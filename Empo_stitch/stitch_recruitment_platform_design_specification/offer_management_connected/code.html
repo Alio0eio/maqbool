@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Offer Management | EMPO Recruitment Suite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#dee8ff",
+                    "primary-fixed": "#dce1ff",
+                    "primary-container": "#1e3a8a",
+                    "surface-card": "#FFFFFF",
+                    "on-primary-fixed": "#00164e",
+                    "on-error": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#d8e3fb",
+                    "border-default": "#E2E8F0",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-primary": "#ffffff",
+                    "surface": "#f9f9ff",
+                    "tertiary-fixed": "#85f8c4",
+                    "surface-tint": "#4059aa",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "surface-container": "#e7eeff",
+                    "status-error": "#DC2626",
+                    "surface-container-low": "#f0f3ff",
+                    "on-tertiary-container": "#4ac08f",
+                    "on-tertiary-fixed": "#002114",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "outline": "#757682",
+                    "on-surface-variant": "#444651",
+                    "background": "#f9f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-primary": "#b6c4ff",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "inverse-surface": "#263143",
+                    "surface-bright": "#f9f9ff",
+                    "on-background": "#111c2d",
+                    "surface-bg": "#F8FAFC",
+                    "text-secondary": "#64748B",
+                    "on-secondary-container": "#fefcff",
+                    "surface-dim": "#cfdaf2",
+                    "inverse-on-surface": "#ecf1ff",
+                    "surface-variant": "#d8e3fb",
+                    "tertiary-container": "#004a32",
+                    "on-secondary-fixed": "#001a42",
+                    "primary": "#00236f",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "on-primary-fixed-variant": "#264191",
+                    "tertiary": "#003120",
+                    "on-surface": "#111c2d",
+                    "outline-variant": "#c5c5d3",
+                    "surface-subtle": "#F1F5F9",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "secondary-container": "#2170e4",
+                    "secondary": "#0058be",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-primary-container": "#90a8ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "container-max": "1280px",
+                    "sm": "8px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "margin": "24px",
+                    "xl": "32px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface overflow-hidden h-screen flex">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-full py-lg px-md space-y-sm bg-surface-container-low border-r border-border-default w-64 shrink-0">
+<div class="px-md mb-xl">
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Talent Suite</h1>
+<p class="text-label-sm text-text-secondary">Recruiter Mode</p>
+</div>
+<nav class="flex-1 space-y-xs">
+<a class="flex items-center gap-md p-md text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg group" href="{{DATA:SCREEN:SCREEN_15}}">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md p-md text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="font-label-md text-label-md">Active Jobs</span>
+</a>
+<a class="flex items-center gap-md p-md text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg group" href="{{DATA:SCREEN:SCREEN_16}}">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Candidates</span>
+</a>
+<a class="flex items-center gap-md p-md bg-primary-container text-on-primary-container rounded-lg font-bold" href="{{DATA:SCREEN:SCREEN_40}}">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-md text-label-md">Interviews</span>
+</a>
+<a class="flex items-center gap-md p-md text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg group" href="{{DATA:SCREEN:SCREEN_27}}">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+</nav>
+<div class="pt-lg border-t border-border-default space-y-xs">
+<a class="block w-full" href="{{DATA:SCREEN:SCREEN_33}}">
+<button class="w-full bg-primary text-on-primary py-md px-lg rounded-lg font-label-md text-label-md active:scale-95 transition-transform mb-md">
+                Create New Job
+            </button>
+</a>
+<a class="flex items-center gap-md p-md text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md p-md text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg" href="{{DATA:SCREEN:SCREEN_8}}">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col h-full overflow-hidden">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-border-default shadow-sm h-16 flex justify-between items-center px-lg md:px-xl z-20">
+<div class="flex items-center gap-xl">
+<span class="md:hidden material-symbols-outlined cursor-pointer">menu</span>
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[20px]">handshake</span>
+</div>
+<span class="font-headline-lg text-headline-lg font-bold text-primary">EMPO</span>
+</div>
+<div class="hidden md:flex items-center gap-lg">
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200" href="{{DATA:SCREEN:SCREEN_2}}">Find Jobs</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="{{DATA:SCREEN:SCREEN_3}}">My Applications</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200" href="#">Post a Job</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden sm:block">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-secondary text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-subtle border-none rounded-full text-body-sm w-64 focus:ring-2 focus:ring-primary/20" placeholder="Search offers..." type="text"/>
+</div>
+<span class="material-symbols-outlined text-text-secondary cursor-pointer hover:text-primary transition-all">notifications</span>
+<span class="material-symbols-outlined text-text-secondary cursor-pointer hover:text-primary transition-all">settings</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-default">
+<img alt="User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBflDqs_DVY1N42nnnTzLcvGu19z80r8wXJbo5UTjC91CzbXhDxTB_TnxwF0O-EtoW-nEi_EKmtCVr0IbVt8k5mpVSTYKNAitOeu1O4HDCCy0WiuoHzOwEWlNqLYCHf4uGbxA4hMDMDJ_j_j-n-3mgdbnN6SayAK5hXIfHCm3x1QRcWL49L-74oO_lrFf8oonKko8L_U1yxTjJOgd5TwGfQVNp8ymlH8iwcFhtC6maP9pcel4kP8LajFw"/>
+</div>
+</div>
+</header>
+<div class="flex-1 overflow-auto custom-scrollbar p-lg md:p-xl space-y-xl">
+<!-- Dashboard Stats Header -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-lg">
+<div class="bg-surface-card p-lg rounded-xl border border-border-default shadow-sm flex flex-col gap-xs">
+<span class="text-label-sm text-text-secondary uppercase tracking-wider">Pending Offers</span>
+<div class="flex items-baseline gap-sm">
+<span class="text-headline-xl font-headline-xl text-primary">12</span>
+<span class="text-label-sm text-status-error flex items-center"><span class="material-symbols-outlined text-[14px]">trending_up</span> +3</span>
+</div>
+</div>
+<div class="bg-surface-card p-lg rounded-xl border border-border-default shadow-sm flex flex-col gap-xs">
+<span class="text-label-sm text-text-secondary uppercase tracking-wider">Accepted (MoM)</span>
+<div class="flex items-baseline gap-sm">
+<span class="text-headline-xl font-headline-xl text-primary">48</span>
+<span class="text-label-sm text-on-tertiary-container flex items-center"><span class="material-symbols-outlined text-[14px]">trending_up</span> 14%</span>
+</div>
+</div>
+<div class="bg-surface-card p-lg rounded-xl border border-border-default shadow-sm flex flex-col gap-xs">
+<span class="text-label-sm text-text-secondary uppercase tracking-wider">Avg. Time to Accept</span>
+<div class="flex items-baseline gap-sm">
+<span class="text-headline-xl font-headline-xl text-primary">4.2d</span>
+<span class="text-label-sm text-text-secondary">Low</span>
+</div>
+</div>
+<div class="bg-surface-card p-lg rounded-xl border border-border-default shadow-sm flex flex-col gap-xs">
+<span class="text-label-sm text-text-secondary uppercase tracking-wider">Decline Rate</span>
+<div class="flex items-baseline gap-sm">
+<span class="text-headline-xl font-headline-xl text-primary">8%</span>
+<span class="text-label-sm text-on-tertiary-container flex items-center">Healthy</span>
+</div>
+</div>
+</section>
+<!-- Main Listing Area -->
+<section class="flex flex-col lg:flex-row gap-lg">
+<!-- Table View -->
+<div class="flex-[3] flex flex-col gap-lg">
+<div class="flex justify-between items-center">
+<div>
+<h2 class="text-headline-md font-headline-md text-on-surface">Offer Pipeline</h2>
+<p class="text-body-md text-text-secondary">Manage and track active candidate offers</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm border border-border-default rounded-lg text-label-md font-label-md flex items-center gap-xs hover:bg-surface-subtle transition-all">
+<span class="material-symbols-outlined text-[20px]">filter_list</span> Filter
+                        </button>
+<button class="px-md py-sm bg-primary text-on-primary rounded-lg text-label-md font-label-md flex items-center gap-xs hover:opacity-90 transition-all" onclick="alert('Creating a new offer...')">
+<span class="material-symbols-outlined text-[20px]">add</span> New Offer
+                        </button>
+</div>
+</div>
+<div class="bg-surface-card rounded-xl border border-border-default shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-subtle border-b border-border-default">
+<tr>
+<th class="px-lg py-md text-label-sm text-text-secondary uppercase">Candidate</th>
+<th class="px-lg py-md text-label-sm text-text-secondary uppercase">Role</th>
+<th class="px-lg py-md text-label-sm text-text-secondary uppercase">Status</th>
+<th class="px-lg py-md text-label-sm text-text-secondary uppercase">Comp (Annual)</th>
+<th class="px-lg py-md text-label-sm text-text-secondary uppercase">Expires</th>
+<th class="px-lg py-md"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-default">
+<tr class="hover:bg-surface-subtle transition-all cursor-pointer group" onclick="location.href='{{DATA:SCREEN:SCREEN_17}}'">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">AW</div>
+<div>
+<p class="text-label-md font-bold text-on-surface">Alexander Wright</p>
+<p class="text-body-sm text-text-secondary">alex.wright@example.com</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface">Senior Product Designer</td>
+<td class="px-lg py-md">
+<span class="px-sm py-1 bg-surface-container-high text-primary rounded-full text-label-sm border border-primary/10">Draft</span>
+</td>
+<td class="px-lg py-md text-body-md font-medium text-on-surface">$145,000</td>
+<td class="px-lg py-md text-body-sm text-text-secondary">Nov 24, 2024</td>
+<td class="px-lg py-md text-right">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary transition-colors">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-subtle transition-all cursor-pointer group" onclick="location.href='{{DATA:SCREEN:SCREEN_17}}'">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<img alt="Elena Petrov" class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBV1FKVqLEvnv9hOTZ3h5z-wTUSpJ1xTwJS5_omvPemgm6-1-tnMxNBBc21YA_7NJ4wl7MWzzXvaMeu_gFlMFEKZciazUgn4mKxds7UlBFp_-S6jlJZgsFqogA_EVJrWANIZeKwQbeBTjbWwjygGYoUun1Sk0yPgBop5AT1fyzwBxMQmY-cucXdR1EvwWBbeIR6p8DuRG75jJc2Q-OQ9q5LlfLR90nkvZAlkW8KwxCP4G5wqKawooO9RA"/>
+<div>
+<p class="text-label-md font-bold text-on-surface">Elena Petrov</p>
+<p class="text-body-sm text-text-secondary">e.petrov@techcorp.io</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface">Engineering Lead</td>
+<td class="px-lg py-md">
+<span class="px-sm py-1 bg-secondary-fixed text-on-secondary-fixed-variant rounded-full text-label-sm border border-secondary/10">Sent</span>
+</td>
+<td class="px-lg py-md text-body-md font-medium text-on-surface">$190,000</td>
+<td class="px-lg py-md text-body-sm text-text-secondary">Nov 20, 2024</td>
+<td class="px-lg py-md text-right">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary transition-colors">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-subtle transition-all cursor-pointer group" onclick="previewOffer('Marcus Chen', 'Marketing Director', '165k', 'Accepted')">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold">MC</div>
+<div>
+<p class="text-label-md font-bold text-on-surface">Marcus Chen</p>
+<p class="text-body-sm text-text-secondary">marcus@creative.agency</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface">Marketing Director</td>
+<td class="px-lg py-md">
+<span class="px-sm py-1 bg-tertiary-container text-on-tertiary-container rounded-full text-label-sm border border-tertiary/10">Accepted</span>
+</td>
+<td class="px-lg py-md text-body-md font-medium text-on-surface">$165,000</td>
+<td class="px-lg py-md text-body-sm text-on-tertiary-fixed-variant font-medium">Hired</td>
+<td class="px-lg py-md text-right">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary transition-colors">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-subtle transition-all cursor-pointer group" onclick="previewOffer('Sarah Jenkins', 'Account Manager', '110k', 'Declined')">
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-dim flex items-center justify-center font-bold">SJ</div>
+<div>
+<p class="text-label-md font-bold text-on-surface">Sarah Jenkins</p>
+<p class="text-body-sm text-text-secondary">sarah.j@outlook.com</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface">Account Manager</td>
+<td class="px-lg py-md">
+<span class="px-sm py-1 bg-error-container text-on-error-container rounded-full text-label-sm border border-error/10">Declined</span>
+</td>
+<td class="px-lg py-md text-body-md font-medium text-on-surface">$110,000</td>
+<td class="px-lg py-md text-body-sm text-text-secondary">Closed</td>
+<td class="px-lg py-md text-right">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary transition-colors">more_vert</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-lg py-md bg-surface-subtle flex justify-between items-center">
+<span class="text-body-sm text-text-secondary">Showing 4 of 24 candidates</span>
+<div class="flex gap-xs">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-border-default hover:bg-surface-card">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-border-default hover:bg-surface-card">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-border-default hover:bg-surface-card">3</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Offer Preview / Sidebar -->
+<aside class="flex-1 flex flex-col gap-lg transition-all duration-300 transform" id="offerSidebar">
+<div class="bg-surface-card p-lg rounded-xl border border-border-default shadow-lg sticky top-0">
+<div class="flex justify-between items-center mb-lg">
+<h3 class="text-headline-md font-headline-md text-primary">Offer Details</h3>
+<button class="p-1 hover:bg-surface-subtle rounded"><span class="material-symbols-outlined text-text-secondary">close</span></button>
+</div>
+<div class="space-y-lg" id="offerContent">
+<div class="flex items-center gap-md p-md bg-surface-container rounded-lg">
+<div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-headline-md" id="previewAvatar">AW</div>
+<div>
+<h4 class="text-label-md font-bold text-on-surface" id="previewName">Alexander Wright</h4>
+<p class="text-body-sm text-text-secondary" id="previewRole">Senior Product Designer</p>
+</div>
+</div>
+<div class="space-y-md">
+<label class="text-label-sm text-text-secondary uppercase font-bold tracking-widest">Base Compensation</label>
+<div class="flex items-center justify-between p-md border border-border-default rounded-lg">
+<span class="text-body-md font-medium">Annual Base</span>
+<span class="text-label-md font-bold text-primary" id="previewComp">$145,000</span>
+</div>
+<div class="flex items-center justify-between p-md border border-border-default rounded-lg">
+<span class="text-body-md font-medium">Equity (Stock Options)</span>
+<span class="text-label-md font-bold text-primary">15,000 Units</span>
+</div>
+<div class="flex items-center justify-between p-md border border-border-default rounded-lg">
+<span class="text-body-md font-medium">Sign-on Bonus</span>
+<span class="text-label-md font-bold text-primary">$10,000</span>
+</div>
+</div>
+<div class="space-y-sm">
+<label class="text-label-sm text-text-secondary uppercase font-bold tracking-widest">Documents</label>
+<div class="flex items-center gap-sm p-sm border border-border-default rounded-lg hover:bg-surface-subtle cursor-pointer group">
+<span class="material-symbols-outlined text-primary">description</span>
+<span class="flex-1 text-body-sm">Offer_Letter_V1.pdf</span>
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary">download</span>
+</div>
+</div>
+<div class="pt-lg border-t border-border-default flex flex-col gap-sm">
+<button class="w-full py-md bg-primary text-on-primary rounded-lg font-bold text-label-md hover:shadow-md transition-all">Send Offer Letter</button>
+<button class="w-full py-md border border-primary text-primary rounded-lg font-bold text-label-md hover:bg-surface-subtle transition-all">Edit Draft</button>
+</div>
+</div>
+</div>
+<!-- Timeline -->
+<div class="bg-surface-card p-lg rounded-xl border border-border-default shadow-sm">
+<h4 class="text-label-md font-bold text-on-surface mb-md">Candidate Activity</h4>
+<div class="space-y-lg relative before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-border-default">
+<div class="relative pl-lg">
+<div class="absolute left-0 top-1 w-[24px] h-[24px] bg-white border-2 border-primary rounded-full flex items-center justify-center">
+<div class="w-2 h-2 bg-primary rounded-full"></div>
+</div>
+<p class="text-label-sm font-bold text-on-surface">Offer Generated</p>
+<p class="text-body-sm text-text-secondary">Nov 18, 2024 by Jane Recruiter</p>
+</div>
+<div class="relative pl-lg opacity-50">
+<div class="absolute left-0 top-1 w-[24px] h-[24px] bg-white border-2 border-border-default rounded-full"></div>
+<p class="text-label-sm font-bold text-on-surface">Offer Sent</p>
+<p class="text-body-sm text-text-secondary">Pending approval</p>
+</div>
+</div>
+</div>
+</aside>
+</section>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-border-default mt-auto">
+<div class="w-full py-md px-lg md:px-xl max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex items-center gap-md">
+<span class="text-headline-md font-headline-md font-bold text-primary">EMPO</span>
+<span class="text-body-sm text-text-secondary">© 2024 EMPO Recruitment Solutions. All rights reserved.</span>
+</div>
+<div class="flex gap-lg">
+<a class="text-label-sm text-text-secondary hover:text-primary transition-all underline" href="#">Privacy Policy</a>
+<a class="text-label-sm text-text-secondary hover:text-primary transition-all underline" href="#">Terms of Service</a>
+<a class="text-label-sm text-text-secondary hover:text-primary transition-all underline" href="#">Help Center</a>
+</div>
+</div>
+</footer>
+</main>
+<script>
+    function previewOffer(name, role, comp, status) {
+        document.getElementById('previewName').innerText = name;
+        document.getElementById('previewRole').innerText = role;
+        document.getElementById('previewComp').innerText = comp.startsWith('$') ? comp : '$' + comp + ',000';
+        
+        const initials = name.split(' ').map(n => n[0]).join('');
+        document.getElementById('previewAvatar').innerText = initials;
+        
+        const sidebar = document.getElementById('offerSidebar');
+        sidebar.classList.remove('opacity-50');
+        
+        sidebar.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+            sidebar.style.transform = 'scale(1)';
+        }, 150);
+    }
+
+    document.querySelectorAll('tr').forEach(row => {
+        row.addEventListener('click', function() {
+            document.querySelectorAll('tr').forEach(r => r.classList.remove('bg-surface-container'));
+            this.classList.add('bg-surface-container');
+        });
+    });
+</script>
+</body></html>

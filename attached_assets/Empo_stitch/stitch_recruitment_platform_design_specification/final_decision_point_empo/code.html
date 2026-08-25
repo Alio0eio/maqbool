@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO Portal | Final Decision &amp; Outcomes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#adc6ff",
+                    "tertiary": "#003120",
+                    "surface-container-high": "#dee8ff",
+                    "surface-tint": "#4059aa",
+                    "on-tertiary-fixed": "#002114",
+                    "on-primary-fixed-variant": "#264191",
+                    "text-secondary": "#64748B",
+                    "on-surface": "#111c2d",
+                    "surface-container": "#e7eeff",
+                    "background": "#f9f9ff",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#cfdaf2",
+                    "surface-variant": "#d8e3fb",
+                    "surface-container-highest": "#d8e3fb",
+                    "primary": "#00236f",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "surface-subtle": "#F1F5F9",
+                    "on-primary-container": "#90a8ff",
+                    "secondary-container": "#2170e4",
+                    "surface-bg": "#F8FAFC",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#dce1ff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "border-default": "#E2E8F0",
+                    "secondary": "#0058be",
+                    "outline-variant": "#c5c5d3",
+                    "inverse-on-surface": "#ecf1ff",
+                    "on-error-container": "#93000a",
+                    "tertiary-container": "#004a32",
+                    "status-error": "#DC2626",
+                    "primary-container": "#1e3a8a",
+                    "on-primary-fixed": "#00164e",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "inverse-surface": "#263143",
+                    "on-surface-variant": "#444651",
+                    "error": "#ba1a1a",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-tertiary-container": "#4ac08f",
+                    "on-background": "#111c2d",
+                    "inverse-primary": "#b6c4ff",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "tertiary-fixed": "#85f8c4",
+                    "surface": "#f9f9ff",
+                    "on-secondary-container": "#fefcff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "outline": "#757682",
+                    "surface-card": "#FFFFFF",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-bright": "#f9f9ff",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "container-max": "1280px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "gutter": "24px",
+                    "margin": "24px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Interactive Micro-animations */
+        .decision-card:hover { transform: translateY(-2px); transition: all 0.2s ease; }
+        .active-ring { ring: 2px; ring-color: var(--tw-primary); }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-background">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r border-border-default bg-surface dark:bg-inverse-surface shadow-sm z-50">
+<div class="p-lg flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">EMPO Portal</h1>
+<p class="text-label-sm text-on-surface-variant">Enterprise AI</p>
+</div>
+</div>
+<nav class="flex-1 px-md py-lg space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-subtle transition-all duration-200 ease-in-out active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold transition-all duration-200 ease-in-out active:scale-95" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="font-label-md text-label-md">Jobs Manager</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-subtle transition-all duration-200 ease-in-out active:scale-95" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Candidates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-subtle transition-all duration-200 ease-in-out active:scale-95" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-subtle transition-all duration-200 ease-in-out active:scale-95" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="p-md mt-auto">
+<button class="w-full py-3 px-4 bg-primary text-on-primary rounded-lg font-label-md text-label-md font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-sm">add</span>
+                Post New Job
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopNavBar Shell -->
+<header class="sticky top-0 z-40 flex justify-between items-center h-16 w-full px-lg bg-surface border-b border-border-default">
+<div class="flex items-center gap-lg flex-1">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined">search</span>
+<input class="bg-transparent border-none focus:ring-0 font-body-md text-body-md w-64" placeholder="Search across portal..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-opacity active:opacity-70">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-opacity active:opacity-70">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-px bg-border-default mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer">
+<div class="text-right">
+<p class="font-label-md text-label-md font-bold text-primary">Jordan Smith</p>
+<p class="text-body-sm text-on-surface-variant">Talent Lead</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary-container object-cover" data-alt="A professional corporate headshot of a recruitment lead, studio lighting, clean gray background, modern professional attire, high-end photography style, representing the EMPO brand's focus on trust and clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvcywyGhCFlDI7hqJ7eEgHWBMlzrh2HN_rmIQz0NYqsxX43jqeL9xXMAfjj-L6IsZBYPA6FKAlz3WPbBwQEJA2s35YWyNQa4MywgvCkMnVCYYL50ABhgdDIFDu8zYEFFU0BEjhF9J6VRQXOleYk5ed6A7iKfOvZIOi2-TzABP9Gl8D_0XFy8PZeSHccojDXkzU0ZiUoQV3r-VV35rjyV41xnCvu1rPkAbeo-Y6HoGSI3C3zNQf9r9u2g"/>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-lg max-w-container-max mx-auto w-full space-y-lg">
+<!-- Breadcrumb & Header -->
+<div class="flex items-end justify-between">
+<div>
+<nav class="flex items-center gap-2 text-body-sm text-on-surface-variant mb-2">
+<span>Jobs Manager</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span>Senior UX Architect</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-primary font-semibold">Stage 7: Final Decision</span>
+</nav>
+<h2 class="font-headline-xl text-headline-xl text-on-surface">Final Decision &amp; Outcomes</h2>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 bg-surface-container-high text-primary rounded-full font-label-sm text-label-sm">Batch: Q3 Design Leads</span>
+<span class="px-3 py-1 bg-surface-subtle text-on-surface-variant rounded-full font-label-sm text-label-sm">4 Evaluated</span>
+</div>
+</div>
+<!-- Content Grid -->
+<div class="bento-grid">
+<!-- Sidebar: Candidate List -->
+<div class="col-span-12 lg:col-span-4 space-y-md">
+<div class="bg-surface-card rounded-xl border border-border-default shadow-sm flex flex-col h-[700px]">
+<div class="p-md border-b border-border-default">
+<h3 class="font-label-md text-label-md font-bold text-on-surface-variant uppercase tracking-wider">Candidates Under Review</h3>
+</div>
+<div class="flex-1 overflow-y-auto hide-scrollbar p-sm space-y-sm">
+<!-- Candidate Card: Selected -->
+<div class="p-md rounded-lg bg-secondary-container border border-primary-container relative cursor-pointer shadow-sm group">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-3">
+<img class="w-12 h-12 rounded-lg object-cover" data-alt="Close up portrait of Elena Rodriguez, a senior design professional with a confident expression, soft warm lighting, blurred studio background, professional aesthetic, corporate high-fidelity style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBof4utb-FRv07vGJbCNfvgGrlTsEwvtmE1ue4zXS--XZ8rnPwHOIpPx55zRKlJrqgYnACe_mG7kfeXfP5BxGhSA0Ukni8ObMBlOaUVMhnb-UeOy3fM0gW0mVY_xbjhY_30aV-UnjMjt19tTC_sIdXrGZJW-WRT-DBqzGWflUFvtoErJIvr0PiKIO8_X6Lst3oSjJD2u4cWLSEf9YZ_4suiqIspTag-GK-kxfRzXO_ADXL92HtUYFFoEw"/>
+<div>
+<p class="font-headline-md text-headline-md font-bold text-on-secondary-container">Elena Rodriguez</p>
+<p class="text-body-sm text-on-secondary-container opacity-80">Principal UX at Neobank</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-headline-md font-black text-on-secondary-container">94%</p>
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-secondary-container">Fit Score</p>
+</div>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-on-secondary-container/20 rounded text-[10px] font-bold text-on-secondary-container uppercase">Design System Expert</span>
+<span class="px-2 py-0.5 bg-on-secondary-container/20 rounded text-[10px] font-bold text-on-secondary-container uppercase">Leadership</span>
+</div>
+</div>
+<!-- Candidate Card: Default -->
+<div class="p-md rounded-lg hover:bg-surface-subtle border border-transparent transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-3">
+<img class="w-12 h-12 rounded-lg object-cover" data-alt="Portrait of Alex Sterling, a creative professional, looking approachable and intelligent, minimalist white studio background, high resolution, soft shadows, modern business casual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7JzPk_4yaTSZQD9gGy2sH9aqeFA88PkvaYO92FnKRh2vv-MgFF5MNdsQMnM-Z8hUCBKeT1aCW0sXLz-ovDFIcjTaFxQrMzdf36LiFcg06riaZugzJf3iRv7ly5rm_cd5vee9Mh4aD4brcx6bwk10ruOjy0nlusuqcCiYliwNpqbEPk3uCtRpmA0jf4CfRUR63-fSJmm9OyawEdeEXbPJfv7adaucpQT7_NvA6A2lclxI2b1HzWJYX5A"/>
+<div>
+<p class="font-headline-md text-headline-md font-bold text-on-surface">Alex Sterling</p>
+<p class="text-body-sm text-on-surface-variant">Senior Product Designer</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-headline-md font-black text-primary">88%</p>
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Fit Score</p>
+</div>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-surface-container rounded text-[10px] font-bold text-primary uppercase">Prototyping</span>
+<span class="px-2 py-0.5 bg-surface-container rounded text-[10px] font-bold text-primary uppercase">Motion</span>
+</div>
+</div>
+<!-- More candidates... -->
+<div class="p-md rounded-lg hover:bg-surface-subtle border border-transparent transition-all cursor-pointer opacity-70">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center font-bold text-primary">JM</div>
+<div>
+<p class="font-headline-md text-headline-md font-bold text-on-surface">James Miller</p>
+<p class="text-body-sm text-on-surface-variant">Lead Designer</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-headline-md font-black text-primary">82%</p>
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Fit Score</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Decision Workspace -->
+<div class="col-span-12 lg:col-span-8 space-y-lg">
+<!-- Top Summary Card -->
+<div class="bg-surface-card rounded-xl border border-border-default p-lg shadow-sm">
+<div class="flex justify-between items-center mb-lg">
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Decision Workspace: Elena Rodriguez</h3>
+<button class="text-primary font-label-md text-label-md flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">visibility</span>
+                                View Interview History
+                            </button>
+</div>
+<!-- Outcome Selector -->
+<div class="grid grid-cols-3 gap-md mb-xl">
+<button class="decision-card flex flex-col items-center justify-center p-lg border-2 border-border-default rounded-xl hover:border-secondary transition-all group active-ring bg-surface-container-low" id="btn-hire" onclick="selectDecision('hire')">
+<div class="w-12 h-12 bg-green-100 text-green-700 rounded-full flex items-center justify-center mb-3">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-on-surface">Shortlist for Hire</span>
+<span class="text-body-sm text-on-surface-variant text-center mt-1">Send offer intent</span>
+</button>
+<button class="decision-card flex flex-col items-center justify-center p-lg border-2 border-border-default rounded-xl hover:border-secondary transition-all group" id="btn-progress" onclick="selectDecision('progress')">
+<div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center mb-3">
+<span class="material-symbols-outlined">fast_forward</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-on-surface">Progress Round</span>
+<span class="text-body-sm text-on-surface-variant text-center mt-1">Final Exec Interview</span>
+</button>
+<button class="decision-card flex flex-col items-center justify-center p-lg border-2 border-border-default rounded-xl hover:border-secondary transition-all group" id="btn-reject" onclick="selectDecision('reject')">
+<div class="w-12 h-12 bg-red-100 text-red-700 rounded-full flex items-center justify-center mb-3">
+<span class="material-symbols-outlined">cancel</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-on-surface">Reject Candidate</span>
+<span class="text-body-sm text-on-surface-variant text-center mt-1">Polite archive</span>
+</button>
+</div>
+<!-- AI Drafted Communication -->
+<div class="bg-surface-subtle border border-border-default rounded-xl overflow-hidden">
+<div class="p-md bg-white border-b border-border-default flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h4 class="font-label-md text-label-md font-bold text-on-surface">AI Communication Draft</h4>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-body-sm font-semibold text-primary">Regenerate</button>
+<button class="text-body-sm font-semibold text-primary">Templates</button>
+</div>
+</div>
+<div class="p-lg">
+<div class="mb-4">
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Email Subject</label>
+<input class="w-full bg-white border border-border-default rounded-lg p-3 font-body-md text-body-md focus:ring-primary focus:border-primary" type="text" value="Exciting Update: Your Application for Senior UX Architect at EMPO"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Message Body</label>
+<div class="bg-white border border-border-default rounded-lg p-4 min-h-[200px] font-body-md text-body-md text-on-surface-variant leading-relaxed">
+<p>Dear Elena,</p>
+<p class="mt-4">It was a pleasure speaking with you throughout our evaluation process. Our team was particularly impressed by your deep expertise in Design Systems and your strategic approach to user architecture at Neobank.</p>
+<p class="mt-4">I am delighted to inform you that you have been <strong>Shortlisted for Hire</strong> for the Senior UX Architect role. We believe your skills align perfectly with our current vision for the EMPO platform.</p>
+<p class="mt-4">Our HR team will reach out within the next 24 hours to discuss the next steps regarding the formal offer and onboarding timeline. We look forward to the possibility of having you join us!</p>
+<p class="mt-4">Best regards,<br/><strong>Jordan Smith</strong><br/>Talent Lead, EMPO</p>
+</div>
+</div>
+</div>
+<div class="px-lg pb-lg flex justify-end gap-3">
+<button class="px-4 py-2 text-on-surface-variant font-label-md text-label-md hover:bg-white rounded-lg transition-colors">Save as Draft</button>
+<button class="px-4 py-2 bg-primary text-on-primary font-label-md text-label-md font-bold rounded-lg hover:opacity-90 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">edit</span>
+                                    Edit Message
+                                </button>
+</div>
+</div>
+</div>
+<!-- Finalize Action -->
+<div class="flex items-center justify-between p-lg bg-primary text-on-primary rounded-xl shadow-lg">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md font-bold">Ready to finalize?</h4>
+<p class="text-body-sm opacity-90">Confirming will update candidate status and trigger the drafted email.</p>
+</div>
+</div>
+<button class="px-xl py-4 bg-white text-primary rounded-lg font-headline-md text-headline-md font-bold hover:bg-secondary-fixed transition-colors active:scale-95 duration-100 flex items-center gap-3">
+                            Confirm and Send Status Updates
+                            <span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        function selectDecision(type) {
+            const btns = ['btn-hire', 'btn-progress', 'btn-reject'];
+            btns.forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.remove('border-primary', 'bg-surface-container-low', 'ring-2', 'ring-primary');
+                el.classList.add('border-border-default');
+            });
+
+            const activeBtn = document.getElementById('btn-' + type);
+            activeBtn.classList.remove('border-border-default');
+            activeBtn.classList.add('border-primary', 'bg-surface-container-low', 'ring-2', 'ring-primary');
+            
+            // Interaction feedback
+            console.log('Decision updated to:', type);
+        }
+
+        // Initialize with Hire selected
+        window.onload = () => selectDecision('hire');
+    </script>
+</body></html>

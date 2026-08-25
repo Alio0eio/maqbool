@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO Portal | Candidate Review</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#fefcff",
+                    "border-default": "#E2E8F0",
+                    "secondary-container": "#2170e4",
+                    "surface-container-highest": "#d8e3fb",
+                    "surface-container-high": "#dee8ff",
+                    "status-error": "#DC2626",
+                    "on-surface-variant": "#444651",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "surface-container": "#e7eeff",
+                    "tertiary": "#003120",
+                    "surface-tint": "#4059aa",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#001a42",
+                    "inverse-primary": "#b6c4ff",
+                    "on-primary-fixed": "#00164e",
+                    "tertiary-fixed": "#85f8c4",
+                    "surface-subtle": "#F1F5F9",
+                    "on-primary-container": "#90a8ff",
+                    "on-background": "#111c2d",
+                    "secondary": "#0058be",
+                    "on-primary-fixed-variant": "#264191",
+                    "inverse-on-surface": "#ecf1ff",
+                    "text-secondary": "#64748B",
+                    "on-secondary-fixed-variant": "#004395",
+                    "primary": "#00236f",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f9f9ff",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#263143",
+                    "on-surface": "#111c2d",
+                    "on-tertiary-fixed": "#002114",
+                    "surface-dim": "#cfdaf2",
+                    "surface-variant": "#d8e3fb",
+                    "on-tertiary-container": "#4ac08f",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "surface-bg": "#F8FAFC",
+                    "primary-container": "#1e3a8a",
+                    "error-container": "#ffdad6",
+                    "surface-card": "#FFFFFF",
+                    "outline-variant": "#c5c5d3",
+                    "surface": "#f9f9ff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "surface-container-low": "#f0f3ff",
+                    "outline": "#757682",
+                    "background": "#f9f9ff",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "primary-fixed": "#dce1ff",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#004a32"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "gutter": "24px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "xs": "4px",
+                    "margin": "24px",
+                    "lg": "24px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "headline-xl-mobile": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .citation-tag {
+            background-color: #2170e4;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            vertical-align: super;
+            margin-left: 4px;
+        }
+        .cv-highlight-primary { background-color: rgba(33, 112, 228, 0.08); border-left: 3px solid #2170e4; }
+        .cv-highlight-accent { background-color: rgba(255, 191, 0, 0.1); border-left: 3px solid #ffbf00; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #CBD5E1; }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface font-body-md overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full flex flex-col bg-surface dark:bg-inverse-surface h-screen w-64 border-r border-border-default dark:border-outline-variant shadow-sm dark:shadow-none z-50">
+<div class="p-6 flex flex-col items-center gap-2">
+<div class="w-12 h-12 bg-primary flex items-center justify-center rounded-xl mb-2">
+<span class="material-symbols-outlined text-white text-3xl">token</span>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">EMPO Portal</h1>
+<p class="text-xs font-label-md text-on-surface-variant opacity-60 tracking-widest uppercase">Enterprise AI</p>
+</div>
+<nav class="flex-1 px-4 py-6 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-subtle dark:hover:bg-on-surface-variant transition-colors transition-all duration-200 ease-in-out active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-lg font-bold transition-all duration-200 ease-in-out active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">group</span>
+                Candidates
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-subtle dark:hover:bg-on-surface-variant transition-colors transition-all duration-200 ease-in-out active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">work</span>
+                Jobs Manager
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-subtle dark:hover:bg-on-surface-variant transition-colors transition-all duration-200 ease-in-out active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-subtle dark:hover:bg-on-surface-variant transition-colors transition-all duration-200 ease-in-out active:scale-95 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="p-4 border-t border-border-default dark:border-outline-variant">
+<button class="w-full bg-primary py-3 rounded-lg text-white font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+                Post New Job
+            </button>
+</div>
+</aside>
+<!-- Main Content Shell -->
+<main class="ml-64 h-screen flex flex-col relative">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-40 flex justify-between items-center px-lg h-16 w-full bg-surface dark:bg-background border-b border-border-default dark:border-outline-variant">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full w-80 text-label-md focus:ring-2 focus:ring-primary" placeholder="Search candidates, jobs..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">help</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">apps</span>
+</div>
+<div class="flex items-center gap-3 pl-4 border-l border-border-default">
+<div class="text-right">
+<p class="font-label-md text-label-md font-bold">Sarah Chen</p>
+<p class="text-[10px] text-on-surface-variant opacity-60 uppercase">Senior Recruiter</p>
+</div>
+<img class="w-10 h-10 rounded-full border border-border-default object-cover" data-alt="A professional headshot of a female recruiter in a corporate office, soft natural lighting, high-end professional photography, minimalist aesthetic, navy and white colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_D5hE3A9pieC9h5MEfyTxbEZdjN6lJgZq4IM8KcyeGPv_OLV7sAZrNwX5gi_wrfl8uVlHlJ51XvJ3XjKfFJjKf5nG3Tizjw9jAUSoBX1Xqwiwu5Aq8KGZI4IPcW0ZdhB5kT9WgFl7DmDFnwo9nTBdZF-RVZ8tTk2HAnvvl-xrzXz1JPkmsZphdKs5lBROqu_uE0mDXY9j00KeUzH7HCzyOwPHoyWdK_-eLaRiusBKoOj2jBandt34nA"/>
+</div>
+</div>
+</header>
+<!-- Profile Header Area -->
+<div class="bg-surface px-8 py-6 border-b border-border-default flex justify-between items-end">
+<div class="flex items-center gap-6">
+<div class="w-20 h-20 rounded-xl overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Close-up professional portrait of Alexander Novak, a senior product designer with a modern, stylish appearance. Clean background, studio lighting, corporate professional style, high contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1ADJ4EUShFDnmOBh2FCgpssdzVz2hBINf9HTNeubKY-Q08qIp-rp1zW1mrngmocBAinN3ZnSKWpmFvBNxS8IuTZPdmLwF2bStoR3T5zO9PgR2ge4eNU9ImYSKi23Kc84OCRsGvEG41fII65yJCuM7ZDcJgod2MLkpQeKLh5RbRc6IXMQIZMnjmH-m18GzNps2_e1t9XcuvP27OTdNJZfjRWu6cfgxJ5pVL4MyldECHDRWIvJi2VznAg"/>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h2 class="font-headline-lg text-headline-lg font-bold text-primary">Alexander Novak</h2>
+<span class="bg-surface-container-highest text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Top Talent</span>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant flex items-center gap-2">
+                        Senior Product Designer • <span class="material-symbols-outlined text-sm">location_on</span> Oslo, Norway
+                    </p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 border border-border-default rounded-lg font-label-md text-label-md hover:bg-surface-subtle transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-md">share</span> Share Profile
+                </button>
+<button class="px-4 py-2 border border-border-default rounded-lg font-label-md text-label-md hover:bg-surface-subtle transition-colors flex items-center gap-2 text-status-error">
+<span class="material-symbols-outlined text-md">flag</span> Report
+                </button>
+</div>
+</div>
+<!-- Split Screen View Container -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Left Pane: CV/Resume View -->
+<section class="w-1/2 overflow-y-auto bg-white p-10 border-r border-border-default shadow-inner">
+<div class="max-w-2xl mx-auto space-y-12">
+<!-- Professional Summary -->
+<div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-widest text-on-surface-variant mb-4">Professional Summary</h3>
+<p class="font-body-lg text-body-lg leading-relaxed text-on-surface">
+                            Dedicated Senior Product Designer with 8+ years of experience specializing in complex SaaS ecosystems and data-driven design systems. Proven track record of leading design teams in fast-paced startup environments and delivering user-centric solutions that drive measurable business growth.
+                        </p>
+</div>
+<!-- Experience -->
+<div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-widest text-on-surface-variant mb-6">Experience</h3>
+<div class="space-y-8">
+<div class="relative pl-6 border-l-2 border-border-default">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-primary"></div>
+<div class="mb-2">
+<h4 class="font-headline-md text-headline-md text-primary font-bold">Lead Product Designer</h4>
+<p class="font-label-md text-label-md text-on-surface-variant">Finlytics AI • 2020 — Present</p>
+</div>
+<div class="cv-highlight-primary p-4 rounded-lg">
+<ul class="list-disc list-outside ml-4 space-y-2 text-on-surface">
+<li>Architected the global design system for a complex financial forecasting platform <span class="citation-tag">Exp-A</span></li>
+<li>Reduced user onboarding friction by 40% through iterative usability testing and prototype refinement</li>
+<li>Managed a cross-functional team of 4 junior designers and 2 UX researchers</li>
+</ul>
+</div>
+</div>
+<div class="relative pl-6 border-l-2 border-border-default opacity-80">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-border-default"></div>
+<div class="mb-2">
+<h4 class="font-headline-md text-headline-md text-on-surface font-bold">Senior UX Designer</h4>
+<p class="font-label-md text-label-md text-on-surface-variant">Streamline SaaS • 2017 — 2020</p>
+</div>
+<div class="p-2">
+<ul class="list-disc list-outside ml-4 space-y-2 text-on-surface">
+<li>Designed core feature sets for a B2B project management suite serving 500k+ users</li>
+<li>Collaborated directly with engineering leads to ensure high-fidelity implementation of UI components</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- Skills -->
+<div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-widest text-on-surface-variant mb-6">Skills &amp; Expertise</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-container-highest text-primary rounded-md font-label-md text-label-md border border-primary/20">Design Systems <span class="citation-tag">S1</span></span>
+<span class="px-3 py-1 bg-surface-container-highest text-primary rounded-md font-label-md text-label-md border border-primary/20">SaaS Product Strategy <span class="citation-tag">S2</span></span>
+<span class="px-3 py-1 bg-surface-container-highest text-primary rounded-md font-label-md text-label-md border border-primary/20">Figma / Advanced Prototyping</span>
+<span class="px-3 py-1 bg-surface-container-highest text-primary rounded-md font-label-md text-label-md border border-primary/20">User Research</span>
+<span class="px-3 py-1 bg-surface-subtle text-on-surface rounded-md font-label-md text-label-md border border-border-default">React / Frontend Basics</span>
+<span class="px-3 py-1 bg-surface-subtle text-on-surface rounded-md font-label-md text-label-md border border-border-default">Data Visualization</span>
+</div>
+</div>
+<!-- Education -->
+<div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-widest text-on-surface-variant mb-4">Education</h3>
+<div class="cv-highlight-accent p-4 rounded-lg">
+<h4 class="font-label-md text-label-md font-bold">MA in Human-Computer Interaction</h4>
+<p class="text-on-surface-variant">University of Oslo • 2015 — 2017 <span class="citation-tag">Edu-1</span></p>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Pane: AI Evaluation Summary -->
+<section class="w-1/2 overflow-y-auto bg-surface-container-low p-8">
+<div class="max-w-xl mx-auto">
+<!-- Fit Score Header -->
+<div class="bg-white rounded-2xl p-8 mb-8 shadow-sm border border-border-default flex items-center justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-primary font-bold mb-1">AI Recommendation</h3>
+<p class="text-on-surface-variant text-label-md">Based on Senior Product Designer requirements</p>
+</div>
+<div class="relative w-24 h-24 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-highest" cx="48" cy="48" fill="transparent" r="42" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-secondary transition-all duration-1000 ease-out" cx="48" cy="48" fill="transparent" r="42" stroke="currentColor" stroke-dasharray="263.89" stroke-dashoffset="15.83" stroke-width="8"></circle>
+</svg>
+<span class="absolute font-headline-xl text-headline-xl text-primary">94<span class="text-sm">%</span></span>
+</div>
+</div>
+<!-- Top Strengths -->
+<div class="space-y-6 mb-8">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-on-tertiary-container">verified</span>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Top Strengths</h3>
+</div>
+<div class="bg-white p-5 rounded-xl border border-border-default flex gap-4">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-sm">architecture</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold mb-1">Deep Systems Thinking</h4>
+<p class="text-on-surface-variant text-body-md mb-2">Evidence of architecting global design systems in complex SaaS environments at Finlytics AI.</p>
+<span class="bg-surface-container text-primary text-[10px] px-2 py-1 rounded font-bold">CITES: Exp-A, S1</span>
+</div>
+</div>
+<div class="bg-white p-5 rounded-xl border border-border-default flex gap-4">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold mb-1">Outcome-Driven Designer</h4>
+<p class="text-on-surface-variant text-body-md mb-2">Quantifiable impact on user onboarding (40% reduction in friction) through data-led iterations.</p>
+<span class="bg-surface-container text-primary text-[10px] px-2 py-1 rounded font-bold">CITES: Exp-A, S2</span>
+</div>
+</div>
+</div>
+<!-- Potential Gaps -->
+<div class="mb-8">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-error">warning</span>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Potential Gaps to Probe</h3>
+</div>
+<div class="bg-error-container/20 p-5 rounded-xl border border-error/10">
+<ul class="space-y-3">
+<li class="flex gap-3 text-on-surface">
+<span class="material-symbols-outlined text-error text-md">fiber_manual_record</span>
+<p class="text-body-md">Limited mention of mobile-first design experience; most highlighted work is desktop/SaaS browser-based.</p>
+</li>
+<li class="flex gap-3 text-on-surface">
+<span class="material-symbols-outlined text-error text-md">fiber_manual_record</span>
+<p class="text-body-md">Stakeholder management: Experience mentions managing designers, but less focus on C-suite influence.</p>
+</li>
+</ul>
+</div>
+</div>
+<!-- Summary -->
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-on-surface-variant">auto_awesome</span>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">AI Summary</h3>
+</div>
+<div class="bg-primary/5 p-6 rounded-xl italic text-on-primary-fixed-variant leading-relaxed text-body-lg border-l-4 border-primary">
+                            "Alexander represents a top 5% candidate for the Senior Product Designer role. His formal education in HCI combined with high-impact leadership at Finlytics makes him a strong candidate for teams needing both design rigor and strategic execution. Recommend immediate interview focusing on cross-platform design adaptability."
+                        </div>
+</div>
+</div>
+</section>
+</div>
+<!-- Floating Action Bar -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-surface-card shadow-[0_20px_50px_rgba(0,0,0,0.15)] rounded-full px-8 py-4 border border-border-default flex items-center gap-6 z-50 animate-in fade-in slide-in-from-bottom-10 duration-500">
+<div class="flex items-center gap-4 pr-6 border-r border-border-default">
+<span class="text-label-md font-bold text-on-surface-variant">Reviewing Alexander N.</span>
+</div>
+<div class="flex gap-4">
+<button class="px-8 py-3 bg-primary text-white rounded-full font-label-md text-label-md hover:opacity-90 transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-md" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+                    Schedule Interview
+                </button>
+<button class="px-8 py-3 bg-secondary-fixed text-on-secondary-fixed rounded-full font-label-md text-label-md hover:bg-secondary-fixed-dim transition-all active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-md" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+                    Shortlist
+                </button>
+<button class="px-8 py-3 border border-border-default text-on-surface-variant rounded-full font-label-md text-label-md hover:bg-surface-subtle transition-all active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-md">close</span>
+                    Reject
+                </button>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for active states or citations if needed
+        document.querySelectorAll('.citation-tag').forEach(tag => {
+            tag.addEventListener('mouseenter', () => {
+                tag.classList.add('scale-110');
+                tag.style.transition = 'transform 0.2s ease';
+            });
+            tag.addEventListener('mouseleave', () => {
+                tag.classList.remove('scale-110');
+            });
+        });
+
+        // Toggle mobile nav (if needed for responsiveness, though this is desktop optimized)
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('opacity-100');
+            }
+          });
+        });
+        
+        document.querySelectorAll('section').forEach((section) => observer.observe(section));
+    </script>
+</body></html>

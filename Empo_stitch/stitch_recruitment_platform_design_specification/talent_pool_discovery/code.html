@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Talent Pool | EMPO Recruitment Solutions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface-variant": "#444651",
+                    "surface-tint": "#4059aa",
+                    "surface-card": "#FFFFFF",
+                    "inverse-primary": "#b6c4ff",
+                    "status-error": "#DC2626",
+                    "on-background": "#111c2d",
+                    "tertiary-container": "#004a32",
+                    "surface-container-highest": "#d8e3fb",
+                    "background": "#f9f9ff",
+                    "tertiary-fixed": "#85f8c4",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary-container": "#1e3a8a",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "on-secondary-fixed-variant": "#004395",
+                    "outline": "#757682",
+                    "primary": "#00236f",
+                    "inverse-surface": "#263143",
+                    "surface-bg": "#F8FAFC",
+                    "error-container": "#ffdad6",
+                    "outline-variant": "#c5c5d3",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-container-high": "#dee8ff",
+                    "on-tertiary-fixed": "#002114",
+                    "on-secondary-container": "#fefcff",
+                    "on-primary-container": "#90a8ff",
+                    "inverse-on-surface": "#ecf1ff",
+                    "on-surface": "#111c2d",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f9f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-tertiary": "#ffffff",
+                    "surface-dim": "#cfdaf2",
+                    "on-primary": "#ffffff",
+                    "text-secondary": "#64748B",
+                    "surface-container": "#e7eeff",
+                    "on-tertiary-container": "#4ac08f",
+                    "surface": "#f9f9ff",
+                    "surface-variant": "#d8e3fb",
+                    "tertiary": "#003120",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "border-default": "#E2E8F0",
+                    "secondary-fixed": "#d8e2ff",
+                    "primary-fixed": "#dce1ff",
+                    "surface-container-low": "#f0f3ff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-primary-fixed": "#00164e",
+                    "secondary": "#0058be",
+                    "secondary-container": "#2170e4",
+                    "on-primary-fixed-variant": "#264191",
+                    "surface-subtle": "#F1F5F9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "md": "16px",
+                    "margin": "24px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "container-max": "1280px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+        .glass-header { backdrop-filter: blur(8px); background-color: rgba(255, 255, 255, 0.8); }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface">
+<!-- TopNavBar -->
+<header class="fixed top-0 z-50 w-full bg-surface-container-lowest dark:bg-inverse-surface border-b border-border-default dark:border-outline-variant shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-xl">
+<span class="text-headline-lg font-headline-lg font-bold text-primary dark:text-primary-fixed-dim cursor-pointer">EMPO</span>
+<nav class="hidden md:flex gap-lg">
+<a class="text-text-secondary dark:text-outline-variant font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 cursor-pointer active:opacity-80 transition-all text-label-md font-label-md" href="#">Find Jobs</a>
+<a class="text-text-secondary dark:text-outline-variant font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 cursor-pointer active:opacity-80 transition-all text-label-md font-label-md" href="#">My Applications</a>
+<a class="text-text-secondary dark:text-outline-variant font-medium hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 cursor-pointer active:opacity-80 transition-all text-label-md font-label-md" href="#">Post a Job</a>
+<a class="text-primary dark:text-primary-fixed-dim font-bold border-b-2 border-primary dark:border-primary-fixed-dim pb-1 hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200 cursor-pointer active:opacity-80 transition-all text-label-md font-label-md" href="#">Talent Pool</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex gap-sm">
+<button class="p-sm rounded-full hover:bg-surface-subtle transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+<button class="p-sm rounded-full hover:bg-surface-subtle transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="w-10 h-10 rounded-full border border-border-default overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional studio headshot of a recruitment manager in a clean white office setting. The lighting is bright and even, highlighting a confident yet approachable expression. High-key corporate photography style with a shallow depth of field background showing a modern minimalist workspace with professional blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4ZgApG4tlM5xQJ5Vb1ZYlRY4vf82zg0yArQOrEDyjiPpBrobuwtY8mRAqaQXy8Oir3biRgJDi_TYs4ooXBjZzl2hD5a8aewnOTQsbSkYiL5NwqC3HAErkx1S56boSjgkVnVsvZ6srK80o9x83WlhKXphMTNhKIVgPucHJ6du_UWLY0-ST5m8kt5URl0Zeks0GRPmTqutMrBSYZbVwjPpmW6xWCboaxTXEhlTayaJUgBBH1WmJ-sJ7wQ"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex pt-16 h-screen overflow-hidden">
+<!-- SideNavBar / Filter Sidebar -->
+<aside class="hidden lg:flex flex-col w-72 h-full bg-surface-container-low dark:bg-inverse-surface border-r border-border-default dark:border-outline-variant py-lg px-md space-y-sm overflow-y-auto custom-scrollbar">
+<div class="px-sm mb-md">
+<h2 class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">Filters</h2>
+<p class="text-body-sm font-body-sm text-text-secondary">Refine your talent search</p>
+</div>
+<!-- Search Internal -->
+<div class="px-sm mb-lg">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-white border border-border-default rounded-lg text-body-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="Search by name..." type="text"/>
+</div>
+</div>
+<!-- Filter Groups -->
+<div class="space-y-xl px-sm">
+<!-- Skills -->
+<div>
+<h3 class="text-label-sm font-label-sm uppercase tracking-wider text-text-secondary mb-sm">Top Skills</h3>
+<div class="space-y-xs">
+<label class="flex items-center gap-sm group cursor-pointer">
+<input checked="" class="w-4 h-4 rounded border-border-default text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md text-on-surface group-hover:text-primary transition-colors">Product Design</span>
+</label>
+<label class="flex items-center gap-sm group cursor-pointer">
+<input class="w-4 h-4 rounded border-border-default text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md text-on-surface group-hover:text-primary transition-colors">UX Research</span>
+</label>
+<label class="flex items-center gap-sm group cursor-pointer">
+<input class="w-4 h-4 rounded border-border-default text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md text-on-surface group-hover:text-primary transition-colors">Design Systems</span>
+</label>
+<button class="text-label-md font-label-md text-secondary mt-2 flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-[16px]" data-icon="add">add</span> Show more
+                        </button>
+</div>
+</div>
+<!-- Experience -->
+<div>
+<h3 class="text-label-sm font-label-sm uppercase tracking-wider text-text-secondary mb-sm">Experience Level</h3>
+<div class="space-y-xs">
+<label class="flex items-center gap-sm group cursor-pointer">
+<input class="w-4 h-4 border-border-default text-primary focus:ring-primary" name="exp" type="radio"/>
+<span class="text-body-md text-on-surface">Entry (0-2 years)</span>
+</label>
+<label class="flex items-center gap-sm group cursor-pointer">
+<input checked="" class="w-4 h-4 border-border-default text-primary focus:ring-primary" name="exp" type="radio"/>
+<span class="text-body-md text-on-surface">Mid-Level (3-5 years)</span>
+</label>
+<label class="flex items-center gap-sm group cursor-pointer">
+<input class="w-4 h-4 border-border-default text-primary focus:ring-primary" name="exp" type="radio"/>
+<span class="text-body-md text-on-surface">Senior (6+ years)</span>
+</label>
+</div>
+</div>
+<!-- Companies -->
+<div>
+<h3 class="text-label-sm font-label-sm uppercase tracking-wider text-text-secondary mb-sm">Previous Companies</h3>
+<div class="flex flex-wrap gap-xs">
+<span class="px-2 py-1 bg-surface-container rounded text-label-sm border border-outline-variant flex items-center gap-1">FAANG <span class="material-symbols-outlined text-[14px] cursor-pointer" data-icon="close">close</span></span>
+<span class="px-2 py-1 bg-surface-container rounded text-label-sm border border-outline-variant flex items-center gap-1">Fortune 500 <span class="material-symbols-outlined text-[14px] cursor-pointer" data-icon="close">close</span></span>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-lg border-t border-border-default">
+<button class="w-full bg-primary-container text-on-primary-container py-3 rounded-lg font-bold text-label-md hover:opacity-90 active:scale-95 transition-all">
+                    Reset All Filters
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto custom-scrollbar px-lg md:px-xl py-lg">
+<div class="max-w-5xl mx-auto">
+<!-- Dashboard Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md mb-xl">
+<div>
+<h1 class="text-headline-xl font-headline-xl text-on-surface">Recommended Candidates</h1>
+<p class="text-body-lg font-body-lg text-text-secondary">Showing 1,248 candidates matched to your open Senior Product Designer role.</p>
+</div>
+<div class="flex items-center gap-sm">
+<span class="text-label-md font-label-md text-text-secondary">Sort by:</span>
+<select class="bg-white border border-border-default rounded-lg px-3 py-2 text-label-md focus:ring-primary focus:border-primary outline-none">
+<option>Match Percentage</option>
+<option>Recently Active</option>
+<option>Years of Exp.</option>
+</select>
+</div>
+</div>
+<!-- Candidates Bento-ish Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Candidate Card 1 -->
+<div class="bg-white border border-border-default rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow relative group">
+<div class="absolute top-4 right-4">
+<div class="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-full border border-green-200">
+<span class="material-symbols-outlined text-[16px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-label-sm">98% Match</span>
+</div>
+</div>
+<div class="flex items-start gap-md mb-md">
+<div class="w-16 h-16 rounded-lg overflow-hidden border-2 border-primary-fixed shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a woman with a creative professional appearance, wearing stylish glasses and a neutral blazer. She is set against a soft, bright office background with light-colored wooden textures and a hint of greenery. The image has a warm, high-end commercial feel with high resolution and crisp focus on her confident facial expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDj6_eJyqnkFGqMOBOjJMMMh_vzrWrHjckziMNV8slPHPS-6WrmNfaSV8UlWXN0g5OYYhUnFdndNcqbpDiUTJ6UsBwYizIQgtPvdQvkKeH-ztp80eeN0rTiOn5vyFYuiBqwjzVP2VEE15m0A0sFoiWkOQfgBN3lJ_qxMNnWB79jCb1ov3Hgw5khB84N13VRU6DXAbm8iJVMrfHJD6qvSQS7oGnwGkvVa2gdcSO2VBUka0bmlgF8TGEP0w"/>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-primary">Elena Rodriguez</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Senior Product Designer • Airbnb</p>
+<div class="flex items-center gap-2 mt-1 text-text-secondary">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span class="text-body-sm">San Francisco, CA (Remote)</span>
+</div>
+</div>
+</div>
+<div class="mb-lg">
+<h4 class="text-label-sm font-label-sm text-text-secondary uppercase mb-2">Top Skills</h4>
+<div class="flex flex-wrap gap-sm">
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">Design Systems</span>
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">User Testing</span>
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">Figma</span>
+<span class="px-2 py-1 bg-surface-subtle text-text-secondary rounded-full text-label-sm">+4 more</span>
+</div>
+</div>
+<div class="flex items-center gap-sm pt-md border-t border-border-default">
+<button class="flex-1 bg-primary text-white py-2 rounded-lg font-bold text-label-md hover:bg-primary-container active:scale-95 transition-all">Message</button>
+<button class="px-4 py-2 border border-primary text-primary rounded-lg font-bold text-label-md hover:bg-surface-subtle active:scale-95 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="bookmark">bookmark</span> Save
+                            </button>
+</div>
+</div>
+<!-- Candidate Card 2 -->
+<div class="bg-white border border-border-default rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow relative group">
+<div class="absolute top-4 right-4">
+<div class="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-full border border-green-200">
+<span class="material-symbols-outlined text-[16px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-label-sm">94% Match</span>
+</div>
+</div>
+<div class="flex items-start gap-md mb-md">
+<div class="w-16 h-16 rounded-lg overflow-hidden border-2 border-primary-fixed shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of a man in his early 40s, dressed in a smart-casual dark navy polo shirt. He has a friendly, knowledgeable expression and is positioned in a modern, brightly lit architectural space with high ceilings and glass walls. The lighting is natural and diffuse, creating a clean, professional corporate look with deep blue and soft grey tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTvXeATGpPQtjgxZ_G2TMykkGpWZTfqLTDgWUE-nhfKLOCyG76XO9X2_j4L36HwFRaBBuawgKWv3X9nahvgfCmTHwATs-oz3PLN5w8Y8IOiz-3Kug2-rNpG52XIkx5Osyk0Qo5aib_kMOICqQ-9wa_pBMgYaFQwEHbLKPoDp-OpJxDJVGCTVdlPePLnODkuEkHGlpxcGDBJosWgSDvAjXoWgfGt5RJeS-Mbp9nIRJ7qQjybQRmXH5OMw"/>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-primary">Marcus Chen</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Lead UX Designer • Stripe</p>
+<div class="flex items-center gap-2 mt-1 text-text-secondary">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span class="text-body-sm">New York, NY</span>
+</div>
+</div>
+</div>
+<div class="mb-lg">
+<h4 class="text-label-sm font-label-sm text-text-secondary uppercase mb-2">Top Skills</h4>
+<div class="flex flex-wrap gap-sm">
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">Fintech UX</span>
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">Product Strategy</span>
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">Prototyping</span>
+<span class="px-2 py-1 bg-surface-subtle text-text-secondary rounded-full text-label-sm">+6 more</span>
+</div>
+</div>
+<div class="flex items-center gap-sm pt-md border-t border-border-default">
+<button class="flex-1 bg-primary text-white py-2 rounded-lg font-bold text-label-md hover:bg-primary-container active:scale-95 transition-all">Message</button>
+<button class="px-4 py-2 border border-primary text-primary rounded-lg font-bold text-label-md hover:bg-surface-subtle active:scale-95 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="bookmark">bookmark</span> Save
+                            </button>
+</div>
+</div>
+<!-- Candidate Card 3 -->
+<div class="bg-white border border-border-default rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow relative group">
+<div class="absolute top-4 right-4">
+<div class="flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-1 rounded-full border border-amber-200">
+<span class="text-label-sm">89% Match</span>
+</div>
+</div>
+<div class="flex items-start gap-md mb-md">
+<div class="w-16 h-16 rounded-lg overflow-hidden border-2 border-primary-fixed shrink-0">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a diverse young professional man with a modern hairstyle, wearing a crisp charcoal grey shirt. He is smiling warmly in a contemporary office setting with soft bokeh lights and blurred green plants in the background. The aesthetic is clean, professional, and trustworthy, with a focus on high-quality lighting and composition typical of premium recruiter profiles." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtRegHyltScDPCVRY65qu1K3n6TY6oiYMqCe0GaMpD0YBx1P6GPpusnERXDoLbPPmmdVb9rTNCdT-3EshPVs4uCfQritP4AjdZFcLaKbcKCauVxFMMilpRTyhXHhcl0U2ZZnn9FDHdYm13M052OtpVAnL_7nuSjNlT3G0ZrWhnUSlXVPI41h2ljnL3O-3JHrjWRhfOmRRPUQav-2CrI6mnUfQL-KvWANhDIa7Km-UfYWwxYbBDejg76w"/>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-primary">Julian Taylor</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Product Designer • Freelance</p>
+<div class="flex items-center gap-2 mt-1 text-text-secondary">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span class="text-body-sm">Austin, TX</span>
+</div>
+</div>
+</div>
+<div class="mb-lg">
+<h4 class="text-label-sm font-label-sm text-text-secondary uppercase mb-2">Top Skills</h4>
+<div class="flex flex-wrap gap-sm">
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">B2B SaaS</span>
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">Visual Design</span>
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">Mobile UX</span>
+<span class="px-2 py-1 bg-surface-subtle text-text-secondary rounded-full text-label-sm">+3 more</span>
+</div>
+</div>
+<div class="flex items-center gap-sm pt-md border-t border-border-default">
+<button class="flex-1 bg-primary text-white py-2 rounded-lg font-bold text-label-md hover:bg-primary-container active:scale-95 transition-all">Message</button>
+<button class="px-4 py-2 border border-primary text-primary rounded-lg font-bold text-label-md hover:bg-surface-subtle active:scale-95 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="bookmark">bookmark</span> Save
+                            </button>
+</div>
+</div>
+<!-- Candidate Card 4 -->
+<div class="bg-white border border-border-default rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow relative group">
+<div class="absolute top-4 right-4">
+<div class="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-full border border-green-200">
+<span class="material-symbols-outlined text-[16px]" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-label-sm">92% Match</span>
+</div>
+</div>
+<div class="flex items-start gap-md mb-md">
+<div class="w-16 h-16 rounded-lg overflow-hidden border-2 border-primary-fixed shrink-0">
+<img class="w-full h-full object-cover" data-alt="A sophisticated professional portrait of a woman in her late 30s with a modern professional hairstyle, wearing a tailored black dress. She is set in a corporate lounge area with soft, high-key natural light coming through large windows. The overall tone is stable, professional, and career-focused, utilizing a palette of cool grays, deep blacks, and soft whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQvQkzPeut63H6OEgQrwncuOPnAZoUar0mcjs419sV5c6c7wfX6X32s9znVmpiUKEWuckMg__zEDtgmd2_Y7EME07fcoiIvFXRGlN2WoeZyNNDqDHYi0n899swGZfc3i_0CtQ37Hraom7bUB8DctPHryKIa9ifjmte17b2Z73--9gK8OqjZHzCize-q-bW--NWuOBcTpaHOrLEMbGg7L-sohD4O9lWrQvP8rKCDeTodk8_4pxarW0p3w"/>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-primary">Sarah Jenkins</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">UI/UX Architect • Oracle</p>
+<div class="flex items-center gap-2 mt-1 text-text-secondary">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+<span class="text-body-sm">Seattle, WA</span>
+</div>
+</div>
+</div>
+<div class="mb-lg">
+<h4 class="text-label-sm font-label-sm text-text-secondary uppercase mb-2">Top Skills</h4>
+<div class="flex flex-wrap gap-sm">
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">Enterprise UX</span>
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">Accessibility</span>
+<span class="px-2 py-1 bg-primary-container/10 text-primary rounded-full text-label-sm font-medium">Angular</span>
+<span class="px-2 py-1 bg-surface-subtle text-text-secondary rounded-full text-label-sm">+5 more</span>
+</div>
+</div>
+<div class="flex items-center gap-sm pt-md border-t border-border-default">
+<button class="flex-1 bg-primary text-white py-2 rounded-lg font-bold text-label-md hover:bg-primary-container active:scale-95 transition-all">Message</button>
+<button class="px-4 py-2 border border-primary text-primary rounded-lg font-bold text-label-md hover:bg-surface-subtle active:scale-95 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="bookmark">bookmark</span> Save
+                            </button>
+</div>
+</div>
+</div>
+<!-- Load More / Pagination -->
+<div class="mt-xl flex justify-center">
+<button class="flex items-center gap-2 px-xl py-lg bg-surface-container-highest text-primary font-bold rounded-xl hover:bg-surface-variant transition-colors group">
+                        Load more candidates
+                        <span class="material-symbols-outlined group-hover:translate-y-1 transition-transform" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="w-full bg-surface-container-lowest dark:bg-inverse-surface border-t border-border-default dark:border-outline-variant py-xl px-lg md:px-xl max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex flex-col md:flex-row items-center gap-lg">
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">EMPO</span>
+<p class="text-body-sm font-body-sm text-text-secondary">© 2024 EMPO Recruitment Solutions. All rights reserved.</p>
+</div>
+<nav class="flex gap-lg">
+<a class="text-text-secondary dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all text-label-sm font-label-sm" href="#">Privacy Policy</a>
+<a class="text-text-secondary dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all text-label-sm font-label-sm" href="#">Terms of Service</a>
+<a class="text-text-secondary dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed-dim underline transition-all text-label-sm font-label-sm" href="#">Help Center</a>
+</nav>
+</footer>
+<script>
+        // Simple micro-interaction for bookmarking
+        document.querySelectorAll('button:has(.material-symbols-outlined[data-icon="bookmark"])').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const icon = this.querySelector('.material-symbols-outlined');
+                const isSaved = icon.style.fontVariationSettings.includes("'FILL' 1");
+                
+                if(isSaved) {
+                    icon.style.fontVariationSettings = "'FILL' 0";
+                    this.classList.remove('bg-primary-fixed');
+                } else {
+                    icon.style.fontVariationSettings = "'FILL' 1";
+                    this.classList.add('bg-primary-fixed');
+                }
+            });
+        });
+
+        // Search highlight interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+    </script>
+</body></html>

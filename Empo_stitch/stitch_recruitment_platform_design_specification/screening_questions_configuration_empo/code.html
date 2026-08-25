@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Screening Questions | EMPO Talent Suite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-container": "#90a8ff",
+                    "surface-bright": "#f9f9ff",
+                    "on-primary": "#ffffff",
+                    "tertiary": "#003120",
+                    "inverse-on-surface": "#ecf1ff",
+                    "surface-container-lowest": "#ffffff",
+                    "background": "#f9f9ff",
+                    "surface-container-low": "#f0f3ff",
+                    "text-secondary": "#64748B",
+                    "primary-container": "#1e3a8a",
+                    "on-tertiary-fixed": "#002114",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-variant": "#444651",
+                    "on-secondary-fixed": "#001a42",
+                    "status-error": "#DC2626",
+                    "border-default": "#E2E8F0",
+                    "on-primary-fixed": "#00164e",
+                    "on-secondary-fixed-variant": "#004395",
+                    "on-error": "#ffffff",
+                    "surface-dim": "#cfdaf2",
+                    "outline": "#757682",
+                    "on-surface": "#111c2d",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#4059aa",
+                    "surface-bg": "#F8FAFC",
+                    "on-background": "#111c2d",
+                    "outline-variant": "#c5c5d3",
+                    "inverse-primary": "#b6c4ff",
+                    "surface-subtle": "#F1F5F9",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "secondary-container": "#2170e4",
+                    "surface-container": "#e7eeff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#264191",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "surface": "#f9f9ff",
+                    "tertiary-container": "#004a32",
+                    "on-secondary-container": "#fefcff",
+                    "surface-card": "#FFFFFF",
+                    "inverse-surface": "#263143",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "tertiary-fixed": "#85f8c4",
+                    "secondary": "#0058be",
+                    "primary": "#00236f",
+                    "surface-container-high": "#dee8ff",
+                    "on-tertiary-container": "#4ac08f",
+                    "surface-container-highest": "#d8e3fb",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-variant": "#d8e3fb",
+                    "primary-fixed": "#dce1ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "xs": "4px",
+                    "margin": "24px",
+                    "container-max": "1280px",
+                    "sm": "8px",
+                    "gutter": "24px",
+                    "xl": "32px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-xl-mobile": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .step-active { color: #1e3a8a; font-weight: 700; }
+        .step-inactive { color: #64748B; }
+        .toggle-checked { background-color: #2170e4; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface-bg font-body-md text-on-surface">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-border-default dark:border-outline-variant shadow-sm w-full h-16 fixed top-0 left-0 z-50">
+<div class="flex justify-between items-center px-lg w-full max-w-container-max mx-auto h-full">
+<div class="flex items-center gap-md">
+<span class="text-headline-lg font-headline-lg font-bold text-primary">EMPO</span>
+<div class="hidden md:flex ml-xl space-x-lg h-full items-center">
+<a class="text-on-surface-variant font-medium hover:bg-surface-subtle transition-colors px-2 py-1 rounded" href="#">Jobs</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-subtle transition-colors px-2 py-1 rounded" href="#">Talent</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-subtle transition-colors px-2 py-1 rounded" href="#">Reports</a>
+</div>
+</div>
+<div class="flex items-center space-x-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-body-md focus:ring-2 focus:ring-secondary/20" placeholder="Search talent..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-subtle rounded-full">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-subtle rounded-full">settings</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-border-default">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a female recruitment manager in a modern office setting, smiling confidently, high-quality corporate photography style with soft bokeh background and cool blue and neutral tones to match the EMPO brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqkUj5Sr_Xy6-Q_R2LSnNberPCKfP4lUpzsG2l_KTvWPakCGq6s6iNcdbOGGwy3p4v2P45wb5rAstZJ75nkW77dZng637xMEk1tIcPC1UlnLPhNupCIPpGxu0EcvaFU3G7OLCAAFJSjOG70kjhin1s8qS2SBOBfanH1zszhSqwyHgrsiXjuaemDMklI8Le2_j8Finw7oJE6TH9XP2MgSHmAD9KbCU0MCP1mXFqerIg51Hw1n0b1cJUag"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Sidebar (Shared Component - Talent Suite) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface dark:bg-on-background border-r border-border-default dark:border-outline-variant pt-20 flex flex-col p-md space-y-sm hidden lg:flex">
+<div class="px-md mb-lg">
+<h2 class="text-headline-md font-headline-md font-bold text-primary">Talent Suite</h2>
+<p class="text-label-sm text-text-secondary">Recruiter Portal</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md p-md bg-secondary-container text-on-secondary-container font-semibold rounded-lg transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="font-label-md text-label-md">Active Jobs</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Candidates</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-md text-label-md">Interviews</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+</nav>
+<div class="pt-4 border-t border-border-default space-y-1">
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:pl-64 pt-16 min-h-screen">
+<div class="max-w-container-max mx-auto p-margin">
+<!-- Progress Stepper -->
+<div class="mb-xl">
+<div class="flex items-center justify-between mb-sm max-w-3xl mx-auto">
+<div class="flex items-center gap-xs">
+<span class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-label-md">1</span>
+<span class="hidden sm:inline font-label-md text-text-secondary">Job Details</span>
+</div>
+<div class="flex-1 h-px bg-border-default mx-md"></div>
+<div class="flex items-center gap-xs">
+<span class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-label-md">2</span>
+<span class="hidden sm:inline font-label-md text-text-secondary">Description</span>
+</div>
+<div class="flex-1 h-px bg-primary mx-md"></div>
+<div class="flex items-center gap-xs">
+<span class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-label-md">3</span>
+<span class="font-label-md text-primary font-bold">Screening</span>
+</div>
+<div class="flex-1 h-px bg-border-default mx-md"></div>
+<div class="flex items-center gap-xs">
+<span class="w-8 h-8 rounded-full border border-border-default text-text-secondary flex items-center justify-center font-bold text-label-md">4</span>
+<span class="hidden sm:inline font-label-md text-text-secondary">Publish</span>
+</div>
+</div>
+</div>
+<!-- Page Header -->
+<div class="mb-xl">
+<h1 class="font-headline-xl text-headline-xl text-on-surface">Screening Questions</h1>
+<p class="text-body-lg text-text-secondary mt-xs">Add specific questions to filter the best candidates for <span class="font-semibold text-on-surface">Senior Product Designer</span>.</p>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-gutter items-start">
+<!-- Central Workspace (Questions Management) -->
+<div class="xl:col-span-8 space-y-md">
+<!-- Question Item 1: Short Answer -->
+<div class="bg-surface-card rounded-xl border border-border-default shadow-sm p-lg relative group transition-all hover:shadow-md">
+<div class="flex justify-between items-start mb-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline cursor-grab">drag_indicator</span>
+<span class="font-label-sm text-secondary px-2 py-0.5 bg-secondary-fixed rounded uppercase">Short Answer</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm">
+<span class="text-label-sm text-on-surface-variant">Mandatory</span>
+<button class="w-10 h-5 rounded-full bg-secondary-container relative transition-colors" onclick="this.classList.toggle('bg-secondary-container'); this.classList.toggle('bg-border-default'); this.children[0].classList.toggle('translate-x-5');">
+<span class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform translate-x-5"></span>
+</button>
+</div>
+<button class="material-symbols-outlined text-outline hover:text-status-error transition-colors">delete</button>
+</div>
+</div>
+<div>
+<label class="block font-label-md mb-xs">Question Text</label>
+<input class="w-full bg-surface border border-border-default rounded-lg px-md py-3 focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all" type="text" value="Please share a link to your online portfolio or personal website."/>
+</div>
+</div>
+<!-- Question Item 2: Multiple Choice -->
+<div class="bg-surface-card rounded-xl border border-border-default shadow-sm p-lg relative group transition-all hover:shadow-md">
+<div class="flex justify-between items-start mb-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline cursor-grab">drag_indicator</span>
+<span class="font-label-sm text-tertiary-container px-2 py-0.5 bg-tertiary-fixed rounded uppercase">Multiple Choice</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm">
+<span class="text-label-sm text-on-surface-variant">Mandatory</span>
+<button class="w-10 h-5 rounded-full bg-secondary-container relative transition-colors">
+<span class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform translate-x-5"></span>
+</button>
+</div>
+<button class="material-symbols-outlined text-outline hover:text-status-error transition-colors">delete</button>
+</div>
+</div>
+<div class="space-y-md">
+<div>
+<label class="block font-label-md mb-xs">Question Text</label>
+<input class="w-full bg-surface border border-border-default rounded-lg px-md py-3 focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all" type="text" value="How many years of professional experience do you have with SaaS products?"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-sm">
+<div class="flex items-center gap-sm bg-surface-container-low p-sm rounded-lg border border-transparent hover:border-outline-variant">
+<span class="material-symbols-outlined text-outline text-[20px]">radio_button_unchecked</span>
+<span class="text-body-md">Less than 2 years</span>
+</div>
+<div class="flex items-center gap-sm bg-surface-container-low p-sm rounded-lg border border-transparent hover:border-outline-variant">
+<span class="material-symbols-outlined text-outline text-[20px]">radio_button_unchecked</span>
+<span class="text-body-md">2-5 years</span>
+</div>
+<div class="flex items-center gap-sm bg-surface-container-low p-sm rounded-lg border border-transparent hover:border-outline-variant">
+<span class="material-symbols-outlined text-outline text-[20px]">radio_button_unchecked</span>
+<span class="text-body-md">5-8 years</span>
+</div>
+<div class="flex items-center gap-sm bg-surface-container-low p-sm rounded-lg border border-transparent hover:border-outline-variant">
+<span class="material-symbols-outlined text-outline text-[20px]">radio_button_unchecked</span>
+<span class="text-body-md">8+ years</span>
+</div>
+</div>
+<button class="text-secondary font-label-md flex items-center gap-xs hover:underline">
+<span class="material-symbols-outlined text-[18px]">add_circle</span> Add Option
+                            </button>
+</div>
+</div>
+<!-- Question Item 3: File Upload -->
+<div class="bg-surface-card rounded-xl border border-border-default shadow-sm p-lg relative group transition-all hover:shadow-md">
+<div class="flex justify-between items-start mb-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline cursor-grab">drag_indicator</span>
+<span class="font-label-sm text-on-surface-variant px-2 py-0.5 bg-surface-container-highest rounded uppercase">File Upload</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm">
+<span class="text-label-sm text-on-surface-variant">Mandatory</span>
+<button class="w-10 h-5 rounded-full bg-border-default relative transition-colors">
+<span class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform"></span>
+</button>
+</div>
+<button class="material-symbols-outlined text-outline hover:text-status-error transition-colors">delete</button>
+</div>
+</div>
+<div class="space-y-md">
+<div>
+<label class="block font-label-md mb-xs">Question Text</label>
+<input class="w-full bg-surface border border-border-default rounded-lg px-md py-3 focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all" type="text" value="Please upload a PDF of your most recent design case study."/>
+</div>
+<div class="border-2 border-dashed border-outline-variant rounded-xl p-xl flex flex-col items-center justify-center text-center bg-surface-container-lowest">
+<span class="material-symbols-outlined text-outline text-[48px] mb-sm">upload_file</span>
+<p class="text-label-md font-bold mb-xs">Drag and drop file here</p>
+<p class="text-body-sm text-text-secondary">Limit 10MB. PDF, DOCX, or ZIP only.</p>
+</div>
+</div>
+</div>
+<!-- Add Question Button -->
+<button class="w-full py-xl border-2 border-dashed border-outline-variant rounded-xl flex items-center justify-center gap-md text-text-secondary hover:border-secondary hover:text-secondary hover:bg-secondary/5 transition-all group">
+<span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">add_circle</span>
+<span class="font-headline-md">Add a Custom Question</span>
+</button>
+</div>
+<!-- AI Sidebar -->
+<div class="xl:col-span-4">
+<div class="bg-primary-container text-white rounded-xl shadow-lg p-lg sticky top-24">
+<div class="flex items-center gap-md mb-lg">
+<div class="w-10 h-10 bg-on-primary-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div>
+<h3 class="font-headline-md">AI Suggestions</h3>
+<p class="text-label-sm text-on-primary-container">Optimized for Senior Product Designer</p>
+</div>
+</div>
+<div class="space-y-md">
+<!-- Suggested 1 -->
+<div class="bg-white/10 border border-white/20 p-md rounded-lg group cursor-pointer hover:bg-white/20 transition-all">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-label-sm font-bold opacity-80 uppercase tracking-wider">Short Answer</span>
+<span class="material-symbols-outlined text-white text-[18px] opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+</div>
+<p class="text-body-md leading-relaxed">What is your current notice period at your present employer?</p>
+</div>
+<!-- Suggested 2 -->
+<div class="bg-white/10 border border-white/20 p-md rounded-lg group cursor-pointer hover:bg-white/20 transition-all">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-label-sm font-bold opacity-80 uppercase tracking-wider">Multiple Choice</span>
+<span class="material-symbols-outlined text-white text-[18px] opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+</div>
+<p class="text-body-md leading-relaxed">Are you proficient in high-fidelity prototyping using Figma or Protopie?</p>
+</div>
+<!-- Suggested 3 -->
+<div class="bg-white/10 border border-white/20 p-md rounded-lg group cursor-pointer hover:bg-white/20 transition-all">
+<div class="flex justify-between items-start mb-sm">
+<span class="text-label-sm font-bold opacity-80 uppercase tracking-wider">Short Answer</span>
+<span class="material-symbols-outlined text-white text-[18px] opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+</div>
+<p class="text-body-md leading-relaxed">Describe a time you used data to influence a design decision.</p>
+</div>
+</div>
+<button class="w-full mt-lg py-sm border border-white/40 rounded-lg text-label-md font-bold hover:bg-white hover:text-primary transition-all">
+                            Refresh Suggestions
+                        </button>
+</div>
+<!-- Analytics Preview Card -->
+<div class="mt-gutter bg-surface-card border border-border-default rounded-xl p-lg shadow-sm">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">insights</span>
+<h4 class="font-label-md text-on-surface">Screening Efficiency</h4>
+</div>
+<p class="text-body-sm text-text-secondary mb-md">Based on current questions, we estimate a <strong>35% reduction</strong> in manual resume screening time.</p>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[65%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Footer Actions -->
+<div class="mt-xl pt-lg border-t border-border-default flex flex-col md:flex-row justify-between items-center gap-md">
+<button class="w-full md:w-auto px-xl py-3 border border-primary text-primary font-bold rounded-lg hover:bg-primary/5 transition-all flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span> Back to Description
+                </button>
+<div class="flex flex-col md:flex-row gap-md w-full md:w-auto">
+<button class="w-full md:w-auto px-xl py-3 text-on-surface-variant font-bold hover:text-on-surface transition-all">Save Draft</button>
+<button class="w-full md:w-auto px-xl py-3 bg-primary text-on-primary font-bold rounded-lg shadow-lg hover:shadow-primary/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-sm">
+                        Save and Continue <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Global Footer (Shared Component) -->
+<footer class="lg:pl-64 w-full bg-surface-container dark:bg-inverse-surface border-t border-border-default dark:border-outline-variant py-lg">
+<div class="flex flex-col md:flex-row justify-between items-center px-lg w-full max-w-container-max mx-auto gap-md">
+<div>
+<span class="font-headline-sm text-headline-sm text-on-surface">EMPO</span>
+<p class="text-body-sm text-on-surface-variant mt-1">© 2024 EMPO Recruitment. All rights reserved.</p>
+</div>
+<div class="flex space-x-lg">
+<a class="text-label-sm text-text-secondary hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-label-sm text-text-secondary hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-label-sm text-text-secondary hover:text-primary transition-colors" href="#">Cookie Policy</a>
+<a class="text-label-sm text-text-secondary hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple logic for the toggles (Client side only simulation)
+        document.querySelectorAll('button[onclick*="classList"]').forEach(btn => {
+            // Click handlers handled by inline for speed in this context
+        });
+        
+        // Add hover interaction to AI suggestion cards
+        const suggestions = document.querySelectorAll('.xl\\:col-span-4 .bg-white\\/10');
+        suggestions.forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.add('scale-95');
+                setTimeout(() => card.classList.remove('scale-95'), 150);
+                // Potential logic to "add" the question to the left pane
+            });
+        });
+    </script>
+</body></html>

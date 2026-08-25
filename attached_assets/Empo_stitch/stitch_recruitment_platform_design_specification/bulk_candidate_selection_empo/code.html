@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO Recruiter - Bulk Selection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "text-secondary": "#64748B",
+                        "outline-variant": "#c5c5d3",
+                        "surface-subtle": "#F1F5F9",
+                        "inverse-surface": "#263143",
+                        "surface-container-low": "#f0f3ff",
+                        "status-error": "#DC2626",
+                        "on-tertiary-fixed": "#002114",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#b6c4ff",
+                        "border-default": "#E2E8F0",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fefcff",
+                        "inverse-on-surface": "#ecf1ff",
+                        "on-surface-variant": "#444651",
+                        "on-secondary-fixed-variant": "#004395",
+                        "tertiary-fixed": "#85f8c4",
+                        "surface-card": "#FFFFFF",
+                        "outline": "#757682",
+                        "surface-container-highest": "#d8e3fb",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "on-tertiary-container": "#4ac08f",
+                        "surface-bg": "#F8FAFC",
+                        "tertiary": "#003120",
+                        "on-primary-container": "#90a8ff",
+                        "primary-fixed": "#dce1ff",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#00164e",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "surface-dim": "#cfdaf2",
+                        "on-error-container": "#93000a",
+                        "on-background": "#111c2d",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "surface-container": "#e7eeff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-high": "#dee8ff",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#1e3a8a",
+                        "surface-variant": "#d8e3fb",
+                        "secondary": "#0058be",
+                        "on-secondary-fixed": "#001a42",
+                        "on-surface": "#111c2d",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "surface": "#f9f9ff",
+                        "secondary-container": "#2170e4",
+                        "surface-tint": "#4059aa",
+                        "background": "#f9f9ff",
+                        "on-primary-fixed-variant": "#264191",
+                        "tertiary-container": "#004a32",
+                        "primary": "#00236f",
+                        "secondary-fixed": "#d8e2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "lg": "24px",
+                        "sm": "8px",
+                        "gutter": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+        }
+        .selection-row-active {
+            background-color: #F1F5F9;
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar (Shared Component) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-card border-r border-border-default shadow-sm flex flex-col py-md px-sm z-50">
+<div class="px-md mb-xl">
+<span class="font-headline-md text-headline-md font-bold text-primary">EMPO</span>
+<p class="text-text-secondary text-body-sm">Recruiter Portal</p>
+</div>
+<nav class="flex-1 space-y-xs overflow-y-auto custom-scrollbar">
+<div class="px-md py-sm flex items-center gap-md text-text-secondary hover:bg-surface-subtle transition-colors duration-200 cursor-pointer active:scale-95 rounded-lg">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</div>
+<div class="px-md py-sm flex items-center gap-md text-primary bg-surface-subtle font-semibold transition-colors duration-200 cursor-pointer active:scale-95 rounded-lg">
+<span class="material-symbols-outlined" data-icon="work">work</span>
+<span class="font-label-md text-label-md">Job Postings</span>
+</div>
+<div class="px-md py-sm flex items-center gap-md text-text-secondary hover:bg-surface-subtle transition-colors duration-200 cursor-pointer active:scale-95 rounded-lg">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-md text-label-md">Talent Pool</span>
+</div>
+<div class="px-md py-sm flex items-center gap-md text-text-secondary hover:bg-surface-subtle transition-colors duration-200 cursor-pointer active:scale-95 rounded-lg">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</div>
+<div class="px-md py-sm flex items-center gap-md text-text-secondary hover:bg-surface-subtle transition-colors duration-200 cursor-pointer active:scale-95 rounded-lg">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</div>
+</nav>
+<div class="mt-auto pt-md border-t border-border-default space-y-xs">
+<button class="w-full mb-md py-sm px-md bg-primary text-on-primary rounded-lg font-label-md text-label-md shadow-sm hover:opacity-90 transition-opacity active:scale-95">
+                Post New Job
+            </button>
+<div class="px-md py-sm flex items-center gap-md text-text-secondary hover:bg-surface-subtle transition-colors duration-200 cursor-pointer rounded-lg">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</div>
+<div class="px-md py-sm flex items-center gap-md text-text-secondary hover:bg-surface-subtle transition-colors duration-200 cursor-pointer rounded-lg">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</div>
+</div>
+</aside>
+<!-- TopNavBar (Shared Component) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-surface-card border-b border-border-default shadow-sm z-40 flex justify-between items-center px-lg">
+<div class="flex items-center gap-lg w-1/2">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-10 pr-md py-sm bg-surface-subtle border-none focus:ring-2 focus:ring-primary/20 rounded-lg text-body-md" placeholder="Search candidates..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+</button>
+<div class="flex items-center gap-sm pl-md border-l border-border-default">
+<div class="w-8 h-8 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a female recruiter in a corporate office setting, natural lighting, soft background blur, professional attire, high-quality photography, representative of a HR professional in a modern tech company." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDltQZqJPPoYlKqxBofB2xGhhOWCz_-ygWYwrqGU7Zg5LDFUjUaoIB_q-OuuA4iqMtPzVXjNid8V53Z7Gs1e_xpIPcCinkKUHWAMKx9_Eiv2HAf1YGxsYDDeBs4o2EaXLW3XxKXP4L_hXyC3-vP0kMnuR2ZMXXyCXJc0xcT-39miNUq6PFCjA5IG39mRLKxZuSF69zAcMInx0N95ziCzgQH-wSEEuB6GrB_IXlW-vI57qQhrLCRUT3Grg"/>
+</div>
+<span class="font-label-md text-label-md text-primary hidden md:block">Alex Rivera</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 pb-32 px-lg max-w-container-max mx-auto min-h-screen">
+<!-- Header Section -->
+<div class="mb-lg flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<div class="flex items-center gap-sm text-text-secondary mb-xs">
+<a class="hover:text-primary flex items-center gap-xs" href="#">
+<span class="material-symbols-outlined text-[18px]" data-icon="arrow_back">arrow_back</span>
+<span class="text-body-sm">Back to Job Postings</span>
+</a>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary">Move to Interview: Senior Product Designer</h1>
+<p class="text-text-secondary text-body-lg mt-1">Select shortlisted candidates to invite for the Round 1: Portfolio Review</p>
+</div>
+<div class="flex items-center gap-sm">
+<div class="bg-surface-card px-md py-sm border border-border-default rounded-lg flex items-center gap-md">
+<div class="flex flex-col">
+<span class="text-body-sm text-text-secondary">Shortlisted</span>
+<span class="font-headline-md text-headline-md text-primary">24</span>
+</div>
+<div class="w-px h-8 bg-border-default"></div>
+<div class="flex flex-col">
+<span class="text-body-sm text-text-secondary">Selected</span>
+<span class="font-headline-md text-headline-md text-secondary" id="selected-count-header">0</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filter & Control Bar -->
+<div class="bg-surface-card border border-border-default rounded-t-xl px-lg py-md flex flex-wrap items-center justify-between gap-md">
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm px-sm py-1.5 bg-surface-subtle rounded-lg border border-border-default">
+<input class="w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary cursor-pointer" id="master-select" type="checkbox"/>
+<label class="text-label-md text-on-surface cursor-pointer" for="master-select">Select All</label>
+</div>
+<div class="h-6 w-px bg-border-default"></div>
+<div class="flex items-center gap-sm">
+<span class="text-body-sm text-text-secondary">Sort by:</span>
+<select class="bg-transparent border-none text-label-md text-primary focus:ring-0 cursor-pointer font-semibold">
+<option>AI Fit Score (High-Low)</option>
+<option>Status</option>
+<option>Application Date</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="flex items-center gap-xs px-md py-2 hover:bg-surface-subtle transition-colors rounded-lg border border-border-default text-label-md text-text-secondary">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                    Filters
+                </button>
+</div>
+</div>
+<!-- Candidate List Table -->
+<div class="bg-surface-card border-x border-b border-border-default rounded-b-xl overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-subtle border-b border-border-default">
+<th class="py-md px-lg w-10"></th>
+<th class="py-md px-md text-label-sm uppercase tracking-wider text-text-secondary">Candidate</th>
+<th class="py-md px-md text-label-sm uppercase tracking-wider text-text-secondary">AI Fit Score</th>
+<th class="py-md px-md text-label-sm uppercase tracking-wider text-text-secondary">Current Stage</th>
+<th class="py-md px-md text-label-sm uppercase tracking-wider text-text-secondary text-right">Action</th>
+</tr>
+</thead>
+<tbody id="candidate-list">
+<!-- Row 1 -->
+<tr class="group hover:bg-surface-subtle transition-colors border-b border-border-default">
+<td class="py-md px-lg">
+<input class="candidate-checkbox w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male designer with stylish glasses, smiling confidently, neutral studio background, professional corporate headshot, soft shadows, high detail, modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDS2x0I8a6TYTbOEcIyZG-zXKVV8ia9WhSx0br0SA0TxtL7LaKD8wOEVltlsgj6tgcKWQyb2C4-SfYCEAXYQTV-jLE8MYAVilyVYit1UZMX5AaMBDS5SqcNWFErup0u9h2yJCIHRCfbcWyP3PBUSD8tCCBeGQi3PVa7MLZ0zRjRkaliBp5m3jkBwfoYUbCzAArjhUKZmtGDMtZk-radyEV2V1j1zzgyA404YyI-9ytI0zJzDFhuya5IvA"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Marcus Holloway</p>
+<p class="text-body-sm text-text-secondary">8+ yrs exp • Senior UX at FinTech Corp</p>
+</div>
+</div>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-1.5 bg-surface-subtle rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[94%]"></div>
+</div>
+<span class="text-label-md font-semibold text-secondary">94%</span>
+</div>
+</td>
+<td class="py-md px-md">
+<span class="px-sm py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant text-[11px] font-bold uppercase rounded-full">Highly Recommended</span>
+</td>
+<td class="py-md px-md text-right">
+<button class="text-secondary font-label-md hover:underline decoration-2 underline-offset-4">View Details</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-surface-subtle transition-colors border-b border-border-default">
+<td class="py-md px-lg">
+<input class="candidate-checkbox w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Professional headshot of a woman with a bright, welcoming expression, light business casual wear, contemporary office environment blurred in the background, sharp focus on the face, high-resolution portrait." src="https://lh3.googleusercontent.com/aida-public/AB6AXuALjWoOE__75VUFqdLmvwP-bKs17CXzhk4g-Fd8qKUVm_Ev6GxuZ8Zng8HiXDDMCn4RkyR3wOzyxjbajaTPtDTAV3pLAWTKv-5WttsvCzk7hsWXfq7-lxqrg368JPC3-V55kKfw-Mxnc_bMo5dtwOosQaa0D42TmituvGMM2yOwwp7w4B6Hsiur5HERnS6FlcJR1m9a2v7GkRfSqG3EPrkYicVrqCMhQEIvb6GqtQ-zoJFAzfspo2NIDA"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Sarah Jenkins</p>
+<p class="text-body-sm text-text-secondary">6+ yrs exp • Interaction Designer at CloudScale</p>
+</div>
+</div>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-1.5 bg-surface-subtle rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[89%]"></div>
+</div>
+<span class="text-label-md font-semibold text-secondary">89%</span>
+</div>
+</td>
+<td class="py-md px-md">
+<span class="px-sm py-1 bg-surface-container-high text-on-primary-fixed-variant text-[11px] font-bold uppercase rounded-full">Shortlisted</span>
+</td>
+<td class="py-md px-md text-right">
+<button class="text-secondary font-label-md hover:underline decoration-2 underline-offset-4">View Details</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-surface-subtle transition-colors border-b border-border-default">
+<td class="py-md px-lg">
+<input class="candidate-checkbox w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A focused portrait of a man in his early 30s, creative aesthetic, minimalist white background, soft overhead lighting, high-end professional profile photo for a tech company." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkkgOkc0zWKx1nLzlb45x1kfJMbvP9hXDmn7h4VvjtfKk8L4o9Mgs_H_vfT-QQiGpq2ldFU-7COYNwSQ-DNA7m-M6-BhlQcHQ6H7UCRVr-XOHJ44l2DYqP08Ro_SIwshU5AIQ3_zUQCXUycHKdyGJBUWlxBqD7zlaTFh7dxPbOCFdejoOrKSbIbYvX9fL0Co2U-Z-d_H4LtIg5OIaBSb8226gQ9pZvyGfZPMyeg09RXtHP2ALIPfH7cA"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Julian Chen</p>
+<p class="text-body-sm text-text-secondary">7+ yrs exp • Product Designer at HealthSync</p>
+</div>
+</div>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-1.5 bg-surface-subtle rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[92%]"></div>
+</div>
+<span class="text-label-md font-semibold text-secondary">92%</span>
+</div>
+</td>
+<td class="py-md px-md">
+<span class="px-sm py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant text-[11px] font-bold uppercase rounded-full">Highly Recommended</span>
+</td>
+<td class="py-md px-md text-right">
+<button class="text-secondary font-label-md hover:underline decoration-2 underline-offset-4">View Details</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="group hover:bg-surface-subtle transition-colors border-b border-border-default">
+<td class="py-md px-lg">
+<input class="candidate-checkbox w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a professional woman, wearing a neutral blazer, slight smile, clean and minimalist aesthetic, warm artificial lighting, blurred interior office background, high contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZzSDqBXEfHuFewyqGPQcL7IPoFtd0_NVr2P7wh4_CuRlT0z2K0jeuGKEFzUmS3uhheBtETX78dSkf6eTkAuraPtul4pwfIM0KlIUo3ElLtJAq6d2GHx5QI56Vyyz6mu0LZUeN1edYqBNemeYGPt_A2rxDYH_KUS-cXPAe9AwkCjOgva7VLcfNG86jYNRrhCw5kYq-6MSriyy4uwOZVitva3ZY2UvT0BL1ZjnIRAsTyXUk_dQqSf5O1g"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Elena Rodriguez</p>
+<p class="text-body-sm text-text-secondary">5+ yrs exp • Senior UI Artist at Gameloft</p>
+</div>
+</div>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-1.5 bg-surface-subtle rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[87%]"></div>
+</div>
+<span class="text-label-md font-semibold text-secondary">87%</span>
+</div>
+</td>
+<td class="py-md px-md">
+<span class="px-sm py-1 bg-surface-container-high text-on-primary-fixed-variant text-[11px] font-bold uppercase rounded-full">Shortlisted</span>
+</td>
+<td class="py-md px-md text-right">
+<button class="text-secondary font-label-md hover:underline decoration-2 underline-offset-4">View Details</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="group hover:bg-surface-subtle transition-colors">
+<td class="py-md px-lg">
+<input class="candidate-checkbox w-4 h-4 text-primary border-outline-variant rounded focus:ring-primary cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Modern professional portrait of a male candidate, neutral expression, clean haircut, navy polo shirt, bright daylighting, professional tech industry style, sharp details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJRTdEqk4mFHNf3dhO_6rnU699XylKMog1ZpkEtz0mXrex69s14ft4LOa-Jxa2rupGTb0A8VSOBO5hocEG_cLYjnlwwyATeQBAe0RQYo6MR7XnK5a1JHxaAfX7plXYZCx8wDEfpEDDiek4rvkYUA46nqxmlXm5-sAtMeQQ4NyI1_ewi45xJcgvSFaltmroOeQeiMfiFq24PHxIncQu8Wwlk6WSNYgZclI0S7hEkN1H5R9nW7Amf1ambQ"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Thomas Wright</p>
+<p class="text-body-sm text-text-secondary">10+ yrs exp • Lead Designer at RetailX</p>
+</div>
+</div>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-1.5 bg-surface-subtle rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[85%]"></div>
+</div>
+<span class="text-label-md font-semibold text-secondary">85%</span>
+</div>
+</td>
+<td class="py-md px-md">
+<span class="px-sm py-1 bg-surface-container-high text-on-primary-fixed-variant text-[11px] font-bold uppercase rounded-full">Shortlisted</span>
+</td>
+<td class="py-md px-md text-right">
+<button class="text-secondary font-label-md hover:underline decoration-2 underline-offset-4">View Details</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="bg-surface-bg px-lg py-md border-t border-border-default flex justify-center">
+<button class="text-text-secondary text-body-sm hover:text-primary transition-colors flex items-center gap-xs">
+                    Show more shortlisted candidates (19 remaining)
+                    <span class="material-symbols-outlined text-[18px]" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Floating Action Bar (Sticky at Bottom) -->
+<div class="fixed bottom-0 right-0 w-[calc(100%-16rem)] bg-white border-t border-border-default px-lg py-md shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] transform translate-y-full transition-transform duration-300 z-40" id="action-bar">
+<div class="max-w-container-max mx-auto flex items-center justify-between">
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-sm">
+<span class="bg-secondary text-on-primary w-8 h-8 rounded-full flex items-center justify-center font-bold text-label-md" id="selected-badge">0</span>
+<span class="font-headline-md text-headline-md text-primary">Candidates Selected</span>
+</div>
+<div class="h-8 w-px bg-border-default"></div>
+<p class="text-text-secondary text-body-md">Moving to: <span class="font-semibold text-on-surface">Portfolio Review</span></p>
+</div>
+<div class="flex items-center gap-md">
+<button class="flex items-center gap-xs px-lg py-sm border border-secondary text-secondary rounded-lg font-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="mail">mail</span>
+                    Bulk Email
+                </button>
+<button class="flex items-center gap-xs px-xl py-sm bg-primary text-on-primary rounded-lg font-label-md shadow-lg shadow-primary/20 hover:opacity-95 active:scale-95 transition-all">
+                    Next: Configure Interview Questions
+                    <span class="material-symbols-outlined text-[20px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const masterCheckbox = document.getElementById('master-select');
+            const candidateCheckboxes = document.querySelectorAll('.candidate-checkbox');
+            const actionBar = document.getElementById('action-bar');
+            const selectedBadge = document.getElementById('selected-badge');
+            const selectedHeader = document.getElementById('selected-count-header');
+            
+            function updateActionBar() {
+                const selectedCount = Array.from(candidateCheckboxes).filter(cb => cb.checked).length;
+                
+                selectedBadge.textContent = selectedCount;
+                selectedHeader.textContent = selectedCount;
+                
+                if (selectedCount > 0) {
+                    actionBar.classList.remove('translate-y-full');
+                } else {
+                    actionBar.classList.add('translate-y-full');
+                }
+
+                // Update row styling
+                candidateCheckboxes.forEach(cb => {
+                    const row = cb.closest('tr');
+                    if (cb.checked) {
+                        row.classList.add('selection-row-active');
+                    } else {
+                        row.classList.remove('selection-row-active');
+                    }
+                });
+            }
+
+            masterCheckbox.addEventListener('change', (e) => {
+                candidateCheckboxes.forEach(cb => {
+                    cb.checked = e.target.checked;
+                });
+                updateActionBar();
+            });
+
+            candidateCheckboxes.forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const allChecked = Array.from(candidateCheckboxes).every(c => c.checked);
+                    const someChecked = Array.from(candidateCheckboxes).some(c => c.checked);
+                    
+                    masterCheckbox.checked = allChecked;
+                    masterCheckbox.indeterminate = someChecked && !allChecked;
+                    
+                    updateActionBar();
+                });
+            });
+
+            // Row click selection (excluding the "View Details" link)
+            document.querySelectorAll('#candidate-list tr').forEach(row => {
+                row.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') {
+                        const cb = row.querySelector('.candidate-checkbox');
+                        cb.checked = !cb.checked;
+                        cb.dispatchEvent(new Event('change'));
+                    }
+                });
+            });
+        });
+    </script>
+</body></html>

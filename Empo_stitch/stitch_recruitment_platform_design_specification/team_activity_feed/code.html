@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO | Real-time Team Activity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .feed-item-hover:hover {
+            background-color: #F1F5F9;
+        }
+        /* Custom Scrollbar for high-density feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #CBD5E1;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "on-background": "#111c2d",
+                        "surface-dim": "#cfdaf2",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-variant": "#d8e3fb",
+                        "text-secondary": "#64748B",
+                        "status-error": "#DC2626",
+                        "on-primary-fixed-variant": "#264191",
+                        "surface-container-high": "#dee8ff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "tertiary-fixed": "#85f8c4",
+                        "inverse-surface": "#263143",
+                        "on-secondary-container": "#fefcff",
+                        "inverse-primary": "#b6c4ff",
+                        "on-tertiary-fixed": "#002114",
+                        "on-surface-variant": "#444651",
+                        "surface-tint": "#4059aa",
+                        "primary-fixed": "#dce1ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#d8e3fb",
+                        "surface": "#f9f9ff",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "surface-card": "#FFFFFF",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#004a32",
+                        "primary-container": "#1e3a8a",
+                        "outline-variant": "#c5c5d3",
+                        "surface-bg": "#F8FAFC",
+                        "on-tertiary-container": "#4ac08f",
+                        "secondary": "#0058be",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#00164e",
+                        "on-primary-container": "#90a8ff",
+                        "tertiary": "#003120",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#d8e2ff",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "surface-subtle": "#F1F5F9",
+                        "on-surface": "#111c2d",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#757682",
+                        "background": "#f9f9ff",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "inverse-on-surface": "#ecf1ff",
+                        "secondary-container": "#2170e4",
+                        "surface-container": "#e7eeff",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "primary": "#00236f",
+                        "border-default": "#E2E8F0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "gutter": "24px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "container-max": "1280px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface-bg text-on-background font-body-md overflow-hidden h-screen flex">
+<!-- SideNavBar (Left Rail) -->
+<aside class="hidden md:flex flex-col h-full py-lg px-md space-y-sm bg-surface-container-low border-r border-border-default w-64 flex-shrink-0">
+<div class="px-md mb-lg">
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Talent Suite</h1>
+<p class="text-label-sm text-text-secondary">Recruiter Mode</p>
+</div>
+<nav class="flex-1 space-y-xs">
+<!-- Dashboard Active -->
+<a class="flex items-center gap-md px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-bold active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="text-label-md font-label-md">Active Jobs</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md">Candidates</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="text-label-md font-label-md">Interviews</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md">Analytics</span>
+</a>
+</nav>
+<button class="w-full py-sm bg-primary text-white rounded-lg font-label-md text-center hover:opacity-90 transition-opacity mb-lg">
+            Create New Job
+        </button>
+<div class="pt-md border-t border-border-default space-y-xs">
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-label-md font-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+<!-- Header / Top Bar for Main Content -->
+<header class="h-16 flex items-center justify-between px-xl bg-surface-container-lowest border-b border-border-default z-10">
+<h2 class="text-headline-lg font-headline-lg text-on-background">Team Activity</h2>
+<div class="flex items-center gap-md">
+<button class="p-sm text-text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-surface-dim overflow-hidden border border-border-default">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtLs-Pe-GFZOFMZKB_g5yfzHIZkE0jK8a62Oe8e9Ob_CmAhMpxyc6yoc-fOinRZQ4UVG8QUZ47_e2m7bMFzZI7eTldKr9e1oCBrE62PqlI5i73lt3gQxyllg5edNqEcZ9wOk4lfMRd1ffgEJ0yHlatDAC2OvWv617vztyhMfn0B2TsAtx8GFuYJdsGHvFZXpU-XqriSYC2eS1qzjCO4IRksEG67GmVOHkNMBMiZyIHZ7w8o8_mbI94iWPyU"/>
+</div>
+</div>
+</header>
+<!-- Dynamic Content Canvas -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Feed Section -->
+<section class="flex-1 overflow-y-auto p-xl space-y-lg">
+<!-- Filter Bar -->
+<div class="flex items-center gap-md sticky top-0 bg-surface-bg/80 backdrop-blur-sm pb-md z-10">
+<button class="px-md py-xs bg-primary text-white rounded-full text-label-sm font-label-sm">All Activity</button>
+<button class="px-md py-xs bg-white border border-border-default text-text-secondary rounded-full text-label-sm font-label-sm hover:border-primary hover:text-primary transition-all">Interviews</button>
+<button class="px-md py-xs bg-white border border-border-default text-text-secondary rounded-full text-label-sm font-label-sm hover:border-primary hover:text-primary transition-all">Offers</button>
+<button class="px-md py-xs bg-white border border-border-default text-text-secondary rounded-full text-label-sm font-label-sm hover:border-primary hover:text-primary transition-all">Comments</button>
+</div>
+<!-- Feed Content -->
+<div class="space-y-sm">
+<!-- Activity Item: Interview -->
+<div class="flex gap-md p-md bg-white rounded-xl border border-border-default shadow-sm feed-item-hover transition-colors group">
+<div class="relative w-12 h-12 flex-shrink-0">
+<img alt="Recruiter" class="w-full h-full rounded-full object-cover border-2 border-white shadow-sm" src="https://lh3.googleusercontent.com/aida/AP1WRLtLs-Pe-GFZOFMZKB_g5yfzHIZkE0jK8a62Oe8e9Ob_CmAhMpxyc6yoc-fOinRZQ4UVG8QUZ47_e2m7bMFzZI7eTldKr9e1oCBrE62PqlI5i73lt3gQxyllg5edNqEcZ9wOk4lfMRd1ffgEJ0yHlatDAC2OvWv617vztyhMfn0B2TsAtx8GFuYJdsGHvFZXpU-XqriSYC2eS1qzjCO4IRksEG67GmVOHkNMBMiZyIHZ7w8o8_mbI94iWPyU"/>
+<div class="absolute -bottom-1 -right-1 bg-secondary text-white p-0.5 rounded-full border-2 border-white">
+<span class="material-symbols-outlined text-[14px]">event</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-xs">
+<p class="text-body-md text-on-background">
+<span class="font-bold">Sarah Jenkins</span> scheduled an interview with <span class="text-secondary font-semibold">Elena Rodriguez</span>
+</p>
+<span class="text-label-sm text-text-secondary whitespace-nowrap">2m ago</span>
+</div>
+<p class="text-label-md text-text-secondary mb-md">Role: Senior Product Designer</p>
+<div class="flex items-center gap-md p-sm bg-surface-subtle rounded-lg border border-border-default/50 w-fit">
+<div class="w-8 h-8 rounded bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot portrait of a candidate with dark hair, looking confident and smiling softly against a neutral corporate background, professional lighting, modern recruitment style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDIdCX9nVQEyK3kJxw6qt4l_lJivjcD-Soh2aQiwO5ZaOWNVrHSRwvh5LsBHZRb7UszynoF8kPgjHFWfA-C4MOZ4xigJPYypA3L2SswR6kYE4di12558a_NcdURfvW6zXt_bGevPUtN4HE744y9SObjVHG6EKhTvHKxuT2yJVnCOGJx0zK9P_P0P5uQ2uAuAnEwdk2oEtp380_y57K3hBZQQoXHOWn0CIw49sV9-Fe___okxKsp0FGIQ"/>
+</div>
+<div class="pr-md">
+<p class="text-label-sm font-bold text-on-background">Portfolio Review</p>
+<p class="text-body-sm text-text-secondary">Today, 4:30 PM • Google Meet</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Activity Item: Stage Move -->
+<div class="flex gap-md p-md bg-white rounded-xl border border-border-default shadow-sm feed-item-hover transition-colors">
+<div class="relative w-12 h-12 flex-shrink-0">
+<div class="w-full h-full rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold">ML</div>
+<div class="absolute -bottom-1 -right-1 bg-status-error text-white p-0.5 rounded-full border-2 border-white">
+<span class="material-symbols-outlined text-[14px]">trending_flat</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-xs">
+<p class="text-body-md text-on-background">
+<span class="font-bold">Michael Lawson</span> moved <span class="text-secondary font-semibold">Liam Foster</span> to <span class="px-sm py-[2px] bg-secondary/10 text-secondary rounded text-[12px] font-bold">Technical Interview</span>
+</p>
+<span class="text-label-sm text-text-secondary whitespace-nowrap">15m ago</span>
+</div>
+<div class="flex items-center gap-sm mt-sm">
+<div class="w-6 h-6 rounded-full overflow-hidden">
+<img alt="Candidate" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtlkHGJ6TADPly6bzDgNeQZx3Hbc_uR_PT16EVdvwed4Oxi4odZvHv3I2GPWWP4oySmdIgFkjncjjhSOa43OZZ7cx5N3Z0JyvQGCQ4eqCZom1a9ikoPpiszYU4nmWAfFzgcfwfoxyf3WhV2_CusR9jnaR2PewMduqMrMVOtoyFu1yqMX_VwiKbXMv2wR-ecJJ-Z5bBWYjMjUM8m7WliTviV9XUOKSz_EutCgkL2HZNQLDVgOeWu8Rw3yZ2G"/>
+</div>
+<span class="text-label-sm text-text-secondary">Full Stack Developer Application</span>
+</div>
+</div>
+</div>
+<!-- Activity Item: Comment -->
+<div class="flex gap-md p-md bg-white rounded-xl border border-border-default shadow-sm feed-item-hover transition-colors">
+<div class="relative w-12 h-12 flex-shrink-0">
+<div class="w-full h-full rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-bold">AT</div>
+<div class="absolute -bottom-1 -right-1 bg-tertiary-fixed text-on-tertiary-fixed p-0.5 rounded-full border-2 border-white">
+<span class="material-symbols-outlined text-[14px]">chat_bubble</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-sm">
+<p class="text-body-md text-on-background">
+                                    New comment by <span class="font-bold">Alex Thompson</span> on <span class="text-secondary font-semibold">Marcus Chen's</span> profile
+                                </p>
+<span class="text-label-sm text-text-secondary whitespace-nowrap">45m ago</span>
+</div>
+<div class="p-md bg-surface-container-low border-l-4 border-tertiary-fixed rounded-r-lg italic text-body-md text-on-surface-variant">
+                                "Strong technical background, let's fast-track"
+                            </div>
+<div class="flex items-center gap-md mt-sm">
+<button class="text-label-sm text-primary font-bold hover:underline">Reply</button>
+<button class="text-label-sm text-text-secondary hover:underline">View Profile</button>
+</div>
+</div>
+</div>
+<!-- Activity Item: Offer -->
+<div class="flex gap-md p-md bg-white rounded-xl border border-border-default shadow-sm feed-item-hover transition-colors">
+<div class="relative w-12 h-12 flex-shrink-0">
+<div class="w-full h-full rounded-full bg-secondary-container text-white flex items-center justify-center">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-green-500 text-white p-0.5 rounded-full border-2 border-white">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-body-md text-on-background font-bold mb-xs">Offer sent to Lila Vasquez</p>
+<p class="text-label-md text-text-secondary">Position: Product Lead</p>
+</div>
+<span class="text-label-sm text-text-secondary whitespace-nowrap">2h ago</span>
+</div>
+<div class="mt-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">visibility</span>
+<span class="text-label-sm text-text-secondary">Recruitment Manager approved 3h ago</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar: Active Recruiters -->
+<aside class="hidden xl:flex w-80 border-l border-border-default bg-white flex-col p-lg">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="text-label-md font-bold text-on-background uppercase tracking-wider">Active Recruiters</h3>
+<span class="px-sm py-xs bg-green-100 text-green-700 text-[10px] font-bold rounded-full">6 ONLINE</span>
+</div>
+<div class="space-y-lg overflow-y-auto">
+<!-- Recruiter Card -->
+<div class="p-md rounded-xl border border-border-default hover:border-primary/30 transition-all group">
+<div class="flex items-center gap-md mb-md">
+<div class="relative">
+<img alt="Sarah Jenkins" class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtLs-Pe-GFZOFMZKB_g5yfzHIZkE0jK8a62Oe8e9Ob_CmAhMpxyc6yoc-fOinRZQ4UVG8QUZ47_e2m7bMFzZI7eTldKr9e1oCBrE62PqlI5i73lt3gQxyllg5edNqEcZ9wOk4lfMRd1ffgEJ0yHlatDAC2OvWv617vztyhMfn0B2TsAtx8GFuYJdsGHvFZXpU-XqriSYC2eS1qzjCO4IRksEG67GmVOHkNMBMiZyIHZ7w8o8_mbI94iWPyU"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<p class="text-label-md font-bold text-on-background">Sarah Jenkins</p>
+<p class="text-label-sm text-text-secondary">Senior Recruiter</p>
+</div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center text-label-sm">
+<span class="text-text-secondary">Current Load</span>
+<span class="font-bold text-on-background">12 Active Jobs</span>
+</div>
+<div class="w-full bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 75%;"></div>
+</div>
+<div class="flex justify-between items-center text-label-sm">
+<span class="text-text-secondary">Response Rate</span>
+<span class="text-green-600 font-bold">98%</span>
+</div>
+</div>
+</div>
+<!-- Recruiter Card -->
+<div class="p-md rounded-xl border border-border-default hover:border-primary/30 transition-all group">
+<div class="flex items-center gap-md mb-md">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center font-bold text-primary">ML</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<p class="text-label-md font-bold text-on-background">Michael Lawson</p>
+<p class="text-label-sm text-text-secondary">Tech Lead Recruiter</p>
+</div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center text-label-sm">
+<span class="text-text-secondary">Current Load</span>
+<span class="font-bold text-on-background">8 Active Jobs</span>
+</div>
+<div class="w-full bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 45%;"></div>
+</div>
+</div>
+</div>
+<!-- Recruiter Card -->
+<div class="p-md rounded-xl border border-border-default hover:border-primary/30 transition-all group">
+<div class="flex items-center gap-md mb-md">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-bold text-primary">AT</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<p class="text-label-md font-bold text-on-background">Alex Thompson</p>
+<p class="text-label-sm text-text-secondary">Talent Scout</p>
+</div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between items-center text-label-sm">
+<span class="text-text-secondary">Current Load</span>
+<span class="font-bold text-on-background">24 Active Jobs</span>
+</div>
+<div class="w-full bg-surface-subtle h-1.5 rounded-full overflow-hidden">
+<div class="bg-status-error h-full rounded-full" style="width: 95%;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-lg">
+<div class="p-md bg-primary-container rounded-xl text-white">
+<p class="text-label-sm font-bold mb-xs">Daily Goal</p>
+<p class="text-headline-md mb-sm">18 / 20 Interviews</p>
+<div class="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+<div class="bg-white h-full rounded-full" style="width: 90%;"></div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<!-- Footer -->
+<footer class="w-full py-md px-lg md:px-xl bg-surface-container-lowest border-t border-border-default flex flex-col md:flex-row justify-between items-center gap-sm">
+<p class="text-body-sm font-body-sm text-text-secondary">© 2024 EMPO Recruitment Solutions. All rights reserved.</p>
+<div class="flex items-center gap-lg">
+<a class="text-label-sm font-label-sm text-text-secondary hover:text-primary transition-all" href="#">Privacy Policy</a>
+<a class="text-label-sm font-label-sm text-text-secondary hover:text-primary transition-all" href="#">Terms of Service</a>
+<a class="text-label-sm font-label-sm text-text-secondary hover:text-primary transition-all" href="#">Help Center</a>
+</div>
+</footer>
+</main>
+<script>
+        // Micro-interaction for feed highlighting
+        document.querySelectorAll('.feed-item-hover').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'translateY(-2px)';
+                item.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.05)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = 'translateY(0)';
+                item.style.boxShadow = 'none';
+            });
+        });
+
+        // Simulating "real-time" update badge
+        setTimeout(() => {
+            const feed = document.querySelector('.space-y-sm');
+            const alert = document.createElement('div');
+            alert.className = 'flex justify-center mb-md animate-bounce';
+            alert.innerHTML = `<button class="bg-secondary text-white px-md py-xs rounded-full text-label-sm font-bold shadow-lg">View 1 New Activity</button>`;
+            feed.prepend(alert);
+        }, 5000);
+    </script>
+</body></html>

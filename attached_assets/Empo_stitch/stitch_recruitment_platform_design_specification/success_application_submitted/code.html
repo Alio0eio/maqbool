@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Application Submitted | EMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "surface-container-high": "#dee8ff",
+                  "on-primary": "#ffffff",
+                  "surface-card": "#FFFFFF",
+                  "inverse-on-surface": "#ecf1ff",
+                  "text-secondary": "#64748B",
+                  "inverse-surface": "#263143",
+                  "error-container": "#ffdad6",
+                  "secondary-fixed-dim": "#adc6ff",
+                  "primary-fixed-dim": "#b6c4ff",
+                  "status-error": "#DC2626",
+                  "surface-container-highest": "#d8e3fb",
+                  "surface-bright": "#f9f9ff",
+                  "on-secondary-fixed-variant": "#004395",
+                  "outline": "#757682",
+                  "on-tertiary-fixed": "#002114",
+                  "on-secondary-container": "#fefcff",
+                  "on-surface-variant": "#444651",
+                  "surface-variant": "#d8e3fb",
+                  "on-surface": "#111c2d",
+                  "border-default": "#E2E8F0",
+                  "surface-container": "#e7eeff",
+                  "surface-tint": "#4059aa",
+                  "secondary-fixed": "#d8e2ff",
+                  "secondary-container": "#2170e4",
+                  "on-background": "#111c2d",
+                  "on-primary-fixed": "#00164e",
+                  "error": "#ba1a1a",
+                  "on-tertiary-container": "#4ac08f",
+                  "on-error": "#ffffff",
+                  "surface-subtle": "#F1F5F9",
+                  "primary": "#00236f",
+                  "surface-bg": "#F8FAFC",
+                  "tertiary-container": "#004a32",
+                  "on-secondary": "#ffffff",
+                  "on-tertiary": "#ffffff",
+                  "on-primary-fixed-variant": "#264191",
+                  "tertiary-fixed-dim": "#68dba9",
+                  "surface-dim": "#cfdaf2",
+                  "secondary": "#0058be",
+                  "primary-fixed": "#dce1ff",
+                  "surface": "#f9f9ff",
+                  "on-error-container": "#93000a",
+                  "on-secondary-fixed": "#001a42",
+                  "tertiary-fixed": "#85f8c4",
+                  "on-primary-container": "#90a8ff",
+                  "tertiary": "#003120",
+                  "surface-container-lowest": "#ffffff",
+                  "surface-container-low": "#f0f3ff",
+                  "outline-variant": "#c5c5d3",
+                  "primary-container": "#1e3a8a",
+                  "on-tertiary-fixed-variant": "#005137",
+                  "inverse-primary": "#b6c4ff",
+                  "background": "#f9f9ff"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "margin": "24px",
+                  "xs": "4px",
+                  "gutter": "24px",
+                  "container-max": "1280px",
+                  "md": "16px",
+                  "sm": "8px",
+                  "lg": "24px",
+                  "xl": "32px"
+          },
+          "fontFamily": {
+                  "body-sm": ["Inter"],
+                  "headline-xl": ["Inter"],
+                  "body-lg": ["Inter"],
+                  "headline-md": ["Inter"],
+                  "label-md": ["Inter"],
+                  "label-sm": ["Inter"],
+                  "headline-xl-mobile": ["Inter"],
+                  "body-md": ["Inter"],
+                  "headline-lg": ["Inter"]
+          },
+          "fontSize": {
+                  "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                  "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                  "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                  "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                  "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                  "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                  "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                  "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #F8FAFC;
+      font-family: 'Inter', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .success-check-pulse {
+      animation: check-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+    @keyframes check-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
+    }
+    .confetti-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body class="text-on-surface">
+<!-- Header Section (Minimalist for Success Page) -->
+<header class="bg-surface-container-lowest border-b border-border-default sticky top-0 z-50">
+<div class="max-w-container-max mx-auto px-lg py-md flex justify-between items-center">
+<div class="text-headline-md font-headline-md font-bold text-primary">EMPO</div>
+<nav class="hidden md:flex gap-xl">
+<a class="font-label-md text-label-md text-text-secondary hover:text-primary transition-colors" href="#">Find Jobs</a>
+<a class="font-label-md text-label-md text-primary font-bold border-b-2 border-primary pb-1" href="#">My Applications</a>
+<a class="font-label-md text-label-md text-text-secondary hover:text-primary transition-colors" href="#">Companies</a>
+</nav>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">notifications</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a young male product designer with a friendly smile, clean studio lighting, corporate professional aesthetic, wearing a navy sweater, soft blurred background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzZKoyCW7BYp7cw9AASo6svUukRpEhBNq7RKB_S2wZKYAr9I0gzaMlHZ_Bh81Fp0ZvbJC4MbpPonpvn8TStdTHYOVOM01gXsM4UJ1zR0uQHGYIreKy5LgjjV-VjhOUB4RbZgNip9pZqUdQStdXv7t1XeEs63yllLAwk5OwnGB8--n1tbOtvRGHag5KxbrhWuT9TKAu2sBJPEZ4RQk9LgwvSXjzUZpsYL4zpXAu8VqRjc6KiOOKgmVVfQ"/>
+</div>
+</div>
+</div>
+</header>
+<main class="relative overflow-hidden">
+<!-- Animated Atmospheric Effect -->
+<canvas class="confetti-canvas" id="confetti"></canvas>
+<!-- Success Hero -->
+<section class="max-w-4xl mx-auto px-lg pt-xl pb-12 text-center relative z-10">
+<div class="inline-flex items-center justify-center w-24 h-24 bg-tertiary-fixed rounded-full mb-lg success-check-pulse shadow-sm">
+<span class="material-symbols-outlined text-6xl text-on-tertiary-fixed" style="font-variation-settings: 'wght' 700;">check_circle</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl mb-md text-primary">Success! Your application has been sent.</h1>
+<p class="font-body-lg text-body-lg text-text-secondary max-w-2xl mx-auto mb-xl">
+        You've successfully applied for the <span class="font-bold text-on-surface">Senior Product Designer</span> role at <span class="font-bold text-on-surface">TechNova</span>. A confirmation email has been sent to <span class="text-secondary font-medium">alex.wright@design.com</span>.
+      </p>
+<div class="flex flex-col sm:flex-row gap-md justify-center mb-xl">
+<button class="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md flex items-center justify-center gap-sm shadow-md hover:opacity-90 transition-all active:scale-95">
+<span class="material-symbols-outlined">track_changes</span>
+          Track Application
+        </button>
+<button class="border-2 border-primary text-primary px-xl py-md rounded-lg font-label-md text-label-md flex items-center justify-center gap-sm hover:bg-surface-subtle transition-all active:scale-95">
+<span class="material-symbols-outlined">search</span>
+          Browse Similar Jobs
+        </button>
+</div>
+<!-- Detail Card (Glassmorphism inspired) -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg text-left shadow-sm max-w-xl mx-auto backdrop-blur-sm bg-opacity-80">
+<h3 class="font-label-md text-label-md text-text-secondary uppercase tracking-wider mb-md">Application Summary</h3>
+<div class="space-y-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center border border-border-default">
+<span class="material-symbols-outlined text-primary">business</span>
+</div>
+<div>
+<p class="font-headline-md text-headline-md">TechNova Solutions</p>
+<p class="font-body-sm text-body-sm text-text-secondary">San Francisco, CA (Remote Friendly)</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md pt-md border-t border-border-default">
+<div>
+<p class="font-label-sm text-label-sm text-text-secondary mb-xs">Submitted On</p>
+<p class="font-body-md text-body-md font-semibold">Oct 24, 2023</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-text-secondary mb-xs">Reference ID</p>
+<p class="font-body-md text-body-md font-semibold">TN-PD-9421</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Keep Exploring Section -->
+<section class="max-w-container-max mx-auto px-lg py-xl">
+<div class="flex items-center justify-between mb-lg">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Keep exploring</h2>
+<a class="text-primary font-label-md text-label-md hover:underline flex items-center gap-xs" href="#">
+          View all recommendations <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<!-- Bento-style Job Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Job Card 1 -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg hover:shadow-md transition-all group">
+<div class="flex justify-between items-start mb-md">
+<div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">cloud</span>
+</div>
+<span class="bg-tertiary-container text-on-tertiary-fixed-variant px-sm py-1 rounded-full font-label-sm text-[10px]">NEW</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-xs group-hover:text-primary transition-colors">Lead UX Architect</h4>
+<p class="font-body-md text-body-md text-text-secondary mb-lg">Skyline Systems • Remote</p>
+<div class="flex flex-wrap gap-xs mb-lg">
+<span class="bg-surface-subtle text-text-secondary px-sm py-1 rounded font-label-sm text-body-sm border border-border-default">Figma</span>
+<span class="bg-surface-subtle text-text-secondary px-sm py-1 rounded font-label-sm text-body-sm border border-border-default">Strategy</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md font-bold text-on-surface">$140k - $180k</span>
+<button class="text-primary font-label-md text-label-md group-hover:underline">View Details</button>
+</div>
+</div>
+<!-- Job Card 2 -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg hover:shadow-md transition-all group">
+<div class="flex justify-between items-start mb-md">
+<div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">layers</span>
+</div>
+<span class="bg-surface-container text-on-surface-variant px-sm py-1 rounded-full font-label-sm text-[10px]">SAVED</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-xs group-hover:text-primary transition-colors">Visual Designer</h4>
+<p class="font-body-md text-body-md text-text-secondary mb-lg">Prism Agency • London, UK</p>
+<div class="flex flex-wrap gap-xs mb-lg">
+<span class="bg-surface-subtle text-text-secondary px-sm py-1 rounded font-label-sm text-body-sm border border-border-default">Branding</span>
+<span class="bg-surface-subtle text-text-secondary px-sm py-1 rounded font-label-sm text-body-sm border border-border-default">Motion</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md font-bold text-on-surface">£65k - £85k</span>
+<button class="text-primary font-label-md text-label-md group-hover:underline">View Details</button>
+</div>
+</div>
+<!-- Job Card 3 -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg hover:shadow-md transition-all group">
+<div class="flex justify-between items-start mb-md">
+<div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">database</span>
+</div>
+</div>
+<h4 class="font-headline-md text-headline-md mb-xs group-hover:text-primary transition-colors">Staff Product Designer</h4>
+<p class="font-body-md text-body-md text-text-secondary mb-lg">DataStream AI • New York, NY</p>
+<div class="flex flex-wrap gap-xs mb-lg">
+<span class="bg-surface-subtle text-text-secondary px-sm py-1 rounded font-label-sm text-body-sm border border-border-default">B2B SaaS</span>
+<span class="bg-surface-subtle text-text-secondary px-sm py-1 rounded font-label-sm text-body-sm border border-border-default">Complex UI</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md font-bold text-on-surface">$160k - $210k</span>
+<button class="text-primary font-label-md text-label-md group-hover:underline">View Details</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-surface-container-lowest border-t border-border-default py-xl mt-12">
+<div class="max-w-container-max mx-auto px-lg text-center">
+<div class="text-primary font-bold text-headline-md mb-md">EMPO</div>
+<p class="text-text-secondary text-body-sm mb-lg max-w-md mx-auto">Connecting world-class designers with industry-leading companies through a modern, trust-based recruitment experience.</p>
+<div class="flex justify-center gap-lg mb-xl">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm" href="#">Contact Support</a>
+</div>
+<p class="text-text-secondary text-body-sm">© 2023 EMPO Recruitment Inc. All rights reserved.</p>
+</div>
+</footer>
+<script>
+    // Micro-interaction: Light Confetti Effect
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height - canvas.height;
+        this.size = Math.random() * 8 + 4;
+        this.color = ['#3B82F6', '#10B981', '#6366F1', '#F59E0B'][Math.floor(Math.random() * 4)];
+        this.speedY = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 2 - 1;
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = Math.random() * 5 - 2.5;
+      }
+
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        this.rotation += this.rotationSpeed;
+        if (this.y > canvas.height) {
+          this.y = -20;
+          this.x = Math.random() * canvas.width;
+        }
+      }
+
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = 0.6;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
+      }
+    }
+
+    function init() {
+      for (let i = 0; i < 40; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+
+    // Button interactions
+    document.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.add('opacity-80', 'scale-95');
+            setTimeout(() => {
+                this.classList.remove('opacity-80', 'scale-95');
+            }, 150);
+        });
+    });
+  </script>
+</body></html>

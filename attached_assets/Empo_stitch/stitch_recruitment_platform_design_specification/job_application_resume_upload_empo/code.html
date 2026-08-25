@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO | Apply to Lumina Tech</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#001a42",
+                        "on-background": "#111c2d",
+                        "status-error": "#DC2626",
+                        "inverse-primary": "#b6c4ff",
+                        "on-tertiary": "#ffffff",
+                        "surface-subtle": "#F1F5F9",
+                        "inverse-surface": "#263143",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container-high": "#dee8ff",
+                        "inverse-on-surface": "#ecf1ff",
+                        "surface-container-highest": "#d8e3fb",
+                        "on-tertiary-container": "#4ac08f",
+                        "on-primary-fixed": "#00164e",
+                        "text-secondary": "#64748B",
+                        "outline-variant": "#c5c5d3",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "tertiary-fixed": "#85f8c4",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#d8e2ff",
+                        "secondary-container": "#2170e4",
+                        "tertiary-container": "#004a32",
+                        "surface": "#f9f9ff",
+                        "primary-fixed": "#dce1ff",
+                        "on-surface": "#111c2d",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-container": "#fefcff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#cfdaf2",
+                        "surface-card": "#FFFFFF",
+                        "error-container": "#ffdad6",
+                        "outline": "#757682",
+                        "on-secondary-fixed-variant": "#004395",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#d8e3fb",
+                        "secondary": "#0058be",
+                        "border-default": "#E2E8F0",
+                        "surface-container": "#e7eeff",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#90a8ff",
+                        "primary": "#00236f",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#4059aa",
+                        "surface-bg": "#F8FAFC",
+                        "on-surface-variant": "#444651",
+                        "primary-container": "#1e3a8a",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "background": "#f9f9ff",
+                        "on-tertiary-fixed": "#002114",
+                        "on-primary-fixed-variant": "#264191",
+                        "tertiary": "#003120"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "margin": "24px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "container-max": "1280px",
+                        "xs": "4px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        .progress-line { height: 2px; background: #E2E8F0; position: relative; overflow: hidden; }
+        .progress-line-active { height: 100%; width: 25%; background: #00236f; transition: width 0.3s ease; }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface min-h-screen">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky z-50 bg-surface-container-lowest border-b border-border-default shadow-sm">
+<div class="flex justify-between items-center w-full px-6 py-3 max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-headline-lg font-headline-lg font-black text-primary">EMPO</span>
+<nav class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Find Jobs</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-semibold font-body-md text-body-md" href="#">My Applications</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Messages</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md text-body-md" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary active:scale-95 transition-all">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary active:scale-95 transition-all">settings</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-default">
+<img class="w-full h-full object-cover" data-alt="Close-up professional headshot of a candidate for a design role, featuring a friendly expression and sharp lighting, set against a clean corporate office background with soft bokeh." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC87duWQWohl0zVB-C8PT-ycBPFo6NiBMfTRuUONRLxznfdgXEageH9HUX71nl0JUqTfhUHEHehQzIEsYT-kTH9f9i76Rgy1ErF2sh4MXpQKXrCodQ1AnOLR3i_McH3yetCoPuW7mWQyE4eyE3pCDtI0eODresaSss2b-ZKWt2mxmnztOg710U5_6YnCfOkOpN3U6A5_QSJg8Id2bUZfnfQ2R0Bgr7uwq5EOLXWYFQ72SVClqWyn6DZTw"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-6 py-8 md:flex md:gap-8">
+<!-- Application Content Column -->
+<div class="flex-1 max-w-3xl mx-auto md:mx-0">
+<!-- Progress Stepper -->
+<div class="mb-10">
+<div class="flex justify-between mb-4">
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-white font-bold text-label-md">1</div>
+<span class="text-label-sm font-label-sm text-primary">Personal Info</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface-variant font-bold text-label-md">2</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Experience</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface-variant font-bold text-label-md">3</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Screening</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface-variant font-bold text-label-md">4</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Review</span>
+</div>
+</div>
+<div class="progress-line rounded-full">
+<div class="progress-line-active"></div>
+</div>
+</div>
+<!-- Page Header -->
+<div class="mb-8">
+<h1 class="font-headline-xl text-headline-xl text-primary mb-2">Personal Information</h1>
+<p class="text-body-lg text-text-secondary">Please provide your details and upload your latest resume to start your application.</p>
+</div>
+<!-- Resume Upload Section -->
+<div class="bg-surface-card border border-border-default rounded-xl p-8 mb-8 shadow-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4">Upload Resume</h2>
+<div class="border-2 border-dashed border-outline-variant rounded-lg p-10 flex flex-col items-center justify-center bg-surface-subtle transition-all cursor-pointer hover:border-primary hover:bg-surface-container-low group" id="drop-zone">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-4xl">cloud_upload</span>
+</div>
+<p class="text-body-lg font-semibold text-on-surface mb-1">Click to upload or drag and drop</p>
+<p class="text-body-sm text-text-secondary">PDF or DOCX (Max 10MB)</p>
+<input class="hidden" id="file-input" type="file"/>
+</div>
+</div>
+<!-- Form Section -->
+<div class="bg-surface-card border border-border-default rounded-xl p-8 mb-8 shadow-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6">Contact Details</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant">Full Name</label>
+<input class="w-full p-3 rounded-lg border border-border-default bg-white focus:ring-2 focus:ring-secondary focus:border-secondary outline-none text-body-md transition-all" placeholder="Alex Thompson" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant">Email Address</label>
+<input class="w-full p-3 rounded-lg border border-border-default bg-white focus:ring-2 focus:ring-secondary focus:border-secondary outline-none text-body-md transition-all" placeholder="alex.design@example.com" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant">Phone Number</label>
+<input class="w-full p-3 rounded-lg border border-border-default bg-white focus:ring-2 focus:ring-secondary focus:border-secondary outline-none text-body-md transition-all" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant">Portfolio Link</label>
+<input class="w-full p-3 rounded-lg border border-border-default bg-white focus:ring-2 focus:ring-secondary focus:border-secondary outline-none text-body-md transition-all" placeholder="https://alexthompson.design" type="url"/>
+</div>
+</div>
+</div>
+<!-- Footer Navigation -->
+<div class="flex items-center justify-between mt-12 pt-6 border-t border-border-default">
+<button class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-primary font-semibold hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined">arrow_back</span>
+<span>Back to Job</span>
+</button>
+<button class="px-10 py-2.5 bg-primary text-white font-semibold rounded-lg shadow-md hover:bg-primary-container transition-all active:scale-95">
+                    Save and Continue
+                </button>
+</div>
+</div>
+<!-- Sidebar / Company Context -->
+<aside class="hidden lg:block w-80 space-y-6">
+<div class="bg-surface-card border border-border-default rounded-xl overflow-hidden shadow-sm sticky top-24">
+<div class="h-32 bg-primary relative">
+<div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 20px 20px;"></div>
+</div>
+<div class="px-6 pb-6">
+<div class="-mt-12 mb-4 relative z-10">
+<div class="w-24 h-24 rounded-2xl bg-white p-2 shadow-lg border border-border-default">
+<img class="w-full h-full object-contain rounded-xl" src="https://lh3.googleusercontent.com/aida/AP1WRLuJyknCQC4kQj-PgXxOW-KT1DAVyxUBkiOu5SQv-Kea1EXsvq77wPLQAEq4RvG653wuz0Fcb4LgVTogRBYiVD7KvKSO-T6ShRjlqI57_psuJI8jmnpa1SWcUlUzmmCSLPgFI-7fhdTt9ZVQzGJ7INSI7354lsQlEYituc9PaxRhdbZ4pysKW5VwPs9it-xLA4ycGybGzRukpMG10KlFXfR4eFmevaw9D_ULYiC_k5uMhHOpnvFcP8C7H8Zj"/>
+</div>
+</div>
+<div class="mb-6">
+<h3 class="font-headline-md text-headline-md text-primary">Lumina Tech</h3>
+<p class="text-label-md text-text-secondary">Building the future of luminous displays.</p>
+</div>
+<div class="space-y-4 pt-4 border-t border-border-default">
+<div>
+<span class="text-label-sm text-text-secondary uppercase tracking-wider">Role</span>
+<p class="font-body-md font-semibold text-on-surface">Senior Product Designer</p>
+</div>
+<div>
+<span class="text-label-sm text-text-secondary uppercase tracking-wider">Location</span>
+<p class="font-body-md font-semibold text-on-surface">San Francisco, CA (Remote)</p>
+</div>
+<div>
+<span class="text-label-sm text-text-secondary uppercase tracking-wider">Type</span>
+<p class="font-body-md font-semibold text-on-surface">Full-Time · $160k - $210k</p>
+</div>
+</div>
+<div class="mt-6 bg-surface-container-low p-4 rounded-lg border border-surface-container-highest">
+<div class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-secondary">info</span>
+<p class="text-body-sm text-on-secondary-fixed-variant">Applying with EMPO guarantees a response within 48 hours.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Help Card -->
+<div class="bg-primary-container p-6 rounded-xl text-white">
+<h4 class="font-headline-md text-on-primary-container mb-2">Need Help?</h4>
+<p class="text-body-sm text-on-primary-container opacity-80 mb-4">Our talent advocates are here to help you shine in your application.</p>
+<button class="w-full py-2 bg-white text-primary font-bold rounded-lg hover:bg-surface-container transition-colors">Chat with us</button>
+</div>
+</aside>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 pb-safe bg-surface-container-lowest border-t border-border-default shadow-lg md:hidden z-50">
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-sm text-[10px] mt-1">Search</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-sm text-[10px] mt-1">Saved</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary bg-primary-container/20 rounded-xl px-4 py-1">
+<span class="material-symbols-outlined">work_history</span>
+<span class="font-label-sm text-[10px] mt-1">Applied</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-[10px] mt-1">Profile</span>
+</div>
+</nav>
+<script>
+        // Simple drag and drop interactivity
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-primary', 'bg-surface-container-low');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-primary', 'bg-surface-container-low');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-primary', 'bg-surface-container-low');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        function handleFileUpload(file) {
+            const fileName = file.name;
+            const fileIcon = fileName.endsWith('.pdf') ? 'picture_as_pdf' : 'description';
+            dropZone.innerHTML = `
+                <div class="flex items-center gap-4 p-4 bg-white border border-primary rounded-lg w-full max-w-sm">
+                    <span class="material-symbols-outlined text-primary text-3xl">${fileIcon}</span>
+                    <div class="flex-1 overflow-hidden">
+                        <p class="text-body-md font-bold truncate">${fileName}</p>
+                        <p class="text-body-sm text-text-secondary">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                    </div>
+                    <button onclick="event.stopPropagation(); resetUpload()" class="material-symbols-outlined text-error hover:bg-error-container/20 p-1 rounded-full">delete</button>
+                </div>
+            `;
+        }
+
+        function resetUpload() {
+            location.reload(); // Simple reset for demo purposes
+        }
+    </script>
+</body></html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO | Review &amp; Submit Application</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container": "#e7eeff",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-primary-container": "#90a8ff",
+                    "secondary": "#0058be",
+                    "border-default": "#E2E8F0",
+                    "surface-tint": "#4059aa",
+                    "surface-bg": "#F8FAFC",
+                    "primary": "#00236f",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#757682",
+                    "surface-variant": "#d8e3fb",
+                    "background": "#f9f9ff",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "on-primary-fixed-variant": "#264191",
+                    "tertiary": "#003120",
+                    "on-tertiary-fixed": "#002114",
+                    "primary-container": "#1e3a8a",
+                    "on-surface-variant": "#444651",
+                    "inverse-on-surface": "#ecf1ff",
+                    "surface-container-highest": "#d8e3fb",
+                    "on-tertiary-container": "#4ac08f",
+                    "inverse-surface": "#263143",
+                    "surface-container-low": "#f0f3ff",
+                    "surface-container-high": "#dee8ff",
+                    "outline-variant": "#c5c5d3",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "tertiary-fixed": "#85f8c4",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed": "#00164e",
+                    "text-secondary": "#64748B",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#001a42",
+                    "on-background": "#111c2d",
+                    "on-tertiary": "#ffffff",
+                    "surface-subtle": "#F1F5F9",
+                    "status-error": "#DC2626",
+                    "inverse-primary": "#b6c4ff",
+                    "surface-dim": "#cfdaf2",
+                    "surface-card": "#FFFFFF",
+                    "on-error": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed": "#d8e2ff",
+                    "secondary-container": "#2170e4",
+                    "tertiary-container": "#004a32",
+                    "surface-bright": "#f9f9ff",
+                    "on-secondary-container": "#fefcff",
+                    "surface": "#f9f9ff",
+                    "primary-fixed": "#dce1ff",
+                    "on-surface": "#111c2d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "container-max": "1280px",
+                    "xs": "4px",
+                    "gutter": "24px",
+                    "md": "16px",
+                    "margin": "24px",
+                    "sm": "8px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .step-completed { @apply text-secondary font-bold; }
+        .step-active { @apply text-primary font-bold border-b-2 border-primary; }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky z-50 bg-surface-container-lowest border-b border-border-default shadow-sm">
+<div class="flex justify-between items-center h-16 px-gutter max-w-container-max mx-auto">
+<div class="flex items-center gap-xl">
+<span class="font-headline-lg text-headline-lg font-bold text-primary">EMPO</span>
+<nav class="hidden md:flex gap-lg">
+<a class="font-body-md text-body-md text-text-secondary hover:text-primary transition-colors" href="#">Browse Jobs</a>
+<a class="font-body-md text-body-md text-secondary border-b-2 border-secondary font-bold pb-1" href="#">My Applications</a>
+<a class="font-body-md text-body-md text-text-secondary hover:text-primary transition-colors" href="#">Messages</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined p-sm rounded-full hover:bg-surface-subtle transition-all cursor-pointer">notifications</button>
+<button class="material-symbols-outlined p-sm rounded-full hover:bg-surface-subtle transition-all cursor-pointer">settings</button>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container ml-sm">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a product designer in a bright studio, smiling warmly. The lighting is soft and natural, emphasizing a high-trust, modern professional aesthetic that aligns with a high-end corporate career platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdmytIWbWkBT2Se3zZMW5D2LVfvLNlv5-PCEQbZbYb7g2WlcvUtDEROL97lChnBlCxBRsqplbc6HvGt2cXNeXr7BTMgDy09nNbmCZ2FBr-8pdeg1JNcICK77P3L1LlrQxrFmONcDS8p4J6OmXQ54ULe1qvAogU8_dEQm7tABaTZ9RjbesSa7I1_6udusayF_X6VCkm6U7ZRjL6nvFa6IbPlfCP7ILM2Y9_eXSFxeegFq0wwCfCFWXPSg"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-gutter py-xl">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Left Column: Application Details -->
+<div class="lg:col-span-8 space-y-lg">
+<!-- Stepper -->
+<div class="bg-surface-card rounded-lg border border-border-default p-md shadow-sm">
+<div class="flex items-center justify-between px-md relative">
+<div class="absolute top-1/2 left-0 w-full h-[2px] bg-surface-container-high -z-0 translate-y-[-50%] mx-gutter hidden md:block"></div>
+<!-- Step 1 -->
+<div class="relative z-10 flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">Contact Info</span>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">Experience</span>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary">Questions</span>
+</div>
+<!-- Step 4 -->
+<div class="relative z-10 flex flex-col items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center border-4 border-surface-container">
+<span class="font-bold text-[14px]">4</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">Review</span>
+</div>
+</div>
+</div>
+<!-- Review Content -->
+<div class="space-y-lg">
+<div class="flex items-center justify-between">
+<h1 class="font-headline-xl text-headline-xl text-on-surface">Review Application</h1>
+<span class="bg-surface-container-high text-primary px-md py-xs rounded-full font-label-md text-label-md">Final Step</span>
+</div>
+<!-- Personal Information Section -->
+<section class="bg-surface-card rounded-lg border border-border-default shadow-sm overflow-hidden transition-all hover:shadow-md">
+<div class="p-md bg-surface-container-low border-b border-border-default flex justify-between items-center">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">person</span>
+<h2 class="font-headline-md text-headline-md">Personal Information</h2>
+</div>
+<button class="text-secondary font-label-md hover:underline cursor-pointer transition-all active:scale-95">Edit</button>
+</div>
+<div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div>
+<p class="text-text-secondary font-label-sm uppercase tracking-wider mb-xs">Full Name</p>
+<p class="font-body-lg text-body-lg text-on-surface font-medium">Alex Thompson</p>
+</div>
+<div>
+<p class="text-text-secondary font-label-sm uppercase tracking-wider mb-xs">Email Address</p>
+<p class="font-body-lg text-body-lg text-on-surface font-medium">alex.thompson@design.io</p>
+</div>
+<div>
+<p class="text-text-secondary font-label-sm uppercase tracking-wider mb-xs">Phone Number</p>
+<p class="font-body-lg text-body-lg text-on-surface font-medium">+1 (555) 902-1432</p>
+</div>
+<div>
+<p class="text-text-secondary font-label-sm uppercase tracking-wider mb-xs">Portfolio</p>
+<a class="font-body-lg text-body-lg text-secondary font-medium hover:underline flex items-center gap-xs" href="#">
+                                    alexthompson.design <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Experience & Education -->
+<section class="bg-surface-card rounded-lg border border-border-default shadow-sm overflow-hidden transition-all hover:shadow-md">
+<div class="p-md bg-surface-container-low border-b border-border-default flex justify-between items-center">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">work_history</span>
+<h2 class="font-headline-md text-headline-md">Experience &amp; Education</h2>
+</div>
+<button class="text-secondary font-label-md hover:underline cursor-pointer transition-all active:scale-95">Edit</button>
+</div>
+<div class="p-lg space-y-lg">
+<!-- Experience Entry -->
+<div class="flex gap-md">
+<div class="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg flex-shrink-0">
+<span class="material-symbols-outlined text-primary">business</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Senior Product Designer</h3>
+<p class="text-text-secondary font-body-md mb-sm">Pixel Flow Agency • 2020 — Present</p>
+<p class="text-on-surface-variant font-body-md leading-relaxed">Lead the end-to-end design for major FinTech clients, increasing user retention by 24%. Mentoring junior designers and establishing a unified design system across 4 cross-functional teams.</p>
+</div>
+</div>
+<div class="h-[1px] bg-border-default mx-auto"></div>
+<!-- Education Entry -->
+<div class="flex gap-md">
+<div class="w-12 h-12 bg-surface-container flex items-center justify-center rounded-lg flex-shrink-0">
+<span class="material-symbols-outlined text-primary">school</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Stanford University</h3>
+<p class="text-text-secondary font-body-md mb-xs">B.S. in Symbolic Systems (HCI focus)</p>
+<p class="text-on-surface-variant font-body-md">Graduated with Distinction • Class of 2018</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Screening Questions -->
+<section class="bg-surface-card rounded-lg border border-border-default shadow-sm overflow-hidden transition-all hover:shadow-md">
+<div class="p-md bg-surface-container-low border-b border-border-default flex justify-between items-center">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">fact_check</span>
+<h2 class="font-headline-md text-headline-md">Screening Questions</h2>
+</div>
+<button class="text-secondary font-label-md hover:underline cursor-pointer transition-all active:scale-95">Edit</button>
+</div>
+<div class="p-lg space-y-md">
+<div class="bg-surface-subtle p-md rounded-lg">
+<p class="text-on-surface font-label-md mb-sm">How many years of experience do you have in Product Design?</p>
+<p class="text-primary font-body-lg font-bold">5 years</p>
+</div>
+<div class="bg-surface-subtle p-md rounded-lg">
+<p class="text-on-surface font-label-md mb-sm">Please provide a link to your Figma case study for your most recent project.</p>
+<a class="text-secondary font-body-lg font-bold hover:underline" href="#">figma.com/file/alex-portfolio-v4</a>
+</div>
+<div class="bg-surface-subtle p-md rounded-lg">
+<p class="text-on-surface font-label-md mb-sm">Are you legally authorized to work in the United States?</p>
+<p class="text-primary font-body-lg font-bold">Yes</p>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Right Column: Sidebar Job Card -->
+<aside class="lg:col-span-4">
+<div class="sticky top-24 space-y-lg">
+<div class="bg-surface-card rounded-xl border border-border-default shadow-lg overflow-hidden">
+<div class="h-32 bg-primary-container relative">
+<div class="absolute -bottom-6 left-lg bg-surface-card p-sm rounded-lg shadow-md border border-border-default w-16 h-16">
+<img alt="Lumina Tech Logo" class="w-full h-full object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLuJyknCQC4kQj-PgXxOW-KT1DAVyxUBkiOu5SQv-Kea1EXsvq77wPLQAEq4RvG653wuz0Fcb4LgVTogRBYiVD7KvKSO-T6ShRjlqI57_psuJI8jmnpa1SWcUlUzmmCSLPgFI-7fhdTt9ZVQzGJ7INSI7354lsQlEYituc9PaxRhdbZ4pysKW5VwPs9it-xLA4ycGybGzRukpMG10KlFXfR4eFmevaw9D_ULYiC_k5uMhHOpnvFcP8C7H8Zj"/>
+</div>
+</div>
+<div class="p-lg pt-10">
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Senior Product Designer</h3>
+<p class="text-text-secondary font-body-md flex items-center gap-xs mb-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span> San Francisco, CA (Hybrid)
+                            </p>
+<div class="flex flex-wrap gap-sm mb-lg">
+<span class="bg-surface-variant text-primary px-sm py-1 rounded font-label-sm">Full-time</span>
+<span class="bg-surface-variant text-primary px-sm py-1 rounded font-label-sm">Design</span>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-sm py-1 rounded font-label-sm">$160k - $210k</span>
+</div>
+<div class="p-md bg-surface-container-lowest rounded-lg border border-border-default mb-lg">
+<p class="font-label-sm text-text-secondary uppercase mb-xs tracking-wider">Hiring Manager</p>
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait of a tech hiring manager in a professional setting. The person wears smart casual attire, looks approachable and professional. The background is a modern office environment with soft focus, maintaining high-end corporate clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDFQoJbyW6Ah0GuiIPf-MTvr8CRibFPTnya2PceV9-9jjWMEQ6ftPbTmNNRETKxpJ2nyXSPMy_Am74qzk3Dvp_GpDiQNwve4nNMwWlJIutpnJpWok_KPTVIX-Fm7D0iwNak-jhG7NL7AycKeFMjIbUqwlmFCcjJy2kzmaGBayd41BbN4zjOIUjwCGyHc5n8k5lN2rg5us3QEDdIlnAeVeMQ6M2n83Liw0xAcl28kz_iqrWfv4v52CDcw"/>
+</div>
+<span class="font-body-md text-on-surface font-medium">Sarah Jenkins</span>
+</div>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between text-body-sm">
+<span class="text-text-secondary">Posted</span>
+<span class="text-on-surface">2 days ago</span>
+</div>
+<div class="flex justify-between text-body-sm">
+<span class="text-text-secondary">Applicants</span>
+<span class="text-on-surface">Over 50</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-md border border-dashed border-outline-variant rounded-lg bg-surface-subtle">
+<p class="font-body-sm text-text-secondary text-center italic">
+                            "Lumina Tech values candidates who demonstrate a strong grasp of design systems and high-fidelity prototyping."
+                        </p>
+</div>
+</div>
+</aside>
+</div>
+<!-- Sticky Footer for Actions -->
+<div class="mt-xl pt-lg border-t border-border-default flex flex-col md:flex-row items-center justify-between gap-lg">
+<div class="max-w-md">
+<p class="font-body-sm text-text-secondary">
+                    By clicking 'Submit Application', you agree to our <a class="text-secondary hover:underline" href="#">Data Privacy Policy</a> and <a class="text-secondary hover:underline" href="#">Terms of Service</a>. Your application will be immediately available to the Lumina Tech recruitment team.
+                </p>
+</div>
+<div class="flex items-center gap-md w-full md:w-auto">
+<button class="flex-1 md:flex-none px-xl py-md border border-primary text-primary font-label-md rounded-lg hover:bg-surface-container transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span> Back
+                </button>
+<button class="flex-1 md:flex-none px-xl py-md bg-primary text-on-primary font-headline-md rounded-lg shadow-lg hover:bg-primary-container transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-sm" id="submitBtn" onclick="submitApplication()">
+                    Submit Application <span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Simple Success Modal (Hidden by default) -->
+<div class="hidden fixed inset-0 z-[100] flex items-center justify-center px-gutter bg-on-background/60 backdrop-blur-sm" id="successModal">
+<div class="bg-surface-card max-w-md w-full p-xl rounded-xl shadow-2xl text-center space-y-lg animate-in fade-in zoom-in duration-300">
+<div class="w-20 h-20 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center mx-auto">
+<span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface">Application Submitted!</h2>
+<p class="font-body-lg text-on-surface-variant">Your application for Senior Product Designer at Lumina Tech has been successfully sent. We've emailed a confirmation to alex.thompson@design.io.</p>
+<div class="pt-md">
+<button class="w-full py-md bg-primary text-on-primary font-headline-md rounded-lg hover:bg-primary-container transition-all cursor-pointer" onclick="closeModal()">Return to Dashboard</button>
+</div>
+</div>
+</div>
+<script>
+        function submitApplication() {
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<span class="animate-spin material-symbols-outlined">progress_activity</span> Processing...';
+            btn.disabled = true;
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
+
+            setTimeout(() => {
+                document.getElementById('successModal').classList.remove('hidden');
+            }, 1500);
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            // Mock navigation
+            window.location.reload(); 
+        }
+    </script>
+</body></html>

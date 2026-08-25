@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Application Submitted | EMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary": "#0058be",
+            "inverse-surface": "#263143",
+            "tertiary-fixed-dim": "#68dba9",
+            "surface-bg": "#F8FAFC",
+            "on-tertiary-fixed": "#002114",
+            "on-tertiary-container": "#4ac08f",
+            "surface-container-highest": "#d8e3fb",
+            "on-secondary-fixed": "#001a42",
+            "secondary-container": "#2170e4",
+            "text-secondary": "#64748B",
+            "on-error": "#ffffff",
+            "outline-variant": "#c5c5d3",
+            "surface-container-high": "#dee8ff",
+            "on-primary-fixed-variant": "#264191",
+            "on-error-container": "#93000a",
+            "tertiary-fixed": "#85f8c4",
+            "on-surface-variant": "#444651",
+            "on-secondary-fixed-variant": "#004395",
+            "surface-dim": "#cfdaf2",
+            "on-background": "#111c2d",
+            "error-container": "#ffdad6",
+            "tertiary-container": "#004a32",
+            "background": "#f9f9ff",
+            "secondary-fixed-dim": "#adc6ff",
+            "primary-container": "#1e3a8a",
+            "tertiary": "#003120",
+            "on-secondary": "#ffffff",
+            "primary": "#00236f",
+            "surface-bright": "#f9f9ff",
+            "status-error": "#DC2626",
+            "on-primary-container": "#90a8ff",
+            "primary-fixed": "#dce1ff",
+            "on-tertiary": "#ffffff",
+            "primary-fixed-dim": "#b6c4ff",
+            "on-surface": "#111c2d",
+            "on-secondary-container": "#fefcff",
+            "surface-subtle": "#F1F5F9",
+            "surface-card": "#FFFFFF",
+            "surface-variant": "#d8e3fb",
+            "on-primary-fixed": "#00164e",
+            "surface-container-low": "#f0f3ff",
+            "surface": "#f9f9ff",
+            "outline": "#757682",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed-variant": "#005137",
+            "on-primary": "#ffffff",
+            "inverse-on-surface": "#ecf1ff",
+            "border-default": "#E2E8F0",
+            "surface-tint": "#4059aa",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#d8e2ff",
+            "inverse-primary": "#b6c4ff",
+            "surface-container": "#e7eeff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "24px",
+            "container-max": "1280px",
+            "xs": "4px",
+            "sm": "8px",
+            "margin": "24px",
+            "lg": "24px",
+            "xl": "32px",
+            "md": "16px"
+          },
+          "fontFamily": {
+            "headline-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "label-md": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "headline-xl": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-xl-mobile": ["Inter"]
+          },
+          "fontSize": {
+            "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+            "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+            "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+            "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+            "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      background-color: #F8FAFC;
+      font-family: 'Inter', sans-serif;
+    }
+    .step-line::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 32px;
+      bottom: -16px;
+      width: 2px;
+      background-color: #E2E8F0;
+    }
+    .step-line:last-child::after {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-surface-bg text-on-surface">
+<!-- TopAppBar Component -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-border-default dark:border-outline-variant shadow-sm docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center px-lg h-16 w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-xl">
+<span class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim">EMPO</span>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary font-label-md text-label-md transition-colors active:scale-95 duration-150" href="#">Find Jobs</a>
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary font-bold pb-1 font-label-md text-label-md transition-colors active:scale-95 duration-150" href="#">Applications</a>
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary font-label-md text-label-md transition-colors active:scale-95 duration-150" href="#">Messages</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm rounded-full hover:bg-surface-subtle transition-colors active:scale-95">
+<span class="material-symbols-outlined text-text-secondary">notifications</span>
+</button>
+<button class="p-sm rounded-full hover:bg-surface-subtle transition-colors active:scale-95">
+<span class="material-symbols-outlined text-text-secondary">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden border border-border-default">
+<img class="w-full h-auto object-cover" data-alt="Professional headshot of a young creative professional with a friendly smile, clean studio lighting, soft corporate aesthetic, high quality photography for a recruitment profile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmteTjhg4KR57TZ5R4FN8H4NH0KhlbHvgz7o1iWDexeg2UCEjixpRW3yNoNUgmw_1yG0JMiskU0Z6hzXDViR8U_qZv04b1cIGk5wcwNp_rKC_NzKrdkz-HffQf0c0US5zPBDoqRhzEzG4N6IcfNg00sDvAW9dxnRFCahiEcArNnfYWqCj3WBH6oZ7VytfBgNysfMlWW-_NqXyFuCmeOXNbpNvPhO6co9kDkMKsSAhrTG1CoKtuPmxnSQ"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-lg py-xl">
+<!-- Success Banner Section -->
+<section class="text-center mb-xl animate-in fade-in duration-700 slide-in-from-bottom-4">
+<div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-secondary-container text-on-secondary-container mb-md shadow-lg shadow-secondary/20">
+<span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary mb-sm">Application Submitted!</h1>
+<p class="font-body-lg text-body-lg text-text-secondary max-w-xl mx-auto">
+        Great job, Alex! Your application for the <span class="font-bold text-on-surface">Senior Product Designer</span> role at Lumina Tech has been successfully received.
+      </p>
+</section>
+<!-- Content Bento Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg items-start">
+<!-- Main Content Card: Timeline -->
+<div class="md:col-span-8 bg-surface-card border border-border-default rounded-xl p-xl shadow-sm">
+<div class="flex items-center justify-between mb-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface">What Happens Next</h2>
+<div class="px-sm py-xs bg-surface-container-low text-secondary rounded-lg font-label-sm text-label-sm uppercase tracking-wide">
+            Application Status: Pending
+          </div>
+</div>
+<div class="space-y-lg relative">
+<!-- Step 1 -->
+<div class="flex gap-md relative step-line">
+<div class="relative z-10 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</div>
+<div class="flex-1">
+<h3 class="font-label-md text-label-md text-on-surface font-bold">Step 1: Recruiter Review</h3>
+<p class="font-body-md text-body-md text-text-secondary mt-xs">A member of Lumina Tech's talent acquisition team will review your portfolio and experience. This usually takes <span class="font-semibold">2-3 business days</span>.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex gap-md relative step-line">
+<div class="relative z-10 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-text-secondary">
+<span class="material-symbols-outlined text-[18px]">videocam</span>
+</div>
+<div class="flex-1">
+<h3 class="font-label-md text-label-md text-on-surface font-bold">Step 2: Initial Screen</h3>
+<p class="font-body-md text-body-md text-text-secondary mt-xs">If your background matches the role's requirements, you'll receive an invitation for a short introductory call with Sarah Jenkins.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex gap-md relative">
+<div class="relative z-10 w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-text-secondary">
+<span class="material-symbols-outlined text-[18px]">groups</span>
+</div>
+<div class="flex-1">
+<h3 class="font-label-md text-label-md text-on-surface font-bold">Step 3: Interview Stages</h3>
+<p class="font-body-md text-body-md text-text-secondary mt-xs">Final rounds include a technical deep-dive and a collaborative design exercise with the product team.</p>
+</div>
+</div>
+</div>
+<div class="mt-xl pt-lg border-t border-border-default flex flex-col sm:flex-row gap-md">
+<button class="bg-primary text-on-primary px-lg py-md rounded-lg font-label-md text-label-md font-bold shadow-md hover:bg-primary-container transition-all active:scale-95 flex-1 text-center">
+            View Application Status
+          </button>
+<button class="border border-secondary text-secondary px-lg py-md rounded-lg font-label-md text-label-md font-bold hover:bg-surface-container-low transition-all active:scale-95 flex-1 text-center">
+            Browse More Jobs
+          </button>
+</div>
+</div>
+<!-- Sidebar Bento Cluster -->
+<div class="md:col-span-4 space-y-lg">
+<!-- Lumina Tech Branding Card -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm">
+<div class="flex flex-col items-center text-center">
+<img alt="Lumina Tech Logo" class="h-12 w-auto mb-md" src="https://lh3.googleusercontent.com/aida/AP1WRLuJyknCQC4kQj-PgXxOW-KT1DAVyxUBkiOu5SQv-Kea1EXsvq77wPLQAEq4RvG653wuz0Fcb4LgVTogRBYiVD7KvKSO-T6ShRjlqI57_psuJI8jmnpa1SWcUlUzmmCSLPgFI-7fhdTt9ZVQzGJ7INSI7354lsQlEYituc9PaxRhdbZ4pysKW5VwPs9it-xLA4ycGybGzRukpMG10KlFXfR4eFmevaw9D_ULYiC_k5uMhHOpnvFcP8C7H8Zj"/>
+<p class="font-body-sm text-body-sm text-text-secondary">You've applied to one of the fastest growing tech hubs in the region.</p>
+</div>
+</div>
+<!-- Hiring Manager Message -->
+<div class="bg-surface-container-low rounded-xl p-lg border border-secondary/10">
+<div class="flex items-center gap-md mb-md">
+<img alt="Sarah Jenkins, Hiring Manager" class="w-12 h-12 rounded-full border-2 border-white shadow-sm object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLvhaWGDjtSqPtllMI1NoI18KmBYVEG4EtEqD-LR1BW2JMTVg52clGnif8sVWzerl_C1DycObhmPQcXQHZur7tHu6qTtr2epioJCKTFlAbl4vOWPhH6UczHex35QDQyMIMldYpE8knCAFNXYv1vctrtsCCXpyDhhDUZSQiRjdtCygA7yjF7ortEeJDd24CalK9abnqjqOteDMPfq0D_tYBtLpZWSDbPol1egX9WKtbn257go3VOB08H6P9P7"/>
+<div>
+<p class="font-label-sm text-label-sm text-primary font-bold">Sarah Jenkins</p>
+<p class="font-body-sm text-body-sm text-text-secondary">Talent Partner</p>
+</div>
+</div>
+<p class="font-body-md text-body-md italic text-on-surface-variant">
+            "Thanks for your interest in Lumina Tech, Alex! We're excited to look through your work. I'll be in touch soon."
+          </p>
+</div>
+<!-- Support Note -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm flex items-start gap-md">
+<div class="text-secondary mt-1">
+<span class="material-symbols-outlined">help</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md font-bold text-on-surface">Help &amp; Support</h4>
+<p class="font-body-sm text-body-sm text-text-secondary mt-xs">Have questions? Reach out to our <span class="text-secondary font-medium hover:underline cursor-pointer">Talent Advocates</span> for assistance.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="bg-surface-bg dark:bg-on-background border-t border-border-default dark:border-outline-variant w-full mt-xl">
+<div class="w-full py-xl px-lg flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto gap-md">
+<div class="flex flex-col md:flex-row items-center gap-md">
+<span class="font-label-sm text-label-sm font-bold text-primary dark:text-primary-fixed">EMPO</span>
+<span class="font-body-sm text-body-sm text-text-secondary dark:text-surface-variant">© 2024 EMPO Recruitment Solutions. All rights reserved.</span>
+</div>
+<div class="flex gap-lg">
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:underline transition-opacity duration-200" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:underline transition-opacity duration-200" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:underline transition-opacity duration-200" href="#">Contact Support</a>
+</div>
+</div>
+</footer>
+<script>
+    // Subtle interactivity for micro-animations
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('mouseenter', () => {
+        button.style.transform = 'translateY(-1px)';
+      });
+      button.addEventListener('mouseleave', () => {
+        button.style.transform = 'translateY(0)';
+      });
+    });
+  </script>
+</body></html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Submit Interview - EMPO Talent Hub</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Typography -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "outline-variant": "#c5c5d3",
+                  "on-primary": "#ffffff",
+                  "surface-bright": "#f9f9ff",
+                  "on-error-container": "#93000a",
+                  "tertiary": "#003120",
+                  "background": "#f9f9ff",
+                  "on-surface-variant": "#444651",
+                  "tertiary-fixed-dim": "#68dba9",
+                  "primary-container": "#1e3a8a",
+                  "secondary-container": "#2170e4",
+                  "error-container": "#ffdad6",
+                  "surface-tint": "#4059aa",
+                  "status-error": "#DC2626",
+                  "surface-bg": "#F8FAFC",
+                  "on-tertiary-fixed-variant": "#005137",
+                  "outline": "#757682",
+                  "surface-variant": "#d8e3fb",
+                  "on-primary-fixed": "#00164e",
+                  "on-surface": "#111c2d",
+                  "inverse-surface": "#263143",
+                  "inverse-primary": "#b6c4ff",
+                  "secondary": "#0058be",
+                  "inverse-on-surface": "#ecf1ff",
+                  "surface-subtle": "#F1F5F9",
+                  "primary": "#00236f",
+                  "secondary-fixed": "#d8e2ff",
+                  "on-secondary-fixed": "#001a42",
+                  "on-primary-fixed-variant": "#264191",
+                  "on-secondary-fixed-variant": "#004395",
+                  "surface-dim": "#cfdaf2",
+                  "on-background": "#111c2d",
+                  "secondary-fixed-dim": "#adc6ff",
+                  "surface-container-highest": "#d8e3fb",
+                  "on-tertiary-fixed": "#002114",
+                  "on-tertiary-container": "#4ac08f",
+                  "tertiary-container": "#004a32",
+                  "surface-container-high": "#dee8ff",
+                  "tertiary-fixed": "#85f8c4",
+                  "on-secondary": "#ffffff",
+                  "on-tertiary": "#ffffff",
+                  "surface-container-low": "#f0f3ff",
+                  "surface-container-lowest": "#ffffff",
+                  "on-error": "#ffffff",
+                  "text-secondary": "#64748B",
+                  "on-primary-container": "#90a8ff",
+                  "surface": "#f9f9ff",
+                  "border-default": "#E2E8F0",
+                  "primary-fixed-dim": "#b6c4ff",
+                  "primary-fixed": "#dce1ff",
+                  "error": "#ba1a1a",
+                  "on-secondary-container": "#fefcff",
+                  "surface-container": "#e7eeff",
+                  "surface-card": "#FFFFFF"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "xl": "32px",
+                  "gutter": "24px",
+                  "xs": "4px",
+                  "md": "16px",
+                  "sm": "8px",
+                  "container-max": "1280px",
+                  "margin": "24px",
+                  "lg": "24px"
+          },
+          "fontFamily": {
+                  "body-lg": ["Inter"],
+                  "headline-xl": ["Inter"],
+                  "body-sm": ["Inter"],
+                  "label-sm": ["Inter"],
+                  "headline-md": ["Inter"],
+                  "headline-xl-mobile": ["Inter"],
+                  "headline-lg": ["Inter"],
+                  "body-md": ["Inter"],
+                  "label-md": ["Inter"]
+          },
+          "fontSize": {
+                  "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                  "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                  "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                  "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                  "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                  "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                  "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #F8FAFC;
+      font-family: 'Inter', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .video-thumbnail-overlay {
+      background: linear-gradient(0deg, rgba(0,35,111,0.6) 0%, rgba(0,35,111,0) 100%);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- TopNavBar Implementation -->
+<nav class="bg-surface-lowest dark:bg-surface-container-low shadow-sm dark:shadow-none border-b border-border-default dark:border-outline-variant sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-6 h-16 max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">EMPO</div>
+<!-- Desktop Navigation Links -->
+<div class="hidden md:flex items-center space-x-8">
+<a class="font-body-md text-body-md text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80" href="#">Find Jobs</a>
+<a class="font-body-md text-body-md text-primary dark:text-primary-fixed-dim font-bold border-b-2 border-primary dark:border-primary-fixed-dim pb-1 cursor-pointer active:opacity-80" href="#">Applications</a>
+<a class="font-body-md text-body-md text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80" href="#">Messages</a>
+<a class="font-body-md text-body-md text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors cursor-pointer active:opacity-80" href="#">Resources</a>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 rounded-full hover:bg-surface-subtle" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 rounded-full hover:bg-surface-subtle" data-icon="settings">settings</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-default">
+<img alt="Candidate Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLueRKZtFfJRy-xW-m5d-IaVeG31kgQhNi-ng1ihTBSgShv9NDILVninBFS46-YETulG6xa4E8KJ1jqrIqy9fR3jmH2Zmc9fEHjlhhClK_3cz6eEUI-QFzh-F6i5m-Jg8_DRFen9ZUAFTyls-BYUdP3EfN3qCmznnZnOyFHlfFMqY4_Yn4qMBp3LCEvcUCschGJqEef0aujceaadvUPtLTZtu0VsRNTj6UdBD0LZAQeohkghhKTSZX6J1Af7"/>
+</div>
+</div>
+</div>
+</nav>
+<main class="flex-grow container max-w-container-max mx-auto px-margin py-xl">
+<!-- Central Confirmation Section -->
+<div class="max-w-4xl mx-auto space-y-lg">
+<!-- Success Message Card -->
+<div class="bg-surface-card border border-border-default rounded-xl p-xl shadow-sm text-center">
+<div class="inline-flex items-center justify-center w-16 h-16 bg-tertiary-fixed rounded-full mb-md">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant text-[32px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary mb-xs">All Questions Answered!</h1>
+<p class="font-body-lg text-body-lg text-text-secondary max-w-lg mx-auto">
+          Great job, Alex! You've successfully recorded all 5 video responses for the Senior Software Engineer position. Review your recordings below before final submission.
+        </p>
+</div>
+<!-- Response Summary Grid -->
+<div class="space-y-md">
+<div class="flex justify-between items-end px-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface">Recorded Responses</h2>
+<span class="font-label-md text-label-md text-text-secondary">5 of 5 Complete</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+<!-- Video 1 -->
+<div class="group relative bg-surface-card border border-border-default rounded-lg overflow-hidden transition-all hover:shadow-md cursor-pointer">
+<div class="aspect-video relative overflow-hidden bg-surface-container">
+<img alt="Response 1 Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AP1WRLueRKZtFfJRy-xW-m5d-IaVeG31kgQhNi-ng1ihTBSgShv9NDILVninBFS46-YETulG6xa4E8KJ1jqrIqy9fR3jmH2Zmc9fEHjlhhClK_3cz6eEUI-QFzh-F6i5m-Jg8_DRFen9ZUAFTyls-BYUdP3EfN3qCmznnZnOyFHlfFMqY4_Yn4qMBp3LCEvcUCschGJqEef0aujceaadvUPtLTZtu0VsRNTj6UdBD0LZAQeohkghhKTSZX6J1Af7"/>
+<div class="video-thumbnail-overlay absolute inset-0 flex items-center justify-center">
+<div class="bg-white/90 p-2 rounded-full shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/60 text-white rounded font-label-sm text-label-sm">1:42</div>
+</div>
+<div class="p-md">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider mb-xs block">Question 1</span>
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">Tell us about your experience with distributed systems and architectural design.</p>
+</div>
+</div>
+<!-- Video 2 -->
+<div class="group relative bg-surface-card border border-border-default rounded-lg overflow-hidden transition-all hover:shadow-md cursor-pointer">
+<div class="aspect-video relative overflow-hidden bg-surface-container">
+<img alt="Response 2 Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AP1WRLueRKZtFfJRy-xW-m5d-IaVeG31kgQhNi-ng1ihTBSgShv9NDILVninBFS46-YETulG6xa4E8KJ1jqrIqy9fR3jmH2Zmc9fEHjlhhClK_3cz6eEUI-QFzh-F6i5m-Jg8_DRFen9ZUAFTyls-BYUdP3EfN3qCmznnZnOyFHlfFMqY4_Yn4qMBp3LCEvcUCschGJqEef0aujceaadvUPtLTZtu0VsRNTj6UdBD0LZAQeohkghhKTSZX6J1Af7"/>
+<div class="video-thumbnail-overlay absolute inset-0 flex items-center justify-center">
+<div class="bg-white/90 p-2 rounded-full shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/60 text-white rounded font-label-sm text-label-sm">2:15</div>
+</div>
+<div class="p-md">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider mb-xs block">Question 2</span>
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">How do you handle technical debt in a fast-paced product environment?</p>
+</div>
+</div>
+<!-- Video 3 -->
+<div class="group relative bg-surface-card border border-border-default rounded-lg overflow-hidden transition-all hover:shadow-md cursor-pointer">
+<div class="aspect-video relative overflow-hidden bg-surface-container">
+<img alt="Response 3 Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AP1WRLueRKZtFfJRy-xW-m5d-IaVeG31kgQhNi-ng1ihTBSgShv9NDILVninBFS46-YETulG6xa4E8KJ1jqrIqy9fR3jmH2Zmc9fEHjlhhClK_3cz6eEUI-QFzh-F6i5m-Jg8_DRFen9ZUAFTyls-BYUdP3EfN3qCmznnZnOyFHlfFMqY4_Yn4qMBp3LCEvcUCschGJqEef0aujceaadvUPtLTZtu0VsRNTj6UdBD0LZAQeohkghhKTSZX6J1Af7"/>
+<div class="video-thumbnail-overlay absolute inset-0 flex items-center justify-center">
+<div class="bg-white/90 p-2 rounded-full shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/60 text-white rounded font-label-sm text-label-sm">1:58</div>
+</div>
+<div class="p-md">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider mb-xs block">Question 3</span>
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">Describe a time you had to mentor a junior engineer through a complex bug.</p>
+</div>
+</div>
+<!-- Video 4 -->
+<div class="group relative bg-surface-card border border-border-default rounded-lg overflow-hidden transition-all hover:shadow-md cursor-pointer">
+<div class="aspect-video relative overflow-hidden bg-surface-container">
+<img alt="Response 4 Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AP1WRLueRKZtFfJRy-xW-m5d-IaVeG31kgQhNi-ng1ihTBSgShv9NDILVninBFS46-YETulG6xa4E8KJ1jqrIqy9fR3jmH2Zmc9fEHjlhhClK_3cz6eEUI-QFzh-F6i5m-Jg8_DRFen9ZUAFTyls-BYUdP3EfN3qCmznnZnOyFHlfFMqY4_Yn4qMBp3LCEvcUCschGJqEef0aujceaadvUPtLTZtu0VsRNTj6UdBD0LZAQeohkghhKTSZX6J1Af7"/>
+<div class="video-thumbnail-overlay absolute inset-0 flex items-center justify-center">
+<div class="bg-white/90 p-2 rounded-full shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/60 text-white rounded font-label-sm text-label-sm">1:10</div>
+</div>
+<div class="p-md">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider mb-xs block">Question 4</span>
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">What is your preferred tech stack and why did you choose it for your last project?</p>
+</div>
+</div>
+<!-- Video 5 -->
+<div class="group relative bg-surface-card border border-border-default rounded-lg overflow-hidden transition-all hover:shadow-md cursor-pointer">
+<div class="aspect-video relative overflow-hidden bg-surface-container">
+<img alt="Response 5 Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida/AP1WRLueRKZtFfJRy-xW-m5d-IaVeG31kgQhNi-ng1ihTBSgShv9NDILVninBFS46-YETulG6xa4E8KJ1jqrIqy9fR3jmH2Zmc9fEHjlhhClK_3cz6eEUI-QFzh-F6i5m-Jg8_DRFen9ZUAFTyls-BYUdP3EfN3qCmznnZnOyFHlfFMqY4_Yn4qMBp3LCEvcUCschGJqEef0aujceaadvUPtLTZtu0VsRNTj6UdBD0LZAQeohkghhKTSZX6J1Af7"/>
+<div class="video-thumbnail-overlay absolute inset-0 flex items-center justify-center">
+<div class="bg-white/90 p-2 rounded-full shadow-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="absolute bottom-2 right-2 px-2 py-1 bg-black/60 text-white rounded font-label-sm text-label-sm">2:45</div>
+</div>
+<div class="p-md">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider mb-xs block">Question 5</span>
+<p class="font-body-md text-body-md text-on-surface line-clamp-2">Where do you see the future of AI-driven development in the next 3 years?</p>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Analysis Teaser -->
+<div class="bg-surface-container-low border border-border-default rounded-xl p-lg flex flex-col md:flex-row items-center gap-lg">
+<div class="flex-shrink-0 w-16 h-16 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-[32px]">psychology</span>
+</div>
+<div class="flex-grow space-y-xs text-center md:text-left">
+<h3 class="font-headline-md text-headline-md text-primary">System Logic &amp; Analysis</h3>
+<p class="font-body-md text-body-md text-text-secondary">
+            Your responses are being secured. Transcripts and AI competency analysis will begin immediately upon submission. Our engine analyzes verbal clarity, technical depth, and cultural alignment indicators.
+          </p>
+</div>
+<div class="flex-shrink-0">
+<div class="inline-flex items-center px-3 py-1 bg-secondary-fixed text-on-secondary-fixed-variant rounded-full text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-sm mr-1" style="font-variation-settings: 'opsz' 20;">lock</span>
+            End-to-End Encrypted
+          </div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col sm:flex-row items-center justify-center gap-md pt-md">
+<button class="w-full sm:w-auto px-xl py-4 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-md hover:bg-primary-container transition-all active:scale-95 flex items-center justify-center gap-sm">
+          Submit Interview
+          <span class="material-symbols-outlined">send</span>
+</button>
+<button class="w-full sm:w-auto px-xl py-4 bg-transparent border border-primary text-primary font-label-md text-label-md rounded-lg hover:bg-surface-subtle transition-all active:scale-95 flex items-center justify-center gap-sm">
+          Go Back and Review
+          <span class="material-symbols-outlined">settings_backup_restore</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Footer Implementation -->
+<footer class="bg-surface-subtle dark:bg-surface-container-highest border-t border-border-default dark:border-outline-variant mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-6 py-8 max-w-container-max mx-auto">
+<div class="mb-4 md:mb-0">
+<div class="font-label-md text-label-md font-bold text-primary dark:text-primary-fixed-dim mb-1">EMPO Recruitment</div>
+<p class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant">© 2024 EMPO Recruitment. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">Help Center</a>
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">Contact</a>
+</div>
+</div>
+</footer>
+<script>
+    // Micro-interaction: Update play icon on hover
+    document.querySelectorAll('.group').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        const icon = card.querySelector('.material-symbols-outlined');
+        if(icon && icon.textContent === 'play_arrow') {
+          icon.style.transition = 'all 0.3s ease';
+        }
+      });
+    });
+
+    // Mock progress indicator for AI analysis teaser
+    const analysisCard = document.querySelector('.bg-primary-container');
+    if (analysisCard) {
+      setInterval(() => {
+        analysisCard.style.opacity = '0.8';
+        setTimeout(() => analysisCard.style.opacity = '1', 1000);
+      }, 2000);
+    }
+  </script>
+</body></html>

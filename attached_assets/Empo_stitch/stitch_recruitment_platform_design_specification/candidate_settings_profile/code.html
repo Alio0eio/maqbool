@@ -1,0 +1,406 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>EMPO | Candidate Settings &amp; Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#dee8ff",
+                        "primary-fixed": "#dce1ff",
+                        "primary-container": "#1e3a8a",
+                        "surface-card": "#FFFFFF",
+                        "on-primary-fixed": "#00164e",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#d8e3fb",
+                        "border-default": "#E2E8F0",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-primary": "#ffffff",
+                        "surface": "#f9f9ff",
+                        "tertiary-fixed": "#85f8c4",
+                        "surface-tint": "#4059aa",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "surface-container": "#e7eeff",
+                        "status-error": "#DC2626",
+                        "surface-container-low": "#f0f3ff",
+                        "on-tertiary-container": "#4ac08f",
+                        "on-tertiary-fixed": "#002114",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "outline": "#757682",
+                        "on-surface-variant": "#444651",
+                        "background": "#f9f9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-primary": "#b6c4ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "inverse-surface": "#263143",
+                        "surface-bright": "#f9f9ff",
+                        "on-background": "#111c2d",
+                        "surface-bg": "#F8FAFC",
+                        "text-secondary": "#64748B",
+                        "on-secondary-container": "#fefcff",
+                        "surface-dim": "#cfdaf2",
+                        "inverse-on-surface": "#ecf1ff",
+                        "surface-variant": "#d8e3fb",
+                        "tertiary-container": "#004a32",
+                        "on-secondary-fixed": "#001a42",
+                        "primary": "#00236f",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-primary-fixed-variant": "#264191",
+                        "tertiary": "#003120",
+                        "on-surface": "#111c2d",
+                        "outline-variant": "#c5c5d3",
+                        "surface-subtle": "#F1F5F9",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#2170e4",
+                        "secondary": "#0058be",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#90a8ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "container-max": "1280px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "xl": "32px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .active-tab-indicator {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface font-body-md min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="bg-surface-container-lowest sticky top-0 z-50 border-b border-border-default shadow-sm">
+<div class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-xl">
+<span class="text-headline-lg font-headline-lg font-bold text-primary">EMPO</span>
+<nav class="hidden md:flex gap-lg items-center">
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 text-label-md font-label-md" href="{{DATA:SCREEN:SCREEN_2}}">Find Jobs</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 text-label-md font-label-md" href="{{DATA:SCREEN:SCREEN_3}}">My Applications</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 text-label-md font-label-md" href="#">Talent Pool</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-xs text-text-secondary hover:text-primary transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="flex items-center gap-sm pl-sm border-l border-border-default h-6">
+<button class="p-xs text-primary font-bold border-b-2 border-primary pb-1 text-label-md font-label-md">
+<span class="material-symbols-outlined align-middle mr-1" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-default">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a confident young candidate for a corporate position. The lighting is soft and even, highlighting friendly features against a neutral, light-grey background. The style is clean, modern, and high-trust, perfectly aligned with a professional recruitment platform's aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_HLG_izo8eGzZiOcdDapgWB4Smw3d7vxnqMv2MXqHbHhKP0tLigY8zNW7DVKTVFGn9QujLHIT6omuKH4_3Lx3Qm8KUQAGtizh8rGNd8xd6cpUcL1asWtB1u34cNkLIQuDDvxq0Ab5UROuOTanRIY8Cs7MrhUQIVPVm31jTWNDrF4QJRYPgcsgA5883Aeah_AB1r_4bywCLhrvLRsQOmGr-rkY7gnVgbF5gyGLKbxHYXZmTdwXZatUkQ">
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-lg md:px-xl py-xl">
+<!-- Page Header -->
+<div class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h1 class="text-headline-xl font-headline-xl text-primary">Settings &amp; Profile</h1>
+<p class="text-text-secondary text-body-lg">Manage your identity, preferences, and visibility to recruiters.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm rounded-lg border border-primary text-primary font-bold hover:bg-surface-container-low transition-all" onclick="if(confirm('Are you sure you want to discard all changes?')) location.reload();">Discard Changes</button>
+<button class="px-md py-sm rounded-lg bg-primary text-white font-bold hover:opacity-90 shadow-sm transition-all" onclick="alert('Profile saved successfully!')">Save Profile</button>
+</div>
+</div>
+<!-- Bento Layout for Content -->
+<div class="bento-grid">
+<!-- Sidebar Navigation (within page context) -->
+<aside class="col-span-12 md:col-span-3 space-y-xs">
+<button class="w-full flex items-center gap-sm px-md py-sm rounded-lg bg-primary-container text-on-primary-container font-bold text-left transition-all" id="btn-personal" onclick="switchTab('personal')">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-label-md font-label-md">Personal Information</span>
+</button>
+<button class="w-full flex items-center gap-sm px-md py-sm rounded-lg text-text-secondary hover:bg-surface-subtle text-left transition-all" id="btn-visibility" onclick="switchTab('visibility')">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+<span class="text-label-md font-label-md">Visibility Status</span>
+</button>
+<button class="w-full flex items-center gap-sm px-md py-sm rounded-lg text-text-secondary hover:bg-surface-subtle text-left transition-all" id="btn-notifications" onclick="switchTab('notifications')">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="text-label-md font-label-md">Notification Preferences</span>
+</button>
+<button class="w-full flex items-center gap-sm px-md py-sm rounded-lg text-text-secondary hover:bg-surface-subtle text-left transition-all" id="btn-documents" onclick="switchTab('documents')">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="text-label-md font-label-md">Documents &amp; Links</span>
+</button>
+</aside>
+<!-- Main Settings Canvas -->
+<div class="col-span-12 md:col-span-9 space-y-lg">
+<!-- Section: Personal Information -->
+<section class="bg-surface-card border border-border-default rounded-xl shadow-sm overflow-hidden" id="pane-personal">
+<div class="px-lg py-md border-b border-border-default bg-surface-container-low">
+<h2 class="text-headline-md font-headline-md text-primary">Personal Information</h2>
+</div>
+<div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="flex flex-col gap-xs">
+<label class="text-label-md font-label-md text-on-surface">Full Name</label>
+<input class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary-container focus:border-secondary transition-all outline-none" type="text" value="Alexander Sterling">
+</div>
+<div class="flex flex-col gap-xs">
+<label class="text-label-md font-label-md text-on-surface">Professional Headline</label>
+<input class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary-container focus:border-secondary transition-all outline-none" type="text" value="Senior Product Designer">
+</div>
+<div class="flex flex-col gap-xs">
+<label class="text-label-md font-label-md text-on-surface">Email Address</label>
+<input class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary-container focus:border-secondary transition-all outline-none" type="email" value="alex.sterling@example.com">
+</div>
+<div class="flex flex-col gap-xs">
+<label class="text-label-md font-label-md text-on-surface">Phone Number</label>
+<input class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary-container focus:border-secondary transition-all outline-none" type="tel" value="+1 (555) 012-3456">
+</div>
+<div class="col-span-full flex flex-col gap-xs">
+<label class="text-label-md font-label-md text-on-surface">Bio</label>
+<textarea class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary-container focus:border-secondary transition-all outline-none resize-none" rows="4">Passionate about building intuitive user experiences and high-fidelity design systems. Over 8 years of experience in the FinTech and SaaS space.</textarea>
+</div>
+</div>
+</section>
+<!-- Section: Visibility Status (Bento Secondary) -->
+<section class="bg-surface-card border border-border-default rounded-xl shadow-sm p-lg" id="pane-visibility">
+<div class="flex items-start justify-between gap-md">
+<div class="flex gap-md">
+<div class="bg-surface-container-high p-md rounded-xl text-primary">
+<span class="material-symbols-outlined" data-icon="hub" style="font-size: 32px;">hub</span>
+</div>
+<div>
+<h2 class="text-headline-md font-headline-md text-primary mb-1">Visibility Status</h2>
+<p class="text-text-secondary text-body-md">Control who can find your profile and contact you.</p>
+</div>
+</div>
+<div class="relative inline-block w-12 h-6 rounded-full bg-primary transition-colors cursor-pointer">
+<div class="absolute top-1 left-7 w-4 h-4 bg-white rounded-full transition-all"></div>
+</div>
+</div>
+<div class="mt-lg grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="p-md border border-border-default rounded-lg bg-surface-subtle">
+<p class="text-label-sm font-label-sm text-primary uppercase tracking-wider mb-2">Current State</p>
+<p class="text-headline-md font-headline-md text-on-surface">Open to Work</p>
+<p class="text-body-sm text-text-secondary mt-1">Visible to all registered recruiters.</p>
+</div>
+<div class="p-md border border-border-default rounded-lg opacity-50">
+<p class="text-label-sm font-label-sm text-text-secondary uppercase tracking-wider mb-2">Alternative</p>
+<p class="text-headline-md font-headline-md text-on-surface">Discreet</p>
+<p class="text-body-sm text-text-secondary mt-1">Visible only to companies you apply to.</p>
+</div>
+<div class="p-md border border-border-default rounded-lg opacity-50">
+<p class="text-label-sm font-label-sm text-text-secondary uppercase tracking-wider mb-2">Passive</p>
+<p class="text-headline-md font-headline-md text-on-surface">Hidden</p>
+<p class="text-body-sm text-text-secondary mt-1">Not searchable in the talent pool.</p>
+</div>
+</div>
+</section>
+<!-- Section: Documents & Links -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-lg" id="pane-documents">
+<!-- Resume Upload -->
+<div class="bg-surface-card border border-border-default rounded-xl shadow-sm p-lg flex flex-col">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-primary" data-icon="upload_file">upload_file</span>
+<h3 class="text-headline-md font-headline-md">Resume</h3>
+</div>
+<div class="flex-grow flex flex-col items-center justify-center border-2 border-dashed border-border-default rounded-xl p-xl bg-surface-subtle hover:bg-surface-container transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-text-secondary text-4xl mb-md group-hover:text-primary transition-colors" data-icon="cloud_upload">cloud_upload</span>
+<p class="text-body-md font-bold text-on-surface">Click to upload fresh resume</p>
+<p class="text-body-sm text-text-secondary mt-1">PDF, DOCX up to 10MB</p>
+</div>
+<div class="mt-md flex items-center justify-between p-sm bg-surface-container-low rounded-lg border border-border-default">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="picture_as_pdf">picture_as_pdf</span>
+<span class="text-body-sm font-medium">Sterling_Resume_2024.pdf</span>
+</div>
+<button class="text-status-error" onclick="if(confirm('Remove this resume?')) this.closest('.mt-md').remove();">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<!-- Social Links -->
+<div class="bg-surface-card border border-border-default rounded-xl shadow-sm p-lg flex flex-col">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-primary" data-icon="link">link</span>
+<h3 class="text-headline-md font-headline-md">Social &amp; Portfolio</h3>
+</div>
+<div class="space-y-md">
+<div class="flex flex-col gap-xs">
+<label class="text-label-sm font-label-sm text-text-secondary">LinkedIn Profile</label>
+<div class="flex items-center gap-sm px-md py-sm border border-border-default rounded-lg">
+<span class="material-symbols-outlined text-text-secondary" data-icon="share">share</span>
+<input class="flex-grow outline-none bg-transparent" type="text" value="linkedin.com/in/alexsterling">
+</div>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="text-label-sm font-label-sm text-text-secondary">Portfolio Website</label>
+<div class="flex items-center gap-sm px-md py-sm border border-border-default rounded-lg">
+<span class="material-symbols-outlined text-text-secondary" data-icon="language">language</span>
+<input class="flex-grow outline-none bg-transparent" type="text" value="alexsterling.design">
+</div>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="text-label-sm font-label-sm text-text-secondary">GitHub / Behance</label>
+<div class="flex items-center gap-sm px-md py-sm border border-border-default rounded-lg">
+<span class="material-symbols-outlined text-text-secondary" data-icon="add_link">add_link</span>
+<input class="flex-grow outline-none bg-transparent" placeholder="Add additional link..." type="text">
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Notification Preferences -->
+<section class="bg-surface-card border border-border-default rounded-xl shadow-sm overflow-hidden" id="pane-notifications">
+<div class="px-lg py-md border-b border-border-default bg-surface-container-low flex justify-between items-center">
+<h2 class="text-headline-md font-headline-md text-primary">Notification Preferences</h2>
+<button class="text-primary text-label-md font-bold">Restore Defaults</button>
+</div>
+<div class="divide-y divide-border-default">
+<div class="p-lg flex items-center justify-between">
+<div>
+<p class="text-label-md font-bold text-on-surface">New Job Matches</p>
+<p class="text-body-sm text-text-secondary">Get notified when a job matching your skills is posted.</p>
+</div>
+<div class="w-10 h-5 bg-primary rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div>
+</div>
+</div>
+<div class="p-lg flex items-center justify-between">
+<div>
+<p class="text-label-md font-bold text-on-surface">Application Status Updates</p>
+<p class="text-body-sm text-text-secondary">Instant alerts when a recruiter reviews your resume.</p>
+</div>
+<div class="w-10 h-5 bg-primary rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full"></div>
+</div>
+</div>
+<div class="p-lg flex items-center justify-between">
+<div>
+<p class="text-label-md font-bold text-on-surface">Marketing &amp; Newsletter</p>
+<p class="text-body-sm text-text-secondary">Career tips, insights, and platform updates.</p>
+</div>
+<div class="w-10 h-5 bg-surface-container-high rounded-full relative cursor-pointer">
+<div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-border-default mt-xl">
+<div class="w-full py-xl px-lg md:px-xl max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex flex-col items-center md:items-start gap-xs">
+<span class="text-headline-md font-headline-md font-bold text-primary">EMPO</span>
+<p class="text-text-secondary text-body-sm">© 2024 EMPO Recruitment Solutions. All rights reserved.</p>
+</div>
+<div class="flex gap-lg">
+<a class="text-text-secondary text-label-sm font-label-sm hover:text-primary transition-all" href="#">Privacy Policy</a>
+<a class="text-text-secondary text-label-sm font-label-sm hover:text-primary transition-all" href="#">Terms of Service</a>
+<a class="text-text-secondary text-label-sm font-label-sm hover:text-primary transition-all" href="#">Help Center</a>
+</div>
+</div>
+</footer>
+<script>
+        function switchTab(tabId) {
+            // Update Navigation Button Styles
+            const tabs = ['personal', 'visibility', 'notifications', 'documents'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('btn-' + t);
+                if (t === tabId) {
+                    btn.classList.add('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                    btn.classList.remove('text-text-secondary', 'hover:bg-surface-subtle');
+                } else {
+                    btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-bold');
+                    btn.classList.add('text-text-secondary', 'hover:bg-surface-subtle');
+                }
+            });
+
+            // Smooth Scroll to Section (or toggle visibility if desired)
+            const target = document.getElementById('pane-' + tabId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Optional: add a temporary highlight effect
+                target.classList.add('ring-2', 'ring-primary-container');
+                setTimeout(() => target.classList.remove('ring-2', 'ring-primary-container'), 1000);
+            }
+        }
+
+        // Simple Toggle Interaction for the Visibility Switches
+        document.querySelectorAll('.w-12.h-6, .w-10.h-5').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const dot = this.querySelector('div');
+                if (this.classList.contains('bg-primary')) {
+                    this.classList.remove('bg-primary');
+                    this.classList.add('bg-surface-container-high');
+                    dot.classList.remove('right-1', 'left-7');
+                    dot.classList.add('left-1');
+                } else {
+                    this.classList.remove('bg-surface-container-high');
+                    this.classList.add('bg-primary');
+                    dot.classList.remove('left-1');
+                    dot.classList.add(this.classList.contains('w-12') ? 'left-7' : 'right-1');
+                }
+            });
+        });
+    </script>
+
+
+
+</body></html>

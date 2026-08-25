@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Senior Product Designer | EMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#dee8ff",
+                    "on-primary": "#ffffff",
+                    "surface-card": "#FFFFFF",
+                    "inverse-on-surface": "#ecf1ff",
+                    "text-secondary": "#64748B",
+                    "inverse-surface": "#263143",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "status-error": "#DC2626",
+                    "surface-container-highest": "#d8e3fb",
+                    "surface-bright": "#f9f9ff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "outline": "#757682",
+                    "on-tertiary-fixed": "#002114",
+                    "on-secondary-container": "#fefcff",
+                    "on-surface-variant": "#444651",
+                    "surface-variant": "#d8e3fb",
+                    "on-surface": "#111c2d",
+                    "border-default": "#E2E8F0",
+                    "surface-container": "#e7eeff",
+                    "surface-tint": "#4059aa",
+                    "secondary-fixed": "#d8e2ff",
+                    "secondary-container": "#2170e4",
+                    "on-background": "#111c2d",
+                    "on-primary-fixed": "#00164e",
+                    "error": "#ba1a1a",
+                    "on-tertiary-container": "#4ac08f",
+                    "on-error": "#ffffff",
+                    "surface-subtle": "#F1F5F9",
+                    "primary": "#00236f",
+                    "surface-bg": "#F8FAFC",
+                    "tertiary-container": "#004a32",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#264191",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "surface-dim": "#cfdaf2",
+                    "secondary": "#0058be",
+                    "primary-fixed": "#dce1ff",
+                    "surface": "#f9f9ff",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#001a42",
+                    "tertiary-fixed": "#85f8c4",
+                    "on-primary-container": "#90a8ff",
+                    "tertiary": "#003120",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "outline-variant": "#c5c5d3",
+                    "primary-container": "#1e3a8a",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "inverse-primary": "#b6c4ff",
+                    "background": "#f9f9ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin": "24px",
+                    "xs": "4px",
+                    "gutter": "24px",
+                    "container-max": "1280px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .bento-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bento-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="bg-surface-container-lowest dark:bg-surface-container-lowest border-b border-border-default dark:border-outline-variant shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-lg py-md max-w-container-max mx-auto">
+<div class="flex items-center gap-xl">
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed">EMPO</span>
+<nav class="hidden md:flex gap-lg items-center">
+<a class="text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1 font-bold font-label-md text-label-md" href="#">Find Jobs</a>
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 font-label-md text-label-md" href="#">My Applications</a>
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 font-label-md text-label-md" href="#">Companies</a>
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 font-label-md text-label-md" href="#">Messages</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm rounded-full hover:bg-surface-subtle transition-colors">
+<span class="material-symbols-outlined text-text-secondary">notifications</span>
+</button>
+<button class="p-sm rounded-full hover:bg-surface-subtle transition-colors">
+<span class="material-symbols-outlined text-text-secondary">help</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+<span class="font-bold text-sm">JS</span>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-lg py-xl">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-xs mb-lg text-text-secondary font-label-sm text-label-sm">
+<a class="hover:text-primary" href="#">Jobs</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary" href="#">Design</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface">Senior Product Designer</span>
+</div>
+<!-- Hero Header -->
+<div class="bg-surface-card rounded-xl border border-border-default p-xl mb-lg shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-lg">
+<div class="flex gap-lg">
+<div class="w-16 h-16 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+</div>
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface mb-xs">Senior Product Designer</h1>
+<div class="flex flex-wrap items-center gap-md text-text-secondary font-body-md text-body-md">
+<span class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">business</span> TechNova
+                            </span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">location_on</span> San Francisco, CA (Remote Friendly)
+                            </span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="flex items-center gap-xs font-semibold text-primary">
+<span class="material-symbols-outlined text-[18px]">payments</span> $140k – $180k + Equity
+                            </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="px-lg py-md bg-primary hover:bg-primary-container text-on-primary rounded-lg font-label-md text-label-md transition-all active:scale-95 flex items-center gap-sm">
+                        Apply Now <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<button class="px-lg py-md border border-primary text-primary hover:bg-surface-container-low rounded-lg font-label-md text-label-md transition-all flex items-center gap-sm">
+<span class="material-symbols-outlined text-[20px]">bookmark</span> Save Job
+                    </button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+<!-- Left Column: Content -->
+<div class="lg:col-span-8 space-y-lg">
+<!-- About Section -->
+<section class="bg-surface-card rounded-xl border border-border-default p-xl shadow-sm bento-card">
+<h2 class="font-headline-md text-headline-md mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">info</span> About the Role
+                    </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                        At TechNova, we are building the next generation of enterprise SaaS tools that empower global teams to collaborate seamlessly. As a Senior Product Designer, you will be a core member of our product organization, shaping the visual identity and user experience of our flagship platform. You'll bridge the gap between complex technical requirements and intuitive, delightful interfaces. This role is perfect for a designer who thrives on solving ambiguous problems and is passionate about pushing the boundaries of what enterprise software can feel like.
+                    </p>
+</section>
+<!-- What You'll Do Section -->
+<section class="bg-surface-card rounded-xl border border-border-default p-xl shadow-sm bento-card">
+<h2 class="font-headline-md text-headline-md mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">task_alt</span> What You'll Do
+                    </h2>
+<ul class="space-y-md">
+<li class="flex items-start gap-md">
+<span class="w-6 h-6 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0 mt-xs">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Lead the evolution of our global design system, ensuring consistency and accessibility across all platforms.</p>
+</li>
+<li class="flex items-start gap-md">
+<span class="w-6 h-6 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0 mt-xs">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Collaborate daily with PMs and Engineering leads to define product roadmaps and feature specifications.</p>
+</li>
+<li class="flex items-start gap-md">
+<span class="w-6 h-6 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0 mt-xs">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Drive end-to-end user research initiatives to validate hypotheses and uncover deep user insights.</p>
+</li>
+<li class="flex items-start gap-md">
+<span class="w-6 h-6 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0 mt-xs">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</span>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Mentor junior designers and foster a culture of design excellence within the organization.</p>
+</li>
+</ul>
+</section>
+<!-- Requirements Section -->
+<section class="bg-surface-card rounded-xl border border-border-default p-xl shadow-sm bento-card">
+<h2 class="font-headline-md text-headline-md mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">verified</span> Requirements
+                    </h2>
+<ul class="space-y-md">
+<li class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">history_edu</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">5+ years of experience in product design for web and mobile applications.</span>
+</li>
+<li class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">palette</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">A strong portfolio showcasing end-to-end design process and business impact.</span>
+</li>
+<li class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">architecture</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">Expert proficiency in Figma, including advanced prototyping and auto-layout.</span>
+</li>
+<li class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">diversity_3</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">Exceptional communication skills and ability to influence cross-functional stakeholders.</span>
+</li>
+</ul>
+</section>
+<!-- Benefits Section -->
+<section class="bg-surface-card rounded-xl border border-border-default p-xl shadow-sm bento-card">
+<h2 class="font-headline-md text-headline-md mb-lg flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">card_giftcard</span> Benefits
+                    </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="p-md bg-surface-subtle rounded-lg flex items-center gap-md">
+<span class="material-symbols-outlined text-tertiary-container text-3xl">medical_services</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Health &amp; Dental</p>
+<p class="font-body-sm text-body-sm text-text-secondary">Premium coverage for you &amp; family</p>
+</div>
+</div>
+<div class="p-md bg-surface-subtle rounded-lg flex items-center gap-md">
+<span class="material-symbols-outlined text-tertiary-container text-3xl">flight_takeoff</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Unlimited PTO</p>
+<p class="font-body-sm text-body-sm text-text-secondary">Rest and recharge anytime</p>
+</div>
+</div>
+<div class="p-md bg-surface-subtle rounded-lg flex items-center gap-md">
+<span class="material-symbols-outlined text-tertiary-container text-3xl">school</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Learning Budget</p>
+<p class="font-body-sm text-body-sm text-text-secondary">$3k annual growth stipend</p>
+</div>
+</div>
+<div class="p-md bg-surface-subtle rounded-lg flex items-center gap-md">
+<span class="material-symbols-outlined text-tertiary-container text-3xl">monitor_heart</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Wellness Program</p>
+<p class="font-body-sm text-body-sm text-text-secondary">Gym and mental health support</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Sidebar -->
+<aside class="lg:col-span-4 space-y-lg">
+<!-- Hiring Manager Card -->
+<div class="bg-surface-card rounded-xl border border-border-default overflow-hidden shadow-sm">
+<div class="h-24 bg-primary relative">
+
+</div>
+<div class="px-xl pb-xl pt-0 -mt-12 relative text-center">
+<img alt="Sarah Jenkins, Talent Lead" class="w-24 h-24 rounded-full border-4 border-surface-card mx-auto mb-md object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtLs-Pe-GFZOFMZKB_g5yfzHIZkE0jK8a62Oe8e9Ob_CmAhMpxyc6yoc-fOinRZQ4UVG8QUZ47_e2m7bMFzZI7eTldKr9e1oCBrE62PqlI5i73lt3gQxyllg5edNqEcZ9wOk4lfMRd1ffgEJ0yHlatDAC2OvWv617vztyhMfn0B2TsAtx8GFuYJdsGHvFZXpU-XqriSYC2eS1qzjCO4IRksEG67GmVOHkNMBMiZyIHZ7w8o8_mbI94iWPyU"/>
+<h3 class="font-headline-md text-headline-md text-on-surface">Sarah Jenkins</h3>
+<p class="font-label-md text-label-md text-text-secondary mb-lg">Talent Lead at TechNova</p>
+<button class="w-full py-md border border-outline rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-subtle transition-colors flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">mail</span> Contact Sarah
+                        </button>
+</div>
+</div>
+<!-- Company Highlights Card -->
+<div class="bg-surface-card rounded-xl border border-border-default p-xl shadow-sm">
+<h3 class="font-headline-md text-headline-md mb-lg">Company Highlights</h3>
+<div class="space-y-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-text-secondary">calendar_today</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Founded</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">2015</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-text-secondary">groups</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Employees</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">500+</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-text-secondary">trending_up</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Funding Stage</span>
+</div>
+<span class="px-sm py-xs bg-surface-container-high text-primary rounded-full font-label-sm text-label-sm">Series D</span>
+</div>
+<div class="pt-lg border-t border-border-default">
+<p class="font-body-sm text-body-sm text-text-secondary mb-md">TechNova is a global leader in AI-driven collaboration software, serving 85% of the Fortune 500.</p>
+<a class="text-primary font-label-md text-label-md flex items-center gap-xs hover:underline" href="#">
+                                View Company Profile <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Job Stats/Meta -->
+<div class="bg-surface-container-low rounded-xl p-lg space-y-md">
+<div class="flex items-center gap-sm text-text-secondary">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+<span class="font-body-sm text-body-sm">Posted 2 days ago</span>
+</div>
+<div class="flex items-center gap-sm text-text-secondary">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+<span class="font-body-sm text-body-sm">1,240 views</span>
+</div>
+<div class="flex items-center gap-sm text-text-secondary">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+<span class="font-body-sm text-body-sm">45 applicants</span>
+</div>
+</div>
+</aside></div>
+</main>
+<!-- Footer Space -->
+<footer class="bg-surface-card border-t border-border-default py-xl mt-xl">
+<div class="max-w-container-max mx-auto px-lg flex flex-col md:flex-row justify-between items-center gap-lg">
+<div class="text-headline-md font-bold text-outline-variant">EMPO</div>
+<div class="flex gap-xl text-text-secondary font-label-md text-label-md">
+<a class="hover:text-primary" href="#">Terms</a>
+<a class="hover:text-primary" href="#">Privacy</a>
+<a class="hover:text-primary" href="#">Cookies</a>
+<a class="hover:text-primary" href="#">Accessibility</a>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary">© 2024 EMPO. All rights reserved.</p>
+</div>
+</footer>
+<!-- Apply Modal (Skeleton / Micro-interaction focus) -->
+<script>
+        // Simple micro-interaction for button feedback
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const originalContent = btn.innerHTML;
+                if (btn.innerText.includes('Apply')) {
+                    btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Applying...';
+                    setTimeout(() => {
+                        btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Application Sent';
+                        btn.classList.replace('bg-primary', 'bg-tertiary-container');
+                    }, 1200);
+                }
+            });
+        });
+    </script>
+</body></html>

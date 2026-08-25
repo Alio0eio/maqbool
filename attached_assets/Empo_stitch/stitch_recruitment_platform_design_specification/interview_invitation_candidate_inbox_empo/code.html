@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Interview Invitation | EMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#b6c4ff",
+                        "on-primary": "#ffffff",
+                        "border-default": "#E2E8F0",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#263143",
+                        "surface-container-low": "#f0f3ff",
+                        "status-error": "#DC2626",
+                        "on-tertiary-fixed": "#002114",
+                        "surface-subtle": "#F1F5F9",
+                        "outline-variant": "#c5c5d3",
+                        "text-secondary": "#64748B",
+                        "tertiary": "#003120",
+                        "on-primary-container": "#90a8ff",
+                        "primary-fixed": "#dce1ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#d8e3fb",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "on-tertiary-container": "#4ac08f",
+                        "surface-bg": "#F8FAFC",
+                        "tertiary-fixed": "#85f8c4",
+                        "surface-card": "#FFFFFF",
+                        "outline": "#757682",
+                        "on-secondary-container": "#fefcff",
+                        "inverse-on-surface": "#ecf1ff",
+                        "on-surface-variant": "#444651",
+                        "on-secondary-fixed-variant": "#004395",
+                        "secondary": "#0058be",
+                        "on-secondary-fixed": "#001a42",
+                        "on-surface": "#111c2d",
+                        "surface-container-high": "#dee8ff",
+                        "surface-container": "#e7eeff",
+                        "surface-bright": "#f9f9ff",
+                        "primary-container": "#1e3a8a",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#d8e3fb",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-background": "#111c2d",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary-fixed": "#00164e",
+                        "surface-dim": "#cfdaf2",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#004a32",
+                        "primary": "#00236f",
+                        "secondary-fixed": "#d8e2ff",
+                        "background": "#f9f9ff",
+                        "surface-tint": "#4059aa",
+                        "on-primary-fixed-variant": "#264191",
+                        "surface": "#f9f9ff",
+                        "secondary-container": "#2170e4",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed-variant": "#005137"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .email-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); }
+    </style>
+</head>
+<body class="bg-surface-subtle min-h-screen flex flex-col text-on-surface">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-surface-container-lowest shadow-sm z-50 border-b border-border-default dark:border-outline-variant">
+<div class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">EMPO</span>
+<div class="hidden md:flex items-center gap-md ml-xl">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant font-medium hover:text-secondary transition-colors duration-200 cursor-pointer" href="#">Find Jobs</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant font-medium hover:text-secondary transition-colors duration-200 cursor-pointer" href="#">My Applications</a>
+<a class="font-body-md text-body-md text-secondary dark:text-secondary-fixed border-b-2 border-secondary dark:border-secondary-fixed font-semibold pb-1 cursor-pointer" href="#">Profile</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-lg text-body-md w-64 focus:ring-2 focus:ring-primary/20" placeholder="Search..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant cursor-pointer active:opacity-80">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant cursor-pointer active:opacity-80">settings</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container text-xs font-bold">
+                    AN
+                </div>
+</div>
+</div>
+</header>
+<!-- Email Client Container -->
+<main class="flex-grow container mx-auto px-4 py-8 max-w-4xl">
+<!-- Header Actions -->
+<div class="flex items-center justify-between mb-lg">
+<div class="flex items-center gap-sm">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-on-surface-variant">arrow_back</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-on-surface-variant">archive</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-on-surface-variant">report</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-on-surface-variant">delete</button>
+</div>
+<div class="flex items-center gap-sm">
+<span class="text-body-sm text-text-secondary">1 of 124</span>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-on-surface-variant">chevron_left</button>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-on-surface-variant">chevron_right</button>
+</div>
+</div>
+<!-- Email Content -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden border border-border-default">
+<!-- Email Header -->
+<div class="p-lg md:p-xl border-b border-border-default">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-md">Invitation: Video Interview for Senior Product Designer at Stratos Financial</h1>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
+</div>
+<div>
+<div class="flex items-center gap-sm">
+<span class="font-label-md text-label-md">Sarah Chen via EMPO</span>
+<span class="text-body-sm text-text-secondary font-normal">&lt;sarah.chen@stratos.com&gt;</span>
+</div>
+<div class="text-body-sm text-text-secondary">to Alexander Novak</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-body-sm text-text-secondary">Oct 24, 2024, 10:42 AM</div>
+<div class="flex gap-sm justify-end mt-sm">
+<span class="material-symbols-outlined text-text-secondary text-sm cursor-pointer hover:text-primary">star</span>
+<span class="material-symbols-outlined text-text-secondary text-sm cursor-pointer hover:text-primary">reply</span>
+<span class="material-symbols-outlined text-text-secondary text-sm cursor-pointer hover:text-primary">more_vert</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Email Body -->
+<div class="p-lg md:p-xl">
+<!-- Branding Header -->
+<div class="flex justify-center mb-xl">
+<img alt="Stratos Financial Logo" class="h-16 object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLuBFFOMwnqjfbDACMysYwxIIc-GhDeYGKlnseDUvsJpMYIOD8WV6aex52aMW32QBWgPvCSUEFw7o56sWN_r6sxKt2ctSury7cmdqNAX8_YoFUVaCq4nQxBavAsuUtK4BZyLQZMHfu9uDn4CKAiOFZ6vHoL_udKDsjYO_1uOQ06XUR_csmeQO8qoTqVuRy7SLlVMXwwIRCe0hm6dSDIC5nKHcdG6oplfuZXVODiJFnNzmfCMeJXbQLkIH_rL"/>
+</div>
+<div class="max-w-2xl mx-auto">
+<p class="font-body-lg text-body-lg mb-lg">Hi Alexander,</p>
+<p class="font-body-lg text-body-lg mb-md leading-relaxed">
+                        Congratulations! Based on your impressive profile and design portfolio, we'd love to invite you to the first stage of our interview process for the <span class="font-semibold">Senior Product Designer</span> role at Stratos Financial.
+                    </p>
+<p class="font-body-lg text-body-lg mb-xl leading-relaxed">
+                        We value your time and want to make this as flexible as possible. For this initial round, we are using EMPO's asynchronous video platform to learn more about your design philosophy and problem-solving approach.
+                    </p>
+<!-- Interview Details Bento -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-xl">
+<div class="bg-surface-subtle p-md rounded-lg flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-primary mb-sm">videocam</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-secondary mb-xs">Format</span>
+<span class="font-label-md text-label-md">Asynchronous Video</span>
+</div>
+<div class="bg-surface-subtle p-md rounded-lg flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-primary mb-sm">quiz</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-secondary mb-xs">Structure</span>
+<span class="font-label-md text-label-md">3 Questions</span>
+</div>
+<div class="bg-surface-subtle p-md rounded-lg flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-primary mb-sm">timer</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-secondary mb-xs">Time</span>
+<span class="font-label-md text-label-md">~ 7 Minutes</span>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="text-center mb-xl">
+<a class="inline-flex items-center justify-center bg-primary-container text-white px-xl py-4 rounded-lg font-label-md text-label-md hover:bg-opacity-90 transition-all shadow-md hover:shadow-lg active:scale-[0.98]" href="#">
+                            Start Interview Portal
+                            <span class="material-symbols-outlined ml-sm">arrow_forward</span>
+</a>
+<p class="text-body-sm text-text-secondary mt-md">
+                            Deadline: <span class="font-semibold text-on-surface">Sunday at 11:59 PM EST</span>
+</p>
+</div>
+<!-- Instructions Card -->
+<div class="border border-border-default rounded-xl p-lg bg-surface-bright mb-xl">
+<h3 class="font-label-md text-label-md mb-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">info</span>
+                            Before you start
+                        </h3>
+<ul class="space-y-sm">
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-sm mt-0.5">check_circle</span>
+                                You can record this on any device with a stable internet connection and a camera/mic (laptop, tablet, or phone).
+                            </li>
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-sm mt-0.5">check_circle</span>
+                                You'll have the chance to do a practice question to test your setup before the real interview begins.
+                            </li>
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-sm mt-0.5">check_circle</span>
+                                Your responses are saved automatically after each question.
+                            </li>
+</ul>
+</div>
+<p class="font-body-lg text-body-lg mb-sm">Best regards,</p>
+<p class="font-headline-md text-headline-md text-primary">Sarah Chen</p>
+<p class="text-body-md text-text-secondary">Director of Design, Stratos Financial</p>
+</div>
+</div>
+<!-- Email Footer -->
+<footer class="bg-surface-container-low border-t border-border-default py-xl px-lg md:px-xl">
+<div class="flex flex-col md:flex-row justify-between items-center gap-md max-w-2xl mx-auto">
+<div class="flex flex-col items-center md:items-start">
+<span class="text-body-sm text-text-secondary">Powered by <span class="font-bold text-primary">EMPO AI Recruitment</span></span>
+<span class="text-body-sm text-text-secondary">© 2024 EMPO AI Recruitment. All rights reserved.</span>
+</div>
+<div class="flex gap-md">
+<a class="text-body-sm text-text-secondary hover:text-primary transition-colors" href="#">Help Center</a>
+<a class="text-body-sm text-text-secondary hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-body-sm text-text-secondary hover:text-primary transition-colors" href="#">Terms</a>
+</div>
+</div>
+</footer>
+</div>
+<!-- Quick Reply Box -->
+<div class="mt-lg flex gap-md">
+<button class="flex-1 py-3 px-xl bg-white border border-border-default rounded-lg text-body-md font-medium text-on-surface-variant hover:bg-surface-subtle transition-all flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined">reply</span> Reply
+            </button>
+<button class="flex-1 py-3 px-xl bg-white border border-border-default rounded-lg text-body-md font-medium text-on-surface-variant hover:bg-surface-subtle transition-all flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined">forward</span> Forward
+            </button>
+</div>
+</main>
+<!-- Global Footer -->
+<footer class="w-full py-xl mt-auto bg-surface-container-low dark:bg-surface-container-lowest border-t border-border-default dark:border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto gap-md">
+<div class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">EMPO</div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Help Center</a>
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Support</a>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface dark:text-on-surface">© 2024 EMPO AI Recruitment. All rights reserved.</div>
+</div>
+</footer>
+<script>
+        // Simple interaction for demo
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if (el.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    console.log('Interaction detected on:', el.innerText || 'Icon');
+                }
+            });
+        });
+    </script>
+</body></html>

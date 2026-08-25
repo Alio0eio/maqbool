@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stratos Financial | Company Profile | EMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#004a32",
+                        "surface-dim": "#cfdaf2",
+                        "inverse-on-surface": "#ecf1ff",
+                        "surface-variant": "#d8e3fb",
+                        "surface-bg": "#F8FAFC",
+                        "text-secondary": "#64748B",
+                        "on-secondary-container": "#fefcff",
+                        "on-background": "#111c2d",
+                        "surface-bright": "#f9f9ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "inverse-surface": "#263143",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#2170e4",
+                        "secondary": "#0058be",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#90a8ff",
+                        "on-secondary": "#ffffff",
+                        "surface-subtle": "#F1F5F9",
+                        "tertiary": "#003120",
+                        "on-surface": "#111c2d",
+                        "outline-variant": "#c5c5d3",
+                        "on-primary-fixed-variant": "#264191",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-secondary-fixed": "#001a42",
+                        "primary": "#00236f",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "surface-tint": "#4059aa",
+                        "surface": "#f9f9ff",
+                        "tertiary-fixed": "#85f8c4",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#d8e3fb",
+                        "border-default": "#E2E8F0",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-primary": "#ffffff",
+                        "surface-card": "#FFFFFF",
+                        "on-primary-fixed": "#00164e",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#dee8ff",
+                        "primary-fixed": "#dce1ff",
+                        "primary-container": "#1e3a8a",
+                        "inverse-primary": "#b6c4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#f9f9ff",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "outline": "#757682",
+                        "on-surface-variant": "#444651",
+                        "on-tertiary-fixed": "#002114",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#e7eeff",
+                        "status-error": "#DC2626",
+                        "surface-container-low": "#f0f3ff",
+                        "on-tertiary-container": "#4ac08f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "gutter": "24px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-border-default shadow-sm h-16">
+<div class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-xl">
+<span class="text-headline-lg font-headline-lg font-bold text-primary">EMPO</span>
+<nav class="hidden md:flex gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md" href="#">Find Jobs</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">My Applications</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Post a Job</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Talent Pool</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden sm:flex items-center gap-sm pr-md border-r border-border-default">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-all">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-all">settings</span>
+</div>
+<button class="text-primary font-label-md text-label-md hover:text-primary-container transition-all">Support</button>
+<button class="bg-primary text-on-primary px-lg py-sm rounded-lg font-label-md text-label-md hover:opacity-90 transition-all">Sign In</button>
+</div>
+</div>
+</header>
+<main class="pt-16 pb-xl">
+<!-- Hero Banner Section -->
+<div class="relative w-full h-[320px] md:h-[400px]">
+<div class="w-full h-full bg-cover bg-center" data-alt="A wide-angle, high-resolution professional photograph of a modern financial district with sleek glass skyscrapers under a clear, bright blue sky. The lighting is crisp and natural, reflecting a high-trust corporate environment. The composition is clean and minimalist, conveying stability and institutional excellence, with subtle lens flare for a premium touch." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCXqIJMQfHjujPYT8xmwh-5iD5nGkYl5v7xbe5cltx1Vg1OdRz4p-VSTcj1SyYXtGzbdTidPJbWPHUlj1oFBnPF_Gg7-3BRTEKRrgezucRnEZV_ZvWJPkiy_8pM8q2CAN8bpg7-dYGhC3YthUfwNQdm3QvCFw8wbXtsvvYmYmvZS2jFxKTaZe_F-K1f4NC8WCagOv_7IOF9T_vUKSXW9OtoALDqGCchCZ76RoRDX4yVpsbKSSL2uOuMvA')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute -bottom-16 left-0 right-0 max-w-container-max mx-auto px-lg md:px-xl">
+<div class="flex flex-col md:flex-row items-end gap-lg">
+<div class="bg-white p-2 rounded-xl shadow-lg border border-border-default w-32 h-32 md:w-40 md:h-40 flex-shrink-0">
+<img alt="Stratos Financial Logo" class="w-full h-full object-contain rounded-lg" src="https://lh3.googleusercontent.com/aida/AP1WRLupFqWfAjv3bwsH1suMcU7k3eEKIYu-yjR9GCb28LtI4akVKQ8l3FZmVYEZvp9HjQmmesIz1xUp6XVenO2kH7dKrMZDfbT2wZUTbQJkX2iKI-dOK7tHoBCJdEHkrmfkGB_k9gw00YVMexsxT7mYGbs_r0VKx4Q399j4kN4XL-9Emq_MnmAYt08efS-V6XlYrTkxoN3OdxzsXl0efDdRlgGWP9ET6SH93gM0-opR3J8v1PTJJuUpLQe7ETUQ"/>
+</div>
+<div class="pb-4 flex-grow text-white">
+<h1 class="font-headline-xl text-headline-xl">Stratos Financial</h1>
+<p class="font-body-lg text-body-lg text-white/90 flex items-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+                            Redefining Institutional Wealth Management
+                        </p>
+</div>
+<div class="pb-4 flex gap-sm">
+<button class="bg-white text-primary px-lg py-md rounded-lg font-label-md text-label-md shadow-md hover:bg-surface-subtle transition-all flex items-center gap-sm">
+<span class="material-symbols-outlined">add</span> Follow
+                        </button>
+<button class="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md shadow-md hover:opacity-90 transition-all">
+                            View Website
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Content Grid (Bento Style) -->
+<div class="max-w-container-max mx-auto px-lg md:px-xl mt-24">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Sidebar Stats -->
+<div class="lg:col-span-4 space-y-gutter">
+<!-- Key Stats Card -->
+<div class="bg-surface-card rounded-xl border border-border-default p-lg shadow-sm">
+<h3 class="font-headline-md text-headline-md mb-lg">Key Facts</h3>
+<div class="space-y-md">
+<div class="flex items-center gap-md">
+<div class="bg-surface-container w-10 h-10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">corporate_fare</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-text-secondary uppercase tracking-wider">Industry</p>
+<p class="text-body-md font-body-md font-semibold">Financial Services</p>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="bg-surface-container w-10 h-10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-text-secondary uppercase tracking-wider">Company Size</p>
+<p class="text-body-md font-body-md font-semibold">5,000 - 10,000 Employees</p>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="bg-surface-container w-10 h-10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">location_on</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-text-secondary uppercase tracking-wider">Headquarters</p>
+<p class="text-body-md font-body-md font-semibold">London, UK</p>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="bg-surface-container w-10 h-10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">public</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-text-secondary uppercase tracking-wider">Type</p>
+<p class="text-body-md font-body-md font-semibold">Public Company</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Culture Card -->
+<div class="bg-primary text-on-primary rounded-xl p-lg shadow-md relative overflow-hidden group">
+<div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-110 transition-transform"></div>
+<h3 class="font-headline-md text-headline-md mb-md relative z-10">Our Culture</h3>
+<p class="text-body-md font-body-md text-white/80 mb-lg relative z-10 leading-relaxed">
+                            At Stratos, we foster an environment of intellectual curiosity and ethical integrity. We believe in empowering our people to drive global change.
+                        </p>
+<div class="flex flex-wrap gap-xs relative z-10">
+<span class="bg-white/20 px-sm py-xs rounded text-label-sm font-label-sm">Innovation</span>
+<span class="bg-white/20 px-sm py-xs rounded text-label-sm font-label-sm">Integrity</span>
+<span class="bg-white/20 px-sm py-xs rounded text-label-sm font-label-sm">Collaboration</span>
+</div>
+</div>
+<!-- Location Insight -->
+<div class="bg-surface-card rounded-xl border border-border-default overflow-hidden shadow-sm">
+<div class="h-40 bg-surface-container" data-location="London" style="">
+<!-- Placeholder for map logic -->
+<div class="w-full h-full bg-cover bg-center" data-alt="A stylized, minimalist map showing the Canary Wharf financial district in London. The map uses a sophisticated dark navy and gray palette with subtle highlights on key landmarks. The style is professional and clean, fitting a modern corporate recruitment portal's aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDrFO3vNRcWWiBJSWeOpSU_no5ZqaW7cTKx1zEFM92_kmXLMTWFt2c9xJ_5d4QDsT0fZKHNTUm8vbo56gGE0cleKIZneo2LHPcyBEFUTQb9DBVJMe0B4kyMslO_ubMBSNg17k5vxOZQjrAl_QJ03Lek-LMy_B8JEuHqhV37-QleyXhQod0Z2V5Enb-8YGavx6HpwVukS1TwUIBPxnDUnha89NF_2tPVUUFM8l5SYiHa1CQ3RJKMCKnXIw')"></div>
+</div>
+<div class="p-md">
+<p class="text-label-md font-label-md font-bold mb-xs">Canary Wharf Office</p>
+<p class="text-body-sm font-body-sm text-text-secondary">25 Churchill Place, London E14 5RB</p>
+</div>
+</div>
+</div>
+<!-- Main Description & Jobs -->
+<div class="lg:col-span-8 space-y-gutter">
+<!-- About Section -->
+<section class="bg-surface-card rounded-xl border border-border-default p-xl shadow-sm">
+<h2 class="font-headline-lg text-headline-lg mb-lg">About Stratos Financial</h2>
+<div class="space-y-md text-on-surface-variant leading-relaxed font-body-lg text-body-lg">
+<p>
+                                Founded in 2004, Stratos Financial has grown into a global leader in investment management and corporate advisory services. We manage over £450 billion in assets for a diverse clientele, ranging from institutional investors to high-net-worth individuals.
+                            </p>
+<p>
+                                Our mission is simple: to provide stable, long-term growth through rigorous analysis and a relentless commitment to our clients' success. We are currently expanding our digital transformation team and looking for forward-thinking professionals to join our journey.
+                            </p>
+</div>
+<div class="mt-xl grid grid-cols-2 md:grid-cols-4 gap-md border-t border-border-default pt-xl">
+<div class="text-center">
+<p class="text-headline-md font-headline-md text-primary">20+</p>
+<p class="text-label-sm font-label-sm text-text-secondary uppercase">Global Offices</p>
+</div>
+<div class="text-center">
+<p class="text-headline-md font-headline-md text-primary">15k</p>
+<p class="text-label-sm font-label-sm text-text-secondary uppercase">Experts</p>
+</div>
+<div class="text-center">
+<p class="text-headline-md font-headline-md text-primary">$450B</p>
+<p class="text-label-sm font-label-sm text-text-secondary uppercase">AUM</p>
+</div>
+<div class="text-center">
+<p class="text-headline-md font-headline-md text-primary">4.8</p>
+<p class="text-label-sm font-label-sm text-text-secondary uppercase">Glassdoor</p>
+</div>
+</div>
+</section>
+<!-- Open Positions -->
+<section>
+<div class="flex justify-between items-center mb-lg">
+<h2 class="font-headline-lg text-headline-lg">Open Positions</h2>
+<div class="flex gap-sm">
+<span class="bg-surface-container px-md py-sm rounded-lg text-label-md font-label-md text-primary cursor-pointer hover:bg-surface-container-high transition-colors">All Categories</span>
+<span class="material-symbols-outlined cursor-pointer text-text-secondary hover:text-primary p-sm">filter_list</span>
+</div>
+</div>
+<div class="space-y-md">
+<!-- Job Card 1 -->
+<div class="bg-surface-card rounded-xl border border-border-default p-lg shadow-sm hover:shadow-md hover:border-primary transition-all group cursor-pointer">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div class="space-y-sm">
+<div class="flex items-center gap-sm">
+<span class="bg-tertiary-container/10 text-tertiary text-label-sm font-label-sm px-sm py-xs rounded-full">New</span>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Senior Portfolio Manager</h3>
+</div>
+<div class="flex flex-wrap gap-md text-text-secondary">
+<span class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span> London (Hybrid)
+                                            </span>
+<span class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">payments</span> £120k - £160k
+                                            </span>
+<span class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">schedule</span> Full-time
+                                            </span>
+</div>
+</div>
+<button class="bg-surface-subtle text-primary border border-border-default px-lg py-md rounded-lg font-label-md text-label-md group-hover:bg-primary group-hover:text-on-primary transition-all">
+                                        Apply Now
+                                    </button>
+</div>
+</div>
+<!-- Job Card 2 -->
+<div class="bg-surface-card rounded-xl border border-border-default p-lg shadow-sm hover:shadow-md hover:border-primary transition-all group cursor-pointer">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div class="space-y-sm">
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Digital Product Designer</h3>
+<div class="flex flex-wrap gap-md text-text-secondary">
+<span class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span> New York (Remote)
+                                            </span>
+<span class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">payments</span> $140k - $180k
+                                            </span>
+<span class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">schedule</span> Full-time
+                                            </span>
+</div>
+</div>
+<button class="bg-surface-subtle text-primary border border-border-default px-lg py-md rounded-lg font-label-md text-label-md group-hover:bg-primary group-hover:text-on-primary transition-all">
+                                        Apply Now
+                                    </button>
+</div>
+</div>
+<!-- Job Card 3 -->
+<div class="bg-surface-card rounded-xl border border-border-default p-lg shadow-sm hover:shadow-md hover:border-primary transition-all group cursor-pointer">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div class="space-y-sm">
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Risk Assessment Lead</h3>
+<div class="flex flex-wrap gap-md text-text-secondary">
+<span class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">location_on</span> Singapore
+                                            </span>
+<span class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">payments</span> Competitive
+                                            </span>
+<span class="flex items-center gap-xs text-body-md font-body-md">
+<span class="material-symbols-outlined text-[18px]">schedule</span> Full-time
+                                            </span>
+</div>
+</div>
+<button class="bg-surface-subtle text-primary border border-border-default px-lg py-md rounded-lg font-label-md text-label-md group-hover:bg-primary group-hover:text-on-primary transition-all">
+                                        Apply Now
+                                    </button>
+</div>
+</div>
+</div>
+<div class="mt-xl text-center">
+<button class="text-primary font-label-md text-label-md flex items-center gap-sm mx-auto hover:underline transition-all">
+                                View all 42 positions <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</section>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-border-default">
+<div class="w-full py-xl px-lg md:px-xl max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex flex-col gap-sm">
+<span class="text-headline-md font-headline-md font-bold text-primary">EMPO</span>
+<p class="text-body-sm font-body-sm text-text-secondary">© 2024 EMPO Recruitment Solutions. All rights reserved.</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-lg">
+<a class="text-text-secondary hover:text-primary transition-all text-label-sm font-label-sm" href="#">Privacy Policy</a>
+<a class="text-text-secondary hover:text-primary transition-all text-label-sm font-label-sm" href="#">Terms of Service</a>
+<a class="text-text-secondary hover:text-primary transition-all text-label-sm font-label-sm" href="#">Cookie Policy</a>
+<a class="text-text-secondary hover:text-primary transition-all text-label-sm font-label-sm" href="#">Contact Us</a>
+<a class="text-text-secondary hover:text-primary transition-all text-label-sm font-label-sm" href="#">Help Center</a>
+</nav>
+</div>
+</footer>
+<script>
+        // Micro-interaction for smooth scrolling or hover effects
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add a simple scroll-shadow effect for the glass header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md');
+            } else {
+                header.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body></html>

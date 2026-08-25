@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO | Final Application Status</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "border-default": "#E2E8F0",
+                    "surface-container-high": "#dee8ff",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "surface-bg": "#F8FAFC",
+                    "on-primary-fixed-variant": "#264191",
+                    "surface-subtle": "#F1F5F9",
+                    "outline-variant": "#c5c5d3",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#b6c4ff",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-primary-container": "#90a8ff",
+                    "on-primary-fixed": "#00164e",
+                    "background": "#f9f9ff",
+                    "surface-container-low": "#f0f3ff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "surface-card": "#FFFFFF",
+                    "on-background": "#111c2d",
+                    "surface": "#f9f9ff",
+                    "on-error-container": "#93000a",
+                    "status-error": "#DC2626",
+                    "tertiary": "#003120",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "text-secondary": "#64748B",
+                    "tertiary-container": "#004a32",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#ecf1ff",
+                    "secondary": "#0058be",
+                    "tertiary-fixed": "#85f8c4",
+                    "on-primary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-surface": "#111c2d",
+                    "surface-container-highest": "#d8e3fb",
+                    "on-secondary-container": "#fefcff",
+                    "surface-variant": "#d8e3fb",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#1e3a8a",
+                    "surface-tint": "#4059aa",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-bright": "#f9f9ff",
+                    "surface-container": "#e7eeff",
+                    "inverse-surface": "#263143",
+                    "surface-dim": "#cfdaf2",
+                    "on-tertiary-container": "#4ac08f",
+                    "on-surface-variant": "#444651",
+                    "on-tertiary-fixed": "#002114",
+                    "primary": "#00236f",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "primary-fixed": "#dce1ff",
+                    "secondary-container": "#2170e4",
+                    "outline": "#757682",
+                    "on-secondary-fixed": "#001a42"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "md": "16px",
+                    "gutter": "24px",
+                    "container-max": "1280px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "xl": "32px",
+                    "margin": "24px"
+            },
+            "fontFamily": {
+                    "headline-xl-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .confetti-canvas {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+        }
+        .bento-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bento-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
+        }
+        .success-glow {
+            box-shadow: 0 0 40px -10px rgba(74, 192, 143, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-surface-bg font-body-md text-on-surface">
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-border-default dark:border-outline-variant shadow-sm sticky top-0 z-40 w-full">
+<nav class="flex justify-between items-center px-lg h-16 w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-xl">
+<span class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim">EMPO</span>
+<div class="hidden md:flex items-center gap-lg">
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary font-label-md text-label-md transition-colors" href="#">Find Jobs</a>
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary font-bold pb-1 font-label-md text-label-md" href="#">Applications</a>
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary font-label-md text-label-md transition-colors" href="#">Messages</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 hover:bg-surface-subtle rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-subtle rounded-full transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-default ml-sm">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of Alex Sterling, a creative professional in his early 30s with short dark hair and a friendly expression. He is wearing a minimalist navy blue sweater against a soft, light grey studio background. The lighting is bright and even, reflecting a modern corporate yet approachable aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDymh6_nPkZddU6b_8a_LnEYQaAeWGEu1Et1_vP-8qKedlWR32rKx84V61y5-orElGfrUEw17kpCEuStpmQpgsZjjajjPBiw5XJoeLZ9hY9K92xcmSY9w2c8s4_QTZxHla0_YZsf9Y9MTKZOzXEZ_QsUtLMmLu93bhLc40q1LBN7Z5ijjE-KzSE5NA_ixzC24p3_kec1lnKSxxq25hcf6LepJNdn-XkBSgfdUWOl7-P-jfc3WaKwbF3Xg"/>
+</div>
+</div>
+</nav>
+</header>
+<main class="max-w-container-max mx-auto px-lg py-xl">
+<!-- Status Header Section -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg items-start">
+<!-- Main Content Area -->
+<div class="md:col-span-8 space-y-lg">
+<!-- Celebratory Status Card -->
+<section class="bg-surface-card rounded-xl border border-border-default p-xl success-glow relative overflow-hidden">
+<div class="absolute top-0 right-0 p-lg opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-sm mb-md">
+<span class="bg-on-tertiary-container/10 text-on-tertiary-container px-3 py-1 rounded-full text-label-sm font-label-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">stars</span>
+                                SHORTLISTED FOR HIRE
+                            </span>
+<span class="text-text-secondary text-label-sm">Application ID: #EMP-88291</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl mb-xs">Congratulations, Alex Sterling!</h1>
+<p class="text-text-secondary text-body-lg mb-xl max-w-2xl">
+                            The hiring team at <span class="font-bold text-on-surface">Lumina Tech</span> has officially shortlisted you for the <strong>Senior UX Architect</strong> position. Your expertise perfectly aligns with their vision for the next generation of creative tools.
+                        </p>
+<div class="flex flex-wrap gap-md">
+<button class="bg-primary text-on-primary px-lg py-md rounded-lg font-label-md text-label-md hover:opacity-90 active:scale-95 transition-all flex items-center gap-sm shadow-md">
+<span class="material-symbols-outlined">description</span>
+                                View Offer Details
+                            </button>
+<button class="border border-primary text-primary px-lg py-md rounded-lg font-label-md text-label-md hover:bg-surface-subtle active:scale-95 transition-all flex items-center gap-sm">
+<span class="material-symbols-outlined">chat_bubble</span>
+                                Message Recruiter
+                            </button>
+</div>
+</div>
+</section>
+<!-- Bento Grid for Feedback and Details -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- AI Feedback Summary -->
+<div class="bento-card bg-surface-card border border-border-default rounded-xl p-lg flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-md text-headline-md flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+                                Why you stood out
+                            </h3>
+</div>
+<ul class="space-y-md">
+<li class="flex gap-md">
+<div class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-sm">architecture</span>
+</div>
+<div>
+<p class="font-label-md text-label-md">Exceptional Technical Depth</p>
+<p class="text-body-sm text-text-secondary">Your systems-thinking approach in the portfolio review was cited as a key differentiator.</p>
+</div>
+</li>
+<li class="flex gap-md">
+<div class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-sm">diversity_3</span>
+</div>
+<div>
+<p class="font-label-md text-label-md">Strong Culture Alignment</p>
+<p class="text-body-sm text-text-secondary">Feedback highlighted your collaborative mindset and experience leading cross-functional teams.</p>
+</div>
+</li>
+<li class="flex gap-md">
+<div class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-sm">trending_up</span>
+</div>
+<div>
+<p class="font-label-md text-label-md">High Growth Potential</p>
+<p class="text-body-sm text-text-secondary">Lumina Tech sees you progressing into a Principal role within 18 months.</p>
+</div>
+</li>
+</ul>
+</div>
+<!-- Role Quick Facts -->
+<div class="bento-card bg-surface-container-low border border-border-default rounded-xl p-lg flex flex-col justify-between">
+<div>
+<h3 class="font-label-md text-label-md text-text-secondary uppercase tracking-widest mb-lg">Lumina Tech | Senior UX Architect</h3>
+<div class="space-y-md">
+<div class="flex justify-between items-center py-sm border-b border-white/40">
+<span class="text-body-md text-text-secondary">Expected Start Date</span>
+<span class="font-bold text-on-surface">January 15, 2025</span>
+</div>
+<div class="flex justify-between items-center py-sm border-b border-white/40">
+<span class="text-body-md text-text-secondary">Work Arrangement</span>
+<span class="font-bold text-on-surface">Remote / Flexible</span>
+</div>
+<div class="flex justify-between items-center py-sm border-b border-white/40">
+<span class="text-body-md text-text-secondary">Team Size</span>
+<span class="font-bold text-on-surface">12 Designers</span>
+</div>
+</div>
+</div>
+<div class="mt-lg">
+<div class="h-32 w-full rounded-lg bg-cover bg-center" data-alt="A sophisticated, high-end office interior featuring floor-to-ceiling glass windows, minimalist ergonomic furniture, and lush green plants. The room is bathed in warm natural afternoon sunlight, creating an inviting and professional atmosphere. The design is sleek, modern, and high-trust, representing a top-tier technology company headquarters." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCZSjxll-Jte4mEal1Hxq7rDxE9OUyxIlS9b1ZQPdny8zgJqdPZeveXAFBoA4LOwldhJN4-cAU_waz0YltxHlTlgjzzWMShLoVLaeMEhV6b_zikJevfUWG6DVmJgktO7uPMdtCoDqZC6EoyFoi_JQxskDh7s2gHORrcc4FH-TB9YLG7wQOlSYeKppqCVJeghG6M_9aVbOVVi1ah6rt5-aY_ZbelSSyB5NeUd6b_i2ZcCAQhGdvLy5wE4A')"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar: Next Steps & Actions -->
+<aside class="md:col-span-4 space-y-lg">
+<!-- Timeline Section -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm">
+<h3 class="font-headline-md text-headline-md mb-lg">What's Next</h3>
+<div class="space-y-xl relative">
+<!-- Vertical line -->
+<div class="absolute left-[11px] top-2 bottom-2 w-0.5 bg-border-default"></div>
+<div class="relative flex gap-lg">
+<div class="w-6 h-6 rounded-full bg-on-tertiary-container flex items-center justify-center shrink-0 z-10 border-4 border-surface-card">
+<span class="material-symbols-outlined text-[12px] text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div>
+<p class="font-label-md text-label-md">Final Shortlisting</p>
+<p class="text-body-sm text-text-secondary">Completed on Dec 12</p>
+</div>
+</div>
+<div class="relative flex gap-lg">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center shrink-0 z-10 border-4 border-surface-card animate-pulse">
+<div class="w-2 h-2 rounded-full bg-white"></div>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">Offer Letter Generation</p>
+<p class="text-body-sm text-text-secondary">Estimated arrival: Within 24-48 hours</p>
+</div>
+</div>
+<div class="relative flex gap-lg opacity-40">
+<div class="w-6 h-6 rounded-full bg-border-default flex items-center justify-center shrink-0 z-10 border-4 border-surface-card"></div>
+<div>
+<p class="font-label-md text-label-md">Background Check</p>
+<p class="text-body-sm text-text-secondary">Expected duration: 3-5 days</p>
+</div>
+</div>
+<div class="relative flex gap-lg opacity-40">
+<div class="w-6 h-6 rounded-full bg-border-default flex items-center justify-center shrink-0 z-10 border-4 border-surface-card"></div>
+<div>
+<p class="font-label-md text-label-md">Onboarding Kickoff</p>
+<p class="text-body-sm text-text-secondary">Target: Week of January 8th</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Actions -->
+<div class="bg-surface-subtle border border-border-default rounded-xl p-lg">
+<h4 class="font-label-md text-label-md mb-md text-on-surface-variant">Ongoing Exploration</h4>
+<div class="flex flex-col gap-sm">
+<a class="flex items-center justify-between p-md bg-surface-card rounded-lg border border-border-default hover:border-primary transition-colors group" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary">search</span>
+<span class="font-label-md text-label-md">Browse Other Jobs</span>
+</div>
+<span class="material-symbols-outlined text-sm text-text-secondary">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-md bg-surface-card rounded-lg border border-border-default hover:border-primary transition-colors group" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-text-secondary group-hover:text-primary">person_search</span>
+<span class="font-label-md text-label-md">Update Your Profile</span>
+</div>
+<span class="material-symbols-outlined text-sm text-text-secondary">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- Recruiter Contact -->
+<div class="flex items-center gap-md p-md border border-border-default rounded-xl bg-surface-card">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="A warm and professional portrait of Sarah Jenkins, a Talent Acquisition Lead. She has curly auburn hair and is smiling warmly, wearing glasses and a crisp white shirt. The background is a soft-focus office environment with warm wood tones and professional lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzYMPpkxhyG6UZK4-PXMPW30JzJqnmsnpSWhCXUBS4mWniiYEIX6C4YCBFeLkfWV3gRuzDCiQhFz_XZ68B06a0-aGQDsHve2sbby0-cLE1_EqpMY6f8Y3ZX449tXC73XBr-tGVseXmbV--FMPZxSeZ9IVYwaZMtEJDxiMDcnt20G0MgsRd6Jpe49o1_WsXbjnzZtkccXQdDiFU3CeZdQLjMHlKc5hBBAIf92wSnRe5mavuwnD505-99g"/>
+<div>
+<p class="font-label-md text-label-md">Sarah Jenkins</p>
+<p class="text-body-sm text-text-secondary">Talent Acquisition Lead</p>
+</div>
+<button class="ml-auto w-10 h-10 rounded-full border border-border-default flex items-center justify-center hover:bg-surface-subtle transition-colors">
+<span class="material-symbols-outlined text-primary">mail</span>
+</button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-bg dark:bg-on-background border-t border-border-default dark:border-outline-variant mt-xl">
+<div class="w-full py-xl px-lg flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto">
+<div class="flex flex-col md:items-start items-center gap-xs mb-lg md:mb-0">
+<span class="font-label-sm text-label-sm font-bold text-on-surface dark:text-surface-variant">EMPO Recruitment Solutions</span>
+<p class="font-body-sm text-body-sm text-text-secondary dark:text-surface-variant">© 2024 EMPO Recruitment Solutions. All rights reserved.</p>
+</div>
+<div class="flex gap-lg">
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:underline" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:underline" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-text-secondary dark:text-on-surface-variant hover:underline" href="#">Contact Support</a>
+</div>
+</div>
+</footer>
+<canvas class="confetti-canvas" id="confetti"></canvas>
+<script>
+        // Simple micro-interaction: Subtle confetti effect on page load for shortlisted state
+        window.addEventListener('load', () => {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            const colors = ['#00236f', '#3B82F6', '#4AC08F', '#85f8c4'];
+
+            for (let i = 0; i < 60; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 3 + 2,
+                    angle: Math.random() * 6.28,
+                    spin: Math.random() * 0.2 - 0.1
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => {
+                    p.y += p.speed;
+                    p.angle += p.spin;
+                    
+                    ctx.fillStyle = p.color;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.angle);
+                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    ctx.restore();
+
+                    if (p.y > canvas.height) {
+                        particles[i].y = -20;
+                        particles[i].x = Math.random() * canvas.width;
+                        // Slowly reduce particles over time
+                        if(Math.random() > 0.98) particles.splice(i, 1);
+                    }
+                });
+
+                if (particles.length > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    canvas.style.display = 'none';
+                }
+            }
+
+            // Trigger only once
+            setTimeout(animate, 500);
+        });
+
+        // Hover scale effect logic for buttons handled by tailwind 'active:scale-95'
+    </script>
+</body></html>

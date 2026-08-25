@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "EMPO AI Recruitment Platform"
+version = "1.0.0"
+id = "artifacts/empo"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25390
+
+[services.development]
+run = "pnpm --filter @workspace/empo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/empo", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/empo/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25390"
+BASE_PATH = "/"

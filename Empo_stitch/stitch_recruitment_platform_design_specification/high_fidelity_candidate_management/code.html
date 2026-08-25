@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO | World-Class Candidate Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#00164e",
+                        "on-error-container": "#93000a",
+                        "on-background": "#111c2d",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-primary-container": "#90a8ff",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "border-default": "#E2E8F0",
+                        "inverse-primary": "#b6c4ff",
+                        "outline-variant": "#c5c5d3",
+                        "outline": "#757682",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "surface-variant": "#d8e3fb",
+                        "on-secondary-container": "#fefcff",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#00236f",
+                        "surface-container": "#e7eeff",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f9f9ff",
+                        "tertiary-container": "#004a32",
+                        "inverse-surface": "#263143",
+                        "surface-container-low": "#f0f3ff",
+                        "error": "#ba1a1a",
+                        "text-secondary": "#64748B",
+                        "on-surface": "#111c2d",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-dim": "#cfdaf2",
+                        "primary-fixed": "#dce1ff",
+                        "background": "#f9f9ff",
+                        "on-error": "#ffffff",
+                        "on-surface-variant": "#444651",
+                        "secondary-container": "#2170e4",
+                        "on-tertiary-container": "#4ac08f",
+                        "status-error": "#DC2626",
+                        "on-secondary": "#ffffff",
+                        "surface-card": "#FFFFFF",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#4059aa",
+                        "secondary": "#0058be",
+                        "surface": "#f9f9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#002114",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "inverse-on-surface": "#ecf1ff",
+                        "surface-container-high": "#dee8ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-bg": "#F8FAFC",
+                        "surface-subtle": "#F1F5F9",
+                        "on-primary-fixed-variant": "#264191",
+                        "tertiary-fixed": "#85f8c4",
+                        "surface-container-highest": "#d8e3fb",
+                        "tertiary": "#003120",
+                        "primary-container": "#1e3a8a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "sm": "8px",
+                        "margin": "24px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .profile-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025); }
+        .slider-thumb::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #00236f; cursor: pointer; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .slider-thumb::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #00236f; cursor: pointer; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-on-background min-h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-full py-lg px-md space-y-sm bg-white border-r border-border-default w-64 flex-shrink-0">
+<div class="mb-xl px-sm">
+<div class="flex items-center gap-sm mb-xs">
+<div class="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[20px]">dynamic_form</span>
+</div>
+<h1 class="text-headline-md font-bold text-primary tracking-tight">EMPO</h1>
+</div>
+<p class="text-label-sm font-label-sm text-text-secondary uppercase tracking-widest px-xs">Recruiter Suite</p>
+</div>
+<nav class="flex-1 space-y-sm overflow-y-auto no-scrollbar">
+<a class="flex items-center gap-md p-md text-text-secondary font-medium hover:bg-surface-subtle transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+<a class="flex items-center gap-md p-md text-text-secondary font-medium hover:bg-surface-subtle transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-label-md text-label-md">Pipeline</span>
+</a>
+<a class="flex items-center gap-md p-md bg-primary-container text-white rounded-lg font-bold shadow-md transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-md text-label-md">Talent Pool</span>
+</a>
+<a class="flex items-center gap-md p-md text-text-secondary font-medium hover:bg-surface-subtle transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-md text-label-md">Schedules</span>
+</a>
+<a class="flex items-center gap-md p-md text-text-secondary font-medium hover:bg-surface-subtle transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</nav>
+<div class="pt-lg border-t border-border-default space-y-sm">
+<button class="w-full bg-primary text-white py-md rounded-lg font-bold text-label-md mb-lg hover:bg-opacity-90 shadow-lg shadow-primary/20 active:scale-95 transition-all">
+            Post New Job
+        </button>
+<a class="flex items-center gap-md p-md text-text-secondary font-medium hover:bg-surface-subtle transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-label-md text-label-md">Configuration</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+<!-- Enhanced Header -->
+<header class="h-20 flex justify-between items-center px-xl bg-white border-b border-border-default z-10">
+<div class="flex items-center gap-xl">
+<div>
+<h2 class="text-headline-lg font-bold text-primary">Candidate Management</h2>
+</div>
+<!-- Job Selector Dropdown -->
+<div class="relative group cursor-pointer">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-text-secondary uppercase tracking-tighter">Current Role View</span>
+<div class="flex items-center gap-sm bg-surface-container-low px-md py-sm rounded-lg border border-border-default hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">work</span>
+<span class="text-body-md font-bold text-on-surface">Senior UX Designer</span>
+<span class="material-symbols-outlined text-outline">unfold_more</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<div class="relative hidden xl:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-md py-2.5 border border-border-default rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none w-80 text-body-md bg-surface-subtle" placeholder="Search by name, skill, or past company..." type="text"/>
+</div>
+<div class="flex items-center gap-md border-l border-border-default pl-lg">
+<button class="p-2 rounded-full hover:bg-surface-subtle text-text-secondary relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 h-2 w-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+<div class="flex items-center gap-md pl-sm">
+<div class="text-right hidden sm:block">
+<p class="text-label-md font-bold text-on-surface">Alex Thompson</p>
+<p class="text-[11px] text-text-secondary">Lead Talent Partner</p>
+</div>
+<div class="h-10 w-10 rounded-xl bg-surface-dim overflow-hidden border-2 border-white shadow-sm ring-1 ring-border-default">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-UlDxoogZlLLUcc3_pxwjxYgRnPFYjZI94wV9zJLsjcGUTpgWXz0zImucmDCaDx6cDNW11rANwCRmgxleyFF4NEwkpTbatsEoL0NSmTkZRBWYqum4IkVesKTuX-jI4PQcjG1pRrSlIlLMTO7OAOYPQxlAEAhJfxhnySyVXXgZ8aHCXa_4U6jfsL3PPr4502V-JGSIplf9nY_uib7yCvQfRN8E1EjFpFqX-i8pgEpUHUsEz_vm-8reUg"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Refined Filter Sidebar -->
+<aside class="w-80 bg-white border-r border-border-default flex flex-col hidden lg:flex">
+<div class="p-lg border-b border-border-default flex justify-between items-center">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">tune</span>
+<span class="text-label-md font-bold text-primary">ADVANCED FILTERS</span>
+</div>
+<button class="text-label-sm text-secondary hover:underline font-bold">Reset</button>
+</div>
+<div class="flex-1 overflow-y-auto p-lg space-y-xl no-scrollbar">
+<!-- Interactive Status -->
+<div>
+<label class="text-[11px] font-bold text-text-secondary block mb-md uppercase tracking-wider">Pipeline Stage</label>
+<div class="grid grid-cols-1 gap-sm">
+<button class="flex items-center justify-between p-md rounded-xl border border-primary bg-primary/5 text-primary font-bold transition-all">
+<span class="flex items-center gap-md">
+<span class="material-symbols-outlined text-[18px]">person_search</span> Screening
+                            </span>
+<span class="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full">24</span>
+</button>
+<button class="flex items-center justify-between p-md rounded-xl border border-border-default hover:border-primary/30 text-on-surface transition-all">
+<span class="flex items-center gap-md">
+<span class="material-symbols-outlined text-outline text-[18px]">forum</span> Interview
+                            </span>
+<span class="bg-surface-container-high text-on-surface-variant text-[10px] px-2 py-0.5 rounded-full">8</span>
+</button>
+</div>
+</div>
+<!-- Interactive Salary Range -->
+<div>
+<label class="text-[11px] font-bold text-text-secondary block mb-md uppercase tracking-wider">Salary Range (Annual)</label>
+<div class="space-y-sm">
+<input class="w-full h-1.5 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary slider-thumb" max="250" min="50" type="range" value="120"/>
+<div class="flex justify-between items-center bg-surface-subtle p-sm rounded-lg border border-border-default">
+<span class="text-body-sm font-bold text-primary">$120k</span>
+<span class="text-body-sm font-bold text-primary">$250k+</span>
+</div>
+</div>
+</div>
+<!-- Experience Slider -->
+<div>
+<label class="text-[11px] font-bold text-text-secondary block mb-md uppercase tracking-wider">Years of Experience</label>
+<input class="w-full h-1.5 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary slider-thumb" max="15" min="0" type="range" value="8"/>
+<div class="flex justify-between mt-sm px-xs">
+<span class="text-[10px] font-medium text-text-secondary">0y</span>
+<span class="text-body-sm font-bold text-primary">Min. 8 Years</span>
+<span class="text-[10px] font-medium text-text-secondary">15y+</span>
+</div>
+</div>
+<!-- Skill Tags Selection -->
+<div>
+<label class="text-[11px] font-bold text-text-secondary block mb-md uppercase tracking-wider">Core Proficiencies</label>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 bg-primary text-white text-label-sm rounded-lg flex items-center gap-xs shadow-sm shadow-primary/20 cursor-pointer">Figma <span class="material-symbols-outlined text-[14px]">close</span></span>
+<span class="px-3 py-1.5 bg-primary text-white text-label-sm rounded-lg flex items-center gap-xs shadow-sm shadow-primary/20 cursor-pointer">React <span class="material-symbols-outlined text-[14px]">close</span></span>
+<span class="px-3 py-1.5 bg-surface-container-high text-on-surface-variant text-label-sm rounded-lg hover:bg-surface-dim cursor-pointer transition-colors">+ Add Skill</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- High-End Candidate List -->
+<section class="flex-1 overflow-y-auto p-lg no-scrollbar bg-[#F1F5F9]/30">
+<div class="max-w-5xl mx-auto">
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h3 class="text-headline-md font-bold text-on-surface">Applications</h3>
+<p class="text-body-sm text-text-secondary">Viewing 34 potential candidates for Senior UX Designer</p>
+</div>
+<div class="flex gap-sm">
+<button class="flex items-center gap-sm px-md py-sm bg-white rounded-lg border border-border-default shadow-sm text-label-md font-bold text-on-surface hover:bg-surface-subtle transition-all">
+<span class="material-symbols-outlined text-[18px]">swap_vert</span> Sort: Relevance
+                        </button>
+<button class="p-sm bg-white rounded-lg border border-border-default shadow-sm text-outline hover:text-primary transition-all">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+</div>
+</div>
+<div class="space-y-lg">
+<!-- Profile Card 1 - World Class Style -->
+<div class="profile-card bg-white rounded-2xl border border-border-default shadow-sm p-lg transition-all cursor-pointer relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1.5 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-xl">
+<!-- Candidate Identity -->
+<div class="flex items-center gap-lg flex-1">
+<div class="relative">
+<div class="h-20 w-20 rounded-2xl overflow-hidden shadow-md ring-4 ring-surface-container-low">
+<img alt="Sarah Henderson" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKMUCCRyzB9PA5GwZHU3SJzC65Hc2QEvDdthgUmSvXA4tJNgxaO_7bY3FsE74VTxNnhA7_Z6giCiVp74cEigb1pQ3chQjxcUDu6zTPgZtH4ZWZYyyc_6-wPc4dxMlwC4-bqLcIvEYwkLfIA26tDO7CQCrtzQ64cU82vBtwxNJwG0aH1M3Wz536fPr4uLon1KNxk2TGP0J1_mTD0UJHb-VUjkM1DSevniPvNdN8lofgncYGEb-Ah7VC2Q"/>
+</div>
+<div class="absolute -bottom-2 -right-2 h-7 w-7 bg-white rounded-full flex items-center justify-center shadow-md border border-border-default">
+<span class="material-symbols-outlined text-green-600 text-[16px] font-bold">verified</span>
+</div>
+</div>
+<div>
+<div class="flex items-center gap-md mb-xs">
+<h4 class="text-body-lg font-bold text-on-surface group-hover:text-primary transition-colors">Sarah Henderson</h4>
+<span class="text-[10px] font-bold text-text-secondary bg-surface-subtle px-2 py-0.5 rounded uppercase tracking-tighter border border-border-default">Applied 2 days ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant font-medium mb-md">Current Role: <span class="text-primary font-bold">Senior Designer at Adobe</span></p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 bg-surface-container-low text-primary text-[11px] font-bold rounded-lg border border-primary/10">Figma</span>
+<span class="px-2.5 py-1 bg-surface-container-low text-primary text-[11px] font-bold rounded-lg border border-primary/10">Design Systems</span>
+<span class="px-2.5 py-1 bg-surface-container-low text-primary text-[11px] font-bold rounded-lg border border-primary/10">UX Research</span>
+<span class="px-2.5 py-1 bg-surface-subtle text-text-secondary text-[11px] font-medium rounded-lg border border-border-default">+4 more</span>
+</div>
+</div>
+</div>
+<!-- Match Score & Stats -->
+<div class="flex items-center gap-xl border-l border-border-default pl-xl">
+<div class="text-center">
+<div class="inline-flex flex-col items-center p-3 bg-green-50 rounded-2xl border border-green-100 shadow-sm shadow-green-600/5">
+<span class="text-headline-md font-bold text-green-700">98%</span>
+<span class="text-[9px] font-bold text-green-600 uppercase tracking-tighter">Match Score</span>
+</div>
+</div>
+<div class="hidden xl:flex flex-col gap-sm">
+<div class="flex items-center gap-sm text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-label-sm font-medium">San Francisco, CA</span>
+</div>
+<div class="flex items-center gap-sm text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">history_edu</span>
+<span class="text-label-sm font-medium">8 Years Experience</span>
+</div>
+</div>
+<div class="flex items-center gap-md ml-lg">
+<button class="bg-primary text-white px-lg py-2.5 rounded-xl font-bold text-label-md hover:bg-opacity-90 shadow-md shadow-primary/10 transition-all">Schedule</button>
+<button class="p-2.5 bg-surface-subtle text-outline rounded-xl hover:text-primary hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Profile Card 2 - Featuring requested image https://lh3.googleusercontent.com/aida-public/AB6AXuA9WmfKRcgaiput7DlpLANTv4u6E3lT92AF90iLwHRrAlCe4XG4dYmm-hJp6v2Iyqtqw6GDC2laUd3uTKe7nSzyAdWbjytUXvShxb4Wq-t3RED8FEP4U6xQDsYSwM6bI-FVAoSP0mNqaVf2H5shsfHFlLM1_CifQlPWfbzYD-yUp3ScVly-m_2nDfeMs9GTxVT0sL0x5WQPnK0r0fCtqhaSshuxBluXxrlDiroCQs8meFo69613QNUM4w -->
+<div class="profile-card bg-white rounded-2xl border border-border-default shadow-sm p-lg transition-all cursor-pointer relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1.5 h-full bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-center gap-xl">
+<div class="flex items-center gap-lg flex-1">
+<div class="relative">
+<div class="h-20 w-20 rounded-2xl overflow-hidden shadow-md ring-4 ring-surface-container-low">
+<img alt="Jordan Miller" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9WmfKRcgaiput7DlpLANTv4u6E3lT92AF90iLwHRrAlCe4XG4dYmm-hJp6v2Iyqtqw6GDC2laUd3uTKe7nSzyAdWbjytUXvShxb4Wq-t3RED8FEP4U6xQDsYSwM6bI-FVAoSP0mNqaVf2H5shsfHFlLM1_CifQlPWfbzYD-yUp3ScVly-m_2nDfeMs9GTxVT0sL0x5WQPnK0r0fCtqhaSshuxBluXxrlDiroCQs8meFo69613QNUM4w"/>
+</div>
+</div>
+<div>
+<div class="flex items-center gap-md mb-xs">
+<h4 class="text-body-lg font-bold text-on-surface group-hover:text-primary transition-colors">Jordan Miller</h4>
+<span class="text-[10px] font-bold text-text-secondary bg-surface-subtle px-2 py-0.5 rounded uppercase tracking-tighter border border-border-default">Applied 5 hours ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant font-medium mb-md">Current Role: <span class="text-primary font-bold">UX Engineer at Stripe</span></p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 bg-surface-container-low text-primary text-[11px] font-bold rounded-lg border border-primary/10">React</span>
+<span class="px-2.5 py-1 bg-surface-container-low text-primary text-[11px] font-bold rounded-lg border border-primary/10">Figma</span>
+<span class="px-2.5 py-1 bg-surface-container-low text-primary text-[11px] font-bold rounded-lg border border-primary/10">Typescript</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-xl border-l border-border-default pl-xl">
+<div class="text-center">
+<div class="inline-flex flex-col items-center p-3 bg-blue-50 rounded-2xl border border-blue-100 shadow-sm shadow-blue-600/5">
+<span class="text-headline-md font-bold text-blue-700">85%</span>
+<span class="text-[9px] font-bold text-blue-600 uppercase tracking-tighter">Match Score</span>
+</div>
+</div>
+<div class="hidden xl:flex flex-col gap-sm">
+<div class="flex items-center gap-sm text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-label-sm font-medium">New York, NY</span>
+</div>
+<div class="flex items-center gap-sm text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">history_edu</span>
+<span class="text-label-sm font-medium">5 Years Experience</span>
+</div>
+</div>
+<div class="flex items-center gap-md ml-lg">
+<button class="bg-surface-subtle text-primary border border-primary/20 px-lg py-2.5 rounded-xl font-bold text-label-md hover:bg-surface-variant transition-all">Review</button>
+<button class="p-2.5 bg-surface-subtle text-outline rounded-xl hover:text-primary hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Profile Card 3 -->
+<div class="profile-card bg-white rounded-2xl border border-border-default shadow-sm p-lg transition-all cursor-pointer relative overflow-hidden group">
+<div class="flex items-center gap-xl">
+<div class="flex items-center gap-lg flex-1">
+<div class="relative">
+<div class="h-20 w-20 rounded-2xl overflow-hidden shadow-md ring-4 ring-surface-container-low">
+<img alt="Lila Vasquez" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAH81eN1JAdQoFu65zXwQnRrwD34bh2pKSzZk56MWreC4NAYSiny7uv7TfLrfs8Q8IMc48Ar0-g5JGSuYM22dKmDDOyOFij4VJ3gECTxosXkbYl10BtK7NvcLtlk9ecOvmo4K6WtmoYLMk8xDE6Mq8Cbqt0efmbvM_amQ_XC1PyMB9Inx5lAM90njziASmtV9kHzZ5epAf81Rz3YWcH8i-odoKlExji2AbvT_JKCSdsFKmwMijviF0CGg"/>
+</div>
+</div>
+<div>
+<div class="flex items-center gap-md mb-xs">
+<h4 class="text-body-lg font-bold text-on-surface group-hover:text-primary transition-colors">Lila Vasquez</h4>
+<span class="text-[10px] font-bold text-text-secondary bg-surface-subtle px-2 py-0.5 rounded uppercase tracking-tighter border border-border-default">Applied 1 week ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant font-medium mb-md">Current Role: <span class="text-primary font-bold">Product Lead at Airbnb</span></p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 bg-surface-container-low text-primary text-[11px] font-bold rounded-lg border border-primary/10">Figma</span>
+<span class="px-2.5 py-1 bg-surface-container-low text-primary text-[11px] font-bold rounded-lg border border-primary/10">UX Research</span>
+<span class="px-2.5 py-1 bg-surface-container-low text-primary text-[11px] font-bold rounded-lg border border-primary/10">Team Lead</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-xl border-l border-border-default pl-xl">
+<div class="text-center">
+<div class="inline-flex flex-col items-center p-3 bg-yellow-50 rounded-2xl border border-yellow-100 shadow-sm shadow-yellow-600/5">
+<span class="text-headline-md font-bold text-yellow-700">74%</span>
+<span class="text-[9px] font-bold text-yellow-600 uppercase tracking-tighter">Match Score</span>
+</div>
+</div>
+<div class="hidden xl:flex flex-col gap-sm">
+<div class="flex items-center gap-sm text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span class="text-label-sm font-medium">New York, NY</span>
+</div>
+<div class="flex items-center gap-sm text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">history_edu</span>
+<span class="text-label-sm font-medium">10 Years Experience</span>
+</div>
+</div>
+<div class="flex items-center gap-md ml-lg">
+<button class="bg-surface-subtle text-primary border border-primary/20 px-lg py-2.5 rounded-xl font-bold text-label-md hover:bg-surface-variant transition-all">Review</button>
+<button class="p-2.5 bg-surface-subtle text-outline rounded-xl hover:text-primary hover:bg-surface-variant transition-all">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Pagination -->
+<div class="mt-xl py-lg flex items-center justify-between border-t border-border-default">
+<span class="text-body-sm font-medium text-text-secondary">Showing <span class="text-on-surface font-bold">1 - 10</span> of <span class="text-on-surface font-bold">34</span> candidates</span>
+<div class="flex items-center gap-xs">
+<button class="p-2 rounded-lg border border-border-default bg-white hover:bg-surface-subtle disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="h-9 w-9 flex items-center justify-center rounded-lg bg-primary text-white font-bold text-label-md">1</button>
+<button class="h-9 w-9 flex items-center justify-center rounded-lg border border-border-default bg-white hover:bg-surface-subtle font-medium text-label-md">2</button>
+<button class="h-9 w-9 flex items-center justify-center rounded-lg border border-border-default bg-white hover:bg-surface-subtle font-medium text-label-md">3</button>
+<button class="p-2 rounded-lg border border-border-default bg-white hover:bg-surface-subtle">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Preview Pane (Compact Detail View) -->
+<aside class="w-[480px] bg-white border-l border-border-default hidden 2xl:flex flex-col h-full overflow-hidden">
+<div class="p-lg border-b border-border-default flex justify-between items-center sticky top-0 bg-white z-10">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-text-secondary uppercase tracking-widest">Selected Candidate</span>
+<h2 class="text-headline-md font-bold text-primary">Candidate Profile</h2>
+</div>
+<div class="flex gap-sm">
+<button class="p-2 rounded-lg hover:bg-surface-subtle text-outline"><span class="material-symbols-outlined">open_in_new</span></button>
+<button class="p-2 rounded-lg hover:bg-surface-subtle text-outline"><span class="material-symbols-outlined">close</span></button>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-lg space-y-lg no-scrollbar">
+<!-- Profile Summary -->
+<div class="text-center bg-surface-subtle p-lg rounded-2xl border border-border-default">
+<div class="h-24 w-24 rounded-3xl bg-white mx-auto mb-lg border-4 border-white shadow-xl overflow-hidden">
+<img alt="Sarah H" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD64uI85ATh9iTNR9hRKlancn-HXZYcS6mSzYrrO1mLpagdzk1xfo_i7K48NzGDWs1IfaQhFUJUs1ai1iJJisykbVtXjRZId5icMSbTlbocOL1wafXVhJyPk-e4KqGZErJkfjDW172MIrdrMNSh4h4GeAS8_yzVtkT6L4794CP08U1dAuIblvpM2F2hSijKgjaYud2CgCmYnsgezbRnZpjcBkc_HqwMVqRUTNIqOs4NqhTx2Z9NL5YTug"/>
+</div>
+<h3 class="text-headline-md font-bold text-on-surface">Sarah Henderson</h3>
+<p class="text-body-md text-text-secondary mb-lg">Senior Product Designer • Adobe</p>
+<div class="flex gap-md">
+<button class="flex-1 bg-primary text-white py-3 rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-opacity-90">Message</button>
+<button class="px-md bg-white border border-border-default text-primary rounded-xl hover:bg-surface-subtle transition-all">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+<!-- Bento Stats -->
+<div class="grid grid-cols-2 gap-lg">
+<div class="bg-white p-lg rounded-2xl border border-border-default shadow-sm text-center">
+<span class="text-[10px] font-bold text-text-secondary uppercase">Availability</span>
+<div class="mt-xs text-headline-md font-bold text-primary">30 Days</div>
+</div>
+<div class="bg-white p-lg rounded-2xl border border-border-default shadow-sm text-center">
+<span class="text-[10px] font-bold text-text-secondary uppercase">Expectation</span>
+<div class="mt-xs text-headline-md font-bold text-primary">$180k+</div>
+</div>
+</div>
+<!-- Resume Link Card -->
+<div class="p-lg bg-white rounded-2xl border border-border-default shadow-sm hover:border-primary transition-all group cursor-pointer flex justify-between items-center">
+<div class="flex items-center gap-md">
+<div class="h-12 w-12 bg-red-50 rounded-xl flex items-center justify-center group-hover:bg-red-100 transition-colors">
+<span class="material-symbols-outlined text-red-600">picture_as_pdf</span>
+</div>
+<div>
+<p class="text-body-md font-bold text-on-surface">Henderson_Resume.pdf</p>
+<p class="text-[11px] text-text-secondary">Updated 12 days ago • 2.4 MB</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary">download</span>
+</div>
+<!-- Work Experience Timeline -->
+<div class="bg-white p-lg rounded-2xl border border-border-default shadow-sm">
+<h4 class="text-label-md font-bold text-primary mb-lg uppercase tracking-wider">Career Journey</h4>
+<div class="space-y-xl relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-border-default">
+<div class="relative pl-lg">
+<div class="absolute left-0 top-1.5 h-4 w-4 bg-primary rounded-full border-4 border-white ring-1 ring-primary shadow-sm"></div>
+<h5 class="text-body-md font-bold text-on-surface">Senior Product Designer</h5>
+<p class="text-body-sm text-primary font-medium">Adobe • 2019 - Present</p>
+<p class="text-body-sm text-text-secondary mt-xs">Orchestrated the design strategy for CC 2024 ecosystem, leading a team of 12 designers across 3 continents.</p>
+</div>
+<div class="relative pl-lg">
+<div class="absolute left-0 top-1.5 h-4 w-4 bg-surface-dim rounded-full border-4 border-white shadow-sm"></div>
+<h5 class="text-body-md font-bold text-on-surface">Product Designer</h5>
+<p class="text-body-sm text-text-secondary font-medium">Slack • 2016 - 2019</p>
+<p class="text-body-sm text-text-secondary mt-xs">Responsible for the core messaging interface and cross-platform UI components.</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<!-- Minimal Footer -->
+<footer class="h-12 bg-white border-t border-border-default px-xl flex items-center justify-between shrink-0">
+<p class="text-[11px] font-medium text-text-secondary">© 2024 EMPO Recruitment Solutions • Enterprise Dashboard v2.4.1</p>
+<div class="flex gap-lg">
+<a class="text-[11px] font-bold text-text-secondary hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-[11px] font-bold text-text-secondary hover:text-primary transition-colors" href="#">Terms</a>
+<a class="text-[11px] font-bold text-text-secondary hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="text-[11px] font-bold text-text-secondary hover:text-primary transition-colors" href="#">Status: Operational</a>
+</div>
+</footer>
+</main>
+<script>
+    // Visual interactions only - purely frontend
+    document.querySelectorAll('.profile-card').forEach(card => {
+        card.addEventListener('click', () => {
+            // Highlight selected state in simulation
+            document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('border-primary', 'ring-1', 'ring-primary/20', 'bg-primary/[0.02]'));
+            card.classList.add('border-primary', 'ring-1', 'ring-primary/20', 'bg-primary/[0.02]');
+        });
+    });
+
+    // Custom Job selector mock interaction
+    const jobSelector = document.querySelector('.relative.group.cursor-pointer');
+    jobSelector.addEventListener('mouseenter', () => {
+        jobSelector.querySelector('.bg-surface-container-low').classList.add('border-primary', 'bg-white');
+    });
+    jobSelector.addEventListener('mouseleave', () => {
+        jobSelector.querySelector('.bg-surface-container-low').classList.remove('border-primary', 'bg-white');
+    });
+</script>
+</body></html>

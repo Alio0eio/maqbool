@@ -1,0 +1,448 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Plans &amp; Billing | EMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-card": "#FFFFFF",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#004a32",
+                        "surface-tint": "#4059aa",
+                        "primary-fixed": "#dce1ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#d8e3fb",
+                        "surface": "#f9f9ff",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "on-secondary-container": "#fefcff",
+                        "inverse-primary": "#b6c4ff",
+                        "on-tertiary-fixed": "#002114",
+                        "on-surface-variant": "#444651",
+                        "on-primary-fixed-variant": "#264191",
+                        "surface-container-high": "#dee8ff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "tertiary-fixed": "#85f8c4",
+                        "inverse-surface": "#263143",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-variant": "#d8e3fb",
+                        "text-secondary": "#64748B",
+                        "status-error": "#DC2626",
+                        "surface-dim": "#cfdaf2",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#111c2d",
+                        "secondary-container": "#2170e4",
+                        "surface-container": "#e7eeff",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "primary": "#00236f",
+                        "border-default": "#E2E8F0",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#757682",
+                        "background": "#f9f9ff",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "inverse-on-surface": "#ecf1ff",
+                        "on-surface": "#111c2d",
+                        "secondary-fixed": "#d8e2ff",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "surface-subtle": "#F1F5F9",
+                        "tertiary": "#003120",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#00164e",
+                        "on-primary-container": "#90a8ff",
+                        "surface-bg": "#F8FAFC",
+                        "on-tertiary-container": "#4ac08f",
+                        "secondary": "#0058be",
+                        "on-error": "#ffffff",
+                        "primary-container": "#1e3a8a",
+                        "outline-variant": "#c5c5d3"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-border-default shadow-sm sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-xl">
+<span class="text-headline-lg font-headline-lg font-bold text-primary">EMPO</span>
+<nav class="hidden md:flex gap-lg items-center h-full">
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200" href="/jobs">Find Jobs</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200" href="/applications">My Applications</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200" href="/post-job">Post a Job</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200" href="/talent-pool">Talent Pool</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-text-secondary cursor-pointer hover:text-primary transition-all">notifications</button>
+<button class="material-symbols-outlined text-primary font-bold border-b-2 border-primary pb-1 cursor-pointer">settings</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-border-default">
+<img class="w-full h-full object-cover" data-alt="A professional corporate headshot of a middle-aged female executive with a warm smile, wearing a dark navy blazer. The background is a soft-focus modern office environment with cool blue tones and bright natural light. The overall aesthetic is clean, high-trust, and aligned with a premium enterprise recruitment platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYgcegSfyW_337UPGM7z_aoPaaMXHGRnQfNnOn67U0azvbQ6fNrsFMmYvpmP7CmU9hHe9hfz9gAmJY7xB4KA3oXami02vAB8Qs4Ip_skGQ11NQZ9mFklWfvtCWiYFXlE829k0YhZTjNIDZASrlXpTyN14F_bwBj8QGmsPmebcIh3oMq1zfRfAlibVWP_qllt99v872GTdHasbCmlHdj8l_IPUSce42VGVcLPS0stHjfivlKlg91dkV_w">
+</div>
+</div>
+</div>
+</header>
+<div class="flex max-w-container-max mx-auto min-h-[calc(100vh-64px)]">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col w-64 bg-surface-container-low border-r border-border-default py-lg px-md space-y-sm">
+<div class="px-md mb-lg">
+<div class="flex items-center gap-sm mb-xs">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[20px]">corporate_fare</span>
+</div>
+<span class="text-headline-md font-headline-md font-bold text-primary">Talent Suite</span>
+</div>
+<span class="text-body-sm text-text-secondary">Recruiter Mode</span>
+</div>
+<nav class="flex-1 space-y-xs">
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="text-label-md font-label-md">Active Jobs</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-label-md font-label-md">Candidates</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="text-label-md font-label-md">Interviews</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md">Analytics</span>
+</a>
+<div class="pt-lg pb-sm px-md">
+<span class="text-[10px] uppercase font-bold tracking-wider text-text-secondary">Account</span>
+</div>
+<a class="flex items-center gap-md px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-bold" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-label-md font-label-md">Plans &amp; Billing</span>
+</a>
+</nav>
+<div class="pt-xl space-y-xs">
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-label-md font-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 p-lg md:p-xl space-y-xl overflow-y-auto">
+<header class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h1 class="text-headline-xl font-headline-xl text-primary">Plans &amp; Billing</h1>
+<p class="text-body-lg text-text-secondary">Manage your subscription, seats, and billing information.</p>
+</div>
+<button class="bg-primary text-white px-lg py-sm rounded-lg font-label-md hover:opacity-90 transition-opacity flex items-center gap-sm" onclick="alert('Opening plan selection workflow...')">
+<span class="material-symbols-outlined text-[20px]">upgrade</span>
+                    Change Plan
+                </button>
+</header>
+<!-- Current Plan & Usage Bento -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<!-- Current Plan Card -->
+<div class="lg:col-span-2 bg-surface-card border border-border-default rounded-xl shadow-sm p-lg flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<span class="bg-primary-container text-on-primary-container text-[10px] uppercase font-bold tracking-widest px-sm py-xs rounded">Current Plan</span>
+<h2 class="text-headline-lg font-headline-lg text-primary mt-sm">Enterprise Pro</h2>
+<p class="text-body-md text-text-secondary mt-xs">Renewing on <span class="font-bold text-on-surface">December 14, 2024</span></p>
+</div>
+<div class="text-right">
+<span class="text-headline-lg font-headline-lg text-primary">$2,400</span>
+<span class="text-body-sm text-text-secondary block">per year / billed annually</span>
+</div>
+</div>
+<div class="mt-xl grid grid-cols-1 md:grid-cols-2 gap-xl">
+<div class="space-y-sm">
+<div class="flex justify-between text-label-md font-label-md">
+<span class="text-on-surface">Seat Usage</span>
+<span class="text-primary">42 / 50</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[84%] rounded-full"></div>
+</div>
+<p class="text-body-sm text-text-secondary">8 seats remaining. Need more? <a class="text-secondary underline" href="/billing/add-seats">Add seats</a></p>
+</div>
+<div class="space-y-sm">
+<div class="flex justify-between text-label-md font-label-md">
+<span class="text-on-surface">AI Sourcing Credits</span>
+<span class="text-primary">8,450 / 10,000</span>
+</div>
+<div class="w-full bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[84.5%] rounded-full"></div>
+</div>
+<p class="text-body-sm text-text-secondary">Monthly quota resets in 12 days.</p>
+</div>
+</div>
+</div>
+<!-- Quick Actions / Payment Methods -->
+<div class="bg-surface-card border border-border-default rounded-xl shadow-sm p-lg flex flex-col">
+<h3 class="text-label-md font-bold text-primary mb-md uppercase tracking-wider">Default Payment Method</h3>
+<div class="flex-1 flex flex-col justify-center">
+<div class="p-md bg-surface-subtle rounded-lg border border-border-default flex items-center gap-md mb-md">
+<div class="w-12 h-8 bg-on-surface rounded flex items-center justify-center text-white font-bold italic">VISA</div>
+<div class="flex-1">
+<p class="text-label-md font-bold text-on-surface">•••• 4242</p>
+<p class="text-body-sm text-text-secondary">Expires 08/26</p>
+</div>
+<span class="material-symbols-outlined text-text-secondary cursor-pointer hover:text-primary">edit</span>
+</div>
+</div>
+<div class="space-y-sm">
+<button class="w-full text-left py-sm px-md text-label-md font-medium text-on-surface hover:bg-surface-subtle rounded-lg flex items-center justify-between border border-transparent hover:border-border-default transition-all">
+                            Manage Cards
+                            <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+<button class="w-full text-left py-sm px-md text-label-md font-medium text-on-surface hover:bg-surface-subtle rounded-lg flex items-center justify-between border border-transparent hover:border-border-default transition-all">
+                            Tax Information
+                            <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Plan Comparison -->
+<section class="space-y-lg">
+<div class="text-center">
+<h2 class="text-headline-md font-headline-md text-primary">Compare Plans</h2>
+<p class="text-body-md text-text-secondary">Find the best fit for your growing recruitment needs.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Starter -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg flex flex-col hover:shadow-md transition-shadow">
+<h3 class="text-headline-md font-bold text-on-surface">Starter</h3>
+<p class="text-body-sm text-text-secondary mt-xs">For small teams getting started.</p>
+<div class="my-lg">
+<span class="text-headline-xl font-bold text-primary">$49</span>
+<span class="text-body-sm text-text-secondary">/mo</span>
+</div>
+<ul class="flex-1 space-y-md mb-xl">
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                3 Active Job Postings
+                            </li>
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                Basic Candidate Tracking
+                            </li>
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                Email Support
+                            </li>
+</ul>
+<button class="w-full py-sm border border-primary text-primary rounded-lg font-label-md hover:bg-primary-fixed transition-colors" onclick="alert('Confirming downgrade to Starter plan...')">Downgrade</button>
+</div>
+<!-- Professional -->
+<div class="bg-surface-card border-2 border-primary rounded-xl p-lg flex flex-col relative shadow-xl transform scale-[1.02]">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold px-md py-xs rounded-full uppercase tracking-widest">Recommended</div>
+<h3 class="text-headline-md font-bold text-on-surface">Professional</h3>
+<p class="text-body-sm text-text-secondary mt-xs">Advanced tools for growing companies.</p>
+<div class="my-lg">
+<span class="text-headline-xl font-bold text-primary">$129</span>
+<span class="text-body-sm text-text-secondary">/mo</span>
+</div>
+<ul class="flex-1 space-y-md mb-xl">
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                15 Active Job Postings
+                            </li>
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                AI Sourcing (500 credits)
+                            </li>
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                Priority Support
+                            </li>
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                Calendar Integrations
+                            </li>
+</ul>
+<button class="w-full py-sm border border-primary text-primary rounded-lg font-label-md hover:bg-primary-fixed transition-colors" onclick="alert('Confirming selection of Professional plan...')">Select Plan</button>
+</div>
+<!-- Enterprise -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg flex flex-col hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between">
+<h3 class="text-headline-md font-bold text-on-surface">Enterprise</h3>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<p class="text-body-sm text-text-secondary mt-xs">Unlimited scale and custom power.</p>
+<div class="my-lg">
+<span class="text-headline-xl font-bold text-primary">Custom</span>
+</div>
+<ul class="flex-1 space-y-md mb-xl">
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                Unlimited Job Postings
+                            </li>
+<li class="flex items-start gap-sm text-body-md font-bold text-primary">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                Advanced AI Sourcing
+                            </li>
+<li class="flex items-start gap-sm text-body-md font-bold text-primary">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                Custom API Integrations
+                            </li>
+<li class="flex items-start gap-sm text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+                                Dedicated Success Manager
+                            </li>
+</ul>
+<button class="w-full py-sm bg-primary text-white rounded-lg font-label-md opacity-50 cursor-not-allowed">Active Plan</button>
+</div>
+</div>
+</section>
+<!-- Billing History -->
+<section class="bg-surface-card border border-border-default rounded-xl shadow-sm overflow-hidden">
+<div class="px-lg py-md border-b border-border-default flex justify-between items-center bg-surface-container-lowest">
+<h3 class="text-headline-md font-headline-md text-primary">Billing History</h3>
+<div class="flex items-center gap-md">
+<div class="relative">
+<input class="pl-xl pr-md py-xs border border-border-default rounded-lg text-body-sm focus:ring-2 focus:ring-secondary focus:outline-none bg-surface-subtle" placeholder="Search invoices..." type="text">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-text-secondary text-[18px]">search</span>
+</div>
+<button class="material-symbols-outlined text-text-secondary hover:text-primary transition-all">filter_list</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-subtle text-label-sm font-label-sm text-text-secondary uppercase tracking-wider">
+<th class="px-lg py-md font-semibold">Invoice ID</th>
+<th class="px-lg py-md font-semibold">Date</th>
+<th class="px-lg py-md font-semibold">Amount</th>
+<th class="px-lg py-md font-semibold">Status</th>
+<th class="px-lg py-md font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-default">
+<tr class="hover:bg-surface-subtle transition-colors">
+<td class="px-lg py-md text-body-md font-medium text-on-surface">#INV-2023-1004</td>
+<td class="px-lg py-md text-body-md text-on-surface-variant">Nov 14, 2023</td>
+<td class="px-lg py-md text-body-md text-on-surface font-bold">$2,400.00</td>
+<td class="px-lg py-md">
+<span class="px-sm py-xs rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider">Paid</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="flex items-center gap-xs ml-auto text-secondary hover:underline text-label-sm font-label-sm" onclick="alert('Downloading invoice PDF...')">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                        PDF
+                                    </button>
+</td>
+</tr>
+<tr class="hover:bg-surface-subtle transition-colors">
+<td class="px-lg py-md text-body-md font-medium text-on-surface">#INV-2022-1004</td>
+<td class="px-lg py-md text-body-md text-on-surface-variant">Nov 14, 2022</td>
+<td class="px-lg py-md text-body-md text-on-surface font-bold">$2,400.00</td>
+<td class="px-lg py-md">
+<span class="px-sm py-xs rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider">Paid</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="flex items-center gap-xs ml-auto text-secondary hover:underline text-label-sm font-label-sm" onclick="alert('Downloading invoice PDF...')">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                        PDF
+                                    </button>
+</td>
+</tr>
+<tr class="hover:bg-surface-subtle transition-colors">
+<td class="px-lg py-md text-body-md font-medium text-on-surface">#INV-2021-1004</td>
+<td class="px-lg py-md text-body-md text-on-surface-variant">Nov 14, 2021</td>
+<td class="px-lg py-md text-body-md text-on-surface font-bold">$1,800.00</td>
+<td class="px-lg py-md">
+<span class="px-sm py-xs rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider">Paid</span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="flex items-center gap-xs ml-auto text-secondary hover:underline text-label-sm font-label-sm" onclick="alert('Downloading invoice PDF...')">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                                        PDF
+                                    </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-lg py-md border-t border-border-default text-center">
+<button class="text-secondary font-label-md hover:underline">View All Invoices</button>
+</div>
+</section>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-border-default">
+<div class="w-full py-xl px-lg md:px-xl max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex flex-col items-center md:items-start gap-sm">
+<span class="text-headline-md font-headline-md font-bold text-primary">EMPO</span>
+<p class="text-body-sm text-text-secondary text-center md:text-left">© 2024 EMPO Recruitment Solutions. All rights reserved.</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-lg">
+<a class="text-text-secondary text-label-sm hover:text-primary underline transition-all" href="#">Privacy Policy</a>
+<a class="text-text-secondary text-label-sm hover:text-primary underline transition-all" href="#">Terms of Service</a>
+<a class="text-text-secondary text-label-sm hover:text-primary underline transition-all" href="#">Cookie Policy</a>
+<a class="text-text-secondary text-label-sm hover:text-primary underline transition-all" href="#">Contact Us</a>
+<a class="text-text-secondary text-label-sm hover:text-primary underline transition-all" href="#">Help Center</a>
+</nav>
+</div>
+</footer>
+<script>
+        // Simple Micro-interactions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+            btn.addEventListener('mouseup', () => btn.classList.remove('scale-95'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('scale-95'));
+        });
+    </script>
+
+
+</body></html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO | My Applications</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#2170e4",
+                    "on-secondary-container": "#fefcff",
+                    "border-default": "#E2E8F0",
+                    "surface-container-high": "#dee8ff",
+                    "status-error": "#DC2626",
+                    "on-surface-variant": "#444651",
+                    "surface-container-highest": "#d8e3fb",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "tertiary": "#003120",
+                    "surface-tint": "#4059aa",
+                    "surface-container": "#e7eeff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#001a42",
+                    "inverse-primary": "#b6c4ff",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed": "#00164e",
+                    "tertiary-fixed": "#85f8c4",
+                    "surface-subtle": "#F1F5F9",
+                    "secondary": "#0058be",
+                    "on-primary-container": "#90a8ff",
+                    "on-background": "#111c2d",
+                    "text-secondary": "#64748B",
+                    "on-secondary-fixed-variant": "#004395",
+                    "primary": "#00236f",
+                    "on-primary-fixed-variant": "#264191",
+                    "inverse-on-surface": "#ecf1ff",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-surface": "#111c2d",
+                    "surface-bright": "#f9f9ff",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#263143",
+                    "surface-variant": "#d8e3fb",
+                    "on-tertiary-container": "#4ac08f",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#002114",
+                    "surface-dim": "#cfdaf2",
+                    "primary-container": "#1e3a8a",
+                    "error-container": "#ffdad6",
+                    "surface-bg": "#F8FAFC",
+                    "surface": "#f9f9ff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "surface-card": "#FFFFFF",
+                    "outline-variant": "#c5c5d3",
+                    "primary-fixed": "#dce1ff",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#004a32",
+                    "surface-container-low": "#f0f3ff",
+                    "outline": "#757682",
+                    "background": "#f9f9ff",
+                    "tertiary-fixed-dim": "#68dba9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "container-max": "1280px",
+                    "xs": "4px",
+                    "margin": "24px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-background min-h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full bg-surface dark:bg-surface-container shadow-sm z-50 flex justify-between items-center px-lg py-md border-b border-border-default dark:border-outline-variant">
+<div class="flex items-center gap-xl">
+<span class="text-headline-lg font-headline-lg font-bold text-primary dark:text-inverse-primary">EMPO</span>
+<div class="hidden md:flex gap-lg">
+<!-- Navigation is handled by SideBar for this view, but top items can exist -->
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative group cursor-pointer p-xs rounded-full hover:bg-surface-subtle transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer p-xs rounded-full hover:bg-surface-subtle transition-colors">settings</span>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-border-default">
+<img class="w-full h-full object-cover" data-alt="A professional close-up of a diverse male candidate in business casual attire with a friendly smile, clean lighting, soft background of a modern office space, high-end photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB15powaTOJbOuAD_oUhtM8xGFJXgYPs4NToov997SSjlhM5LpLwO94pPLDYaSMUIL2SGpEAg2AfUnF_rXPzFzpz4iFHtDV_HWsi4etExldFE4jutGJiCARjjM_rjjL6Q3IikCyfGVkPjaUtWjU_5a-_gkWgGcgkjX1Q_U9LdrEV6arzc8He7GV8vOds9sawNxr1kpfkRCQTt0s0nMXpbnLsim3Uj-oRx3Bm-GQ9BV2hBVBoPXqppY8TA"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low dark:bg-surface-container-lowest border-r border-border-default dark:border-outline-variant flex flex-col p-md z-40 pt-24">
+<div class="mb-xl px-md">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Welcome back, Alex</h2>
+<p class="font-label-md text-label-md text-text-secondary">Candidate Portal</p>
+</div>
+<nav class="flex-1 flex flex-col gap-sm">
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-md text-label-md">Explore Jobs</span>
+</a>
+<!-- Active State: 'My Applications' isn't in JSON list but 'Saved Jobs' or others are. Applying active style to what corresponds logically. -->
+<!-- In the prompt, SideNavBar should have 'My Applications' active. JSON provided labels: ["Dashboard", "Explore Jobs", "Saved Jobs", "Job Alerts", "Interviews"] -->
+<!-- Since 'My Applications' was requested as active, but not in the JSON labels, I will assume it's part of 'Dashboard' or create a visual match for 'Interviews' as an approximation of journey tracking. For this specific task, I'll add the Application link specifically. -->
+<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-lg px-md py-sm font-semibold translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">work_history</span>
+<span class="font-label-md text-label-md">My Applications</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">bookmark</span>
+<span class="font-label-md text-label-md">Saved Jobs</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-label-md text-label-md">Interviews</span>
+</a>
+</nav>
+<div class="mt-auto space-y-md">
+<button class="w-full py-md bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-sm active:opacity-80 transition-opacity">
+                Upload Resume
+            </button>
+<div class="pt-md border-t border-border-default">
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant px-md py-sm hover:bg-surface-variant rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Sign Out</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-64 pt-24 px-xl pb-xl max-w-container-max mx-auto">
+<!-- Header Section -->
+<header class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-lg">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-primary mb-xs">Track your career journey</h1>
+<p class="font-body-lg text-body-lg text-text-secondary">Keep an eye on your progress and upcoming milestones.</p>
+</div>
+<div class="flex gap-md">
+<div class="bg-surface-card border border-border-default rounded-xl p-md shadow-sm min-w-[140px]">
+<p class="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider mb-xs">Active Apps</p>
+<p class="font-headline-lg text-headline-lg text-primary font-black">4</p>
+</div>
+<div class="bg-surface-card border border-border-default rounded-xl p-md shadow-sm min-w-[140px]">
+<p class="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider mb-xs">Interviews</p>
+<p class="font-headline-lg text-headline-lg text-secondary font-black">2</p>
+</div>
+<div class="bg-surface-card border border-border-default rounded-xl p-md shadow-sm min-w-[140px]">
+<p class="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider mb-xs">Offers</p>
+<p class="font-headline-lg text-headline-lg text-on-tertiary-container font-black">1</p>
+</div>
+</div>
+</header>
+<div class="grid grid-cols-12 gap-xl">
+<!-- Active Applications List -->
+<div class="col-span-12 lg:col-span-8 space-y-lg">
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-headline-md text-headline-md text-on-background">Active Applications</h3>
+<div class="flex gap-sm">
+<button class="p-xs hover:bg-surface-subtle rounded-lg"><span class="material-symbols-outlined">grid_view</span></button>
+<button class="p-xs bg-surface-variant rounded-lg"><span class="material-symbols-outlined">list</span></button>
+</div>
+</div>
+<!-- Application Card: Lumina Tech -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
+<div class="flex items-start gap-lg">
+<div class="w-14 h-14 rounded-lg bg-surface-subtle flex items-center justify-center overflow-hidden border border-border-default">
+<img alt="Lumina Logo" class="w-full h-full object-contain p-2" src="https://lh3.googleusercontent.com/aida/AP1WRLuJyknCQC4kQj-PgXxOW-KT1DAVyxUBkiOu5SQv-Kea1EXsvq77wPLQAEq4RvG653wuz0Fcb4LgVTogRBYiVD7KvKSO-T6ShRjlqI57_psuJI8jmnpa1SWcUlUzmmCSLPgFI-7fhdTt9ZVQzGJ7INSI7354lsQlEYituc9PaxRhdbZ4pysKW5VwPs9it-xLA4ycGybGzRukpMG10KlFXfR4eFmevaw9D_ULYiC_k5uMhHOpnvFcP8C7H8Zj"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-xs">
+<h4 class="font-headline-md text-headline-md group-hover:text-secondary transition-colors">Senior Product Designer</h4>
+<span class="px-md py-xs rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm">Interviewing</span>
+</div>
+<p class="font-body-md text-body-md text-text-secondary mb-md">Lumina Tech • Applied Oct 24, 2023</p>
+<div class="flex items-center gap-xl border-t border-border-default pt-md mt-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">calendar_today</span>
+<span class="font-label-md text-label-md text-on-surface">Round 2: Portfolio Review</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">person</span>
+<span class="font-label-md text-label-md text-on-surface">Contact: Sarah Miller</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+<!-- Application Card: Stratos Financial -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group">
+<div class="flex items-start gap-lg">
+<div class="w-14 h-14 rounded-lg bg-surface-subtle flex items-center justify-center overflow-hidden border border-border-default">
+<img alt="Stratos Logo" class="w-full h-full object-contain p-2" src="https://lh3.googleusercontent.com/aida/AP1WRLuBFFOMwnqjfbDACMysYwxIIc-GhDeYGKlnseDUvsJpMYIOD8WV6aex52aMW32QBWgPvCSUEFw7o56sWN_r6sxKt2ctSury7cmdqNAX8_YoFUVaCq4nQxBavAsuUtK4BZyLQZMHfu9uDn4CKAiOFZ6vHoL_udKDsjYO_1uOQ06XUR_csmeQO8qoTqVuRy7SLlVMXwwIRCe0hm6dSDIC5nKHcdG6oplfuZXVODiJFnNzmfCMeJXbQLkIH_rL"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-xs">
+<h4 class="font-headline-md text-headline-md group-hover:text-secondary transition-colors">UX Researcher</h4>
+<span class="px-md py-xs rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">Offer Received</span>
+</div>
+<p class="font-body-md text-body-md text-text-secondary mb-md">Stratos Financial • Applied Oct 18, 2023</p>
+<div class="flex items-center gap-xl border-t border-border-default pt-md mt-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-status-error text-[18px]">priority_high</span>
+<span class="font-label-md text-label-md text-on-surface">Expires in 3 days</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">description</span>
+<span class="font-label-md text-label-md text-on-surface">Contract Pending</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+<!-- Application Card: Generic Reviewing -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer group opacity-90">
+<div class="flex items-start gap-lg">
+<div class="w-14 h-14 rounded-lg bg-surface-subtle flex items-center justify-center overflow-hidden border border-border-default">
+<span class="material-symbols-outlined text-outline text-[32px]">apartment</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-xs">
+<h4 class="font-headline-md text-headline-md group-hover:text-secondary transition-colors">Visual Designer</h4>
+<span class="px-md py-xs rounded-full bg-surface-subtle text-outline font-label-sm text-label-sm">Reviewing</span>
+</div>
+<p class="font-body-md text-body-md text-text-secondary mb-md">DesignSphere • Applied Oct 28, 2023</p>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+<!-- Archived/Past Applications Section -->
+<div class="pt-xl mt-xl border-t border-border-default">
+<details class="group">
+<summary class="flex items-center justify-between cursor-pointer list-none">
+<h3 class="font-headline-md text-headline-md text-text-secondary">Past Applications (12)</h3>
+<span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-lg space-y-md">
+<div class="flex items-center justify-between p-md border border-border-default rounded-lg bg-surface-subtle">
+<div class="flex gap-md items-center">
+<div class="w-10 h-10 rounded bg-white border border-border-default flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">architecture</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Interaction Designer</p>
+<p class="font-body-sm text-body-sm text-text-secondary">Apex Corp • Closed</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-text-secondary">Aug 12, 2023</span>
+</div>
+</div>
+</details>
+</div>
+</div>
+<!-- Sidebar / Action Required -->
+<div class="col-span-12 lg:col-span-4 space-y-lg">
+<!-- Action Required Card -->
+<div class="bg-primary text-on-primary rounded-xl p-lg shadow-lg relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-on-primary-container">priority_high</span>
+<h4 class="font-label-md text-label-md uppercase tracking-widest">Next Steps</h4>
+</div>
+<p class="font-headline-md text-headline-md mb-md leading-tight">You have 1 offer pending signature.</p>
+<button class="w-full py-md bg-on-primary text-primary font-bold rounded-lg hover:bg-secondary-fixed transition-colors">Review Offer Contract</button>
+</div>
+<!-- Decorative element -->
+<div class="absolute -right-8 -bottom-8 w-32 h-32 bg-on-primary opacity-5 rounded-full"></div>
+</div>
+<!-- Recruiter Contact Card -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm">
+<h4 class="font-label-md text-label-md text-text-secondary mb-lg">Active Interview Contact</h4>
+<div class="flex items-center gap-md mb-lg">
+<div class="w-16 h-16 rounded-full border-2 border-secondary overflow-hidden">
+<img alt="HR Manager" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLvhaWGDjtSqPtllMI1NoI18KmBYVEG4EtEqD-LR1BW2JMTVg52clGnif8sVWzerl_C1DycObhmPQcXQHZur7tHu6qTtr2epioJCKTFlAbl4vOWPhH6UczHex35QDQyMIMldYpE8knCAFNXYv1vctrtsCCXpyDhhDUZSQiRjdtCygA7yjF7ortEeJDd24CalK9abnqjqOteDMPfq0D_tYBtLpZWSDbPol1egX9WKtbn257go3VOB08H6P9P7"/>
+</div>
+<div>
+<p class="font-headline-md text-headline-md">Sarah Miller</p>
+<p class="font-body-sm text-body-sm text-text-secondary">Senior Talent Lead at Lumina Tech</p>
+</div>
+</div>
+<div class="space-y-sm">
+<a class="flex items-center gap-md text-on-surface-variant p-md hover:bg-surface-subtle rounded-lg border border-transparent hover:border-border-default transition-all" href="mailto:sarah@lumina.tech">
+<span class="material-symbols-outlined text-secondary">mail</span>
+<span class="font-label-md text-label-md">Send a Message</span>
+</a>
+<button class="w-full flex items-center gap-md text-on-surface-variant p-md hover:bg-surface-subtle rounded-lg border border-transparent hover:border-border-default transition-all">
+<span class="material-symbols-outlined text-secondary">calendar_today</span>
+<span class="font-label-md text-label-md">Reschedule Interview</span>
+</button>
+</div>
+</div>
+<!-- Upcoming Events -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm">
+<h4 class="font-label-md text-label-md text-text-secondary mb-lg">Upcoming Schedule</h4>
+<div class="space-y-lg">
+<div class="flex gap-md">
+<div class="flex flex-col items-center justify-center bg-secondary-fixed text-on-secondary-fixed w-12 h-14 rounded-lg">
+<span class="text-[10px] uppercase font-black">Nov</span>
+<span class="text-headline-md font-bold leading-none">02</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Lumina Tech: Round 2</p>
+<p class="font-body-sm text-body-sm text-text-secondary">2:30 PM - 3:30 PM (Virtual)</p>
+</div>
+</div>
+<div class="flex gap-md">
+<div class="flex flex-col items-center justify-center bg-surface-subtle text-text-secondary w-12 h-14 rounded-lg">
+<span class="text-[10px] uppercase font-black">Nov</span>
+<span class="text-headline-md font-bold leading-none">05</span>
+</div>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface">Follow-up: Stratos Fin</p>
+<p class="font-body-sm text-body-sm text-text-secondary">Final check-in call</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Micro-interaction Script -->
+<script>
+        // Simple hover effect enhancement
+        document.querySelectorAll('.group').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('translate-y-[-2px]');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('translate-y-[-2px]');
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Company Setup | EMPO Recruitment</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#005137",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "surface-container": "#e7eeff",
+                    "tertiary": "#003120",
+                    "surface-tint": "#4059aa",
+                    "on-secondary-container": "#fefcff",
+                    "border-default": "#E2E8F0",
+                    "secondary-container": "#2170e4",
+                    "surface-container-highest": "#d8e3fb",
+                    "surface-container-high": "#dee8ff",
+                    "status-error": "#DC2626",
+                    "on-surface-variant": "#444651",
+                    "tertiary-fixed": "#85f8c4",
+                    "surface-subtle": "#F1F5F9",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#001a42",
+                    "inverse-primary": "#b6c4ff",
+                    "on-primary-fixed": "#00164e",
+                    "secondary-fixed": "#d8e2ff",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f9f9ff",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#263143",
+                    "on-surface": "#111c2d",
+                    "on-primary-container": "#90a8ff",
+                    "on-background": "#111c2d",
+                    "secondary": "#0058be",
+                    "inverse-on-surface": "#ecf1ff",
+                    "on-primary-fixed-variant": "#264191",
+                    "primary": "#00236f",
+                    "text-secondary": "#64748B",
+                    "on-secondary-fixed-variant": "#004395",
+                    "surface-card": "#FFFFFF",
+                    "outline-variant": "#c5c5d3",
+                    "surface": "#f9f9ff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "surface-container-low": "#f0f3ff",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "outline": "#757682",
+                    "background": "#f9f9ff",
+                    "primary-fixed": "#dce1ff",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#004a32",
+                    "on-tertiary-fixed": "#002114",
+                    "surface-dim": "#cfdaf2",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#d8e3fb",
+                    "on-tertiary-container": "#4ac08f",
+                    "error": "#ba1a1a",
+                    "surface-bg": "#F8FAFC",
+                    "primary-container": "#1e3a8a",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "gutter": "24px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "xs": "4px",
+                    "margin": "24px",
+                    "lg": "24px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+        }
+        .step-active {
+            background-color: #1e3a8a;
+            color: white;
+        }
+        .step-inactive {
+            background-color: #E2E8F0;
+            color: #64748B;
+        }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface">
+<!-- Top Navigation Bar (Shared Component) -->
+<header class="bg-surface dark:bg-background border-b border-border-default dark:border-outline-variant shadow-sm dark:shadow-none docked full-width top-0 z-50">
+<div class="flex justify-between items-center px-lg py-md w-full max-w-container-max mx-auto">
+<div class="text-headline-lg font-headline-lg font-bold text-primary dark:text-primary-fixed-dim">
+                EMPO
+            </div>
+<nav class="hidden md:flex gap-xl">
+<span class="text-on-surface-variant dark:text-on-surface-variant font-label-md text-label-md">Setup Progress: 50%</span>
+</nav>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined p-sm hover:bg-surface-subtle rounded-full transition-colors">help_outline</button>
+<div class="h-8 w-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-xs">JD</div>
+</div>
+</div>
+</header>
+<main class="min-h-[calc(100vh-160px)] flex items-center justify-center py-xl px-gutter">
+<div class="w-full max-w-container-max grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Sidebar - Explanatory Context -->
+<div class="lg:col-span-4 order-2 lg:order-1">
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm">
+<div class="flex items-center gap-sm mb-md text-primary">
+<span class="material-symbols-outlined">info</span>
+<h2 class="font-headline-md text-headline-md">Setup Your Workspace</h2>
+</div>
+<p class="font-body-md text-body-md text-text-secondary mb-lg">
+                        This information is critical for provisioning your company’s recruitment portal. Once completed, we will:
+                    </p>
+<ul class="space-y-md">
+<li class="flex gap-sm items-start">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Generate your unique career page URL based on your company name.</span>
+</li>
+<li class="flex gap-sm items-start">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Tailor your job posting templates to your specific industry benchmarks.</span>
+</li>
+<li class="flex gap-sm items-start">
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Configure your team seats based on the company size.</span>
+</li>
+</ul>
+<div class="mt-xl p-md bg-surface-container-low border border-border-default rounded-lg">
+<p class="font-label-sm text-label-sm text-primary mb-xs">Privacy Assurance</p>
+<p class="font-body-sm text-body-sm text-text-secondary italic">Your company data is encrypted and handled according to our enterprise security standards.</p>
+</div>
+</div>
+</div>
+<!-- Right Sidebar - Form Container -->
+<div class="lg:col-span-8 order-1 lg:order-2">
+<div class="bg-surface-card border border-border-default rounded-xl shadow-sm overflow-hidden">
+<!-- Progress Bar -->
+<div class="bg-surface-subtle p-md border-b border-border-default flex justify-between items-center">
+<div class="flex gap-sm items-center">
+<div class="h-6 w-6 rounded-full step-active flex items-center justify-center font-label-sm text-label-sm">1</div>
+<span class="font-label-md text-label-md text-primary font-bold">Company Profile</span>
+</div>
+<div class="w-16 h-[2px] bg-border-default flex-grow mx-lg hidden sm:block"></div>
+<div class="flex gap-sm items-center opacity-50">
+<div class="h-6 w-6 rounded-full step-inactive flex items-center justify-center font-label-sm text-label-sm">2</div>
+<span class="font-label-md text-label-md text-text-secondary">Invite Team</span>
+</div>
+</div>
+<form class="p-xl space-y-xl">
+<!-- Branding Section -->
+<div class="flex flex-col md:flex-row gap-lg items-center">
+<div class="relative group cursor-pointer">
+<div class="w-32 h-32 bg-surface-container-highest rounded-xl border-2 border-dashed border-outline-variant flex flex-col items-center justify-center overflow-hidden hover:border-primary transition-all">
+<span class="material-symbols-outlined text-[40px] text-outline mb-sm group-hover:text-primary">add_a_photo</span>
+<span class="font-label-sm text-label-sm text-text-secondary group-hover:text-primary">Upload Logo</span>
+</div>
+<input class="absolute inset-0 opacity-0 cursor-pointer" id="logoUpload" type="file"/>
+</div>
+<div class="flex-1 text-center md:text-left">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-xs">Brand Identity</h3>
+<p class="font-body-sm text-body-sm text-text-secondary">Upload your company logo (PNG, JPG, or SVG). Recommended size: 512x512px. This will appear on all your outgoing job posts.</p>
+</div>
+</div>
+<!-- Grid Form Fields -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface" for="companyName">Company Name</label>
+<input class="w-full h-11 px-md rounded-lg border border-border-default focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all font-body-md text-body-md" id="companyName" placeholder="e.g. Acme Global" type="text"/>
+</div>
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface" for="industry">Industry</label>
+<select class="w-full h-11 px-md rounded-lg border border-border-default focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all font-body-md text-body-md bg-white" id="industry">
+<option disabled="" selected="" value="">Select Industry</option>
+<option>Technology</option>
+<option>Finance</option>
+<option>Healthcare</option>
+<option>Education</option>
+<option>Manufacturing</option>
+<option>Creative &amp; Media</option>
+</select>
+</div>
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface" for="companySize">Company Size</label>
+<select class="w-full h-11 px-md rounded-lg border border-border-default focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all font-body-md text-body-md bg-white" id="companySize">
+<option disabled="" selected="" value="">Select headcount</option>
+<option>1-10 employees</option>
+<option>11-50 employees</option>
+<option>51-200 employees</option>
+<option>201-500 employees</option>
+<option>500+ employees</option>
+</select>
+</div>
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface" for="website">Website URL</label>
+<div class="relative">
+<span class="absolute left-md top-1/2 -translate-y-1/2 text-outline font-body-sm text-body-sm">https://</span>
+<input class="w-full h-11 pl-16 pr-md rounded-lg border border-border-default focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition-all font-body-md text-body-md" id="website" placeholder="www.example.com" type="text"/>
+</div>
+</div>
+</div>
+<!-- Transactional Footer -->
+<div class="pt-lg flex items-center justify-between border-t border-border-default mt-xl">
+<button class="text-secondary font-label-md text-label-md hover:underline px-md py-sm rounded-lg hover:bg-surface-subtle transition-colors" type="button">Skip for now</button>
+<button class="bg-primary-container text-on-primary h-11 px-xl rounded-lg font-label-md text-label-md hover:brightness-110 active:scale-95 transition-all shadow-sm" type="submit">Complete Setup</button>
+</div>
+</form>
+</div>
+<!-- Small Visual Proofing Section -->
+<div class="mt-lg grid grid-cols-1 sm:grid-cols-3 gap-md">
+<div class="flex items-center gap-sm p-sm border border-border-default rounded-lg bg-surface-container-lowest">
+<span class="material-symbols-outlined text-on-tertiary-container">lock</span>
+<span class="font-label-sm text-label-sm text-text-secondary">SSL Secured</span>
+</div>
+<div class="flex items-center gap-sm p-sm border border-border-default rounded-lg bg-surface-container-lowest">
+<span class="material-symbols-outlined text-on-tertiary-container">verified_user</span>
+<span class="font-label-sm text-label-sm text-text-secondary">GDPR Compliant</span>
+</div>
+<div class="flex items-center gap-sm p-sm border border-border-default rounded-lg bg-surface-container-lowest">
+<span class="material-symbols-outlined text-on-tertiary-container">support_agent</span>
+<span class="font-label-sm text-label-sm text-text-secondary">24/7 Support</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface-container-lowest dark:bg-inverse-surface border-t border-border-default dark:border-outline-variant full-width bottom-0">
+<div class="w-full py-xl px-lg flex flex-col md:flex-row justify-between items-center gap-md max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim">
+                EMPO
+            </div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm" href="#">Terms of Service</a>
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm" href="#">Cookie Policy</a>
+<a class="text-text-secondary dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors font-label-sm text-label-sm" href="#">Contact Support</a>
+</div>
+<div class="text-secondary dark:text-secondary-fixed font-body-sm text-body-sm">
+                © 2024 EMPO Recruitment. All rights reserved.
+            </div>
+</div>
+</footer>
+<script>
+        // Micro-interaction for logo upload preview (visual only)
+        const logoUpload = document.getElementById('logoUpload');
+        if (logoUpload) {
+            logoUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const container = logoUpload.parentElement.querySelector('div');
+                        container.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-contain p-xs">`;
+                        container.classList.remove('border-dashed');
+                        container.classList.add('border-solid', 'border-secondary');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Form submission animation/logic
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin mr-sm">sync</span> Processing...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                alert('Company Profile saved! Redirecting to Dashboard...');
+                window.location.reload(); // Simulate next step
+            }, 1500);
+        });
+    </script>
+</body></html>

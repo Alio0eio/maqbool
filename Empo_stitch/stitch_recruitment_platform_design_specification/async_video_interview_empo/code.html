@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO - Async Video Interview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#adc6ff",
+                        "tertiary": "#003120",
+                        "surface-container-high": "#dee8ff",
+                        "on-primary-fixed-variant": "#264191",
+                        "surface-tint": "#4059aa",
+                        "on-tertiary-fixed": "#002114",
+                        "text-secondary": "#64748B",
+                        "on-surface": "#111c2d",
+                        "surface-container": "#e7eeff",
+                        "on-primary": "#ffffff",
+                        "background": "#f9f9ff",
+                        "surface-dim": "#cfdaf2",
+                        "surface-variant": "#d8e3fb",
+                        "surface-container-highest": "#d8e3fb",
+                        "primary": "#00236f",
+                        "on-error": "#ffffff",
+                        "surface-subtle": "#F1F5F9",
+                        "surface-container-low": "#f0f3ff",
+                        "secondary-container": "#2170e4",
+                        "surface-bg": "#F8FAFC",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#90a8ff",
+                        "primary-fixed": "#dce1ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "border-default": "#E2E8F0",
+                        "secondary": "#0058be",
+                        "outline-variant": "#c5c5d3",
+                        "inverse-on-surface": "#ecf1ff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#004a32",
+                        "status-error": "#DC2626",
+                        "on-primary-fixed": "#00164e",
+                        "primary-container": "#1e3a8a",
+                        "inverse-surface": "#263143",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "on-surface-variant": "#444651",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-tertiary-container": "#4ac08f",
+                        "on-background": "#111c2d",
+                        "inverse-primary": "#b6c4ff",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "tertiary-fixed": "#85f8c4",
+                        "surface": "#f9f9ff",
+                        "on-secondary-container": "#fefcff",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "outline": "#757682",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-card": "#FFFFFF",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-bright": "#f9f9ff",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "24px",
+                        "gutter": "24px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .recording-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .video-gradient-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 40%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-hidden h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-border-default shadow-sm z-50">
+<div class="flex justify-between items-center px-lg py-md w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-md">
+<span class="font-headline-lg text-headline-lg font-bold text-primary">EMPO</span>
+<div class="h-6 w-px bg-outline-variant mx-sm hidden md:block"></div>
+<div class="hidden md:flex items-center gap-xs text-text-secondary">
+<span class="material-symbols-outlined text-[20px]">video_chat</span>
+<span class="font-label-md text-label-md">Interview Session: Senior UX Architect</span>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-text-secondary hover:text-primary font-label-md text-label-md transition-colors" href="#">Help Center</a>
+<a class="text-text-secondary hover:text-primary font-label-md text-label-md transition-colors" href="#">Test Connection</a>
+</nav>
+<div class="flex items-center gap-md">
+<button class="text-text-secondary hover:text-primary transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-text-secondary hover:text-primary transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<div class="flex-1 flex overflow-hidden">
+<!-- SideNavBar (Contextual Map) -->
+<aside class="hidden md:flex flex-col h-full w-72 bg-surface-container-low border-r border-border-default p-md gap-sm">
+<div class="mb-lg">
+<h2 class="font-headline-md text-headline-md text-primary font-bold">Interview Setup</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Technical Prep &amp; Progress</p>
+</div>
+<nav class="flex flex-col gap-xs flex-1">
+<div class="flex items-center gap-md px-md py-sm text-on-surface-variant rounded-lg hover:bg-surface-subtle transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="start">start</span>
+<span class="font-label-md text-label-md">Welcome</span>
+</div>
+<div class="flex items-center gap-md px-md py-sm text-on-surface-variant rounded-lg hover:bg-surface-subtle transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="Settings">settings</span>
+<span class="font-label-md text-label-md">System Check</span>
+</div>
+<div class="flex items-center gap-md px-md py-sm text-on-surface-variant rounded-lg hover:bg-surface-subtle transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="video_chat">video_chat</span>
+<span class="font-label-md text-label-md">Practice</span>
+</div>
+<div class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container font-bold rounded-lg transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="play_circle">play_circle</span>
+<span class="font-label-md text-label-md">Start Interview</span>
+</div>
+</nav>
+<div class="mt-auto space-y-md">
+<div class="p-md bg-surface-container-high rounded-xl border border-outline-variant">
+<h4 class="font-label-md text-label-md text-primary mb-xs">Pro Tip</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                        Look directly at the camera lens, not your screen, to maintain better eye contact with your future team.
+                    </p>
+</div>
+<button class="w-full py-md bg-white border border-border-default text-primary font-label-md text-label-md rounded-lg hover:bg-surface-subtle transition-colors flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">contact_support</span>
+                    Need Help?
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-y-auto bg-background p-lg">
+<div class="max-w-[1100px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-lg h-full">
+<!-- Left Column: Video & Controls -->
+<div class="lg:col-span-8 flex flex-col gap-lg">
+<!-- Question Card -->
+<div class="bg-surface-card rounded-xl border border-border-default shadow-sm p-lg">
+<div class="flex items-center justify-between mb-sm">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-text-secondary">Question 2 of 5</span>
+<span class="px-sm py-xs bg-tertiary-fixed text-on-tertiary-fixed-variant rounded font-label-sm text-label-sm">Time Limit: 3:00</span>
+</div>
+<h1 class="font-headline-md text-headline-md text-primary">
+                            Walk us through a complex design challenge you solved recently. What was the impact on user metrics?
+                        </h1>
+</div>
+<!-- Video Interface -->
+<div class="relative flex-1 min-h-[480px] bg-inverse-surface rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center">
+<img alt="Candidate Preview" class="absolute inset-0 w-full h-full object-cover opacity-80" src="https://lh3.googleusercontent.com/aida/AP1WRLueRKZtFfJRy-xW-m5d-IaVeG31kgQhNi-ng1ihTBSgShv9NDILVninBFS46-YETulG6xa4E8KJ1jqrIqy9fR3jmH2Zmc9fEHjlhhClK_3cz6eEUI-QFzh-F6i5m-Jg8_DRFen9ZUAFTyls-BYUdP3EfN3qCmznnZnOyFHlfFMqY4_Yn4qMBp3LCEvcUCschGJqEef0aujceaadvUPtLTZtu0VsRNTj6UdBD0LZAQeohkghhKTSZX6J1Af7"/>
+<div class="absolute inset-0 video-gradient-overlay"></div>
+<!-- Video Indicators -->
+<div class="absolute top-md left-md flex flex-wrap gap-sm">
+<div class="flex items-center gap-xs px-sm py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                Camera: Active
+                            </div>
+<div class="flex items-center gap-xs px-sm py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                Connection: Stable
+                            </div>
+<div class="flex items-center gap-xs px-sm py-1 bg-black/40 backdrop-blur-md rounded-full border border-white/10 text-white font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                Mic: High
+                            </div>
+</div>
+<!-- Recording Status -->
+<div class="absolute top-md right-md hidden" id="recording-badge">
+<div class="flex items-center gap-sm px-md py-1 bg-status-error/90 backdrop-blur-md rounded-full text-white font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-white recording-pulse"></span>
+                                REC 00:42
+                            </div>
+</div>
+<!-- Center Action -->
+<div class="relative z-10 flex flex-col items-center gap-lg" id="start-screen">
+<button class="group flex flex-col items-center gap-md" onclick="startRecording()">
+<div class="w-20 h-20 rounded-full bg-secondary-container flex items-center justify-center border-4 border-white/20 shadow-xl group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-white text-[32px]">videocam</span>
+</div>
+<span class="font-headline-md text-headline-md text-white drop-shadow-md">Start Recording</span>
+</button>
+</div>
+<!-- Controls Bar -->
+<div class="absolute bottom-0 left-0 w-full p-lg flex items-center justify-between z-20">
+<div class="flex gap-md">
+<button class="flex items-center gap-xs px-lg py-md bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 rounded-lg font-label-md text-label-md transition-all active:opacity-80">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+                                    Retake
+                                </button>
+</div>
+<div class="flex items-center gap-lg">
+<div class="hidden md:flex flex-col items-end">
+<span class="text-white/60 font-body-sm text-body-sm">Audio Level</span>
+<div class="flex gap-1 mt-1">
+<div class="w-1 h-3 bg-green-400"></div>
+<div class="w-1 h-3 bg-green-400"></div>
+<div class="w-1 h-3 bg-green-400"></div>
+<div class="w-1 h-3 bg-green-400"></div>
+<div class="w-1 h-3 bg-white/20"></div>
+</div>
+</div>
+<button class="px-xl py-md bg-white/10 text-white/40 border border-white/10 rounded-lg font-label-md text-label-md cursor-not-allowed" disabled="" id="next-btn">
+                                    Next Question
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Context/Sidebar -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<!-- Guide Card -->
+<div class="bg-surface-card rounded-xl border border-border-default shadow-sm p-lg">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">list_alt</span>
+<h3 class="font-headline-md text-headline-md text-primary">Key points to cover</h3>
+</div>
+<ul class="space-y-md">
+<li class="flex gap-md">
+<div class="mt-1 w-5 h-5 rounded-full border-2 border-outline-variant flex-shrink-0 flex items-center justify-center">
+<span class="w-2 h-2 rounded-full bg-secondary opacity-0 transition-opacity" id="check-1"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Specific Challenge</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Briefly define the context and problem space.</span>
+</div>
+</li>
+<li class="flex gap-md">
+<div class="mt-1 w-5 h-5 rounded-full border-2 border-outline-variant flex-shrink-0 flex items-center justify-center">
+<span class="w-2 h-2 rounded-full bg-secondary opacity-0 transition-opacity" id="check-2"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Your Approach</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">The tools, methodology, and collaborative process used.</span>
+</div>
+</li>
+<li class="flex gap-md">
+<div class="mt-1 w-5 h-5 rounded-full border-2 border-outline-variant flex-shrink-0 flex items-center justify-center">
+<span class="w-2 h-2 rounded-full bg-secondary opacity-0 transition-opacity" id="check-3"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Measured Outcome</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Conversion rates, NPS, or user engagement stats.</span>
+</div>
+</li>
+<li class="flex gap-md">
+<div class="mt-1 w-5 h-5 rounded-full border-2 border-outline-variant flex-shrink-0 flex items-center justify-center">
+<span class="w-2 h-2 rounded-full bg-secondary opacity-0 transition-opacity" id="check-4"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Key Learning</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">What would you do differently next time?</span>
+</div>
+</li>
+</ul>
+</div>
+<!-- Progress Indicator -->
+<div class="bg-surface-container rounded-xl p-lg">
+<div class="flex justify-between items-center mb-sm">
+<span class="font-label-md text-label-md text-primary">Interview Completion</span>
+<span class="font-label-md text-label-md text-primary">40%</span>
+</div>
+<div class="w-full h-2 bg-outline-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[40%] rounded-full"></div>
+</div>
+<div class="mt-md flex justify-between">
+<div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white ring-4 ring-secondary/20">
+<span class="font-label-sm text-label-sm">2</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-white border border-outline-variant flex items-center justify-center text-on-surface-variant">
+<span class="font-label-sm text-label-sm">3</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-white border border-outline-variant flex items-center justify-center text-on-surface-variant">
+<span class="font-label-sm text-label-sm">4</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-white border border-outline-variant flex items-center justify-center text-on-surface-variant">
+<span class="font-label-sm text-label-sm">5</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-bg border-t border-border-default z-50">
+<div class="flex flex-col md:flex-row justify-between items-center px-lg py-md w-full max-w-container-max mx-auto">
+<span class="font-body-sm text-body-sm text-text-secondary">© 2024 EMPO Recruitment Platform. All rights reserved.</span>
+<div class="flex gap-lg mt-sm md:mt-0">
+<a class="font-body-sm text-body-sm text-text-secondary hover:underline opacity-90" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-text-secondary hover:underline opacity-90" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-text-secondary hover:underline opacity-90" href="#">Candidate Support</a>
+</div>
+</div>
+</footer>
+<script>
+        function startRecording() {
+            const startScreen = document.getElementById('start-screen');
+            const recordingBadge = document.getElementById('recording-badge');
+            const nextBtn = document.getElementById('next-btn');
+
+            startScreen.classList.add('hidden');
+            recordingBadge.classList.remove('hidden');
+            
+            // Simulating end of recording after 5 seconds for demonstration
+            setTimeout(() => {
+                recordingBadge.innerHTML = `
+                    <div class="flex items-center gap-sm px-md py-1 bg-green-600/90 backdrop-blur-md rounded-full text-white font-label-md text-label-md">
+                        <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                        Recording Saved
+                    </div>
+                `;
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('bg-white/10', 'text-white/40', 'cursor-not-allowed');
+                nextBtn.classList.add('bg-secondary', 'text-white', 'hover:bg-secondary-container', 'transition-all', 'active:opacity-80');
+                
+                // Show checklist items as completed
+                document.getElementById('check-1').classList.remove('opacity-0');
+                document.getElementById('check-2').classList.remove('opacity-0');
+                document.getElementById('check-3').classList.remove('opacity-0');
+            }, 5000);
+        }
+    </script>
+</body></html>

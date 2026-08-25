@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO - Practice Interview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .recording-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface font-body-md overflow-hidden">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed": "#002114",
+                      "primary-container": "#1e3a8a",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-container": "#4ac08f",
+                      "surface-container-high": "#dee8ff",
+                      "border-default": "#E2E8F0",
+                      "on-secondary-container": "#fefcff",
+                      "on-surface": "#111c2d",
+                      "on-primary-container": "#90a8ff",
+                      "tertiary-container": "#004a32",
+                      "error-container": "#ffdad6",
+                      "surface-bg": "#F8FAFC",
+                      "outline-variant": "#c5c5d3",
+                      "on-tertiary-fixed-variant": "#005137",
+                      "on-secondary-fixed-variant": "#004395",
+                      "on-primary-fixed": "#00164e",
+                      "inverse-surface": "#263143",
+                      "tertiary": "#003120",
+                      "surface-container-highest": "#d8e3fb",
+                      "tertiary-fixed": "#85f8c4",
+                      "on-surface-variant": "#444651",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "secondary": "#0058be",
+                      "on-primary": "#ffffff",
+                      "outline": "#757682",
+                      "on-background": "#111c2d",
+                      "surface-card": "#FFFFFF",
+                      "secondary-container": "#2170e4",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "surface-tint": "#4059aa",
+                      "on-error": "#ffffff",
+                      "inverse-primary": "#b6c4ff",
+                      "tertiary-fixed-dim": "#68dba9",
+                      "primary-fixed": "#dce1ff",
+                      "on-secondary-fixed": "#001a42",
+                      "surface": "#f9f9ff",
+                      "primary": "#00236f",
+                      "text-secondary": "#64748B",
+                      "error": "#ba1a1a",
+                      "surface-subtle": "#F1F5F9",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "status-error": "#DC2626",
+                      "surface-container-low": "#f0f3ff",
+                      "on-primary-fixed-variant": "#264191",
+                      "inverse-on-surface": "#ecf1ff",
+                      "surface-container": "#e7eeff",
+                      "secondary-fixed": "#d8e2ff",
+                      "surface-bright": "#f9f9ff",
+                      "surface-variant": "#d8e3fb",
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#cfdaf2",
+                      "background": "#f9f9ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "xs": "4px",
+                      "md": "16px",
+                      "margin": "24px",
+                      "sm": "8px",
+                      "container-max": "1280px",
+                      "xl": "32px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-xl": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<div class="flex h-screen w-full overflow-hidden">
+<!-- SideNavBar Anchor -->
+<aside class="bg-surface-container-low dark:bg-surface-dim text-on-surface-variant dark:text-surface-variant border-r border-border-default dark:border-outline-variant hidden md:flex flex-col h-screen p-md gap-sm w-64 shrink-0 transition-all duration-200 ease-in-out">
+<div class="mb-xl px-2">
+<span class="text-primary font-bold font-headline-md text-headline-md">EMPO</span>
+</div>
+<div class="space-y-sm flex-1">
+<!-- Welcome -->
+<div class="flex items-center gap-md px-md py-sm cursor-pointer text-on-surface-variant dark:text-surface-variant transition-all duration-200 ease-in-out hover:bg-surface-subtle dark:hover:bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined">start</span>
+<span class="font-label-md text-label-md">Welcome</span>
+</div>
+<!-- System Check -->
+<div class="flex items-center gap-md px-md py-sm cursor-pointer text-on-surface-variant dark:text-surface-variant transition-all duration-200 ease-in-out hover:bg-surface-subtle dark:hover:bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">System Check</span>
+</div>
+<!-- Practice (Active State) -->
+<div class="flex items-center gap-md px-md py-sm cursor-pointer bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold rounded-lg transition-all duration-200 ease-in-out">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">video_chat</span>
+<span class="font-label-md text-label-md">Practice</span>
+</div>
+<!-- Start Interview -->
+<div class="flex items-center gap-md px-md py-sm cursor-pointer text-on-surface-variant dark:text-surface-variant transition-all duration-200 ease-in-out hover:bg-surface-subtle dark:hover:bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined">play_circle</span>
+<span class="font-label-md text-label-md">Start Interview</span>
+</div>
+</div>
+<div class="mt-auto p-md border-t border-border-default dark:border-outline-variant">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a diverse candidate, wearing business casual attire against a clean, neutral gray background. Soft high-key lighting illuminates their face, conveying confidence and readiness for a corporate recruitment process. Modern and crisp aesthetics consistent with a high-end HR platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAinxuCnPxkd-8_g5Xwng512QG3NXvHuWLANyyrWg_FiEeTiR2Sqb4fgJ5Psf5nYs2pkrIUli36jkpoYXTknHvMxX9nx9eTM-DD-XmaRKsqg_wvZyN4b4YsUptC4FkNRqtM6izQR6deJDXBCY9H9xgTHZFKUszzPRpzvsiBHRv13lMWj3JbBdJG6Nqs529cX0z7FICqSppRJC8rs13bxE8uxiWwTPgRzbdemkyyQfMsCwfJmp_1mKMcEg"/>
+</div>
+<div class="overflow-hidden">
+<p class="font-label-md text-label-md text-on-surface truncate">Alex Sterling</p>
+<p class="text-xs text-text-secondary truncate">Candidate Portrait</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col bg-surface-bg overflow-hidden">
+<!-- TopNavBar Anchor -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-border-default dark:border-outline-variant shadow-sm flex justify-between items-center px-lg py-md w-full shrink-0">
+<div class="flex items-center gap-md">
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed-dim">Practice Session</h1>
+<span class="px-sm py-1 bg-tertiary-container text-on-tertiary-fixed rounded text-xs font-bold tracking-wider uppercase">Trial Question</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="hidden md:flex gap-md">
+<a class="font-label-md text-label-md text-text-secondary hover:text-primary transition-colors cursor-pointer active:opacity-80" href="#">Help Center</a>
+<a class="font-label-md text-label-md text-text-secondary hover:text-primary transition-colors cursor-pointer active:opacity-80" href="#">Test Connection</a>
+</div>
+<div class="flex gap-sm">
+<span class="material-symbols-outlined text-text-secondary cursor-pointer hover:text-primary transition-colors">settings</span>
+<span class="material-symbols-outlined text-text-secondary cursor-pointer hover:text-primary transition-colors">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Recording Screen (Dark Environment) -->
+<div class="flex-1 relative flex flex-col items-center justify-center p-lg overflow-hidden bg-on-surface">
+<!-- Practice Mode Banner -->
+<div class="absolute top-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-6 py-2 bg-secondary-container text-on-secondary-container rounded-full font-bold shadow-xl border border-white/20 animate-bounce">
+<span class="material-symbols-outlined text-sm">info</span>
+<span class="text-label-md font-label-md uppercase tracking-widest">Practice Mode Active</span>
+</div>
+<div class="max-w-6xl w-full h-full flex flex-col md:flex-row gap-lg relative z-10">
+<!-- Left Column: Video Interface -->
+<div class="flex-[2] flex flex-col gap-md h-full">
+<div class="relative flex-1 bg-black rounded-xl overflow-hidden shadow-2xl border border-white/5">
+<!-- Background WebGL Shader (Visual atmosphere) -->
+
+<!-- Webcam Placeholder -->
+<img class="w-full h-full object-cover" data-alt="A POV webcam view of a young professional candidate sitting in a modern, well-lit home office with acoustic panels and soft plants in the background. The scene is slightly dimmed as if seen through a digital recording interface, with sharp focus on the person and a cool, cinematic professional color grade." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAub98xbNlk5RdR4WA1-avdg4kD2XToBmWSUETVN7GALFvoU3xFCjDEKwdTwDy8fzDWLBnzzEbO2vnJir1iRTpGtuxqD_uGo6nfKeNtQwqq2NSvAL7DG0nD1FayYUODJBfJixeInKsBJ5tO-OwxZFZtgCH6pelDCIrnQ6_g_30rP-w9ZEjb7eORRIZpZXWmqFDOfTzwZ9kFXgItIELqmoVC9UXu-aBF7pUGLWXpZQ32z5e4pQkybsSQuQ"/>
+<!-- Overlays -->
+<div class="absolute inset-x-0 top-0 p-lg flex justify-between items-start bg-gradient-to-b from-black/60 to-transparent">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-error/90 text-white rounded-md recording-pulse">
+<div class="w-2.5 h-2.5 rounded-full bg-white"></div>
+<span class="text-xs font-bold tracking-tighter">REC 00:42 / 02:00</span>
+</div>
+<div class="glass-panel px-3 py-1.5 rounded-md text-white/90 text-xs font-medium">
+                                        HD 1080p
+                                    </div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<div class="glass-panel p-2 rounded-md">
+<div class="flex gap-1 h-4 items-end">
+<div class="w-1 bg-on-tertiary-container h-1/2"></div>
+<div class="w-1 bg-on-tertiary-container h-3/4"></div>
+<div class="w-1 bg-on-tertiary-container h-full"></div>
+<div class="w-1 bg-on-tertiary-container h-2/3"></div>
+</div>
+</div>
+<span class="text-[10px] text-white/60 uppercase tracking-widest font-bold">Mic Input Level</span>
+</div>
+</div>
+<!-- Recording Controls Overlay -->
+<div class="absolute inset-x-0 bottom-0 p-xl flex justify-center items-center gap-lg bg-gradient-to-t from-black/80 to-transparent">
+<button class="w-14 h-14 rounded-full flex items-center justify-center glass-panel text-white hover:bg-white/20 transition-all hover:scale-110 group">
+<span class="material-symbols-outlined text-3xl">replay</span>
+</button>
+<button class="w-20 h-20 rounded-full bg-error border-4 border-white/20 flex items-center justify-center text-white shadow-2xl hover:scale-105 active:scale-95 transition-all" id="recordBtn">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">stop</span>
+</button>
+<button class="w-14 h-14 rounded-full flex items-center justify-center glass-panel text-white hover:bg-white/20 transition-all hover:scale-110 group">
+<span class="material-symbols-outlined text-3xl">play_arrow</span>
+</button>
+</div>
+</div>
+<!-- Question Display -->
+<div class="bg-surface-container-high/10 backdrop-blur-sm border border-white/10 rounded-xl p-lg">
+<div class="flex justify-between items-start mb-2">
+<span class="text-primary-fixed-dim font-bold text-xs uppercase tracking-widest">Current Question</span>
+<span class="text-error font-bold text-xs uppercase tracking-widest flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">warning</span>
+                                    Practice Question - Not Scored
+                                </span>
+</div>
+<p class="text-white text-headline-md font-headline-md leading-relaxed">
+                                "Tell us a bit about yourself and why you're interested in this role."
+                            </p>
+</div>
+</div>
+<!-- Right Column: Instructional Sidebar -->
+<div class="flex-1 flex flex-col gap-lg">
+<div class="bg-surface-container-high/10 backdrop-blur-md border border-white/10 rounded-xl p-lg text-white">
+<h3 class="font-headline-md text-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-on-tertiary-container">psychology</span>
+                                Preparation Tips
+                            </h3>
+<ul class="space-y-4">
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-secondary-fixed-dim shrink-0">check_circle</span>
+<p class="text-label-md font-label-md text-white/80 leading-snug">Relax! This is for your eyes only. Use this space to get comfortable with the camera and mic.</p>
+</li>
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-secondary-fixed-dim shrink-0">check_circle</span>
+<p class="text-label-md font-label-md text-white/80 leading-snug">Check your framing. Ensure your face is centered and there are no distracting backgrounds.</p>
+</li>
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-secondary-fixed-dim shrink-0">check_circle</span>
+<p class="text-label-md font-label-md text-white/80 leading-snug">Review your playback to check your audio clarity and lighting.</p>
+</li>
+</ul>
+</div>
+<div class="bg-white/5 border border-white/10 rounded-xl p-lg flex flex-col items-center text-center gap-4">
+<div class="w-12 h-12 bg-on-tertiary-container/20 rounded-full flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md text-white mb-1">Private Session</h4>
+<p class="text-label-md text-white/60">Recruiters will never see these practice recordings. They are automatically deleted once you start the real interview.</p>
+</div>
+</div>
+<div class="mt-auto pt-lg">
+<button class="w-full bg-secondary-container hover:bg-secondary text-white py-lg rounded-xl font-bold flex items-center justify-center gap-md shadow-lg transition-all active:scale-95 group">
+                                Start Real Interview
+                                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<p class="text-center text-[10px] text-white/40 mt-4 uppercase tracking-[0.2em]">Next step: Section 1 of 5</p>
+</div>
+</div>
+</div>
+<!-- Animated Atmospheric Particles (Micro-interaction) -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
+<div class="absolute h-px w-px bg-white rounded-full top-[10%] left-[20%] shadow-[0_0_10px_2px_rgba(255,255,255,0.5)] animate-pulse"></div>
+<div class="absolute h-px w-px bg-white rounded-full top-[60%] left-[80%] shadow-[0_0_10px_2px_rgba(255,255,255,0.5)] animate-pulse" style="animation-delay: 1s"></div>
+</div>
+</div>
+<!-- Footer Anchor -->
+<footer class="bg-surface-bg dark:bg-on-surface border-t border-border-default dark:border-outline-variant shrink-0">
+<div class="flex flex-col md:flex-row justify-between items-center px-lg py-md w-full max-w-container-max mx-auto gap-md">
+<p class="font-body-sm text-body-sm text-text-secondary dark:text-surface-variant">
+                        © 2024 EMPO Recruitment Platform. All rights reserved.
+                    </p>
+<div class="flex gap-lg">
+<a class="font-body-sm text-body-sm text-text-secondary hover:underline opacity-90 transition-opacity" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-text-secondary hover:underline opacity-90 transition-opacity" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-text-secondary hover:underline opacity-90 transition-opacity" href="#">Candidate Support</a>
+</div>
+</div>
+</footer>
+</main>
+</div>
+<script>
+        // Micro-interaction for the record button
+        const recordBtn = document.getElementById('recordBtn');
+        let isRecording = true;
+
+        recordBtn.addEventListener('click', () => {
+            isRecording = !isRecording;
+            const icon = recordBtn.querySelector('.material-symbols-outlined');
+            if(isRecording) {
+                icon.innerText = 'stop';
+                recordBtn.classList.add('bg-error');
+                recordBtn.classList.remove('bg-white', 'text-error');
+            } else {
+                icon.innerText = 'fiber_manual_record';
+                recordBtn.classList.remove('bg-error');
+                recordBtn.classList.add('bg-white', 'text-error');
+            }
+        });
+
+        // Simple light/dark mode persistence for demonstration
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // document.documentElement.classList.add('dark');
+        }
+    </script>
+</body></html>

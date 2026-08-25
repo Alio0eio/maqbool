@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Senior Product Designer | Lumina Tech - Candidate Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#b6c4ff",
+                        "primary-container": "#1e3a8a",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "on-surface": "#111c2d",
+                        "surface-container": "#e7eeff",
+                        "surface-container-high": "#dee8ff",
+                        "surface-variant": "#d8e3fb",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "outline": "#757682",
+                        "on-primary-fixed-variant": "#264191",
+                        "outline-variant": "#c5c5d3",
+                        "tertiary-fixed": "#85f8c4",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#111c2d",
+                        "secondary": "#0058be",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "surface-tint": "#4059aa",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#90a8ff",
+                        "on-tertiary-fixed": "#002114",
+                        "on-tertiary-container": "#4ac08f",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-dim": "#cfdaf2",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-subtle": "#F1F5F9",
+                        "on-secondary-container": "#fefcff",
+                        "secondary-container": "#2170e4",
+                        "on-primary-fixed": "#00164e",
+                        "background": "#f9f9ff",
+                        "tertiary-container": "#004a32",
+                        "primary-fixed": "#dce1ff",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#004395",
+                        "error": "#ba1a1a",
+                        "surface-container-low": "#f0f3ff",
+                        "surface": "#f9f9ff",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#263143",
+                        "surface-bg": "#F8FAFC",
+                        "tertiary": "#003120",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#ecf1ff",
+                        "primary": "#00236f",
+                        "on-surface-variant": "#444651",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#d8e3fb",
+                        "surface-bright": "#f9f9ff",
+                        "surface-card": "#FFFFFF",
+                        "border-default": "#E2E8F0",
+                        "text-secondary": "#64748B",
+                        "status-error": "#DC2626"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "margin": "24px",
+                        "sm": "8px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "container-max": "1280px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .card-shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .sticky-active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .sticky-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="bg-surface-bg font-body-md text-on-surface custom-scrollbar">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface dark:bg-surface-container border-b border-border-default dark:border-outline-variant shadow-sm dark:shadow-none h-16">
+<nav class="flex justify-between items-center w-full px-lg py-md max-w-container-max mx-auto h-full">
+<div class="flex items-center gap-md">
+<span class="text-headline-lg font-headline-lg font-bold text-primary dark:text-inverse-primary">EMPO</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="hidden md:flex items-center gap-xl">
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:bg-surface-subtle dark:hover:bg-surface-container-high transition-colors px-md py-sm rounded-lg" href="#">Jobs</a>
+<a class="text-primary dark:text-inverse-primary font-bold border-b-2 border-primary font-label-md text-label-md px-md py-sm" href="#">My Applications</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-md text-label-md hover:bg-surface-subtle dark:hover:bg-surface-container-high transition-colors px-md py-sm rounded-lg" href="#">Interviews</a>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-primary dark:text-inverse-primary p-xs hover:bg-surface-subtle transition-colors rounded-full" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined text-primary dark:text-inverse-primary p-xs hover:bg-surface-subtle transition-colors rounded-full" data-icon="settings">settings</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Candidate profile avatar of Alex Thompson, a professional product designer, in a minimalist high-trust light-mode setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBscAoAxeLRZifY01stzqXeinOmX0D9HgQQBmWX3TFiUW6VzDbyh4v4sjyT-1z-tIxMifZ0EqeTxS4tMwwEkpFR4QJsHxmWv6jDHICBYmKBy_fc2rQnhAEtsARj5qXOv96HAyXiUJN-y549U00Lo7xFUmBjK1S9_tuQtKRc4qRbp7NdbAc18C02Q-mZsGnbW4618MTwWlWSVAlRzUrEw2QkfcVhi3E0sjnHzY2T8F86v_D8eu1O9N55tQ"/>
+</div>
+</div>
+</div>
+</nav>
+</header>
+<!-- Side Navigation Bar (Hidden on small screens) -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-surface-container-low dark:bg-surface-container-lowest border-r border-border-default dark:border-outline-variant flex flex-col p-md z-40 hidden lg:flex">
+<div class="mb-xl">
+<h2 class="text-headline-md font-headline-md font-black text-primary dark:text-inverse-primary px-md mb-xs">Welcome back, Alex</h2>
+<p class="text-on-surface-variant dark:text-outline-variant text-label-md font-label-md px-md">Candidate Portal</p>
+</div>
+<nav class="flex-grow space-y-sm">
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant px-md py-sm hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-lg px-md py-sm font-semibold translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-md text-label-md">Explore Jobs</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant px-md py-sm hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">bookmark</span>
+<span class="font-label-md text-label-md">Saved Jobs</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant px-md py-sm hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-label-md text-label-md">Job Alerts</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant px-md py-sm hover:bg-surface-variant dark:hover:bg-surface-container-highest transition-all duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-label-md text-label-md">Interviews</span>
+</a>
+</nav>
+<div class="mt-auto space-y-sm border-t border-border-default pt-md">
+<button class="w-full bg-primary text-on-primary py-md rounded-lg font-bold mb-md hover:opacity-90 transition-opacity">Upload Resume</button>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant px-md py-sm hover:bg-surface-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant dark:text-outline-variant px-md py-sm hover:bg-surface-variant transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Sticky Header/Action Bar -->
+<div class="fixed top-16 left-0 lg:left-64 right-0 z-40 bg-white border-b border-border-default py-sm px-lg transition-all duration-300 transform sticky-hidden" id="sticky-header">
+<div class="max-w-container-max mx-auto flex items-center justify-between">
+<div class="flex items-center gap-md">
+<img alt="Lumina Tech Small" class="w-10 h-10 object-contain rounded-lg border border-border-default p-1" src="https://lh3.googleusercontent.com/aida/AP1WRLuJyknCQC4kQj-PgXxOW-KT1DAVyxUBkiOu5SQv-Kea1EXsvq77wPLQAEq4RvG653wuz0Fcb4LgVTogRBYiVD7KvKSO-T6ShRjlqI57_psuJI8jmnpa1SWcUlUzmmCSLPgFI-7fhdTt9ZVQzGJ7INSI7354lsQlEYituc9PaxRhdbZ4pysKW5VwPs9it-xLA4ycGybGzRukpMG10KlFXfR4eFmevaw9D_ULYiC_k5uMhHOpnvFcP8C7H8Zj"/>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface leading-none">Senior Product Designer</h3>
+<p class="text-body-sm text-text-secondary">Lumina Tech • San Francisco, CA</p>
+</div>
+</div>
+<button class="bg-primary text-on-primary px-xl py-sm rounded-lg font-bold hover:opacity-90 active:scale-95 transition-all">Apply Now</button>
+</div>
+</div>
+<!-- Main Content Canvas -->
+<main class="mt-16 lg:ml-64 p-lg min-h-screen">
+<div class="max-w-container-max mx-auto">
+<!-- Hero Section -->
+<section class="bg-white rounded-xl card-shadow border border-border-default p-xl mb-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary-container/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+<div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-lg">
+<div class="flex-grow">
+<div class="mb-lg">
+<img alt="Lumina Tech Logo" class="h-24 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLuJyknCQC4kQj-PgXxOW-KT1DAVyxUBkiOu5SQv-Kea1EXsvq77wPLQAEq4RvG653wuz0Fcb4LgVTogRBYiVD7KvKSO-T6ShRjlqI57_psuJI8jmnpa1SWcUlUzmmCSLPgFI-7fhdTt9ZVQzGJ7INSI7354lsQlEYituc9PaxRhdbZ4pysKW5VwPs9it-xLA4ycGybGzRukpMG10KlFXfR4eFmevaw9D_ULYiC_k5uMhHOpnvFcP8C7H8Zj"/>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface mb-xs">Senior Product Designer</h1>
+<div class="flex flex-wrap items-center gap-md text-text-secondary">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="font-body-md text-body-md">San Francisco, CA (Remote Friendly)</span>
+</div>
+<div class="h-1 w-1 rounded-full bg-outline-variant"></div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">payments</span>
+<span class="font-body-md text-body-md">$160k - $210k • Equity</span>
+</div>
+<div class="h-1 w-1 rounded-full bg-outline-variant"></div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-sm">work</span>
+<span class="font-body-md text-body-md">Full-time</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-md items-stretch sm:items-center">
+<button class="bg-primary text-on-primary px-xl py-lg rounded-lg font-bold hover:bg-primary/90 active:scale-[0.98] transition-all shadow-lg shadow-primary-container/20">Apply Now</button>
+<button class="border-2 border-primary text-primary px-xl py-lg rounded-lg font-bold hover:bg-primary/5 transition-colors flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined">bookmark_border</span>
+                            Save Job
+                        </button>
+</div>
+</div>
+</section>
+<!-- Main Content (Two-Column Bento Layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Column (Role Details) -->
+<div class="lg:col-span-8 space-y-lg">
+<!-- About Section -->
+<div class="bg-white rounded-xl card-shadow border border-border-default p-xl">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-lg border-b border-border-default pb-md">About the Role</h2>
+<div class="space-y-md text-on-surface-variant leading-relaxed">
+<p class="font-body-lg text-body-lg">Lumina Tech is looking for a Senior Product Designer to join our core product team. You will be responsible for defining the future of how professionals collaborate across decentralized networks. This isn't just about making things look pretty—it's about solving complex interaction challenges at the intersection of productivity and AI.</p>
+<p class="font-body-lg text-body-lg">As a senior member of the team, you'll own major initiatives from discovery through to high-fidelity implementation. You'll partner closely with engineering and product management to ensure our solutions are not only beautiful but feasible and impactful.</p>
+</div>
+</div>
+<!-- Key Responsibilities -->
+<div class="bg-white rounded-xl card-shadow border border-border-default p-xl">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-lg border-b border-border-default pb-md">Key Responsibilities</h2>
+<ul class="space-y-md">
+<li class="flex gap-md group">
+<span class="material-symbols-outlined text-secondary mt-1 group-hover:scale-125 transition-transform">check_circle</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">Lead the design of complex features from conceptual ideation to polished interactive prototypes.</span>
+</li>
+<li class="flex gap-md group">
+<span class="material-symbols-outlined text-secondary mt-1 group-hover:scale-125 transition-transform">check_circle</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">Conduct user research and usability testing to validate design decisions and iterate based on real feedback.</span>
+</li>
+<li class="flex gap-md group">
+<span class="material-symbols-outlined text-secondary mt-1 group-hover:scale-125 transition-transform">check_circle</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">Contribute to and evolve our design system, ensuring consistency across all touchpoints.</span>
+</li>
+<li class="flex gap-md group">
+<span class="material-symbols-outlined text-secondary mt-1 group-hover:scale-125 transition-transform">check_circle</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">Mentor junior and mid-level designers, fostering a culture of excellence and continuous learning.</span>
+</li>
+<li class="flex gap-md group">
+<span class="material-symbols-outlined text-secondary mt-1 group-hover:scale-125 transition-transform">check_circle</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">Collaborate with cross-functional stakeholders to align design strategy with business objectives.</span>
+</li>
+</ul>
+</div>
+<!-- Qualifications -->
+<div class="bg-white rounded-xl card-shadow border border-border-default p-xl">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-lg border-b border-border-default pb-md">Qualifications</h2>
+<ul class="space-y-md">
+<li class="flex gap-md group">
+<span class="material-symbols-outlined text-secondary mt-1">verified</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">5+ years of experience in product design, ideally in high-growth SaaS environments.</span>
+</li>
+<li class="flex gap-md group">
+<span class="material-symbols-outlined text-secondary mt-1">verified</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">A strong portfolio showcasing complex systems thinking and exceptional visual craft.</span>
+</li>
+<li class="flex gap-md group">
+<span class="material-symbols-outlined text-secondary mt-1">verified</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">Proficiency with modern design tools like Figma, Framer, and Adobe Creative Cloud.</span>
+</li>
+<li class="flex gap-md group">
+<span class="material-symbols-outlined text-secondary mt-1">verified</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">Strong understanding of frontend technologies (HTML/CSS/JS) to facilitate handoffs.</span>
+</li>
+<li class="flex gap-md group">
+<span class="material-symbols-outlined text-secondary mt-1">verified</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant">Excellent communication skills and the ability to articulate design rationale to non-designers.</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Right Column (Sidebar Extras) -->
+<div class="lg:col-span-4 space-y-lg">
+<!-- Company Culture Card -->
+<div class="bg-white rounded-xl card-shadow border border-border-default overflow-hidden group">
+<div class="h-48 overflow-hidden relative">
+<img alt="Lumina Tech Office Culture" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida/AP1WRLs0e_SIWULiydt7BhJ_yz8VnNi0BM-VChHdSXYOYOZk-wxiBTDlhEwi4NmPjXuzBffgdXJzm4xSuHydf1-5V1ynvgI4PSXDqBAeUeagSSOqiFmxddGC4grDcJyQ5IhjbwD3gjftVsrTDuXwrXm_pESNkbHafe25QCKrO1FUCS4MITQQSi6WzUUcGUnfwmOYEyAKZye8JxmBTqRLKVb3OtVdHjxiRkrqftwSgDLCGS9CBraHexxXmibWjdcM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-md left-md">
+<span class="bg-white/20 backdrop-blur-md text-white text-label-sm font-label-sm px-md py-xs rounded-full border border-white/30 uppercase tracking-widest">Our Space</span>
+</div>
+</div>
+<div class="p-lg">
+<h3 class="font-headline-md text-headline-md text-primary mb-sm">Company Culture</h3>
+<p class="text-on-surface-variant text-body-md mb-md">We believe in radical transparency, deep focus, and diverse perspectives. Join a team where your voice is heard and your work has real-world impact.</p>
+<button class="text-secondary font-bold hover:underline flex items-center gap-xs">
+                                Explore Life at Lumina
+                                <span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+</div>
+<!-- Hiring Process -->
+<div class="bg-white rounded-xl card-shadow border border-border-default p-lg">
+<h3 class="font-headline-md text-headline-md text-primary mb-lg">Hiring Process</h3>
+<div class="space-y-xl relative before:absolute before:left-3 before:top-2 before:bottom-2 before:w-[2px] before:bg-outline-variant">
+<!-- Step 1 -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-0 w-6 h-6 rounded-full bg-primary flex items-center justify-center z-10 border-4 border-white"></div>
+<h4 class="font-label-md text-label-md text-on-surface">Application Review</h4>
+<p class="text-body-sm text-text-secondary">Our recruiters review your portfolio and background.</p>
+</div>
+<!-- Step 2 -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-0 w-6 h-6 rounded-full bg-outline-variant flex items-center justify-center z-10 border-4 border-white"></div>
+<h4 class="font-label-md text-label-md text-on-surface">Initial Screen</h4>
+<p class="text-body-sm text-text-secondary">30-minute chat with our Head of Talent.</p>
+</div>
+<!-- Step 3 -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-0 w-6 h-6 rounded-full bg-outline-variant flex items-center justify-center z-10 border-4 border-white"></div>
+<h4 class="font-label-md text-label-md text-on-surface">Portfolio Review</h4>
+<p class="text-body-sm text-text-secondary">Deep dive into 2-3 projects with Design Leads.</p>
+</div>
+<!-- Step 4 -->
+<div class="relative pl-10">
+<div class="absolute left-0 top-0 w-6 h-6 rounded-full bg-outline-variant flex items-center justify-center z-10 border-4 border-white"></div>
+<h4 class="font-label-md text-label-md text-on-surface">Virtual On-site</h4>
+<p class="text-body-sm text-text-secondary">A series of interviews with the product team.</p>
+</div>
+</div>
+</div>
+<!-- Benefits -->
+<div class="bg-surface-container-high rounded-xl border border-outline-variant p-lg">
+<h3 class="font-headline-md text-headline-md text-primary mb-lg">Benefits &amp; Perks</h3>
+<div class="grid grid-cols-2 gap-md">
+<div class="bg-white/50 p-md rounded-lg border border-white/50 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-secondary mb-xs">health_and_safety</span>
+<span class="text-label-sm font-label-sm">Premium Health</span>
+</div>
+<div class="bg-white/50 p-md rounded-lg border border-white/50 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-secondary mb-xs">school</span>
+<span class="text-label-sm font-label-sm">Learning Stipend</span>
+</div>
+<div class="bg-white/50 p-md rounded-lg border border-white/50 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-secondary mb-xs">home_work</span>
+<span class="text-label-sm font-label-sm">Remote Friendly</span>
+</div>
+<div class="bg-white/50 p-md rounded-lg border border-white/50 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-secondary mb-xs">savings</span>
+<span class="text-label-sm font-label-sm">Generous Equity</span>
+</div>
+</div>
+</div>
+<!-- Team Preview -->
+<div class="bg-white rounded-xl card-shadow border border-border-default p-lg">
+<h3 class="font-headline-md text-headline-md text-primary mb-md">Future Teammates</h3>
+<div class="flex -space-x-2 mb-md">
+<img alt="Sarah - Design Lead" class="w-10 h-10 rounded-full border-2 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjQTzb3N7fAzPEv7creoBqGDHDGT-xNm40JB_Pg4USCej7ubSAe9e2NoNNMDLIaT4jD3JUdwpiyGOtfo71XaBaF3pIzN7sPuLnE4OETX_ZloY9oQFbM-vXminookXXmXNxr4SIJA9M-riZAq1cTrFUoj5dvYJ6fLOMmqmb27e98e7F8-RIES5klHKtY2kax_foJAtYLA0FW1czb3skRXO175zfAanTA_jUfM7ttTG5JDx5qciAqdkscg"/>
+<img alt="James - PM" class="w-10 h-10 rounded-full border-2 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgQctfAsrT7BEStyvfs3jhNygoY0osDHlsCsSLZtxGJvmhTHwigMwNZbCx66KO68gRuIKA1eZkwlTbYtcNDd0myyzI7GcgUDFaVebkps8G__vhilJkDU4awr6bZgQKCK01pexswuNEIVF0X6Wcge6Pe_iIVCCY0YvjnpZ2n3aXWWohd0N5goqOx-h3dfW0GfQ-aC5n6CpcdFm5CeuZilibz1kvwwOJvbqSh5s9MveFd0xzhRXA6hNOWw"/>
+<img alt="Maya - Researcher" class="w-10 h-10 rounded-full border-2 border-white" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUMDP3l9XfQq0PumgQoRAO8nWYX2TiLOtON2XOiSzPXU3L3gXN57ACA4pqj2l6J9arTGz-e_7wdNlrSbjG4pQNjYsBWvWi-0ROVJaRpBPzhVxufJGf8zCZr2CCJmBL7LRCidFkm6v-dQ8bNK8ufOxpA8f5LwXfSg00zpISq8dRQo-gkBLy4eH8GL-WSQtB4W9jZGxzHog3O9Di58j6JaQWExDQ0IPnJd8JSxi5061Kuq4MdCdU8B4eYA"/>
+<div class="w-10 h-10 rounded-full border-2 border-white bg-surface-container-high flex items-center justify-center text-label-sm font-bold text-primary">+12</div>
+</div>
+<p class="text-body-sm text-text-secondary">Join a diverse group of 15 designers and researchers.</p>
+</div>
+</div>
+</div>
+<!-- Footer Spacing -->
+<div class="h-16"></div>
+</div>
+</main>
+<!-- Bottom Action Bar (Mobile Only) -->
+<div class="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-border-default p-md z-50 flex items-center justify-between gap-md">
+<div class="flex-grow">
+<p class="font-label-md text-label-md truncate">Senior Product Designer</p>
+<p class="text-body-sm text-text-secondary">$160k - $210k</p>
+</div>
+<button class="bg-primary text-on-primary px-lg py-sm rounded-lg font-bold">Apply Now</button>
+</div>
+<script>
+        // Sticky Header Intersection Observer
+        const stickyHeader = document.getElementById('sticky-header');
+        const heroSection = document.querySelector('section');
+
+        const observerOptions = {
+            root: null,
+            threshold: 0,
+            rootMargin: '-80px 0px 0px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    stickyHeader.classList.remove('sticky-hidden');
+                    stickyHeader.classList.add('sticky-active');
+                } else {
+                    stickyHeader.classList.remove('sticky-active');
+                    stickyHeader.classList.add('sticky-hidden');
+                }
+            });
+        }, observerOptions);
+
+        observer.observe(heroSection);
+
+        // Simple button active interactions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.96)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

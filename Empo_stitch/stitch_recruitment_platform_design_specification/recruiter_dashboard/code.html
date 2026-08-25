@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO Recruiter Dashboard | Active Jobs</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Use the provided Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#00164e",
+                    "on-error-container": "#93000a",
+                    "on-background": "#111c2d",
+                    "on-secondary-fixed-variant": "#004395",
+                    "on-primary-container": "#90a8ff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "border-default": "#E2E8F0",
+                    "inverse-primary": "#b6c4ff",
+                    "outline-variant": "#c5c5d3",
+                    "outline": "#757682",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "surface-variant": "#d8e3fb",
+                    "on-secondary-container": "#fefcff",
+                    "on-tertiary": "#ffffff",
+                    "primary": "#00236f",
+                    "surface-container": "#e7eeff",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f9f9ff",
+                    "tertiary-container": "#004a32",
+                    "inverse-surface": "#263143",
+                    "surface-container-low": "#f0f3ff",
+                    "error": "#ba1a1a",
+                    "text-secondary": "#64748B",
+                    "on-surface": "#111c2d",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-dim": "#cfdaf2",
+                    "primary-fixed": "#dce1ff",
+                    "background": "#f9f9ff",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#444651",
+                    "secondary-container": "#2170e4",
+                    "on-tertiary-container": "#4ac08f",
+                    "status-error": "#DC2626",
+                    "on-secondary": "#ffffff",
+                    "surface-card": "#FFFFFF",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#4059aa",
+                    "secondary": "#0058be",
+                    "surface": "#f9f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#002114",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "inverse-on-surface": "#ecf1ff",
+                    "surface-container-high": "#dee8ff",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-bg": "#F8FAFC",
+                    "surface-subtle": "#F1F5F9",
+                    "on-primary-fixed-variant": "#264191",
+                    "tertiary-fixed": "#85f8c4",
+                    "surface-container-highest": "#d8e3fb",
+                    "tertiary": "#003120",
+                    "primary-container": "#1e3a8a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "container-max": "1280px",
+                    "gutter": "24px",
+                    "sm": "8px",
+                    "margin": "24px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-background min-h-screen flex overflow-hidden">
+<!-- SideNavBar Component (Shared) -->
+<aside class="hidden md:flex flex-col h-full py-lg px-md space-y-sm bg-surface-container-low border-r border-border-default w-64 fixed left-0 top-0 z-50">
+<div class="mb-xl px-md">
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Talent Suite</h1>
+<p class="text-label-sm font-label-sm text-text-secondary">Recruiter Mode</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg group active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-md">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<!-- Active State Applied Here: Active Jobs -->
+<a class="flex items-center px-md py-sm bg-primary-container text-on-primary-container rounded-lg font-bold group active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-md">work</span>
+<span class="text-label-md font-label-md">Active Jobs</span>
+</a>
+<a class="flex items-center px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg group active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-md">group</span>
+<span class="text-label-md font-label-md">Candidates</span>
+</a>
+<a class="flex items-center px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg group active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-md">event_available</span>
+<span class="text-label-md font-label-md">Interviews</span>
+</a>
+<a class="flex items-center px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg group active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-md">analytics</span>
+<span class="text-label-md font-label-md">Analytics</span>
+</a>
+</nav>
+<div class="pt-lg border-t border-border-default space-y-1">
+<a class="flex items-center px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg group active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-md">help</span>
+<span class="text-label-md font-label-md">Help Center</span>
+</a>
+<a class="flex items-center px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors duration-150 rounded-lg group active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined mr-md">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+<div class="mt-xl pt-md px-md flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-dim overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Professional studio portrait of a corporate recruiter wearing a smart navy blazer, set against a clean, soft-lit professional office background. The lighting is bright and even, conveying a high-trust and modern recruitment brand identity within the EMPO ecosystem. Deep blue and soft gray tones dominate the scene." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpNrjXF3fMFkUoAnE3Xg5rHMCZBsG10O8hvCX2alFpjUneQtCOlGOpA_lxdQ7QATFH2IUI7QxswJtZpW2VD-opxKj9rnXN0LwS3Y5cQcaeSr2jcjfCobx9fNTVDuP_J05OdAb4_i4tqpblfZSwUgmlmPTjJKy1fm7N8ZCz-Z5M2vdHDoibsb8S7whqkl-ec-rsQ9v2YRfixbMljyTZYkuqI2wmBaG1WaHlbwwugmEz0bHQvo8shfWCQA"/>
+</div>
+<div class="overflow-hidden">
+<p class="text-label-md font-label-md truncate">Recruiter Co. HQ</p>
+<p class="text-body-sm font-body-sm text-text-secondary truncate">Talent Acquisition</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-64 flex flex-col h-screen overflow-y-auto bg-surface-bg relative">
+<!-- TopNavBar (Simplified for Dashboard context) -->
+<header class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-16 bg-surface-container-lowest border-b border-border-default sticky top-0 z-40">
+<div class="flex items-center gap-md">
+<button class="md:hidden p-sm text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="text-headline-md font-headline-md font-bold text-primary">Active Jobs</h2>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden sm:flex items-center relative">
+<span class="material-symbols-outlined absolute left-3 text-outline text-sm">search</span>
+<input class="pl-10 pr-md py-xs bg-surface-subtle border-none rounded-lg text-body-md focus:ring-2 focus:ring-secondary w-64" placeholder="Search postings..." type="text"/>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-sm text-text-secondary hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-sm text-text-secondary hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="px-lg md:px-xl py-xl max-w-container-max mx-auto w-full space-y-xl">
+<!-- Summary Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Card 1: Active Jobs -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-border-default shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-md">
+<div class="p-sm bg-primary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">work</span>
+</div>
+<span class="text-body-sm font-body-sm text-status-success font-bold text-on-tertiary-container">+2 this week</span>
+</div>
+<p class="text-label-md font-label-md text-text-secondary mb-xs">Active Jobs</p>
+<h3 class="text-headline-xl font-headline-xl">24</h3>
+</div>
+<!-- Card 2: Total Applications -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-border-default shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-md">
+<div class="p-sm bg-secondary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-secondary">group</span>
+</div>
+<span class="text-body-sm font-body-sm text-on-primary-container font-bold">+112 new</span>
+</div>
+<p class="text-label-md font-label-md text-text-secondary mb-xs">Total Applications</p>
+<h3 class="text-headline-xl font-headline-xl">842</h3>
+</div>
+<!-- Card 3: Interviews Scheduled -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-border-default shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-md">
+<div class="p-sm bg-tertiary-container/10 rounded-lg">
+<span class="material-symbols-outlined text-on-tertiary-container">event_available</span>
+</div>
+<span class="text-body-sm font-body-sm text-text-secondary">Next: 2:00 PM</span>
+</div>
+<p class="text-label-md font-label-md text-text-secondary mb-xs">Interviews Today</p>
+<h3 class="text-headline-xl font-headline-xl">8</h3>
+</div>
+</div>
+<!-- Table Header Actions -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+<div>
+<h3 class="text-headline-md font-headline-md">Job Postings</h3>
+<p class="text-body-md font-body-md text-text-secondary">Manage and track your ongoing recruitment drives.</p>
+</div>
+<button class="bg-primary text-on-primary px-lg py-md rounded-lg font-label-md flex items-center gap-sm shadow-sm active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+                    Post a New Job
+                </button>
+</div>
+<!-- Active Jobs Table Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-border-default shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-subtle border-b border-border-default">
+<th class="px-lg py-md text-label-sm font-label-sm text-text-secondary">JOB TITLE</th>
+<th class="px-lg py-md text-label-sm font-label-sm text-text-secondary">STATUS</th>
+<th class="px-lg py-md text-label-sm font-label-sm text-text-secondary text-center">TOTAL APPS</th>
+<th class="px-lg py-md text-label-sm font-label-sm text-text-secondary text-center">NEW</th>
+<th class="px-lg py-md text-label-sm font-label-sm text-text-secondary text-right">ACTIONS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-default">
+<!-- Table Row 1 -->
+<tr class="hover:bg-surface-bg transition-colors cursor-pointer group">
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">code</span>
+</div>
+<div>
+<p class="text-body-md font-body-md font-semibold text-primary">Senior Frontend Developer</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Engineering • Full-time</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg">
+<span class="px-sm py-xs bg-tertiary-container/10 text-on-tertiary-container text-label-sm font-label-sm rounded-full">Open</span>
+</td>
+<td class="px-lg py-lg text-center font-medium">124</td>
+<td class="px-lg py-lg text-center">
+<span class="bg-primary-container text-on-primary-container px-sm py-xs rounded-full text-label-sm font-bold">12</span>
+</td>
+<td class="px-lg py-lg text-right">
+<div class="flex justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Table Row 2 -->
+<tr class="hover:bg-surface-bg transition-colors cursor-pointer group">
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">palette</span>
+</div>
+<div>
+<p class="text-body-md font-body-md font-semibold text-primary">Senior UX Designer</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Design • Full-time</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg">
+<span class="px-sm py-xs bg-tertiary-container/10 text-on-tertiary-container text-label-sm font-label-sm rounded-full">Open</span>
+</td>
+<td class="px-lg py-lg text-center font-medium">48</td>
+<td class="px-lg py-lg text-center">
+<span class="bg-primary-container text-on-primary-container px-sm py-xs rounded-full text-label-sm font-bold">4</span>
+</td>
+<td class="px-lg py-lg text-right">
+<div class="flex justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Table Row 3 -->
+<tr class="hover:bg-surface-bg transition-colors cursor-pointer group">
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">campaign</span>
+</div>
+<div>
+<p class="text-body-md font-body-md font-semibold text-primary">Marketing Manager</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Marketing • Remote</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg">
+<span class="px-sm py-xs bg-outline-variant/20 text-text-secondary text-label-sm font-label-sm rounded-full">Closed</span>
+</td>
+<td class="px-lg py-lg text-center font-medium">312</td>
+<td class="px-lg py-lg text-center">
+<span class="text-text-secondary text-label-sm">0</span>
+</td>
+<td class="px-lg py-lg text-right">
+<div class="flex justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Table Row 4 -->
+<tr class="hover:bg-surface-bg transition-colors cursor-pointer group">
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">manage_accounts</span>
+</div>
+<div>
+<p class="text-body-md font-body-md font-semibold text-primary">HR Business Partner</p>
+<p class="text-body-sm font-body-sm text-text-secondary">People • Hybrid</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg">
+<span class="px-sm py-xs bg-tertiary-container/10 text-on-tertiary-container text-label-sm font-label-sm rounded-full">Open</span>
+</td>
+<td class="px-lg py-lg text-center font-medium">92</td>
+<td class="px-lg py-lg text-center">
+<span class="bg-primary-container text-on-primary-container px-sm py-xs rounded-full text-label-sm font-bold">18</span>
+</td>
+<td class="px-lg py-lg text-right">
+<div class="flex justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="p-sm text-text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-lg py-md border-t border-border-default flex justify-between items-center bg-surface-subtle/50">
+<p class="text-label-sm font-label-sm text-text-secondary">Showing 4 of 24 active jobs</p>
+<div class="flex items-center gap-sm">
+<button class="p-xs border border-border-default rounded hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="p-xs border border-border-default rounded hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Talent Pool Sneak Peek (Asymmetric Layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-lg">
+<div class="lg:col-span-3 bg-surface-container-lowest p-lg rounded-xl border border-border-default shadow-sm">
+<div class="flex justify-between items-center mb-lg">
+<h4 class="text-headline-md font-headline-md">Top Talent Matches</h4>
+<a class="text-label-md font-label-md text-secondary hover:underline transition-all" href="#">View All</a>
+</div>
+<div class="space-y-md">
+<div class="flex items-center justify-between p-md bg-surface-bg rounded-lg border border-border-default hover:border-primary transition-colors cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up headshot of a diverse female candidate with a bright, professional expression, wearing creative eyeglasses and a minimal white linen top. The lighting is soft and artistic, highlighting her confident and innovative personality. The background is a clean, modern workspace with subtle navy blue branding elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVMrs6jB0R-BwtkoUDXC-og-IhS4_XV8oR2G6P796Zt_BfOWKgDFN8GZzqqcWNcD_Ogn-i4Uw3v5g9S3MwUBurohx9oLGzyOi8SnF01BgDKmvQT4FmOq9QaQBLDHMKSHq2Kz3MD8cKLNIeHQUbFI6mr3PiuU8GiFXI1MvzaKdhi7a1XsW2RTFRNi4NMI4TX6U51dm7ToPVWLS41fSvjYNze3_5TOAG4cN6OTfzPABDLC1rGsfnDY_ezQ"/>
+</div>
+<div>
+<p class="text-body-md font-body-md font-bold">Elena Rodriguez</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Product Designer • 8 years exp.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-label-sm font-label-sm text-primary">94% Match</p>
+<div class="flex gap-1 mt-1 justify-end">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-md bg-surface-bg rounded-lg border border-border-default hover:border-primary transition-colors cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A focused male professional in a modern business-casual outfit, featuring a light blue shirt. He is sitting in a minimalist glass-walled conference room with natural light streaming in. The mood is high-trust and stable, emphasizing professional competence and clarity, aligned with the EMPO recruitment platform's aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXMxPI20Zk3erGgLvzdoosYoxYG7FFh8z575j9Wp3i3q43os95kmMrjbfBtyrBiSDdu1B-sEJsuvUUS0oILnUShdLArcaxYr_7jK0eaDAc7T5qoZzfqxgBL5AXJVzLnJJ0e90zQ3ZCCmm20zurFpLmfqAM-3peWLYSX_gXt0oTV3H1Yf0UYILa1_SPzisUBGj9WEQnflKF8vWMV2GXfQ_YXzNRfujxxdzC7yc-DyHw5r2rnUGOaQKZpg"/>
+</div>
+<div>
+<p class="text-body-md font-body-md font-bold">Jordan Smith</p>
+<p class="text-body-sm font-body-sm text-text-secondary">Fullstack Engineer • 5 years exp.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-label-sm font-label-sm text-primary">89% Match</p>
+<div class="flex gap-1 mt-1 justify-end">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="w-2 h-2 rounded-full bg-on-tertiary-container"></span>
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 bg-primary-container p-lg rounded-xl flex flex-col justify-between text-on-primary-container relative overflow-hidden group">
+<div class="relative z-10">
+<h4 class="text-headline-md font-headline-md text-white mb-sm">Upgrade to Premium</h4>
+<p class="text-body-md font-body-md text-on-primary-container/80">Get advanced AI filtering and direct access to top 1% passive talent.</p>
+</div>
+<button class="mt-xl bg-white text-primary px-lg py-md rounded-lg font-label-md w-full active:scale-95 transition-transform relative z-10">
+                        Explore Talent Pool
+                    </button>
+<!-- Abstract decorative element -->
+<div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+</div>
+</div>
+</div>
+<!-- Footer (Shared) -->
+<footer class="w-full py-xl px-lg md:px-xl max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md border-t border-border-default mt-auto">
+<div class="flex flex-col md:items-start items-center">
+<h4 class="text-headline-md font-headline-md font-bold text-primary">EMPO</h4>
+<p class="text-body-sm font-body-sm text-text-secondary">© 2024 EMPO Recruitment Solutions. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="text-label-sm font-label-sm text-text-secondary hover:text-primary underline transition-all" href="#">Privacy Policy</a>
+<a class="text-label-sm font-label-sm text-text-secondary hover:text-primary underline transition-all" href="#">Terms of Service</a>
+<a class="text-label-sm font-label-sm text-text-secondary hover:text-primary underline transition-all" href="#">Cookie Policy</a>
+<a class="text-label-sm font-label-sm text-text-secondary hover:text-primary underline transition-all" href="#">Contact Us</a>
+<a class="text-label-sm font-label-sm text-text-secondary hover:text-primary underline transition-all" href="#">Help Center</a>
+</div>
+</footer>
+</main>
+<!-- Contextual FAB (Mobile Only) -->
+<button class="md:hidden fixed bottom-lg right-lg w-14 h-14 bg-primary text-white rounded-full shadow-xl flex items-center justify-center active:scale-95 transition-transform z-50">
+<span class="material-symbols-outlined">add</span>
+</button>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.classList.add('translate-x-1');
+                row.style.transition = 'all 0.2s ease-out';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.classList.remove('translate-x-1');
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        if(searchInput) {
+            searchInput.addEventListener('focus', () => {
+                searchInput.parentElement.classList.add('ring-2', 'ring-secondary/20');
+            });
+            searchInput.addEventListener('blur', () => {
+                searchInput.parentElement.classList.remove('ring-2', 'ring-secondary/20');
+            });
+        }
+    </script>
+</body></html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO - Interview Scheduler</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(5, 1fr);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-high": "#dee8ff",
+                      "primary-fixed": "#dce1ff",
+                      "primary-container": "#1e3a8a",
+                      "surface-card": "#FFFFFF",
+                      "on-primary-fixed": "#00164e",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "surface-container-highest": "#d8e3fb",
+                      "border-default": "#E2E8F0",
+                      "secondary-fixed": "#d8e2ff",
+                      "on-primary": "#ffffff",
+                      "surface": "#f9f9ff",
+                      "tertiary-fixed": "#85f8c4",
+                      "surface-tint": "#4059aa",
+                      "on-tertiary-fixed-variant": "#005137",
+                      "surface-container": "#e7eeff",
+                      "status-error": "#DC2626",
+                      "surface-container-low": "#f0f3ff",
+                      "on-tertiary-container": "#4ac08f",
+                      "on-tertiary-fixed": "#002114",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#68dba9",
+                      "outline": "#757682",
+                      "on-surface-variant": "#444651",
+                      "background": "#f9f9ff",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-primary": "#b6c4ff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed-variant": "#004395",
+                      "inverse-surface": "#263143",
+                      "surface-bright": "#f9f9ff",
+                      "on-background": "#111c2d",
+                      "surface-bg": "#F8FAFC",
+                      "text-secondary": "#64748B",
+                      "on-secondary-container": "#fefcff",
+                      "surface-dim": "#cfdaf2",
+                      "inverse-on-surface": "#ecf1ff",
+                      "surface-variant": "#d8e3fb",
+                      "tertiary-container": "#004a32",
+                      "on-secondary-fixed": "#001a42",
+                      "primary": "#00236f",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "on-primary-fixed-variant": "#264191",
+                      "tertiary": "#003120",
+                      "on-surface": "#111c2d",
+                      "outline-variant": "#c5c5d3",
+                      "surface-subtle": "#F1F5F9",
+                      "on-secondary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "secondary-container": "#2170e4",
+                      "secondary": "#0058be",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "on-primary-container": "#90a8ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "container-max": "1280px",
+                      "sm": "8px",
+                      "xs": "4px",
+                      "md": "16px",
+                      "margin": "24px",
+                      "xl": "32px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "headline-xl-mobile": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-xl": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface-bg text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface-container-lowest border-b border-border-default shadow-sm top-0 z-50 sticky">
+<div class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-xl">
+<a class="text-headline-lg font-headline-lg font-bold text-primary" href="/">EMPO</a>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200" href="{{DATA:SCREEN:SCREEN_2}}">Find Jobs</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200" href="{{DATA:SCREEN:SCREEN_3}}">My Applications</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200" href="#">Post a Job</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200" href="#">Talent Pool</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-text-secondary hover:text-primary transition-colors cursor-pointer">notifications</button>
+<button class="material-symbols-outlined text-text-secondary hover:text-primary transition-colors cursor-pointer">settings</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-border-default">
+<img class="h-full w-full object-cover" data-alt="A professional headshot of a recruitment manager in a modern office environment. The person is wearing a navy blue blazer, smiling confidently at the camera. The background is a soft-focus corporate office with warm timber accents and bright natural light. The overall mood is high-trust, professional, and welcoming, fitting the EMPO recruitment platform's aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpK3bcc_tIXWOBZsIoGW_4LLDZqGeupVWLaxl96CeQsrTjxk8GUp73k_5fzk9GB1MRWD23LAEdN0CmSMHzXVvinSUYoGQbTCd6J61Y0mjshLB7rK28WzTvXX69dLTbmH4wRvhRJq9KONKB50jW64CqTeiedyigYzgTv4kGfUAhMUxXNv9V2N0NDapAVgt27qe5uEAB0t_oYJIdfmRTMiW-c5KTsbU2Tobq5xHdrQ2563SeIF8BWlW99Q"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<aside class="hidden md:flex flex-col h-full py-lg px-md space-y-sm bg-surface-container-low border-r border-border-default w-64">
+<div class="px-sm mb-lg">
+<h2 class="text-headline-md font-headline-md font-bold text-primary">Talent Suite</h2>
+<p class="text-body-sm text-text-secondary">Recruiter Mode</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors rounded-lg" href="{{DATA:SCREEN:SCREEN_15}}">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="font-label-md">Active Jobs</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors rounded-lg" href="{{DATA:SCREEN:SCREEN_16}}">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md">Candidates</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm bg-primary-container text-on-primary-container font-bold rounded-lg" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-md">Interviews</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md">Analytics</span>
+</a>
+</nav>
+<a class="w-full bg-primary text-on-primary py-md rounded-lg font-bold flex items-center justify-center gap-sm active:scale-95 transition-transform" href="{{DATA:SCREEN:SCREEN_33}}">
+<span class="material-symbols-outlined">add</span>
+            Create New Job
+        </a>
+<div class="pt-xl border-t border-border-default space-y-1">
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary hover:bg-surface-subtle transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-surface p-lg md:p-xl custom-scrollbar">
+<div class="max-w-container-max mx-auto space-y-xl">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div>
+<h1 class="text-headline-xl font-headline-xl text-primary">Interview Scheduling</h1>
+<p class="text-body-lg text-text-secondary">Sync team calendars and manage candidate availability.</p>
+</div>
+<div class="flex items-center gap-sm">
+<div class="flex -space-x-2 mr-md">
+<div class="h-8 w-8 rounded-full border-2 border-white overflow-hidden" title="Sarah (Engineering Manager)">
+<img class="h-full w-full object-cover" data-alt="A focused headshot of a woman in her late 30s, Sarah, acting as an Engineering Manager. She has glasses, dark hair tied back, and is wearing a professional charcoal sweater. The setting is a brightly lit, modern office with soft architectural lines and plants. High-resolution, professional, Corporate Modern style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ4ed8JjsLtva3ENZodjYMUg0dzk-1_yTH0qvnTv4RcWbrq_Wl-Apt0SD-DD4EAQvx-eAwguHhq539nNL4V8z9hrfhxZT2u7unc4PHhuQHHSgLIf1zI3HF6SnPHs7hM226cwmi--yer5U4T8QEkIqg0FXBFSXj6rSx7j2456UUioLTcQG2O5LmysxAM7KyVpQzxP0CyAd0xzitqgpp2GoAPo0Dcfu5c6_7VWFO_x8rlb3NgKKpQmsECg"/>
+</div>
+<div class="h-8 w-8 rounded-full border-2 border-white overflow-hidden" title="David (Senior Recruiter)">
+<img class="h-full w-full object-cover" data-alt="A friendly headshot of David, a senior recruiter in his 40s. He has a warm smile, light stubble, and is wearing a crisp white dress shirt. The background is a blurred office interior with glass walls and professional blue tones. Clean lighting, professional studio quality, consistent with the EMPO design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMQVnKPrlIcZAPJLrksO_mLdYd396Rn7atZtoKEIzyurVfx94AaO7nsj0PL8wbpAbePE3O9ekc8GtrOx6DCJA6w1SdSt75Kw0sT-pa5Rq0mVXOrB8Sp8Rvfd_gDZ2EpYpRVcv5oUtyXMUlKDGp-8MkQKMWM3hGUbx7q71cM5gkn3g0UXH4U3Kny9i2a2SL8z5ilL0IEHQqTPD9pCVxJhaG45z-9hByS6GqMYblbzcnhWVdlBfnTH_ogg"/>
+</div>
+<div class="h-8 w-8 rounded-full border-2 border-white overflow-hidden bg-surface-container-high flex items-center justify-center text-primary font-bold text-[10px]">
+                            +3
+                        </div>
+</div>
+<button class="bg-surface-container-lowest border border-border-default text-primary px-lg py-md rounded-lg font-bold flex items-center gap-sm hover:bg-surface-subtle transition-all">
+<span class="material-symbols-outlined">sync</span>
+                        Sync Calendars
+                    </button>
+<a class="bg-secondary text-on-primary px-lg py-md rounded-lg font-bold flex items-center gap-sm hover:bg-secondary-container transition-all shadow-md" href="{{DATA:SCREEN:SCREEN_33}}">
+<span class="material-symbols-outlined">calendar_add_on</span>
+                        Schedule New
+                    </a>
+</div>
+</div>
+<!-- Bento Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Column: Pending Requests (Bento Item 1) -->
+<div class="lg:col-span-4 space-y-lg">
+<div class="bg-surface-card rounded-xl border border-border-default p-lg shadow-sm">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="text-headline-md font-headline-md">Pending Requests</h3>
+<span class="bg-primary-container text-white text-[10px] px-sm py-xs rounded-full font-bold">4 NEW</span>
+</div>
+<div class="space-y-md">
+<!-- Candidate Card 1 -->
+<a class="block p-md border border-border-default rounded-lg hover:border-secondary hover:bg-surface-subtle transition-all cursor-pointer group" href="{{DATA:SCREEN:SCREEN_17}}">
+<div class="flex gap-md">
+<div class="h-12 w-12 rounded-lg overflow-hidden shrink-0 shadow-sm">
+<img class="h-full w-full object-cover" data-alt="A professional headshot of a young male software developer candidate, wearing a modern gray t-shirt. He has a slight, friendly smile and is posed against a clean, minimalist off-white background with subtle lighting. The style is crisp, clean, and professional for a talent acquisition platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOHH7kAmKtUuOioeDaSb9Bu-Gx7TLeeJviMLEeq-WuR6e_4HFCyKJALfZ02jWGvry2Lwhs8mqZ9sHA3SV0frhJN1n-W1m43t5cacZryGlZwCEJN7QnyGd5u911qx87F1d6umUnr9Wp0bGxbthOHTliwBCsKoVTB7phTaMRuTDLahfHO2tLBFH-YZsrCWQ_83yreIOXC-i8DwpY3HM51-bhv2JCxOV2AnZgqUIEBgec2oaq-esZ8qXXoQ"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-bold text-on-surface truncate">Alex Rivera</p>
+<p class="text-body-sm text-text-secondary truncate">Senior Backend Dev</p>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-secondary transition-colors">chevron_right</span>
+</div>
+<div class="mt-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-status-error">schedule</span>
+<span class="text-body-sm text-status-error font-medium">Needs availability</span>
+</div>
+</a>
+<!-- Candidate Card 2 -->
+<a class="block p-md border border-border-default rounded-lg hover:border-secondary hover:bg-surface-subtle transition-all cursor-pointer group" href="{{DATA:SCREEN:SCREEN_17}}">
+<div class="flex gap-md">
+<div class="h-12 w-12 rounded-lg overflow-hidden shrink-0 shadow-sm">
+<img class="h-full w-full object-cover" data-alt="A professional headshot of a female UI/UX designer candidate in her late 20s. She is wearing a modern mustard-yellow top and has a creative, confident expression. The background is a soft-focus studio with neutral tones and excellent lighting. The image is clean and professional for a recruitment suite." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYckYnKD4wdwVBsR6vnIYwHc0JMNMyFQjQ1j3G9QFv2G_0OGrrfqC_O6C7TPacy9p3W9v9Gj-sdR_OOsW2ueWDTremFllgupWy-ouzaQightDRz0qaTlVgwWXk5fEZ-eR0A5H3VHKTI9N5-Za6VwJuGvjS0j9yoqMT1Lr3vLATi9qghuAw15EpfVOHFJEYcJF-qjw8HPGNf_Um2-yjUOgPjgd6H_karJb6gj6NIsmnL0LKWNcCjXnKQA"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-bold text-on-surface truncate">Jamie Chen</p>
+<p class="text-body-sm text-text-secondary truncate">Product Designer</p>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-secondary transition-colors">chevron_right</span>
+</div>
+<div class="mt-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">check_circle</span>
+<span class="text-body-sm text-secondary font-medium">Available (3 slots)</span>
+</div>
+</a>
+<!-- Candidate Card 3 -->
+<a class="block p-md border border-border-default rounded-lg hover:border-secondary hover:bg-surface-subtle transition-all cursor-pointer group opacity-60" href="{{DATA:SCREEN:SCREEN_17}}">
+<div class="flex gap-md">
+<div class="h-12 w-12 rounded-lg overflow-hidden shrink-0 shadow-sm">
+<img class="h-full w-full object-cover" data-alt="A high-quality headshot of a mature male candidate for a Lead Architect position. He is wearing a dark navy polo shirt and has a distinguished, experienced look. The background is a professional office environment with soft bokeh effects. The image follows the corporate modern aesthetic of the EMPO platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqEdC7Kd0iXtcvoA4uEIuGZQvuZJoV0CGhGRPdFrV0qILJGSmnFexZV9T-DQYpVYhy3FxQ_78LtIo8bNL9A-Tm4UoOMMImKeu6dzijpLgB5Xgffz30gI9mFzu1FeRWDaEZIqo91GfLNuuYWcsX7dUCDwqYrqQ3ojAG1tDstRKWjNi_0TQ-ggXEI1B8JKbrbIU8yexcafpb5Ttlk-a4otAwsa2wl1r9BvJG6QSsDLQjjWPiHD3hynJKZw"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-bold text-on-surface truncate">Marcus Sterling</p>
+<p class="text-body-sm text-text-secondary truncate">Lead Architect</p>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<div class="mt-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-text-secondary">history</span>
+<span class="text-body-sm text-text-secondary font-medium">Reschedule requested</span>
+</div>
+</a>
+</div>
+<button class="w-full mt-lg text-primary font-bold text-label-md py-sm hover:bg-surface-subtle rounded-lg transition-colors">
+                            View All (12)
+                        </button>
+</div>
+</div>
+<!-- Right Column: Calendar View (Bento Item 2) -->
+<div class="lg:col-span-8 bg-surface-card rounded-xl border border-border-default shadow-sm overflow-hidden flex flex-col">
+<!-- Calendar Toolbar -->
+<div class="p-lg border-b border-border-default flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex items-center gap-lg">
+<h3 class="text-headline-md font-headline-md">Calendar</h3>
+<div class="flex items-center border border-border-default rounded-lg overflow-hidden">
+<button class="px-md py-sm border-r border-border-default hover:bg-surface-subtle"><span class="material-symbols-outlined text-[18px]">chevron_left</span></button>
+<button class="px-md py-sm font-bold text-label-md bg-surface-subtle">Dec 16 - 20, 2024</button>
+<button class="px-md py-sm border-l border-border-default hover:bg-surface-subtle"><span class="material-symbols-outlined text-[18px]">chevron_right</span></button>
+</div>
+</div>
+<div class="flex gap-sm">
+<div class="bg-surface-container-low rounded-lg p-xs flex">
+<button class="px-md py-sm rounded-md font-bold text-label-sm">Day</button>
+<button class="px-md py-sm rounded-md font-bold text-label-sm bg-white shadow-sm text-primary">Week</button>
+<button class="px-md py-sm rounded-md font-bold text-label-sm">Month</button>
+</div>
+</div>
+</div>
+<!-- Calendar Content -->
+<div class="flex-1 overflow-x-auto">
+<div class="min-w-[800px]">
+<!-- Header Days -->
+<div class="calendar-grid border-b border-border-default">
+<div class="p-sm text-body-sm text-text-secondary text-right border-r border-border-default">UTC-8</div>
+<div class="p-sm text-center border-r border-border-default">
+<p class="text-body-sm text-text-secondary">MON</p>
+<p class="text-headline-md font-bold text-primary">16</p>
+</div>
+<div class="p-sm text-center border-r border-border-default bg-surface-container-high/20">
+<p class="text-body-sm text-text-secondary">TUE</p>
+<p class="text-headline-md font-bold text-primary">17</p>
+</div>
+<div class="p-sm text-center border-r border-border-default">
+<p class="text-body-sm text-text-secondary">WED</p>
+<p class="text-headline-md font-bold text-primary">18</p>
+</div>
+<div class="p-sm text-center border-r border-border-default">
+<p class="text-body-sm text-text-secondary">THU</p>
+<p class="text-headline-md font-bold text-primary">19</p>
+</div>
+<div class="p-sm text-center">
+<p class="text-body-sm text-text-secondary">FRI</p>
+<p class="text-headline-md font-bold text-primary">20</p>
+</div>
+</div>
+<!-- Time Slots & Events -->
+<div class="relative h-[480px] overflow-y-auto custom-scrollbar">
+<div class="calendar-grid relative">
+<!-- Time Labels -->
+<div class="space-y-[60px]">
+<div class="h-[60px] p-sm text-body-sm text-text-secondary text-right border-r border-border-default -mt-xs">09:00 AM</div>
+<div class="h-[60px] p-sm text-body-sm text-text-secondary text-right border-r border-border-default">10:00 AM</div>
+<div class="h-[60px] p-sm text-body-sm text-text-secondary text-right border-r border-border-default">11:00 AM</div>
+<div class="h-[60px] p-sm text-body-sm text-text-secondary text-right border-r border-border-default">12:00 PM</div>
+<div class="h-[60px] p-sm text-body-sm text-text-secondary text-right border-r border-border-default">01:00 PM</div>
+<div class="h-[60px] p-sm text-body-sm text-text-secondary text-right border-r border-border-default">02:00 PM</div>
+<div class="h-[60px] p-sm text-body-sm text-text-secondary text-right border-r border-border-default">03:00 PM</div>
+<div class="h-[60px] p-sm text-body-sm text-text-secondary text-right border-r border-border-default">04:00 PM</div>
+</div>
+<!-- Day Grids -->
+<div class="border-r border-border-default relative"></div>
+<div class="border-r border-border-default relative bg-surface-container-high/10"></div>
+<div class="border-r border-border-default relative"></div>
+<div class="border-r border-border-default relative"></div>
+<div class="relative"></div>
+<!-- Scheduled Events (Absolute Positioned) -->
+<!-- Monday Event -->
+<div class="absolute top-[120px] left-[80px] w-[calc((100%-80px)/5-4px)] h-[90px] bg-primary-container text-white p-sm rounded-lg border-l-4 border-secondary text-body-sm shadow-sm z-10 mx-xs">
+<p class="font-bold">Jamie Chen</p>
+<p class="opacity-80 text-[10px]">Product Designer @ 11 AM</p>
+</div>
+<!-- Tuesday Event (Active Selection Concept) -->
+<div class="absolute top-[180px] left-[calc(80px+(100%-80px)/5)] w-[calc((100%-80px)/5-4px)] h-[60px] bg-secondary/10 border-2 border-secondary border-dashed p-sm rounded-lg text-secondary text-body-sm z-10 mx-xs flex items-center justify-center gap-xs cursor-pointer hover:bg-secondary/20 transition-all" onclick="toggleWizard()">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<p class="font-bold">Pick Slot</p>
+</div>
+<!-- Wednesday Event -->
+<div class="absolute top-[60px] left-[calc(80px+2*(100%-80px)/5)] w-[calc((100%-80px)/5-4px)] h-[120px] bg-surface-container-high text-primary p-sm rounded-lg border-l-4 border-primary text-body-sm shadow-sm z-10 mx-xs">
+<p class="font-bold">Team Sync</p>
+<p class="opacity-80 text-[10px]">Engineering Panel</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Schedule Wizard Modal (Hidden by Default) -->
+<div class="fixed inset-0 z-[60] flex items-center justify-center p-md bg-inverse-surface/40 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none" id="scheduleWizard">
+<div class="bg-surface-card w-full max-w-3xl rounded-xl shadow-xl overflow-hidden flex flex-col md:flex-row max-h-[921px]">
+<!-- Wizard Sidebar -->
+<div class="md:w-64 bg-surface-container-low p-xl border-r border-border-default">
+<div class="space-y-xl">
+<h2 class="text-headline-md font-bold text-primary">Schedule</h2>
+<ul class="space-y-lg">
+<li class="flex items-center gap-md text-primary font-bold">
+<span class="h-6 w-6 rounded-full bg-primary text-white flex items-center justify-center text-[10px]">1</span>
+                        Candidate
+                    </li>
+<li class="flex items-center gap-md text-text-secondary font-medium">
+<span class="h-6 w-6 rounded-full bg-surface-container-high flex items-center justify-center text-[10px]">2</span>
+                        Time Slot
+                    </li>
+<li class="flex items-center gap-md text-text-secondary font-medium">
+<span class="h-6 w-6 rounded-full bg-surface-container-high flex items-center justify-center text-[10px]">3</span>
+                        Interviewers
+                    </li>
+<li class="flex items-center gap-md text-text-secondary font-medium">
+<span class="h-6 w-6 rounded-full bg-surface-container-high flex items-center justify-center text-[10px]">4</span>
+                        Confirmation
+                    </li>
+</ul>
+</div>
+</div>
+<!-- Wizard Content -->
+<div class="flex-1 p-xl flex flex-col">
+<div class="flex justify-between items-center mb-xl">
+<h3 class="text-headline-md font-headline-md">Select Candidate</h3>
+<button class="material-symbols-outlined text-text-secondary hover:text-primary" onclick="toggleWizard()">close</button>
+</div>
+<div class="flex-1 space-y-lg overflow-y-auto pr-sm custom-scrollbar">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-text-secondary">search</span>
+<input class="w-full pl-xl pr-md py-md border border-border-default rounded-lg focus:ring-2 focus:ring-secondary/50 outline-none transition-all" placeholder="Search by name or email..." type="text"/>
+</div>
+<div class="grid grid-cols-1 gap-md">
+<!-- Suggested Candidate -->
+<div class="flex items-center gap-md p-md border-2 border-secondary bg-secondary/5 rounded-xl cursor-pointer">
+<div class="h-14 w-14 rounded-lg overflow-hidden shrink-0 shadow-sm">
+<img class="h-full w-full object-cover" data-alt="A studio portrait of a male candidate, Jamie Chen, professional software engineer. He is wearing a minimalist navy sweater and has a friendly, accessible expression. Lighting is soft and bright, highlighting high-quality skin textures. The aesthetic is clean, corporate, and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmLJahxuPo7p12ImAquRLeZVXtrY6BVB5tkfSwJOUkgge2b6_IU1i8WDiFEwwZHclS4ETpxuFuYtGOH74EyG3qGLTpWVmCCcHzQaBu2OGrqxU8T6FhBNcwkV7BqhrL0eqge40agTDDRE2jJ30t9mSzMOM2b8cSwKrf4vRedciOsKY6ps6zE5ewpki-_M-Irsc1lxYX4jaRD1PmWzVYi_S_xH1qaVzlsuTLqXcHE_dIC0hFRYHaYIuGTA"/>
+</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface">Jamie Chen</p>
+<p class="text-body-sm text-text-secondary">Product Designer • Applied 2 days ago</p>
+</div>
+<div class="material-symbols-outlined text-secondary">check_circle</div>
+</div>
+<div class="flex items-center gap-md p-md border border-border-default hover:bg-surface-subtle rounded-xl cursor-pointer transition-colors">
+<div class="h-14 w-14 rounded-lg overflow-hidden shrink-0 shadow-sm opacity-80">
+<img class="h-full w-full object-cover" data-alt="A clean professional headshot of a candidate for a technical position. The person is in their early 30s, wearing a modern business casual outfit. Background is a neutral gray studio setting with clean, even lighting. The visual style is crisp and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI9qdxKLmOn6OoHZ0IdYJSmPoMGKNKeAhIjXU9LENhLbaDiIcMBeluXzsRTy0A0DRMXdFpa5ScWiZf8rKGYGJR4y6E16kCHesFJdbIJ_KkGkdlvu0HZZO-i1WXh7rRtepEXwCvcQcitqxdVmJo8JpNDy2tNKN4vSEj703dCYRPQq8rjjd0abmA1Q-lvlmzCX28Vu7i4KleIEM8AGmn4z5UvH51APxnyDv_TjHIlxTrAsrIfxvu5cNl3Q"/>
+</div>
+<div class="flex-1">
+<p class="font-bold text-on-surface">Sarah Lopez</p>
+<p class="text-body-sm text-text-secondary">DevOps Engineer • Applied 5 days ago</p>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-xl border-t border-border-default mt-lg flex justify-end gap-md">
+<button class="px-xl py-md text-text-secondary font-bold hover:bg-surface-subtle rounded-lg transition-colors" onclick="toggleWizard()">Cancel</button>
+<button class="px-xl py-md bg-primary text-on-primary font-bold rounded-lg hover:opacity-90 transition-opacity">Next Step</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface-container-lowest border-t border-border-default mt-auto">
+<div class="w-full py-xl px-lg md:px-xl max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex items-center gap-md">
+<span class="text-headline-md font-headline-md font-bold text-primary">EMPO</span>
+<p class="text-body-sm text-text-secondary">© 2024 EMPO Recruitment Solutions. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="text-text-secondary font-label-sm hover:text-primary underline transition-all" href="#">Privacy Policy</a>
+<a class="text-text-secondary font-label-sm hover:text-primary underline transition-all" href="#">Terms of Service</a>
+<a class="text-text-secondary font-label-sm hover:text-primary underline transition-all" href="#">Cookie Policy</a>
+<a class="text-text-secondary font-label-sm hover:text-primary underline transition-all" href="#">Contact Us</a>
+<a class="text-text-secondary font-label-sm hover:text-primary underline transition-all" href="#">Help Center</a>
+</div>
+</div>
+</footer>
+<script>
+    function toggleWizard() {
+        const modal = document.getElementById('scheduleWizard');
+        modal.classList.toggle('opacity-0');
+        modal.classList.toggle('pointer-events-none');
+    }
+
+    // Simple animation for calendar entry
+    document.addEventListener('DOMContentLoaded', () => {
+        const events = document.querySelectorAll('.calendar-grid div[class*="absolute"]');
+        events.forEach((el, index) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                el.style.transition = 'all 0.5s ease';
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, 100 * (index + 1));
+        });
+    });
+</script>
+</body></html>

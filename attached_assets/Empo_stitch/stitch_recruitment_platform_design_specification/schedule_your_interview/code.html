@@ -1,0 +1,349 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Schedule Your Interview | EMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .time-slot-transition {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-high": "#dee8ff",
+                      "primary-fixed": "#dce1ff",
+                      "primary-container": "#1e3a8a",
+                      "surface-card": "#FFFFFF",
+                      "on-primary-fixed": "#00164e",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "surface-container-highest": "#d8e3fb",
+                      "border-default": "#E2E8F0",
+                      "secondary-fixed": "#d8e2ff",
+                      "on-primary": "#ffffff",
+                      "surface": "#f9f9ff",
+                      "tertiary-fixed": "#85f8c4",
+                      "surface-tint": "#4059aa",
+                      "on-tertiary-fixed-variant": "#005137",
+                      "surface-container": "#e7eeff",
+                      "status-error": "#DC2626",
+                      "surface-container-low": "#f0f3ff",
+                      "on-tertiary-container": "#4ac08f",
+                      "on-tertiary-fixed": "#002114",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#68dba9",
+                      "outline": "#757682",
+                      "on-surface-variant": "#444651",
+                      "background": "#f9f9ff",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-primary": "#b6c4ff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed-variant": "#004395",
+                      "inverse-surface": "#263143",
+                      "surface-bright": "#f9f9ff",
+                      "on-background": "#111c2d",
+                      "surface-bg": "#F8FAFC",
+                      "text-secondary": "#64748B",
+                      "on-secondary-container": "#fefcff",
+                      "surface-dim": "#cfdaf2",
+                      "inverse-on-surface": "#ecf1ff",
+                      "surface-variant": "#d8e3fb",
+                      "tertiary-container": "#004a32",
+                      "on-secondary-fixed": "#001a42",
+                      "primary": "#00236f",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "on-primary-fixed-variant": "#264191",
+                      "tertiary": "#003120",
+                      "on-surface": "#111c2d",
+                      "outline-variant": "#c5c5d3",
+                      "surface-subtle": "#F1F5F9",
+                      "on-secondary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "secondary-container": "#2170e4",
+                      "secondary": "#0058be",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "on-primary-container": "#90a8ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "container-max": "1280px",
+                      "sm": "8px",
+                      "xs": "4px",
+                      "md": "16px",
+                      "margin": "24px",
+                      "xl": "32px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "headline-xl-mobile": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-xl": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface-bg text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest border-b border-border-default shadow-sm top-0 w-full z-50">
+<div class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-16">
+<div class="text-headline-lg font-headline-lg font-bold text-primary">EMPO</div>
+<div class="hidden md:flex space-x-lg">
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 text-label-md font-label-md" href="{{DATA:SCREEN:SCREEN_2}}">Find Jobs</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 text-label-md font-label-md" href="{{DATA:SCREEN:SCREEN_3}}">My Applications</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 text-label-md font-label-md" href="#">Support</a>
+</div>
+<div class="flex items-center space-x-md">
+<button class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-all">notifications</button>
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden border border-border-default">
+<img class="w-full h-full object-cover" data-alt="Professional studio portrait of a young candidate for a corporate recruitment platform. The lighting is soft and natural, with a clean white office background. The overall aesthetic is professional, modern, and high-trust, using a palette of soft blues and grays." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyg5laBCCOOSbmiFPJ1esiG-OlKi_w7b7ZQugoJAag7PNYgIiekEqfIaN-TOr3XXBc4GF9t6vYVIF_pltaYRyeXSuIMCyGf-ssI3bpWN8lCltCPpa6l0dtC_zncaeaZ8kfMflNtOwILPLcgP41Ye_jKrgs9BOUOyUAtFV6wSkiDKxQcv1AN6wvP24XmjkXB7G-Iu1kNWl0SO-tHlIjDDXs82OfQKRZv5Ol2BcX20yUdioqs04yF0CN_w">
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin py-xl lg:py-16">
+<div class="grid lg:grid-cols-12 gap-lg lg:gap-xl items-start">
+<!-- Welcome & Context (Left Rail) -->
+<div class="lg:col-span-5 space-y-lg">
+<div class="space-y-sm">
+<span class="bg-primary-fixed text-on-primary-fixed px-sm py-xs rounded-lg text-label-sm font-label-sm inline-block">Technical Interview</span>
+<h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight">Senior Product Designer</h1>
+<p class="text-body-lg text-text-secondary">Hi Alex, we're impressed with your portfolio. Let's find a time for a 45-minute technical deep dive with our design team.</p>
+</div>
+<!-- Interviewer Card -->
+<div class="bg-surface-card border border-border-default rounded-xl p-md shadow-sm">
+<h3 class="text-label-md font-label-md text-text-secondary uppercase tracking-wider mb-md">Your Interviewers</h3>
+<div class="space-y-md">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex-shrink-0">
+<img class="w-full h-full object-cover rounded-full" data-alt="A professional headshot of a female design lead in a brightly lit, modern office environment. She is smiling warmly, conveying confidence and approachability. The style is clean and corporate, matching a high-trust recruitment application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhJ9FJtZ7VqlAnhlH97z6Mg0f057e7y292VOpHzY0k_oDciOBRLN8A0_YPERb2isVEvzBjh6JNhCs80CD2TDyd3QJ_Rz8lT9BinkGwKFeRuqPOA5WCwWSlo2vqHIVUCqZTNbmi8irtVpFi37ZYDQEgiT1gbSSt5gs39m8ZZQDFRoJd4FPnQZVfYm2pyNQKmd8NUuDt7_0HYubkDYOGOWs28WFWzBB0PNRvkPVtrBXmK1APN83n-NtVqw">
+</div>
+<div>
+<p class="font-bold text-on-surface text-body-md">Sarah Jenkins</p>
+<p class="text-body-sm text-text-secondary">Head of Product Design</p>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex-shrink-0">
+<img class="w-full h-full object-cover rounded-full" data-alt="A professional headshot of a male senior engineer in a modern tech office. He has a friendly, professional demeanor. The lighting is crisp and the background is a blurred high-end workspace, maintaining a corporate yet human-centered aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIytol_BxGCEoh1_23NX81XFHElOe8lVTDlTZaTEHc4768Rd39ZDgiJUkmk7MihJES9x6N6q47sz1QLFcLrOYhapPQqNZLzg8JHG0JCZNoUsf3ey3-4QZ2GMdZ2wR8ZaaFCVNhbVMsMHgu654qvKrr-R8KSAQqMSWOcQlT7F38107nRWnfG5gK-sJlMxxYuEQ56qsCN7OBOqVNX95YYEvM2oJHNbfrHYIsYIGfUstQ3ktjh04AiDOEMA">
+</div>
+<div>
+<p class="font-bold text-on-surface text-body-md">David Chen</p>
+<p class="text-body-sm text-text-secondary">Senior Frontend Architect</p>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-sm text-body-sm text-text-secondary">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span class="">45 Minutes • Google Meet</span>
+</div>
+</div>
+<!-- Scheduler Bento (Right Rail) -->
+<div class="lg:col-span-7">
+<div class="bg-surface-card border border-border-default rounded-xl shadow-sm overflow-hidden">
+<!-- Date Selector Header -->
+<div class="border-b border-border-default p-lg bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div class="flex items-center gap-md">
+<a href="{{DATA:SCREEN:SCREEN_3}}" class="w-10 h-10 rounded-lg flex items-center justify-center border border-border-default bg-surface-card hover:bg-surface-subtle transition-all active:scale-95"><span class="material-symbols-outlined">chevron_left</span></a>
+<div class="text-center md:text-left">
+<h2 class="text-headline-md font-headline-md text-on-surface">September 2024</h2>
+<p class="text-body-sm text-text-secondary">Select a date to see availability</p>
+</div>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center border border-border-default bg-surface-card hover:bg-surface-subtle transition-all active:scale-95">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<div class="flex items-center gap-sm bg-surface-card border border-border-default px-md py-sm rounded-lg text-label-sm font-label-sm text-text-secondary">
+<span class="material-symbols-outlined text-[16px]">public</span>
+<span class="">(GMT-08:00) Pacific Time</span>
+</div>
+</div>
+<div class="p-lg grid md:grid-cols-7 gap-md">
+<!-- Calendar Placeholder (Focus on interactive selection) -->
+<div class="md:col-span-4 space-y-md">
+<div class="grid grid-cols-7 text-center text-label-sm font-label-sm text-text-secondary mb-sm">
+<div class="">M</div><div class="">T</div><div class="">W</div><div class="">T</div><div class="">F</div><div class="">S</div><div class="">S</div>
+</div>
+<div class="grid grid-cols-7 gap-sm">
+<!-- Calendar Mockup -->
+<button class="h-10 text-body-sm text-outline opacity-30 cursor-not-allowed">26</button>
+<button class="h-10 text-body-sm text-outline opacity-30 cursor-not-allowed">27</button>
+<button class="h-10 text-body-sm text-outline opacity-30 cursor-not-allowed">28</button>
+<button class="h-10 text-body-sm text-outline opacity-30 cursor-not-allowed">29</button>
+<button class="h-10 text-body-sm text-outline opacity-30 cursor-not-allowed">30</button>
+<button class="h-10 text-body-sm text-outline opacity-30 cursor-not-allowed">31</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">1</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">2</button>
+<button class="h-10 flex items-center justify-center rounded-lg bg-primary text-white font-bold shadow-md ring-2 ring-primary ring-offset-2">3</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">4</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">5</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">6</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">7</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">8</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">9</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">10</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">11</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">12</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">13</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">14</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">15</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">16</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">17</button>
+<button class="h-10 flex items-center justify-center rounded-lg hover:bg-surface-subtle transition-all text-body-sm font-medium">18</button>
+</div>
+</div>
+<!-- Time Slot Picker -->
+<div class="md:col-span-3 space-y-md border-t md:border-t-0 md:border-l border-border-default pt-lg md:pt-0 md:pl-lg">
+<h3 class="text-label-md font-label-md text-text-secondary uppercase tracking-widest">Available Times</h3>
+<div class="space-y-sm max-h-[300px] overflow-y-auto pr-sm custom-scrollbar">
+<button class="w-full text-left p-md border border-border-default rounded-lg hover:border-primary hover:bg-primary-fixed transition-all group flex items-center justify-between" onclick="selectTime(this, '09:00 AM')">
+<span class="text-body-md font-medium text-on-surface group-hover:text-primary">09:00 AM</span>
+<span class="material-symbols-outlined text-transparent group-hover:text-primary">check_circle</span>
+</button>
+<button class="w-full text-left p-md border border-border-default rounded-lg hover:border-primary hover:bg-primary-fixed transition-all group flex items-center justify-between" onclick="selectTime(this, '10:30 AM')">
+<span class="text-body-md font-medium text-on-surface group-hover:text-primary">10:30 AM</span>
+<span class="material-symbols-outlined text-transparent group-hover:text-primary">check_circle</span>
+</button>
+<button class="w-full text-left p-md border border-border-default rounded-lg hover:border-primary hover:bg-primary-fixed transition-all group flex items-center justify-between" onclick="selectTime(this, '01:15 PM')">
+<span class="text-body-md font-medium text-on-surface group-hover:text-primary">01:15 PM</span>
+<span class="material-symbols-outlined text-transparent group-hover:text-primary">check_circle</span>
+</button>
+<button class="w-full text-left p-md border border-border-default rounded-lg hover:border-primary hover:bg-primary-fixed transition-all group flex items-center justify-between" onclick="selectTime(this, '03:45 PM')">
+<span class="text-body-md font-medium text-on-surface group-hover:text-primary">03:45 PM</span>
+<span class="material-symbols-outlined text-transparent group-hover:text-primary">check_circle</span>
+</button>
+<button class="w-full text-left p-md border border-border-default rounded-lg hover:border-primary hover:bg-primary-fixed transition-all group flex items-center justify-between" onclick="selectTime(this, '04:30 PM')">
+<span class="text-body-md font-medium text-on-surface group-hover:text-primary">04:30 PM</span>
+<span class="material-symbols-outlined text-transparent group-hover:text-primary">check_circle</span>
+</button>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="border-t border-border-default p-lg bg-surface-container-lowest flex items-center justify-between">
+<div class="text-body-sm text-text-secondary italic" id="selection-summary">
+                            No time slot selected yet.
+                        </div>
+<button class="px-xl py-md bg-primary text-white rounded-lg font-bold shadow-md opacity-50 cursor-not-allowed transition-all active:scale-95" disabled="" id="confirm-btn" onclick="showSuccess()" data-action="confirm-interview">
+                            Confirm Interview
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-border-default mt-xl">
+<div class="w-full py-xl px-lg md:px-xl max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="text-headline-md font-headline-md font-bold text-primary">EMPO</div>
+<div class="flex flex-wrap justify-center gap-md">
+<a class="text-text-secondary hover:text-primary underline transition-all text-label-sm font-label-sm" href="#">Privacy Policy</a>
+<a class="text-text-secondary hover:text-primary underline transition-all text-label-sm font-label-sm" href="#">Terms of Service</a>
+<a class="text-text-secondary hover:text-primary underline transition-all text-label-sm font-label-sm" href="#">Help Center</a>
+</div>
+<p class="text-text-secondary text-body-sm font-body-sm text-center md:text-right">© 2024 EMPO Recruitment Solutions. All rights reserved.</p>
+</div>
+</footer>
+<!-- Success Modal Overlay -->
+<div class="fixed inset-0 bg-inverse-surface/60 backdrop-blur-sm z-[100] flex items-center justify-center hidden p-md" id="success-modal">
+<div class="bg-surface-card rounded-xl p-xl max-w-md w-full shadow-xl border border-border-default text-center space-y-lg animate-in fade-in zoom-in duration-300">
+<div class="w-20 h-20 bg-tertiary-fixed rounded-full flex items-center justify-center mx-auto">
+<span class="material-symbols-outlined text-on-tertiary-fixed text-[40px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="space-y-sm">
+<h2 class="text-headline-xl font-headline-xl text-on-surface">Interview Confirmed!</h2>
+<p class="text-body-md text-text-secondary">We've sent a calendar invitation and meeting link to your email. We look forward to meeting you.</p>
+</div>
+<div class="bg-surface-container-low rounded-lg p-md text-left border border-border-default">
+<p class="text-label-sm font-label-sm text-text-secondary uppercase">Interview Details</p>
+<p class="text-body-md font-bold text-primary mt-xs">Tuesday, Sept 3 • 10:30 AM</p>
+<p class="text-body-sm text-on-surface-variant">Senior Product Designer with Sarah &amp; David</p>
+</div>
+<button class="w-full py-md bg-secondary text-white rounded-lg font-bold shadow-md" onclick="closeModal()">
+                Return to Dashboard
+            </button>
+</div>
+</div>
+<script>
+        let selectedTime = null;
+
+        function selectTime(element, time) {
+            // Reset all slots
+            document.querySelectorAll('button[onclick^="selectTime"]').forEach(btn => {
+                btn.classList.remove('bg-primary-fixed', 'border-primary');
+                btn.querySelector('span.material-symbols-outlined').classList.add('text-transparent');
+                btn.querySelector('span.material-symbols-outlined').classList.remove('text-primary');
+            });
+
+            // Highlight selected
+            element.classList.add('bg-primary-fixed', 'border-primary');
+            element.querySelector('span.material-symbols-outlined').classList.remove('text-transparent');
+            element.querySelector('span.material-symbols-outlined').classList.add('text-primary');
+
+            selectedTime = time;
+            
+            // Update summary
+            const summary = document.getElementById('selection-summary');
+            summary.innerHTML = `Selected: <span class="font-bold text-on-surface">Sept 3 at ${time}</span>`;
+            summary.classList.remove('italic', 'text-text-secondary');
+            summary.classList.add('text-on-surface');
+
+            // Enable button
+            const confirmBtn = document.getElementById('confirm-btn');
+            confirmBtn.disabled = false;
+            confirmBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function showSuccess() {
+            document.getElementById('success-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('success-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+
+
+
+</body></html>

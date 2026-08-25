@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO AI Recruitment - Job Application Step 3</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#004a32",
+                    "background": "#f9f9ff",
+                    "primary": "#00236f",
+                    "surface-bright": "#f9f9ff",
+                    "tertiary": "#003120",
+                    "on-secondary": "#ffffff",
+                    "primary-container": "#1e3a8a",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "tertiary-fixed": "#85f8c4",
+                    "on-surface-variant": "#444651",
+                    "surface-container-high": "#dee8ff",
+                    "on-primary-fixed-variant": "#264191",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#c5c5d3",
+                    "on-background": "#111c2d",
+                    "surface-dim": "#cfdaf2",
+                    "secondary-container": "#2170e4",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-container-highest": "#d8e3fb",
+                    "on-error": "#ffffff",
+                    "text-secondary": "#64748B",
+                    "inverse-surface": "#263143",
+                    "secondary": "#0058be",
+                    "on-tertiary-container": "#4ac08f",
+                    "on-tertiary-fixed": "#002114",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "surface-bg": "#F8FAFC",
+                    "surface-container": "#e7eeff",
+                    "secondary-fixed": "#d8e2ff",
+                    "inverse-primary": "#b6c4ff",
+                    "surface-container-lowest": "#ffffff",
+                    "border-default": "#E2E8F0",
+                    "surface-tint": "#4059aa",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#ecf1ff",
+                    "surface": "#f9f9ff",
+                    "outline": "#757682",
+                    "error": "#ba1a1a",
+                    "surface-container-low": "#f0f3ff",
+                    "on-surface": "#111c2d",
+                    "on-secondary-container": "#fefcff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#d8e3fb",
+                    "on-primary-fixed": "#00164e",
+                    "surface-card": "#FFFFFF",
+                    "surface-subtle": "#F1F5F9",
+                    "on-primary-container": "#90a8ff",
+                    "primary-fixed": "#dce1ff",
+                    "status-error": "#DC2626"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "md": "16px",
+                    "gutter": "24px",
+                    "container-max": "1280px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "margin": "24px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+        .step-active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: currentColor; }
+    </style>
+</head>
+<body class="bg-background text-on-surface flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-surface-container-lowest w-full top-0 sticky z-50 border-b border-border-default dark:border-outline-variant shadow-sm">
+<div class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-xl">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed cursor-pointer">EMPO</span>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-on-surface-variant dark:text-on-surface-variant font-medium font-body-md text-body-md hover:text-secondary transition-colors duration-200" href="#">Find Jobs</a>
+<a class="text-secondary dark:text-secondary-fixed border-b-2 border-secondary dark:border-secondary-fixed font-semibold pb-1 font-body-md text-body-md" href="#">My Applications</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant font-medium font-body-md text-body-md hover:text-secondary transition-colors duration-200" href="#">Profile</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden cursor-pointer active:opacity-80">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a diverse male candidate in business casual attire, with a soft-focus office background, matching the corporate modern aesthetic of the EMPO recruitment platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVtjbQa_bgoMT2_Ppi8lfeKEWibg2ItBdni2uqB29M4rw_SKMTOqHOMp7HUKV0P4kXEsPLk19tp090tbu8ncU5XLknRj4CjJ-IxNUW4rrE4yCnWLes8HJQ5eFjq9ny2bKOrSeb3MLrOIqtCF942xOGoFvNlyOTyD2j9PO-6f9f9r3cHR6DdyDyrFW7mi2zLv0FakHajxuuKOAhbZSb0vuIDtxKlMtUhZKEmdRsq1Vl_ZOVTVBCPoHadg"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-lg md:px-xl py-xl">
+<!-- Stepper -->
+<div class="mb-xl">
+<div class="flex items-center justify-between max-w-2xl mx-auto relative px-md md:px-0">
+<!-- Connectors -->
+<div class="absolute top-1/2 left-0 w-full h-0.5 bg-outline-variant -translate-y-1/2 z-0"></div>
+<div class="absolute top-1/2 left-0 w-2/3 h-0.5 bg-primary -translate-y-1/2 z-0 transition-all duration-500"></div>
+<!-- Step 1 -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="check" style="font-variation-settings: 'wght' 700">check</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant hidden md:block">Personal Info</span>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="check" style="font-variation-settings: 'wght' 700">check</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant hidden md:block">Experience</span>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold shadow-sm ring-4 ring-primary/10">
+                        3
+                    </div>
+<span class="text-label-md font-label-md text-primary font-bold hidden md:block">Screening</span>
+</div>
+<!-- Step 4 -->
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest text-on-surface-variant border-2 border-outline-variant flex items-center justify-center font-bold">
+                        4
+                    </div>
+<span class="text-label-sm font-label-sm text-on-surface-variant hidden md:block">Review</span>
+</div>
+</div>
+<div class="text-center mt-md md:hidden">
+<span class="text-headline-md font-headline-md text-primary">Step 3: Screening Questions</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Main Content: Screening Questions -->
+<div class="lg:col-span-8 bg-surface-card rounded-xl border border-border-default shadow-sm overflow-hidden">
+<div class="p-lg border-b border-border-default bg-surface-subtle/30">
+<h1 class="text-headline-lg font-headline-lg text-on-surface">Screening Questions</h1>
+<p class="text-body-md font-body-md text-text-secondary mt-1">Please answer these specific questions from the Lumina Tech hiring team.</p>
+</div>
+<div class="p-xl space-y-xl">
+<!-- Question 1 -->
+<div class="space-y-md">
+<label class="block text-label-md font-label-md text-on-surface" for="exp-years">
+                            How many years of experience do you have in SaaS product design?
+                        </label>
+<div class="flex items-center gap-lg">
+<input class="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" id="exp-years" max="20" min="0" oninput="document.getElementById('years-val').innerText = this.value + ' Years'" step="1" type="range" value="5"/>
+<span class="shrink-0 font-label-md text-label-md bg-primary-container/10 text-primary px-3 py-1.5 rounded-lg border border-primary/10" id="years-val">
+                                5 Years
+                            </span>
+</div>
+<div class="flex justify-between text-body-sm font-body-sm text-text-secondary">
+<span>0 years</span>
+<span>20+ years</span>
+</div>
+</div>
+<div class="h-px bg-outline-variant/30"></div>
+<!-- Question 2 -->
+<div class="space-y-md">
+<label class="block text-label-md font-label-md text-on-surface" for="portfolio-url">
+                            Please provide a link to your portfolio showcasing case studies of complex workflows.
+                        </label>
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-md" data-icon="link">link</span>
+<input class="w-full pl-10 pr-md py-3 bg-surface-container-lowest border border-border-default rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none transition-all text-body-md font-body-md" id="portfolio-url" placeholder="https://portfolio.com/projects" type="url"/>
+</div>
+<p class="text-body-sm font-body-sm text-text-secondary italic">e.g., Behance, Dribbble, or a personal website link.</p>
+</div>
+<div class="h-px bg-outline-variant/30"></div>
+<!-- Question 3 -->
+<div class="space-y-md">
+<span class="block text-label-md font-label-md text-on-surface">
+                            Are you authorized to work in the United States?
+                        </span>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<label class="flex items-center gap-md p-lg border border-border-default rounded-lg cursor-pointer hover:bg-surface-subtle hover:border-secondary/30 transition-all group">
+<input class="w-5 h-5 text-primary border-outline-variant focus:ring-primary" name="auth" type="radio" value="yes"/>
+<span class="text-body-lg font-body-lg text-on-surface">Yes, I am authorized</span>
+</label>
+<label class="flex items-center gap-md p-lg border border-border-default rounded-lg cursor-pointer hover:bg-surface-subtle hover:border-secondary/30 transition-all group">
+<input class="w-5 h-5 text-primary border-outline-variant focus:ring-primary" name="auth" type="radio" value="no"/>
+<span class="text-body-lg font-body-lg text-on-surface">No, I require sponsorship</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="p-lg bg-surface-container-low border-t border-border-default flex justify-between items-center">
+<button class="px-xl py-2.5 text-primary font-label-md text-label-md hover:bg-primary/5 rounded-lg transition-colors flex items-center gap-2 group">
+<span class="material-symbols-outlined text-md group-hover:-translate-x-1 transition-transform" data-icon="arrow_back">arrow_back</span>
+                        Back
+                    </button>
+<button class="px-xl py-2.5 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-sm hover:bg-primary-container transition-all active:scale-95 flex items-center gap-2">
+                        Save and Continue
+                        <span class="material-symbols-outlined text-md" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Sidebar -->
+<div class="lg:col-span-4 space-y-lg">
+<!-- Job Card -->
+<div class="bg-surface-card rounded-xl border border-border-default shadow-sm overflow-hidden">
+<div class="p-lg bg-surface-subtle/50 flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-white p-2 border border-border-default shadow-sm flex items-center justify-center">
+<img alt="Lumina Logo" class="w-full h-auto object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLuJyknCQC4kQj-PgXxOW-KT1DAVyxUBkiOu5SQv-Kea1EXsvq77wPLQAEq4RvG653wuz0Fcb4LgVTogRBYiVD7KvKSO-T6ShRjlqI57_psuJI8jmnpa1SWcUlUzmmCSLPgFI-7fhdTt9ZVQzGJ7INSI7354lsQlEYituc9PaxRhdbZ4pysKW5VwPs9it-xLA4ycGybGzRukpMG10KlFXfR4eFmevaw9D_ULYiC_k5uMhHOpnvFcP8C7H8Zj"/>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-text-secondary uppercase tracking-wider">Hiring Company</p>
+<h3 class="text-headline-md font-headline-md text-on-surface">Lumina Tech</h3>
+</div>
+</div>
+<div class="p-lg space-y-md">
+<div>
+<h2 class="text-body-lg font-bold text-primary">Senior Product Designer</h2>
+<div class="flex items-center gap-sm text-body-sm font-body-sm text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-md" data-icon="location_on">location_on</span>
+                                San Francisco, CA (Remote)
+                            </div>
+</div>
+<div class="p-md bg-surface-container-low rounded-lg border border-primary/5">
+<div class="flex justify-between items-center">
+<span class="text-body-sm font-body-sm text-text-secondary">Expected Salary</span>
+<span class="text-label-md font-label-md text-primary font-bold">$120k - $160k</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-surface-subtle text-on-surface-variant text-label-sm font-label-sm rounded-md border border-border-default">Full-time</span>
+<span class="px-2 py-1 bg-surface-subtle text-on-surface-variant text-label-sm font-label-sm rounded-md border border-border-default">Product Design</span>
+<span class="px-2 py-1 bg-surface-subtle text-on-surface-variant text-label-sm font-label-sm rounded-md border border-border-default">SaaS</span>
+</div>
+</div>
+</div>
+<!-- Help Card -->
+<div class="bg-primary rounded-xl p-lg shadow-lg relative overflow-hidden group">
+<!-- Subtle pattern background -->
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<svg height="100%" viewbox="0 0 100 100" width="100%">
+<pattern height="20" id="grid" patternunits="userSpaceOnUse" width="20">
+<path d="M 20 0 L 0 0 0 20" fill="none" stroke="white" stroke-width="0.5"></path>
+</pattern>
+<rect fill="url(#grid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<div class="relative z-10 space-y-md text-on-primary">
+<div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="support_agent">support_agent</span>
+</div>
+<h4 class="text-headline-md font-headline-md">Need help?</h4>
+<p class="text-body-sm font-body-sm text-on-primary/80">
+                            Our talent advocates are here to assist with your application. We typically respond within 2 hours.
+                        </p>
+<button class="w-full py-2.5 bg-white text-primary font-label-md text-label-md rounded-lg shadow-sm hover:bg-primary-fixed transition-colors active:scale-95">
+                            Contact Support
+                        </button>
+</div>
+</div>
+<!-- Tip Card -->
+<div class="bg-surface-container-high rounded-xl p-lg border border-outline-variant/30">
+<div class="flex gap-md">
+<span class="material-symbols-outlined text-secondary" data-icon="lightbulb" style="font-variation-settings: 'FILL' 1">lightbulb</span>
+<div class="space-y-1">
+<p class="text-label-md font-label-md text-on-surface">Pro-tip</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                                Mentioning specific outcomes like "increased conversion by 12%" in your portfolio case studies helps you stand out.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-surface-container-lowest w-full py-xl mt-auto border-t border-border-default dark:border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto gap-md">
+<div class="flex flex-col items-center md:items-start gap-xs">
+<span class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">EMPO</span>
+<p class="font-body-sm text-body-sm text-on-surface dark:text-on-surface">© 2024 EMPO AI Recruitment. All rights reserved.</p>
+</div>
+<nav class="flex items-center gap-lg">
+<a class="text-text-secondary dark:text-on-surface-variant font-body-sm text-body-sm hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Privacy Policy</a>
+<a class="text-text-secondary dark:text-on-surface-variant font-body-sm text-body-sm hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Terms of Service</a>
+<a class="text-text-secondary dark:text-on-surface-variant font-body-sm text-body-sm hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Help Center</a>
+<a class="text-text-secondary dark:text-on-surface-variant font-body-sm text-body-sm hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer" href="#">Support</a>
+</nav>
+</div>
+</footer>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Clear all sibling backgrounds
+                const container = this.closest('.grid');
+                container.querySelectorAll('label').forEach(lbl => {
+                    lbl.classList.remove('bg-surface-subtle', 'border-secondary', 'ring-2', 'ring-secondary/20');
+                    lbl.classList.add('border-border-default');
+                });
+                // Add active state to selected
+                if (this.checked) {
+                    const activeLabel = this.closest('label');
+                    activeLabel.classList.add('bg-surface-subtle', 'border-secondary', 'ring-2', 'ring-secondary/20');
+                    activeLabel.classList.remove('border-border-default');
+                }
+            });
+        });
+
+        // Sticky header transition
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 0) {
+                header.classList.add('shadow-md');
+            } else {
+                header.classList.remove('shadow-md');
+            }
+        });
+    </script>
+</body></html>

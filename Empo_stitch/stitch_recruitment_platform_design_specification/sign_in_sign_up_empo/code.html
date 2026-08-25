@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign In | EMPO AI Recruitment</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#002114",
+                        "on-tertiary-container": "#4ac08f",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#90a8ff",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "surface-tint": "#4059aa",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "secondary": "#0058be",
+                        "on-primary-fixed": "#00164e",
+                        "secondary-container": "#2170e4",
+                        "on-secondary-container": "#fefcff",
+                        "surface-subtle": "#F1F5F9",
+                        "surface-dim": "#cfdaf2",
+                        "on-secondary-fixed": "#001a42",
+                        "secondary-fixed": "#d8e2ff",
+                        "outline-variant": "#c5c5d3",
+                        "outline": "#757682",
+                        "on-primary-fixed-variant": "#264191",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "surface-variant": "#d8e3fb",
+                        "surface-container-high": "#dee8ff",
+                        "surface-container": "#e7eeff",
+                        "on-surface": "#111c2d",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "primary-container": "#1e3a8a",
+                        "inverse-primary": "#b6c4ff",
+                        "on-background": "#111c2d",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#85f8c4",
+                        "primary": "#00236f",
+                        "inverse-on-surface": "#ecf1ff",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#003120",
+                        "surface-bg": "#F8FAFC",
+                        "inverse-surface": "#263143",
+                        "text-secondary": "#64748B",
+                        "status-error": "#DC2626",
+                        "border-default": "#E2E8F0",
+                        "surface-bright": "#f9f9ff",
+                        "surface-card": "#FFFFFF",
+                        "surface-container-highest": "#d8e3fb",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#444651",
+                        "on-secondary-fixed-variant": "#004395",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#dce1ff",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#004a32",
+                        "background": "#f9f9ff",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "surface": "#f9f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "24px",
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "lg": "24px",
+                        "md": "16px",
+                        "container-max": "1280px",
+                        "xl": "32px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .auth-card {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        }
+        .tab-active {
+            color: #00236f;
+            border-bottom: 2px solid #00236f;
+        }
+        .transition-standard {
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden">
+<!-- Main Content Area: Split Screen -->
+<main class="flex-grow flex flex-col md:flex-row w-full">
+<!-- Left Side: Visual & Branding (Hidden on Mobile for focus) -->
+<section class="hidden md:flex relative md:w-1/2 lg:w-3/5 bg-primary-container overflow-hidden">
+<!-- Background Image -->
+<div class="absolute inset-0 z-0 brightness-75 bg-cover bg-center transition-transform duration-[10s] hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida/AP1WRLs0e_SIWULiydt7BhJ_yz8VnNi0BM-VChHdSXYOYOZk-wxiBTDlhEwi4NmPjXuzBffgdXJzm4xSuHydf1-5V1ynvgI4PSXDqBAeUeagSSOqiFmxddGC4grDcJyQ5IhjbwD3gjftVsrTDuXwrXm_pESNkbHafe25QCKrO1FUCS4MITQQSi6WzUUcGUnfwmOYEyAKZye8JxmBTqRLKVb3OtVdHjxiRkrqftwSgDLCGS9CBraHexxXmibWjdcM')"></div>
+<!-- Overlay Gradient for Readability -->
+<div class="absolute inset-0 bg-gradient-to-t from-primary-container/80 via-transparent to-transparent z-10"></div>
+<!-- Branding Content -->
+<div class="relative z-20 flex flex-col justify-end p-xl lg:p-24 h-full text-on-primary">
+<div class="max-w-xl">
+<h1 class="font-headline-xl text-headline-xl mb-md">
+                        The human-centered way to hire and be hired.
+                    </h1>
+<p class="font-body-lg text-body-lg opacity-90 leading-relaxed">
+                        EMPO leverages advanced AI to match the right talent with the right opportunities, ensuring every career move is meaningful and every hire is strategic.
+                    </p>
+<div class="mt-xl flex gap-md">
+<div class="flex items-center gap-sm bg-white/10 backdrop-blur-md px-md py-sm rounded-lg border border-white/20">
+<span class="material-symbols-outlined text-tertiary-fixed">verified</span>
+<span class="font-label-md text-label-md">Verified Talent</span>
+</div>
+<div class="flex items-center gap-sm bg-white/10 backdrop-blur-md px-md py-sm rounded-lg border border-white/20">
+<span class="material-symbols-outlined text-tertiary-fixed">speed</span>
+<span class="font-label-md text-label-md">Fast Matching</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Side: Authentication Card -->
+<section class="w-full md:w-1/2 lg:w-2/5 flex flex-col items-center justify-center p-md lg:p-xl bg-surface-bg relative">
+<!-- Mobile Brand Logo -->
+<div class="absolute top-md left-md md:hidden">
+<span class="font-headline-lg text-headline-lg font-bold text-primary">EMPO</span>
+</div>
+<!-- Desktop Brand Logo -->
+<div class="hidden md:block mb-xl">
+<span class="font-headline-lg text-headline-lg font-bold text-primary">EMPO</span>
+</div>
+<div class="w-full max-w-md auth-card bg-surface-card rounded-xl p-xl border border-border-default">
+<!-- Auth Toggle (Candidate vs Recruiter) -->
+<div class="flex bg-surface-subtle p-xs rounded-lg mb-xl" id="role-toggle">
+<button class="flex-1 py-sm font-label-md text-label-md rounded-lg transition-standard bg-white text-primary shadow-sm" id="btn-candidate" onclick="switchRole('candidate')">
+                        I am a Candidate
+                    </button>
+<button class="flex-1 py-sm font-label-md text-label-md rounded-lg transition-standard text-text-secondary" id="btn-recruiter" onclick="switchRole('recruiter')">
+                        I am a Recruiter
+                    </button>
+</div>
+<!-- Tabs: Sign In / Create Account -->
+<div class="flex border-b border-border-default mb-xl">
+<button class="flex-1 pb-sm font-label-md text-label-md tab-active transition-standard" id="tab-signin" onclick="switchTab('signin')">
+                        Sign In
+                    </button>
+<button class="flex-1 pb-sm font-label-md text-label-md text-text-secondary hover:text-primary transition-standard" id="tab-signup" onclick="switchTab('signup')">
+                        Create Account
+                    </button>
+</div>
+<!-- Auth Forms -->
+<div id="auth-container">
+<!-- Sign In Form -->
+<form class="space-y-md" id="form-signin">
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface" for="signin-email">Email Address</label>
+<input class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-standard outline-none font-body-md text-body-md" id="signin-email" placeholder="name@company.com" type="email"/>
+</div>
+<div class="space-y-xs relative">
+<div class="flex justify-between items-center">
+<label class="font-label-md text-label-md text-on-surface" for="signin-password">Password</label>
+<a class="font-label-sm text-label-sm text-secondary hover:underline" href="#">Forgot password?</a>
+</div>
+<input class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-standard outline-none font-body-md text-body-md" id="signin-password" placeholder="••••••••" type="password"/>
+</div>
+<button class="w-full bg-primary-container text-on-primary py-md rounded-lg font-label-md text-label-md hover:bg-primary transition-standard active:scale-[0.98]" type="submit">
+                            Sign In
+                        </button>
+</form>
+<!-- Sign Up Form (Hidden by default) -->
+<form class="space-y-md hidden" id="form-signup">
+<div class="grid grid-cols-2 gap-sm">
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface">First Name</label>
+<input class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-standard outline-none font-body-md text-body-md" placeholder="Jane" type="text"/>
+</div>
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface">Last Name</label>
+<input class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-standard outline-none font-body-md text-body-md" placeholder="Doe" type="text"/>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface">Work Email</label>
+<input class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-standard outline-none font-body-md text-body-md" placeholder="jane.doe@example.com" type="email"/>
+</div>
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface">Password</label>
+<input class="w-full px-md py-sm border border-border-default rounded-lg focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-standard outline-none font-body-md text-body-md" placeholder="Create a strong password" type="password"/>
+</div>
+<button class="w-full bg-primary-container text-on-primary py-md rounded-lg font-label-md text-label-md hover:bg-primary transition-standard active:scale-[0.98]" type="submit">
+                            Create Account
+                        </button>
+</form>
+<!-- Divider -->
+<div class="relative my-xl">
+<div class="absolute inset-0 flex items-center"><div class="w-full border-t border-border-default"></div></div>
+<div class="relative flex justify-center text-label-sm font-label-sm uppercase"><span class="bg-surface-card px-sm text-text-secondary">Or continue with</span></div>
+</div>
+<!-- Social Auth Buttons -->
+<div class="grid grid-cols-2 gap-md">
+<button class="flex items-center justify-center gap-sm py-sm border border-border-default rounded-lg hover:bg-surface-subtle transition-standard active:scale-[0.98]">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+<span class="font-label-md text-label-md text-on-surface">Google</span>
+</button>
+<button class="flex items-center justify-center gap-sm py-sm border border-border-default rounded-lg hover:bg-surface-subtle transition-standard active:scale-[0.98]">
+<svg class="w-5 h-5" fill="#0077b5" viewbox="0 0 24 24">
+<path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"></path>
+</svg>
+<span class="font-label-md text-label-md text-on-surface">LinkedIn</span>
+</button>
+</div>
+</div>
+<p class="mt-xl text-center font-body-sm text-body-sm text-text-secondary">
+                    By signing in, you agree to our <a class="text-secondary hover:underline" href="#">User Agreement</a> and <a class="text-secondary hover:underline" href="#">Privacy Policy</a>.
+                </p>
+</div>
+</section>
+</main>
+<!-- Simple Footer -->
+<footer class="w-full bg-surface-container-low border-t border-border-default py-md px-lg">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md">
+<p class="font-body-sm text-body-sm text-text-secondary">
+                © 2024 EMPO AI Recruitment. All rights reserved.
+            </p>
+<div class="flex gap-xl">
+<a class="font-label-sm text-label-sm text-text-secondary hover:text-primary transition-standard" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-text-secondary hover:text-primary transition-standard" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-text-secondary hover:text-primary transition-standard" href="#">Cookie Policy</a>
+<a class="font-label-sm text-label-sm text-text-secondary hover:text-primary transition-standard" href="#">Support</a>
+</div>
+</div>
+</footer>
+<script>
+        function switchRole(role) {
+            const btnCandidate = document.getElementById('btn-candidate');
+            const btnRecruiter = document.getElementById('btn-recruiter');
+            
+            if (role === 'candidate') {
+                btnCandidate.classList.add('bg-white', 'text-primary', 'shadow-sm');
+                btnCandidate.classList.remove('text-text-secondary');
+                btnRecruiter.classList.remove('bg-white', 'text-primary', 'shadow-sm');
+                btnRecruiter.classList.add('text-text-secondary');
+            } else {
+                btnRecruiter.classList.add('bg-white', 'text-primary', 'shadow-sm');
+                btnRecruiter.classList.remove('text-text-secondary');
+                btnCandidate.classList.remove('bg-white', 'text-primary', 'shadow-sm');
+                btnCandidate.classList.add('text-text-secondary');
+            }
+        }
+
+        function switchTab(tab) {
+            const tabSignIn = document.getElementById('tab-signin');
+            const tabSignUp = document.getElementById('tab-signup');
+            const formSignIn = document.getElementById('form-signin');
+            const formSignUp = document.getElementById('form-signup');
+
+            if (tab === 'signin') {
+                tabSignIn.classList.add('tab-active');
+                tabSignIn.classList.remove('text-text-secondary');
+                tabSignUp.classList.remove('tab-active');
+                tabSignUp.classList.add('text-text-secondary');
+                formSignIn.classList.remove('hidden');
+                formSignUp.classList.add('hidden');
+            } else {
+                tabSignUp.classList.add('tab-active');
+                tabSignUp.classList.remove('text-text-secondary');
+                tabSignIn.classList.remove('tab-active');
+                tabSignIn.classList.add('text-text-secondary');
+                formSignUp.classList.remove('hidden');
+                formSignIn.classList.add('hidden');
+            }
+        }
+
+        // Add some interaction to the visual side
+        document.addEventListener('mousemove', (e) => {
+            const parallaxImg = document.querySelector('.absolute.inset-0.z-0');
+            if (!parallaxImg) return;
+            const x = (window.innerWidth - e.pageX * 2) / 100;
+            const y = (window.innerHeight - e.pageY * 2) / 100;
+            parallaxImg.style.transform = `translateX(${x}px) translateY(${y}px) scale(1.05)`;
+        });
+    </script>
+</body></html>

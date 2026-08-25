@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO Recruiter Dashboard | Active Jobs</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Use the provided Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#00164e",
+                    "on-error-container": "#93000a",
+                    "on-background": "#111c2d",
+                    "on-secondary-fixed-variant": "#004395",
+                    "on-primary-container": "#90a8ff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "border-default": "#E2E8F0",
+                    "inverse-primary": "#b6c4ff",
+                    "outline-variant": "#c5c5d3",
+                    "outline": "#757682",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "surface-variant": "#d8e3fb",
+                    "on-secondary-container": "#fefcff",
+                    "on-tertiary": "#ffffff",
+                    "primary": "#00236f",
+                    "surface-container": "#e7eeff",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f9f9ff",
+                    "tertiary-container": "#004a32",
+                    "inverse-surface": "#263143",
+                    "surface-container-low": "#f0f3ff",
+                    "error": "#ba1a1a",
+                    "text-secondary": "#64748B",
+                    "on-surface": "#111c2d",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-dim": "#cfdaf2",
+                    "primary-fixed": "#dce1ff",
+                    "background": "#f9f9ff",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#444651",
+                    "secondary-container": "#2170e4",
+                    "on-tertiary-container": "#4ac08f",
+                    "status-error": "#DC2626",
+                    "on-secondary": "#ffffff",
+                    "surface-card": "#FFFFFF",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#4059aa",
+                    "secondary": "#0058be",
+                    "surface": "#f9f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#002114",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "inverse-on-surface": "#ecf1ff",
+                    "surface-container-high": "#dee8ff",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-bg": "#F8FAFC",
+                    "surface-subtle": "#F1F5F9",
+                    "on-primary-fixed-variant": "#264191",
+                    "tertiary-fixed": "#85f8c4",
+                    "surface-container-highest": "#d8e3fb",
+                    "tertiary": "#003120",
+                    "primary-container": "#1e3a8a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "container-max": "1280px",
+                    "gutter": "24px",
+                    "sm": "8px",
+                    "margin": "24px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav-item {
+            background-color: white;
+            color: #00236f;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .sparkline {
+            height: 24px;
+            width: 80px;
+            background: linear-gradient(90deg, transparent 0%, rgba(33, 112, 228, 0.1) 50%, transparent 100%);
+            mask: url("data:image/svg+xml,%3Csvg width='80' height='24' viewBox='0 0 80 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20L10 18L20 22L30 15L40 17L50 8L60 12L70 5L80 9' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            mask-repeat: no-repeat;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg width='80' height='24' viewBox='0 0 80 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20L10 18L20 22L30 15L40 17L50 8L60 12L70 5L80 9' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            -webkit-mask-repeat: no-repeat;
+        }
+        .sparkline-success { background-color: #4ac08f; }
+        .sparkline-primary { background-color: #2170e4; }
+    </style>
+</head>
+<body class="bg-[#F1F5F9] text-on-background min-h-screen flex overflow-hidden">
+<!-- SideNavBar Component (Sophisticated Restyle) -->
+<aside class="hidden md:flex flex-col h-full py-lg px-md space-y-sm bg-[#1E293B] border-r border-border-default w-64 fixed left-0 top-0 z-50">
+<div class="mb-xl px-md flex items-center gap-sm">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-md">hub</span>
+</div>
+<div>
+<h1 class="text-label-md font-bold text-white tracking-tight">TalentSuite</h1>
+<p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Enterprise</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-md py-sm text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-md text-[20px]">grid_view</span>
+<span class="text-label-md font-medium">Dashboard</span>
+</a>
+<a class="flex items-center px-md py-sm bg-primary text-white rounded-lg font-semibold group shadow-lg shadow-primary/20" href="#">
+<span class="material-symbols-outlined mr-md text-[20px] fill-1">work</span>
+<span class="text-label-md">Active Jobs</span>
+</a>
+<a class="flex items-center px-md py-sm text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-md text-[20px]">person_search</span>
+<span class="text-label-md">Candidates</span>
+</a>
+<a class="flex items-center px-md py-sm text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-md text-[20px]">calendar_today</span>
+<span class="text-label-md">Interviews</span>
+</a>
+<a class="flex items-center px-md py-sm text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-md text-[20px]">bar_chart_4_bars</span>
+<span class="text-label-md">Analytics</span>
+</a>
+</nav>
+<div class="pt-lg border-t border-slate-700 space-y-1">
+<a class="flex items-center px-md py-sm text-slate-400 hover:text-white hover:bg-slate-800 transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-md text-[20px]">help_center</span>
+<span class="text-label-md">Support</span>
+</a>
+<a class="flex items-center px-md py-sm text-slate-400 hover:text-white hover:bg-slate-800 transition-colors duration-150 rounded-lg group" href="#">
+<span class="material-symbols-outlined mr-md text-[20px]">settings</span>
+<span class="text-label-md">Settings</span>
+</a>
+<div class="mt-xl pt-md px-md flex items-center gap-md bg-slate-800/50 rounded-xl p-sm">
+<div class="w-8 h-8 rounded-full bg-slate-600 overflow-hidden flex-shrink-0 ring-2 ring-slate-700">
+<img class="w-full h-full object-cover" data-alt="Professional studio portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpNrjXF3fMFkUoAnE3Xg5rHMCZBsG10O8hvCX2alFpjUneQtCOlGOpA_lxdQ7QATFH2IUI7QxswJtZpW2VD-opxKj9rnXN0LwS3Y5cQcaeSr2jcjfCobx9fNTVDuP_J05OdAb4_i4tqpblfZSwUgmlmPTjJKy1fm7N8ZCz-Z5M2vdHDoibsb8S7whqkl-ec-rsQ9v2YRfixbMljyTZYkuqI2wmBaG1WaHlbwwugmEz0bHQvo8shfWCQA"/>
+</div>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-white truncate">Sarah Jenkins</p>
+<p class="text-[10px] text-slate-400 truncate uppercase">Recruiter Co.</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-64 flex flex-col h-screen overflow-y-auto relative">
+<!-- Header: Refined with Candidate Search and Better Notifications -->
+<header class="flex justify-between items-center w-full px-lg md:px-xl h-16 bg-white border-b border-border-default sticky top-0 z-40">
+<div class="flex items-center gap-md flex-1">
+<button class="md:hidden p-sm text-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="relative w-full max-w-md hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+<input class="pl-10 pr-md py-2 bg-slate-100 border-transparent focus:border-primary focus:ring-0 rounded-lg text-body-md w-full transition-all" placeholder="Search for candidates or job postings..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-sm">
+<div class="relative">
+<button class="p-2 text-slate-500 hover:text-primary transition-colors bg-slate-50 rounded-full border border-slate-200">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<span class="absolute top-0 right-0 w-2.5 h-2.5 bg-error border-2 border-white rounded-full"></span>
+</div>
+<button class="p-2 text-slate-500 hover:text-primary transition-colors bg-slate-50 rounded-full border border-slate-200">
+<span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+</button>
+</div>
+<div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
+<button class="bg-primary text-on-primary px-lg py-2 rounded-lg font-label-md flex items-center gap-sm shadow-sm hover:bg-primary/90 transition-all">
+<span class="material-symbols-outlined text-md">add</span>
+<span class="hidden sm:inline">Create Job</span>
+</button>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="px-lg md:px-xl py-lg w-full max-w-container-max mx-auto space-y-lg">
+<!-- Page Title -->
+<div class="flex flex-col md:flex-row justify-between items-end">
+<div>
+<h2 class="text-headline-lg font-bold text-slate-900">Active Job Pipeline</h2>
+<p class="text-body-md text-text-secondary">Overview of current recruitment status and top candidate matches.</p>
+</div>
+<div class="flex items-center gap-md mt-md md:mt-0">
+<div class="flex -space-x-2">
+<img alt="Team member" class="w-8 h-8 rounded-full border-2 border-white shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpNrjXF3fMFkUoAnE3Xg5rHMCZBsG10O8hvCX2alFpjUneQtCOlGOpA_lxdQ7QATFH2IUI7QxswJtZpW2VD-opxKj9rnXN0LwS3Y5cQcaeSr2jcjfCobx9fNTVDuP_J05OdAb4_i4tqpblfZSwUgmlmPTjJKy1fm7N8ZCz-Z5M2vdHDoibsb8S7whqkl-ec-rsQ9v2YRfixbMljyTZYkuqI2wmBaG1WaHlbwwugmEz0bHQvo8shfWCQA"/>
+<div class="w-8 h-8 rounded-full border-2 border-white bg-slate-200 shadow-sm flex items-center justify-center text-[10px] font-bold text-slate-600">+4</div>
+</div>
+<button class="p-2 text-slate-500 hover:text-primary transition-colors bg-white rounded-lg border border-slate-200">
+<span class="material-symbols-outlined text-[20px]">filter_list</span>
+</button>
+</div>
+</div>
+<!-- Stats Cards: Redesigned with Sparklines -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+<!-- Active Jobs -->
+<div class="bg-white p-lg rounded-xl border border-border-default shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-sm">
+<span class="text-label-sm font-semibold text-text-secondary uppercase">Active Postings</span>
+<span class="material-symbols-outlined text-primary text-lg">work</span>
+</div>
+<h3 class="text-headline-xl font-bold">24</h3>
+</div>
+<div class="flex items-center justify-between mt-md">
+<div class="flex items-center text-status-success text-xs font-bold">
+<span class="material-symbols-outlined text-sm mr-xs">trending_up</span>
+                        +8.2%
+                    </div>
+<div class="sparkline sparkline-primary opacity-50"></div>
+</div>
+</div>
+<!-- Total Applications -->
+<div class="bg-white p-lg rounded-xl border border-border-default shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-sm">
+<span class="text-label-sm font-semibold text-text-secondary uppercase">Total Applicants</span>
+<span class="material-symbols-outlined text-secondary text-lg">group</span>
+</div>
+<h3 class="text-headline-xl font-bold">842</h3>
+</div>
+<div class="flex items-center justify-between mt-md">
+<div class="flex items-center text-status-success text-xs font-bold">
+<span class="material-symbols-outlined text-sm mr-xs">trending_up</span>
+                        +12%
+                    </div>
+<div class="sparkline sparkline-success opacity-50"></div>
+</div>
+</div>
+<!-- Interview Rate -->
+<div class="bg-white p-lg rounded-xl border border-border-default shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-sm">
+<span class="text-label-sm font-semibold text-text-secondary uppercase">Interview Rate</span>
+<span class="material-symbols-outlined text-on-tertiary-container text-lg">event_available</span>
+</div>
+<h3 class="text-headline-xl font-bold">14.5%</h3>
+</div>
+<div class="flex items-center justify-between mt-md">
+<div class="flex items-center text-error text-xs font-bold">
+<span class="material-symbols-outlined text-sm mr-xs">trending_down</span>
+                        -2.1%
+                    </div>
+<div class="sparkline bg-error/20 opacity-50" style="mask: url('data:image/svg+xml,%3Csvg width=\'80\' height=\'24\' viewBox=\'0 0 80 24\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 5L10 8L20 6L30 15L40 12L50 20L60 18L70 22L80 19\' stroke=\'black\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E');"></div>
+</div>
+</div>
+<!-- Time to Hire -->
+<div class="bg-white p-lg rounded-xl border border-border-default shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-sm">
+<span class="text-label-sm font-semibold text-text-secondary uppercase">Avg. Time to Hire</span>
+<span class="material-symbols-outlined text-outline text-lg">timer</span>
+</div>
+<h3 class="text-headline-xl font-bold">18d</h3>
+</div>
+<div class="flex items-center justify-between mt-md">
+<div class="flex items-center text-status-success text-xs font-bold">
+<span class="material-symbols-outlined text-sm mr-xs">trending_up</span>
+                        -3 days
+                    </div>
+<div class="sparkline bg-slate-300 opacity-50"></div>
+</div>
+</div>
+</div>
+<!-- Active Jobs Table (Denser and Functional) -->
+<div class="bg-white rounded-xl border border-border-default shadow-sm overflow-hidden">
+<div class="px-lg py-md border-b border-border-default flex justify-between items-center">
+<h3 class="text-body-lg font-bold">Job Postings</h3>
+<div class="flex gap-sm">
+<div class="flex rounded-lg border border-border-default overflow-hidden">
+<button class="px-md py-1.5 bg-slate-50 text-label-sm font-semibold border-r border-border-default">All</button>
+<button class="px-md py-1.5 hover:bg-slate-50 text-label-sm text-text-secondary border-r border-border-default">Drafts</button>
+<button class="px-md py-1.5 hover:bg-slate-50 text-label-sm text-text-secondary">Closed</button>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 border-b border-border-default">
+<th class="px-lg py-3 text-[11px] font-bold text-text-secondary uppercase tracking-wider">Job Title</th>
+<th class="px-lg py-3 text-[11px] font-bold text-text-secondary uppercase tracking-wider">Status</th>
+<th class="px-lg py-3 text-[11px] font-bold text-text-secondary uppercase tracking-wider">Matches</th>
+<th class="px-lg py-3 text-[11px] font-bold text-text-secondary uppercase tracking-wider">Recruiter</th>
+<th class="px-lg py-3 text-[11px] font-bold text-text-secondary uppercase tracking-wider text-center">Days Open</th>
+<th class="px-lg py-3 text-[11px] font-bold text-text-secondary uppercase tracking-wider text-center">Total/New</th>
+<th class="px-lg py-3 text-[11px] font-bold text-text-secondary uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-default">
+<!-- Table Row 1 -->
+<tr class="hover:bg-slate-50/80 transition-colors group">
+<td class="px-lg py-3">
+<div>
+<p class="text-body-md font-semibold text-primary">Senior Frontend Developer</p>
+<p class="text-[11px] text-text-secondary">Engineering • London, UK</p>
+</div>
+</td>
+<td class="px-lg py-3">
+<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded uppercase">Active</span>
+</td>
+<td class="px-lg py-3">
+<div class="flex items-center gap-xs">
+<span class="text-body-sm font-bold text-secondary">85%</span>
+<div class="w-12 h-1 bg-slate-200 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[85%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-3">
+<div class="flex items-center gap-sm">
+<img alt="Recruiter" class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpNrjXF3fMFkUoAnE3Xg5rHMCZBsG10O8hvCX2alFpjUneQtCOlGOpA_lxdQ7QATFH2IUI7QxswJtZpW2VD-opxKj9rnXN0LwS3Y5cQcaeSr2jcjfCobx9fNTVDuP_J05OdAb4_i4tqpblfZSwUgmlmPTjJKy1fm7N8ZCz-Z5M2vdHDoibsb8S7whqkl-ec-rsQ9v2YRfixbMljyTZYkuqI2wmBaG1WaHlbwwugmEz0bHQvo8shfWCQA"/>
+<span class="text-body-sm font-medium">S. Jenkins</span>
+</div>
+</td>
+<td class="px-lg py-3 text-center">
+<span class="text-body-sm text-text-secondary">12d</span>
+</td>
+<td class="px-lg py-3 text-center">
+<div class="flex flex-col">
+<span class="text-body-sm font-bold">124</span>
+<span class="text-[10px] text-secondary font-bold">+12 new</span>
+</div>
+</td>
+<td class="px-lg py-3 text-right">
+<button class="p-1.5 text-slate-400 hover:text-primary transition-colors hover:bg-slate-100 rounded">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 2 -->
+<tr class="hover:bg-slate-50/80 transition-colors group">
+<td class="px-lg py-3">
+<div>
+<p class="text-body-md font-semibold text-primary">Senior UX Designer</p>
+<p class="text-[11px] text-text-secondary">Design • Remote</p>
+</div>
+</td>
+<td class="px-lg py-3">
+<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded uppercase">Active</span>
+</td>
+<td class="px-lg py-3">
+<div class="flex items-center gap-xs">
+<span class="text-body-sm font-bold text-secondary">92%</span>
+<div class="w-12 h-1 bg-slate-200 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[92%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-3">
+<div class="flex items-center gap-sm">
+<div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold">ML</div>
+<span class="text-body-sm font-medium">M. Lawson</span>
+</div>
+</td>
+<td class="px-lg py-3 text-center">
+<span class="text-body-sm text-text-secondary">4d</span>
+</td>
+<td class="px-lg py-3 text-center">
+<div class="flex flex-col">
+<span class="text-body-sm font-bold">48</span>
+<span class="text-[10px] text-secondary font-bold">+4 new</span>
+</div>
+</td>
+<td class="px-lg py-3 text-right">
+<button class="p-1.5 text-slate-400 hover:text-primary transition-colors hover:bg-slate-100 rounded">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Table Row 3 -->
+<tr class="hover:bg-slate-50/80 transition-colors group">
+<td class="px-lg py-3">
+<div>
+<p class="text-body-md font-semibold text-primary">Technical Lead</p>
+<p class="text-[11px] text-text-secondary">Engineering • Berlin, DE</p>
+</div>
+</td>
+<td class="px-lg py-3">
+<span class="px-2 py-0.5 bg-orange-100 text-orange-700 text-[10px] font-bold rounded uppercase">Urgent</span>
+</td>
+<td class="px-lg py-3">
+<div class="flex items-center gap-xs">
+<span class="text-body-sm font-bold text-secondary">64%</span>
+<div class="w-12 h-1 bg-slate-200 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[64%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-3">
+<div class="flex items-center gap-sm">
+<img alt="Recruiter" class="w-6 h-6 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpNrjXF3fMFkUoAnE3Xg5rHMCZBsG10O8hvCX2alFpjUneQtCOlGOpA_lxdQ7QATFH2IUI7QxswJtZpW2VD-opxKj9rnXN0LwS3Y5cQcaeSr2jcjfCobx9fNTVDuP_J05OdAb4_i4tqpblfZSwUgmlmPTjJKy1fm7N8ZCz-Z5M2vdHDoibsb8S7whqkl-ec-rsQ9v2YRfixbMljyTZYkuqI2wmBaG1WaHlbwwugmEz0bHQvo8shfWCQA"/>
+<span class="text-body-sm font-medium">S. Jenkins</span>
+</div>
+</td>
+<td class="px-lg py-3 text-center">
+<span class="text-body-sm text-text-secondary">28d</span>
+</td>
+<td class="px-lg py-3 text-center">
+<div class="flex flex-col">
+<span class="text-body-sm font-bold">212</span>
+<span class="text-[10px] text-secondary font-bold">+18 new</span>
+</div>
+</td>
+<td class="px-lg py-3 text-right">
+<button class="p-1.5 text-slate-400 hover:text-primary transition-colors hover:bg-slate-100 rounded">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-lg py-3 border-t border-border-default flex justify-between items-center bg-slate-50">
+<p class="text-label-sm text-text-secondary">Showing <span class="font-bold text-on-surface">3</span> of 24 active jobs</p>
+<div class="flex items-center gap-sm">
+<button class="px-3 py-1 border border-border-default rounded bg-white hover:bg-slate-50 transition-colors text-label-sm font-semibold">Previous</button>
+<button class="px-3 py-1 border border-border-default rounded bg-white hover:bg-slate-50 transition-colors text-label-sm font-semibold">Next</button>
+</div>
+</div>
+</div>
+<!-- Lower Section: Top Matches and Upgrade -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<!-- Top Talent Matches -->
+<div class="lg:col-span-2 bg-white p-lg rounded-xl border border-border-default shadow-sm">
+<div class="flex justify-between items-center mb-lg">
+<div>
+<h4 class="text-body-lg font-bold">AI Recommended Matches</h4>
+<p class="text-body-sm text-text-secondary">Based on top job requirements and candidate scores.</p>
+</div>
+<button class="text-label-sm font-bold text-secondary hover:text-primary">View Analytics</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<!-- Match 1 -->
+<div class="flex items-center gap-md p-md bg-slate-50 rounded-xl border border-slate-100 hover:border-secondary transition-all cursor-pointer group shadow-sm">
+<div class="w-14 h-14 rounded-xl overflow-hidden shadow-sm relative flex-shrink-0">
+<img alt="Alex Mercer" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9WmfKRcgaiput7DlpLANTv4u6E3lT92AF90iLwHRrAlCe4XG4dYmm-hJp6v2Iyqtqw6GDC2laUd3uTKe7nSzyAdWbjytUXvShxb4Wq-t3RED8FEP4U6xQDsYSwM6bI-FVAoSP0mNqaVf2H5shsfHFlLM1_CifQlPWfbzYD-yUp3ScVly-m_2nDfeMs9GTxVT0sL0x5WQPnK0r0fCtqhaSshuxBluXxrlDiroCQs8meFo69613QNUM4w"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-body-md font-bold truncate">Alex Mercer</p>
+<span class="text-[10px] font-bold text-secondary bg-secondary/10 px-1.5 py-0.5 rounded">98% Match</span>
+</div>
+<p class="text-[11px] text-text-secondary truncate">Full Stack Engineer • 6y Exp.</p>
+<div class="flex gap-1 mt-2">
+<span class="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-semibold text-slate-500">React</span>
+<span class="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-semibold text-slate-500">Node.js</span>
+</div>
+</div>
+</div>
+<!-- Match 2 -->
+<div class="flex items-center gap-md p-md bg-slate-50 rounded-xl border border-slate-100 hover:border-secondary transition-all cursor-pointer group shadow-sm">
+<div class="w-14 h-14 rounded-xl overflow-hidden shadow-sm relative flex-shrink-0">
+<img alt="Elena Rodriguez" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVMrs6jB0R-BwtkoUDXC-og-IhS4_XV8oR2G6P796Zt_BfOWKgDFN8GZzqqcWNcD_Ogn-i4Uw3v5g9S3MwUBurohx9oLGzyOi8SnF01BgDKmvQT4FmOq9QaQBLDHMKSHq2Kz3MD8cKLNIeHQUbFI6mr3PiuU8GiFXI1MvzaKdhi7a1XsW2RTFRNi4NMI4TX6U51dm7ToPVWLS41fSvjYNze3_5TOAG4cN6OTfzPABDLC1rGsfnDY_ezQ"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<p class="text-body-md font-bold truncate">Elena Rodriguez</p>
+<span class="text-[10px] font-bold text-secondary bg-secondary/10 px-1.5 py-0.5 rounded">94% Match</span>
+</div>
+<p class="text-[11px] text-text-secondary truncate">Senior Product Designer</p>
+<div class="flex gap-1 mt-2">
+<span class="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-semibold text-slate-500">Figma</span>
+<span class="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[9px] font-semibold text-slate-500">Prototyping</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Premium Promo -->
+<div class="bg-[#2170e4] p-lg rounded-xl flex flex-col justify-between text-white relative overflow-hidden shadow-lg shadow-blue-200">
+<div class="relative z-10">
+<div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mb-md">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<h4 class="text-headline-md font-bold mb-xs">Unlock Talent Insights</h4>
+<p class="text-body-sm text-white/80">Get advanced AI filtering and direct access to top 1% passive talent.</p>
+</div>
+<button class="mt-xl bg-white text-primary px-lg py-md rounded-lg font-bold text-label-md w-full shadow-lg hover:bg-slate-50 transition-all relative z-10">
+                    Try Premium Free
+                </button>
+<!-- Abstract decorative element -->
+<div class="absolute -bottom-10 -right-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute -top-10 -left-10 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
+</div>
+</div>
+</div>
+<!-- Footer (Shared) -->
+<footer class="w-full py-lg px-lg md:px-xl max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md border-t border-border-default mt-auto bg-white/50">
+<div class="flex flex-col md:items-start items-center">
+<h4 class="text-label-md font-bold text-primary">EMPO Recruitment</h4>
+<p class="text-[11px] text-text-secondary">© 2024 EMPO Enterprise Solutions. Data encrypted.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="text-[11px] font-semibold text-text-secondary hover:text-primary transition-all" href="#">System Status</a>
+<a class="text-[11px] font-semibold text-text-secondary hover:text-primary transition-all" href="#">Privacy</a>
+<a class="text-[11px] font-semibold text-text-secondary hover:text-primary transition-all" href="#">Terms</a>
+<a class="text-[11px] font-semibold text-text-secondary hover:text-primary transition-all" href="#">Security</a>
+</div>
+</footer>
+</main>
+<!-- Contextual FAB (Mobile Only) -->
+<button class="md:hidden fixed bottom-lg right-lg w-14 h-14 bg-primary text-white rounded-full shadow-xl flex items-center justify-center active:scale-95 transition-transform z-50">
+<span class="material-symbols-outlined">add</span>
+</button>
+<script>
+    // Micro-interactions
+    document.querySelectorAll('tr').forEach(row => {
+        row.addEventListener('mouseenter', () => {
+            row.querySelector('.material-symbols-outlined')?.classList.add('text-primary');
+        });
+        row.addEventListener('mouseleave', () => {
+            row.querySelector('.material-symbols-outlined')?.classList.remove('text-primary');
+        });
+    });
+
+    // Header interaction
+    const headerInput = document.querySelector('header input');
+    if(headerInput) {
+        headerInput.addEventListener('focus', () => {
+            headerInput.parentElement.classList.add('ring-2', 'ring-primary/10');
+            headerInput.classList.replace('bg-slate-100', 'bg-white');
+        });
+        headerInput.addEventListener('blur', () => {
+            headerInput.parentElement.classList.remove('ring-2', 'ring-primary/10');
+            headerInput.classList.replace('bg-white', 'bg-slate-100');
+        });
+    }
+</script>
+</body></html>

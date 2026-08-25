@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saved Jobs &amp; Alerts | EMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#d8e2ff",
+                        "tertiary-container": "#004a32",
+                        "secondary-container": "#2170e4",
+                        "surface": "#f9f9ff",
+                        "on-surface": "#111c2d",
+                        "primary-fixed": "#dce1ff",
+                        "on-secondary-container": "#fefcff",
+                        "surface-bright": "#f9f9ff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#cfdaf2",
+                        "surface-card": "#FFFFFF",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#001a42",
+                        "on-background": "#111c2d",
+                        "inverse-primary": "#b6c4ff",
+                        "status-error": "#DC2626",
+                        "on-tertiary": "#ffffff",
+                        "surface-subtle": "#F1F5F9",
+                        "inverse-surface": "#263143",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container-high": "#dee8ff",
+                        "surface-container-highest": "#d8e3fb",
+                        "on-tertiary-container": "#4ac08f",
+                        "inverse-on-surface": "#ecf1ff",
+                        "text-secondary": "#64748B",
+                        "on-primary-fixed": "#00164e",
+                        "outline-variant": "#c5c5d3",
+                        "tertiary-fixed": "#85f8c4",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "on-surface-variant": "#444651",
+                        "primary-container": "#1e3a8a",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "background": "#f9f9ff",
+                        "on-tertiary-fixed": "#002114",
+                        "on-primary-fixed-variant": "#264191",
+                        "tertiary": "#003120",
+                        "outline": "#757682",
+                        "on-secondary-fixed-variant": "#004395",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#d8e3fb",
+                        "secondary": "#0058be",
+                        "border-default": "#E2E8F0",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-primary-container": "#90a8ff",
+                        "surface-container": "#e7eeff",
+                        "on-primary": "#ffffff",
+                        "primary": "#00236f",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#4059aa",
+                        "surface-bg": "#F8FAFC"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "margin": "24px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "xl": "32px",
+                        "container-max": "1280px",
+                        "xs": "4px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        .toggle-switch {
+            width: 36px;
+            height: 20px;
+            transition: all 0.2s ease;
+        }
+        .toggle-dot {
+            width: 14px;
+            height: 14px;
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<body class="bg-surface-bg font-body-md text-on-background min-h-screen">
+<!-- Sidebar Component (Mapped from JSON) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface border-r border-border-default z-40 hidden md:flex flex-col py-lg px-md">
+<div class="mb-xl px-md">
+<h1 class="font-headline-md text-headline-md font-bold text-primary mb-xs">EMPO</h1>
+<p class="font-label-md text-label-md text-text-secondary">Candidate Portal</p>
+</div>
+<nav class="flex-1 space-y-xs">
+<div class="group flex items-center px-md py-sm mb-xs cursor-pointer text-on-surface-variant hover:bg-surface-container-low transition-all duration-200">
+<span class="material-symbols-outlined mr-md">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</div>
+<div class="group flex items-center px-md py-sm mb-xs cursor-pointer text-on-surface-variant hover:bg-surface-container-low transition-all duration-200">
+<span class="material-symbols-outlined mr-md">search</span>
+<span class="font-label-md text-label-md">Job Search</span>
+</div>
+<!-- ACTIVE TAB -->
+<div class="group flex items-center px-md py-sm mb-xs cursor-pointer bg-secondary-container text-on-secondary-container rounded-lg font-semibold shadow-sm">
+<span class="material-symbols-outlined mr-md" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+<span class="font-label-md text-label-md">Saved Jobs</span>
+</div>
+<div class="group flex items-center px-md py-sm mb-xs cursor-pointer text-on-surface-variant hover:bg-surface-container-low transition-all duration-200">
+<span class="material-symbols-outlined mr-md">description</span>
+<span class="font-label-md text-label-md">Applications</span>
+</div>
+</nav>
+<div class="px-md mb-lg">
+<button class="w-full bg-primary text-on-primary py-md rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">
+                Update Resume
+            </button>
+</div>
+<div class="pt-lg border-t border-border-default space-y-xs">
+<div class="group flex items-center px-md py-sm mb-xs cursor-pointer text-on-surface-variant hover:bg-surface-container-low transition-all duration-200">
+<span class="material-symbols-outlined mr-md">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</div>
+<div class="group flex items-center px-md py-sm mb-xs cursor-pointer text-on-surface-variant hover:bg-surface-container-low transition-all duration-200">
+<span class="material-symbols-outlined mr-md">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 min-h-screen">
+<!-- Top Nav Component (Mapped from JSON) -->
+<header class="flex justify-between items-center w-full px-lg h-16 sticky top-0 z-50 bg-surface-container-lowest border-b border-border-default shadow-sm">
+<div class="flex items-center gap-lg">
+<span class="md:hidden material-symbols-outlined cursor-pointer">menu</span>
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-1.5 rounded-full border border-border-default bg-surface-subtle text-body-md focus:outline-none focus:ring-2 focus:ring-secondary w-64 transition-all" placeholder="Search saved jobs..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors">help</span>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Professional candidate portrait in a soft-lit studio setting with a clean, light blue background. High-quality corporate headshot style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS0S3WhBpgbl5v_YUR6oXeCqXpOpPPDICxLeQgEYWRwubdGq-CqxHr_y5SJwpTc1cw8jSOhmtwUZQF0lrAHCkU5bInWI5sOk5Js6HJs0jybzH1h5aOMH70inIBiiCn8F55_W-xkT2dnZlkRQrZilmUgkePpfMsdlaNKTuJrcwK9zdsVRr7XIoVDQu-LwpjW-UXeaufle62Mjq-WTo3UDVF3wpsIVKSQ4v0DRtTh7P9UQfCvqkiXeKzQg"/>
+</div>
+</div>
+</header>
+<div class="p-margin max-w-container-max mx-auto">
+<!-- Page Header -->
+<div class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-primary mb-xs">Opportunities &amp; Alerts</h2>
+<p class="font-body-lg text-body-lg text-text-secondary">Manage your bookmarked roles and discovery preferences.</p>
+</div>
+<button class="inline-flex items-center bg-secondary text-on-secondary px-lg py-md rounded-lg font-label-md text-label-md shadow-sm hover:brightness-110 transition-all">
+<span class="material-symbols-outlined mr-sm">add_alert</span>
+                    Create New Alert
+                </button>
+</div>
+<!-- Bento Layout Sections -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Saved Jobs List (Main Area) -->
+<div class="col-span-12 lg:col-span-8 space-y-md">
+<div class="flex items-center justify-between mb-sm px-xs">
+<h3 class="font-headline-lg text-headline-lg flex items-center text-on-surface">
+                            Saved Jobs
+                            <span class="ml-md text-body-sm font-normal text-text-secondary bg-surface-container-high px-md py-xs rounded-full">12 roles</span>
+</h3>
+<div class="flex gap-sm">
+<button class="p-sm hover:bg-surface-subtle rounded-lg text-outline"><span class="material-symbols-outlined">filter_list</span></button>
+<button class="p-sm hover:bg-surface-subtle rounded-lg text-outline"><span class="material-symbols-outlined">sort</span></button>
+</div>
+</div>
+<!-- Job Card 1 -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm hover:shadow-md hover:border-secondary transition-all group">
+<div class="flex gap-lg">
+<div class="h-16 w-16 bg-surface-container-low rounded-lg p-sm border border-border-default flex-shrink-0 flex items-center justify-center">
+<img class="max-h-full max-w-full" data-alt="Minimalist modern corporate logo for 'Lumina', featuring a geometric sunburst icon in navy blue and silver gray on a clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeIjmmT_a_mnCDBb24MoED4DqnQ_J1K5vx21T9tBpjj-Oc8u2zCS51wD9mZchu_fFd7g2w3n8Ul91qvk9jTw59hG4NrGbdyXzwlrSxH2oKOIBa83vtAuaA7eRs0PAWb78pB1cM3EDaz2Zba2LWB-_Z0dwBglrbiuWS8o4noXoEo1lIOkhjn2HEJFs2_Sp8IZ5bDFT2W1HtFxydT4NYhJqLOCDPHMsWA0HCntwWLPwhO06nPRZSC5FXPQ"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline-md text-headline-md text-primary group-hover:text-secondary transition-colors">Senior Product Designer</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Lumina Technology • San Francisco, CA (Hybrid)</p>
+</div>
+<button class="text-error hover:bg-error-container p-sm rounded-lg transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+</div>
+<div class="mt-md flex flex-wrap gap-sm">
+<span class="bg-surface-container-low px-md py-xs rounded-full text-label-sm font-label-sm text-primary">$160k - $210k</span>
+<span class="bg-tertiary-container/10 px-md py-xs rounded-full text-label-sm font-label-sm text-on-tertiary-container">Full-time</span>
+<span class="bg-secondary-fixed/50 px-md py-xs rounded-full text-label-sm font-label-sm text-on-secondary-fixed">Top Choice</span>
+</div>
+<div class="mt-lg flex items-center justify-between">
+<span class="text-body-sm text-text-secondary flex items-center italic">
+<span class="material-symbols-outlined text-[16px] mr-xs">schedule</span> Saved 2 days ago
+                                    </span>
+<div class="flex gap-md">
+<button class="text-secondary border border-secondary px-lg py-sm rounded-lg font-label-md text-label-md hover:bg-secondary-container/10 transition-all">Details</button>
+<button class="bg-primary text-on-primary px-xl py-sm rounded-lg font-label-md text-label-md hover:brightness-110 shadow-sm transition-all">Apply Now</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Job Card 2 -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm hover:shadow-md hover:border-secondary transition-all group">
+<div class="flex gap-lg">
+<div class="h-16 w-16 bg-surface-container-low rounded-lg p-sm border border-border-default flex-shrink-0 flex items-center justify-center">
+<img class="max-h-full max-w-full" data-alt="Strong corporate emblem for 'Stratos', a shield-like geometric shape incorporating an S-curve, rendered in professional navy blue and textured silver metal finish." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6NTUsZCWwFedhhwzgYUVydHnLfxRKfqmaMsJB1r9TtGAu74_-dd3HZlQEsUFHgKhdLaQh8KtmHw-ZDwKBi5_szckeBsy1T0qcYM5X_ZpTv3-Ul4-ouGKWQp0eDz1wQU7VW3r_Hv7PWAeaZnZzL9PnVlGDHQ2C0Be3Qw3QgxEVdtqmbz1F6361hgEmZb6AuQa3tHh7Btx8IM50ITZ35NJ-m0_naX7iX5EtXXUpT1uEGFKz6i5WsjctOg"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline-md text-headline-md text-primary group-hover:text-secondary transition-colors">Infrastructure Architect</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Stratos Systems • Remote</p>
+</div>
+<button class="text-error hover:bg-error-container p-sm rounded-lg transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+</div>
+<div class="mt-md flex flex-wrap gap-sm">
+<span class="bg-surface-container-low px-md py-xs rounded-full text-label-sm font-label-sm text-primary">$180k - $240k</span>
+<span class="bg-tertiary-container/10 px-md py-xs rounded-full text-label-sm font-label-sm text-on-tertiary-container">Contract</span>
+</div>
+<div class="mt-lg flex items-center justify-between">
+<span class="text-body-sm text-text-secondary flex items-center italic">
+<span class="material-symbols-outlined text-[16px] mr-xs">schedule</span> Saved 4 days ago
+                                    </span>
+<div class="flex gap-md">
+<button class="text-secondary border border-secondary px-lg py-sm rounded-lg font-label-md text-label-md hover:bg-secondary-container/10 transition-all">Details</button>
+<button class="bg-primary text-on-primary px-xl py-sm rounded-lg font-label-md text-label-md hover:brightness-110 shadow-sm transition-all">Apply Now</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Job Card 3 (Simplified/Minimal) -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm hover:shadow-md hover:border-secondary transition-all group">
+<div class="flex gap-lg">
+<div class="h-16 w-16 bg-surface-container-low rounded-lg p-sm border border-border-default flex-shrink-0 flex items-center justify-center">
+<div class="text-primary font-bold text-headline-md">M</div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline-md text-headline-md text-primary group-hover:text-secondary transition-colors">Lead Engineering Manager</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Metaflow Solutions • New York, NY</p>
+</div>
+<button class="text-error hover:bg-error-container p-sm rounded-lg transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+</div>
+<div class="mt-lg flex items-center justify-between">
+<span class="text-body-sm text-text-secondary flex items-center italic">
+<span class="material-symbols-outlined text-[16px] mr-xs">schedule</span> Saved 1 week ago
+                                    </span>
+<button class="text-secondary font-label-md hover:underline">View Application Requirements</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Job Alerts & Settings -->
+<div class="col-span-12 lg:col-span-4 space-y-gutter">
+<!-- Job Alerts Section -->
+<div class="bg-surface-card border border-border-default rounded-xl shadow-sm overflow-hidden">
+<div class="p-lg border-b border-border-default flex items-center justify-between bg-surface-subtle/50">
+<h3 class="font-headline-md text-headline-md text-primary">Active Alerts</h3>
+<span class="material-symbols-outlined text-outline text-[20px] cursor-help" title="Configure your search criteria">info</span>
+</div>
+<div class="divide-y divide-border-default">
+<!-- Alert Item 1 -->
+<div class="p-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between mb-sm">
+<div>
+<p class="font-label-md text-label-md text-on-surface">Product Design - San Francisco</p>
+<p class="text-body-sm text-text-secondary">Daily Notification</p>
+</div>
+<button class="toggle-switch bg-on-tertiary-container relative rounded-full p-[3px] flex items-center" onclick="toggleAlert(this)">
+<div class="toggle-dot bg-white rounded-full translate-x-[16px]"></div>
+</button>
+</div>
+<div class="flex gap-md">
+<button class="text-secondary text-label-sm hover:underline flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-xs">edit</span> Edit
+                                    </button>
+<button class="text-error text-label-sm hover:underline flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-xs">delete</span> Delete
+                                    </button>
+</div>
+</div>
+<!-- Alert Item 2 -->
+<div class="p-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-start justify-between mb-sm">
+<div>
+<p class="font-label-md text-label-md text-on-surface">Senior Engineer - Remote</p>
+<p class="text-body-sm text-text-secondary">Weekly Notification</p>
+</div>
+<button class="toggle-switch bg-outline relative rounded-full p-[3px] flex items-center" onclick="toggleAlert(this)">
+<div class="toggle-dot bg-white rounded-full translate-x-0"></div>
+</button>
+</div>
+<div class="flex gap-md">
+<button class="text-secondary text-label-sm hover:underline flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-xs">edit</span> Edit
+                                    </button>
+<button class="text-error text-label-sm hover:underline flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-xs">delete</span> Delete
+                                    </button>
+</div>
+</div>
+</div>
+<div class="p-md text-center">
+<button class="text-primary font-label-md text-label-md hover:underline w-full py-sm">Manage All 4 Alerts</button>
+</div>
+</div>
+<!-- Notification Preferences -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm">
+<h3 class="font-headline-md text-headline-md text-primary mb-md">Delivery Settings</h3>
+<div class="space-y-md">
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">mail</span>
+<div>
+<span class="font-label-md text-label-md block">Email Digest</span>
+<span class="text-body-sm text-text-secondary">Summary of all active alerts</span>
+</div>
+</div>
+<input checked="" class="rounded border-border-default text-primary focus:ring-primary h-5 w-5" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between cursor-pointer group">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">notifications_active</span>
+<div>
+<span class="font-label-md text-label-md block">Browser Push</span>
+<span class="text-body-sm text-text-secondary">Instant match notifications</span>
+</div>
+</div>
+<input class="rounded border-border-default text-primary focus:ring-primary h-5 w-5" type="checkbox"/>
+</label>
+</div>
+<div class="mt-lg pt-lg border-t border-border-default">
+<p class="text-body-sm text-text-secondary mb-md">Send notifications to:</p>
+<div class="flex items-center gap-sm bg-surface-subtle px-md py-sm rounded-lg border border-border-default">
+<span class="material-symbols-outlined text-text-secondary text-[18px]">verified_user</span>
+<span class="font-label-md text-label-md">alex.design@empo.com</span>
+</div>
+</div>
+</div>
+<!-- Talent Match Suggestion Card -->
+<div class="relative overflow-hidden bg-primary rounded-xl p-lg text-on-primary shadow-lg group">
+<div class="absolute -right-8 -bottom-8 opacity-20 transform group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-[160px]">lightbulb</span>
+</div>
+<h4 class="font-headline-md text-headline-md mb-xs relative z-10">Smart Match</h4>
+<p class="text-body-sm mb-lg opacity-90 relative z-10">Based on your "Senior Product Designer" saved jobs, we found 3 new matches with 95% skill alignment.</p>
+<button class="bg-white text-primary px-lg py-sm rounded-lg font-label-md text-label-md hover:bg-secondary-fixed transition-colors relative z-10">Review Matches</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Mobile Bottom Nav Component (Mapped from JSON logic) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container-lowest border-t border-border-default h-16 flex items-center justify-around z-50">
+<div class="flex flex-col items-center gap-xs text-text-secondary">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-label-sm uppercase">Home</span>
+</div>
+<div class="flex flex-col items-center gap-xs text-text-secondary">
+<span class="material-symbols-outlined">search</span>
+<span class="text-[10px] font-label-sm uppercase">Search</span>
+</div>
+<div class="flex flex-col items-center gap-xs text-secondary font-bold">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+<span class="text-[10px] font-label-sm uppercase border-b-2 border-secondary">Saved</span>
+</div>
+<div class="flex flex-col items-center gap-xs text-text-secondary">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-label-sm uppercase">Profile</span>
+</div>
+</nav>
+<script>
+        function toggleAlert(btn) {
+            const dot = btn.querySelector('.toggle-dot');
+            const isActive = dot.classList.contains('translate-x-[16px]');
+            
+            if (isActive) {
+                dot.classList.remove('translate-x-[16px]');
+                dot.classList.add('translate-x-0');
+                btn.classList.remove('bg-on-tertiary-container');
+                btn.classList.add('bg-outline');
+            } else {
+                dot.classList.remove('translate-x-0');
+                dot.classList.add('translate-x-[16px]');
+                btn.classList.remove('bg-outline');
+                btn.classList.add('bg-on-tertiary-container');
+            }
+        }
+
+        // Simple Fade-in micro-interaction
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.bg-surface-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.4s ease-out ' + (index * 0.1) + 's';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 50);
+            });
+        });
+    </script>
+</body></html>

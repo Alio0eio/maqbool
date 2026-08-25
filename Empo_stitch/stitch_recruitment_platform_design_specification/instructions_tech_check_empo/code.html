@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO | Technical Check &amp; Instructions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#002114",
+                        "primary-container": "#1e3a8a",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-container": "#4ac08f",
+                        "surface-container-high": "#dee8ff",
+                        "border-default": "#E2E8F0",
+                        "on-secondary-container": "#fefcff",
+                        "on-surface": "#111c2d",
+                        "on-primary-container": "#90a8ff",
+                        "tertiary-container": "#004a32",
+                        "error-container": "#ffdad6",
+                        "surface-bg": "#F8FAFC",
+                        "outline-variant": "#c5c5d3",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-primary-fixed": "#00164e",
+                        "inverse-surface": "#263143",
+                        "tertiary": "#003120",
+                        "surface-container-highest": "#d8e3fb",
+                        "tertiary-fixed": "#85f8c4",
+                        "on-surface-variant": "#444651",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "secondary": "#0058be",
+                        "on-primary": "#ffffff",
+                        "outline": "#757682",
+                        "on-background": "#111c2d",
+                        "surface-card": "#FFFFFF",
+                        "secondary-container": "#2170e4",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "surface-tint": "#4059aa",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#b6c4ff",
+                        "tertiary-fixed-dim": "#68dba9",
+                        "primary-fixed": "#dce1ff",
+                        "on-secondary-fixed": "#001a42",
+                        "surface": "#f9f9ff",
+                        "primary": "#00236f",
+                        "text-secondary": "#64748B",
+                        "error": "#ba1a1a",
+                        "surface-subtle": "#F1F5F9",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "status-error": "#DC2626",
+                        "surface-container-low": "#f0f3ff",
+                        "on-primary-fixed-variant": "#264191",
+                        "inverse-on-surface": "#ecf1ff",
+                        "surface-container": "#e7eeff",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-variant": "#d8e3fb",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#cfdaf2",
+                        "background": "#f9f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "margin": "24px",
+                        "sm": "8px",
+                        "container-max": "1280px",
+                        "xl": "32px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9f9ff; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .mic-bar { transition: height 0.1s ease-out; }
+        .stepper-line { flex: 1 1 0%; height: 2px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- TopNavBar Component -->
+<header class="bg-surface border-b border-border-default shadow-sm docked full-width top-0 z-50">
+<div class="flex justify-between items-center w-full px-lg py-md max-w-container-max mx-auto">
+<div class="flex items-center gap-md">
+<span class="text-headline-lg font-headline-lg font-bold text-primary">EMPO</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-sm cursor-pointer active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</div>
+<div class="flex items-center gap-sm cursor-pointer active:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a professional candidate smiling confidently, high quality corporate photography, soft studio lighting, clean office background, modern professional aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCD5zfkU4PwDY_zywCEAmIbqK1rFiPTN7f0We10FSLrgW1HE7LS4c4atr8c5MKRk0T9y_QlfX8zes26Qe5Rbt3BE8ceoJFdHGsbbvosacfnj88CreWrMssrqjc6zlJKsT1PNgH5kctZyXU_PuPwMd6ZKIYKsAC4Dj99wuObadNghwiqz-TWDGY6pO2INfh72JXe0Zv-fe8WTO1ia8utWXEEdhKwXt6_MySQ3pDA0wJcEDoXJrRvfyHrxQ"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-container-max mx-auto w-full px-margin py-xl">
+<!-- Progress Stepper -->
+<div class="mb-xl max-w-2xl mx-auto">
+<div class="flex items-center justify-between px-md">
+<div class="flex flex-col items-center gap-xs">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold">1</div>
+<span class="font-label-md text-label-md text-primary font-bold">Setup</span>
+</div>
+<div class="stepper-line bg-primary mx-sm"></div>
+<div class="flex flex-col items-center gap-xs">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold">2</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Practice</span>
+</div>
+<div class="stepper-line bg-surface-container-highest mx-sm"></div>
+<div class="flex flex-col items-center gap-xs">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold">3</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Interview</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+<!-- Left Column: Video & Tech Check -->
+<div class="lg:col-span-8 space-y-lg">
+<!-- Video Preview Area -->
+<div class="bg-on-surface rounded-xl overflow-hidden shadow-sm relative group aspect-video lg:aspect-auto lg:h-[480px]">
+<div class="absolute inset-0 flex items-center justify-center">
+<img class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" data-alt="A POV perspective of a professional video interview setup, showing a clean home office background with a bookshelf and a plant, soft natural lighting from a window, high definition webcam quality, 4k digital interface style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCv0bp2nv-YptQ6UUXSZ3tQoTwhorLh-oJnZtAgHehpZvBmsYT6js3bMpTOXF_MnhpW0NtliuOT8Xy6z0icCMypikjLc2j77S1crgpzu7wMg4-6K49ZkZEKy7N5c4ZT91J2Fl4_lg7xIJj_t_AhrkIEqApdaZ-l73J-IBLBtgbyXPn1eUx3YtFIWdabSNCdMQeZ6jN06kDZBauVHtv3y3i1OdgWmd8vJ7g1IcqjbHYVkLvXD1QRsbKrew"/>
+</div>
+<!-- Overlay Indicators -->
+<div class="absolute top-md left-md flex items-center gap-sm bg-black/50 backdrop-blur-md px-md py-xs rounded-full border border-white/20">
+<div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+<span class="text-white font-label-md text-label-md">Camera Active</span>
+</div>
+<div class="absolute bottom-md left-md right-md flex justify-between items-end">
+<div class="bg-black/50 backdrop-blur-md p-md rounded-xl border border-white/20 flex gap-sm items-end h-16">
+<div class="mic-bar w-1.5 bg-on-tertiary-container rounded-full" style="height: 40%;"></div>
+<div class="mic-bar w-1.5 bg-on-tertiary-container rounded-full" style="height: 65%;"></div>
+<div class="mic-bar w-1.5 bg-on-tertiary-container rounded-full" style="height: 30%;"></div>
+<div class="mic-bar w-1.5 bg-on-tertiary-container rounded-full" style="height: 80%;"></div>
+<div class="mic-bar w-1.5 bg-on-tertiary-container rounded-full" style="height: 50%;"></div>
+<span class="ml-sm text-white font-label-md text-label-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">mic</span>
+</span>
+</div>
+<div class="flex gap-sm">
+<button class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 transition-all flex items-center justify-center">
+<span class="material-symbols-outlined">videocam</span>
+</button>
+<button class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/20 transition-all flex items-center justify-center">
+<span class="material-symbols-outlined">mic</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Technical Checklist (Bento style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="bg-surface-card border border-border-default p-md rounded-lg flex items-center gap-md hover:border-secondary transition-colors">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/10 flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">wifi</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold">Internet Connection</p>
+<p class="text-body-sm text-text-secondary">Stable &amp; Ready</p>
+</div>
+<span class="material-symbols-outlined text-on-tertiary-container ml-auto">check_circle</span>
+</div>
+<div class="bg-surface-card border border-border-default p-md rounded-lg flex items-center gap-md hover:border-secondary transition-colors">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/10 flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">videocam</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold">Camera Permission</p>
+<p class="text-body-sm text-text-secondary">Access Granted</p>
+</div>
+<span class="material-symbols-outlined text-on-tertiary-container ml-auto">check_circle</span>
+</div>
+<div class="bg-surface-card border border-border-default p-md rounded-lg flex items-center gap-md hover:border-secondary transition-colors">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/10 flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">mic</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold">Microphone Working</p>
+<p class="text-body-sm text-text-secondary">Levels Normal</p>
+</div>
+<span class="material-symbols-outlined text-on-tertiary-container ml-auto">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Info & Tips -->
+<div class="lg:col-span-4 space-y-lg">
+<!-- Interview Overview Card -->
+<div class="bg-primary text-on-primary rounded-xl p-lg shadow-lg relative overflow-hidden">
+<div class="relative z-10">
+<h2 class="font-headline-md text-headline-md mb-md">Interview Overview</h2>
+<div class="space-y-md">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">help_center</span>
+<div>
+<p class="font-label-md text-label-md font-bold text-on-primary-container">3 Questions</p>
+<p class="text-body-sm opacity-80">Covering skills &amp; culture fit</p>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">schedule</span>
+<div>
+<p class="font-label-md text-label-md font-bold text-on-primary-container">~7 Minutes</p>
+<p class="text-body-sm opacity-80">Estimated total duration</p>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined">psychology</span>
+<div>
+<p class="font-label-md text-label-md font-bold text-on-primary-container">Practice Mode</p>
+<p class="text-body-sm opacity-80">Unlimited practice time</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Subtle background decoration -->
+<div class="absolute -bottom-12 -right-12 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+</div>
+<!-- Pro-tips Section -->
+<div class="bg-surface-card border border-border-default rounded-xl p-lg shadow-sm">
+<h3 class="font-headline-md text-headline-md mb-md text-primary">Pro-tips for success</h3>
+<ul class="space-y-lg">
+<li class="flex gap-md">
+<div class="bg-secondary-container/10 p-sm rounded-lg h-fit">
+<span class="material-symbols-outlined text-secondary">lightbulb</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold">Perfect Lighting</p>
+<p class="text-body-sm text-text-secondary">Position your main light source in front of you, not behind, to avoid silhouettes.</p>
+</div>
+</li>
+<li class="flex gap-md">
+<div class="bg-secondary-container/10 p-sm rounded-lg h-fit">
+<span class="material-symbols-outlined text-secondary">visibility</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold">Eye Contact</p>
+<p class="text-body-sm text-text-secondary">Look directly at the camera lens, not the screen, to simulate engagement.</p>
+</div>
+</li>
+<li class="flex gap-md">
+<div class="bg-secondary-container/10 p-sm rounded-lg h-fit">
+<span class="material-symbols-outlined text-secondary">home_work</span>
+</div>
+<div>
+<p class="font-label-md text-label-md font-bold">Clear Background</p>
+<p class="text-body-sm text-text-secondary">Use a tidy, neutral background to keep the focus entirely on you.</p>
+</div>
+</li>
+</ul>
+</div>
+<!-- CTA -->
+<button class="w-full bg-secondary hover:bg-secondary-container text-on-secondary py-md rounded-lg font-bold shadow-md transition-all transform active:scale-[0.98] flex items-center justify-center gap-sm">
+                    Continue to Practice Question
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<p class="text-body-sm text-text-secondary text-center">You can't redo the interview once it starts.</p>
+</div>
+</div>
+</main>
+<!-- Footer for reassurance -->
+<footer class="mt-auto border-t border-border-default py-lg">
+<div class="max-w-container-max mx-auto px-margin flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-text-secondary">lock</span>
+<p class="text-body-sm text-text-secondary">Your data is securely encrypted and only shared with the hiring team.</p>
+</div>
+<div class="flex gap-lg">
+<a class="text-body-sm text-primary hover:underline" href="#">Help Center</a>
+<a class="text-body-sm text-primary hover:underline" href="#">Accessibility</a>
+<a class="text-body-sm text-primary hover:underline" href="#">Privacy Policy</a>
+</div>
+</div>
+</footer>
+<script>
+        // Microphone animation simulation
+        function animateMic() {
+            const bars = document.querySelectorAll('.mic-bar');
+            bars.forEach(bar => {
+                const randomHeight = Math.floor(Math.random() * 70) + 10;
+                bar.style.height = randomHeight + '%';
+            });
+        }
+        setInterval(animateMic, 150);
+
+        // Interaction for buttons
+        document.querySelector('button.bg-secondary').addEventListener('click', function() {
+            this.classList.add('opacity-80');
+            setTimeout(() => this.classList.remove('opacity-80'), 100);
+        });
+    </script>
+</body></html>

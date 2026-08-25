@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Interviews &amp; Scheduling | EMPO Candidate Portal</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-error-container": "#93000a",
+            "secondary-fixed": "#d8e2ff",
+            "on-surface": "#111c2d",
+            "surface-bright": "#f9f9ff",
+            "on-tertiary": "#ffffff",
+            "inverse-surface": "#263143",
+            "secondary": "#0058be",
+            "on-background": "#111c2d",
+            "on-primary-container": "#90a8ff",
+            "primary": "#00236f",
+            "text-secondary": "#64748B",
+            "on-secondary-fixed-variant": "#004395",
+            "inverse-on-surface": "#ecf1ff",
+            "on-primary-fixed-variant": "#264191",
+            "surface": "#f9f9ff",
+            "secondary-fixed-dim": "#adc6ff",
+            "surface-card": "#FFFFFF",
+            "outline-variant": "#c5c5d3",
+            "tertiary-container": "#004a32",
+            "primary-fixed": "#dce1ff",
+            "on-error": "#ffffff",
+            "tertiary-fixed-dim": "#68dba9",
+            "outline": "#757682",
+            "background": "#f9f9ff",
+            "surface-container-low": "#f0f3ff",
+            "on-secondary": "#ffffff",
+            "surface-variant": "#d8e3fb",
+            "on-tertiary-container": "#4ac08f",
+            "error": "#ba1a1a",
+            "surface-dim": "#cfdaf2",
+            "on-tertiary-fixed": "#002114",
+            "primary-container": "#1e3a8a",
+            "error-container": "#ffdad6",
+            "surface-bg": "#F8FAFC",
+            "primary-fixed-dim": "#b6c4ff",
+            "on-tertiary-fixed-variant": "#005137",
+            "surface-tint": "#4059aa",
+            "tertiary": "#003120",
+            "surface-container": "#e7eeff",
+            "secondary-container": "#2170e4",
+            "border-default": "#E2E8F0",
+            "on-secondary-container": "#fefcff",
+            "surface-container-high": "#dee8ff",
+            "status-error": "#DC2626",
+            "on-surface-variant": "#444651",
+            "surface-container-highest": "#d8e3fb",
+            "tertiary-fixed": "#85f8c4",
+            "surface-subtle": "#F1F5F9",
+            "on-secondary-fixed": "#001a42",
+            "inverse-primary": "#b6c4ff",
+            "surface-container-lowest": "#ffffff",
+            "on-primary": "#ffffff",
+            "on-primary-fixed": "#00164e"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "lg": "24px",
+            "container-max": "1280px",
+            "xs": "4px",
+            "margin": "24px",
+            "xl": "32px",
+            "sm": "8px",
+            "md": "16px",
+            "gutter": "24px"
+          },
+          "fontFamily": {
+            "body-sm": ["Inter"], "body-lg": ["Inter"], "headline-lg": ["Inter"], "label-md": ["Inter"], "headline-xl": ["Inter"], "headline-md": ["Inter"], "body-md": ["Inter"], "headline-xl-mobile": ["Inter"], "label-sm": ["Inter"]
+          },
+          "fontSize": {
+            "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+            "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+            "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+            "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+            "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body { background-color: #F8FAFC; font-family: 'Inter', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .card-shadow { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02); }
+    .glass-effect { backdrop-filter: blur(8px); background-color: rgba(255, 255, 255, 0.8); }
+    .sidebar-active { background-color: #2170e4; color: white; }
+  </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar Component (COMPONENTS_33 Logic) -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low border-r border-border-default flex flex-col p-md z-40">
+<div class="mb-xl px-md">
+<span class="text-headline-md font-headline-md font-black text-primary">EMPO</span>
+</div>
+<!-- Profile Header -->
+<div class="flex items-center gap-md px-md mb-xl">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of Alex, a tech professional in her early 30s with a warm smile, wearing a navy blue blazer and white blouse in a bright modern office setting. The lighting is soft and natural, emphasizing a high-trust corporate environment with clean lines and soft bokeh in the background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf2YGq44UARRIPiK4h6E3I7CiKIRUu2iYFx6b89yTDAoJQn16O5eJHKJJ7HYh-mC1tMmWtPu_6EanOsRqeSzCY4quNS9-Muds5mLbMhMjvlFT350vR_5LfOwnAu1a02SOagNluT-IeVP22-A5DAl06GbIa0oCDnum05OIhzul7YthCNnJWeXqnxIw0Qoh7oYuQ3T5qcRQwnLx81xxGiz6LKoiqTD4yf2jLa7glCl4WFSg7sTi0-SbuBg"/>
+</div>
+<div>
+<p class="font-label-md text-on-surface font-semibold">Alex Thompson</p>
+<p class="text-body-sm text-text-secondary">Candidate Portal</p>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex-1 space-y-xs">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg px-md py-sm" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg px-md py-sm" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-label-md">Explore Jobs</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg px-md py-sm" href="#">
+<span class="material-symbols-outlined">bookmark</span>
+<span class="font-label-md">Saved Jobs</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg px-md py-sm" href="#">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="font-label-md">Job Alerts</span>
+</a>
+<!-- Active Tab: Interviews -->
+<a class="flex items-center gap-md bg-secondary-container text-on-secondary-container rounded-lg px-md py-sm font-semibold translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-label-md">Interviews</span>
+</a>
+</nav>
+<div class="mt-lg">
+<button class="w-full bg-primary text-on-primary py-sm rounded-lg font-label-md hover:bg-primary-container transition-colors">
+        Upload Resume
+      </button>
+</div>
+<!-- Footer Tabs -->
+<div class="mt-auto pt-md space-y-xs">
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg px-md py-sm" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant hover:bg-surface-variant transition-all rounded-lg px-md py-sm" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 min-h-screen p-lg max-w-container-max mx-auto">
+<!-- Top Bar -->
+<header class="flex justify-between items-start mb-xl">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface mb-xs">Interviews &amp; Scheduling</h1>
+<p class="font-body-md text-text-secondary">Manage your upcoming rounds and preparation.</p>
+</div>
+<div class="flex gap-md">
+<button class="p-sm text-text-secondary hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-sm text-text-secondary hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-lg">
+<!-- Left Column: Interviews List (8 Columns) -->
+<div class="col-span-12 lg:col-span-8 space-y-lg">
+<!-- Section: Upcoming -->
+<div class="space-y-md">
+<div class="flex justify-between items-center px-xs">
+<h2 class="font-headline-md text-headline-md">Upcoming Interviews</h2>
+<button class="text-secondary font-label-md hover:underline">View All</button>
+</div>
+<!-- Interview Card 1: Lumina Tech -->
+<div class="bg-surface-lowest border border-border-default rounded-xl p-lg card-shadow hover:shadow-md transition-shadow">
+<div class="flex flex-col md:flex-row justify-between gap-lg">
+<div class="flex-1">
+<div class="flex items-center gap-md mb-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center border border-border-default overflow-hidden">
+<img class="w-8 h-8 object-contain" data-alt="A clean and modern corporate logo for Lumina Tech featuring abstract geometric shapes in deep navy blue and silver grey on a white background. The aesthetic is professional, minimalist, and tech-forward, suitable for a leading high-fidelity recruitment platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuALvjxsAx0GFYahb_Tp7AnKIYeihCTdeOwxV1wXtnsqCXCyb-MXat9Sg0QnlCAzFUP20KtciwMxl58ueyQxuCLVPYL2YhkBrppU3dMfRQAImIdHLVZrGxEWgLjfhASMyVpTk8C-TdUnxPbxPNvqhzR1wIBWJ3-h5eh9PFXir_fJBa0CtrvumvPMuZVGf3F3y-WoJgz0bW9H9a-xoPlRF_YKBD8bA4qMXa9Fc4_HOe5wJQCEGL_GnudWKg"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Senior Product Designer</h3>
+<p class="text-body-md text-text-secondary">Lumina Tech • Series D Fintech</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md mb-lg">
+<div class="flex items-center gap-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">calendar_today</span>
+<span class="font-label-md">Nov 2, 2:30 PM - 3:30 PM</span>
+</div>
+<div class="flex items-center gap-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">videocam</span>
+<span class="font-label-md">Google Meet</span>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex -space-x-3 overflow-hidden">
+<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="A professional headshot of Sarah Jenkins, a friendly talent partner with blonde hair, wearing a grey blazer, smiling warmly in a bright corporate office environment. The lighting is crisp and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbJOen3M6h0od-jjsHu9RcR-BFntVBHy4fCYYySRz0L_w8eYZhWs3VnAHqHCZhshF4C1wzzq73Xs6ze3DA23LOuLjZqtCBC2zg_JFerKidCk9Vg2OlJM6pt-ZSm5tt_E7NTr60yFKj1bbYVD76hSYbvyHLd2h_URHyTXtaTHgO8-epZ4sMsKm_kt_IlscfthrsFzq-SCfgTbWYr6jhnEJOgHgHSeq1MsGH2lV0-2ZyMpntmU87VqrTvQ"/>
+<img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" data-alt="A professional headshot of Marcus Chen, a design lead with dark hair and glasses, wearing a black sweater, looking professional and approachable in a modern office with tech-inspired decor." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFu_Bjp93gAji9zFM7HJBvoJooLnuLD1s0GzU4_bynwAQHuQYm3Zh6IywHnpdVIsHnWaGYO8-RwhT_lFY_PtcqankRqcSmW30t9BWSUWuD9QbPPTUmDMopEpQ51ziaK9ZbpZUbsKA1YxOi-PbowDTDlCaWMQnZdMH4-LR2-E2rtUOA4gl5MquG4Kr06MVAyseY3h02qCrUTPrUfdJW0SnFAj6qC39CYIzsAV9xPh3AQraWUe2qAZNGCQ"/>
+</div>
+<p class="text-body-sm text-text-secondary">
+                    Interviewers: <span class="font-semibold text-on-surface">Sarah J., Marcus C.</span>
+</p>
+</div>
+</div>
+<div class="flex md:flex-col gap-sm justify-end md:w-48">
+<button class="flex-1 bg-secondary text-on-secondary px-md py-sm rounded-lg font-label-md hover:bg-secondary-container transition-colors flex items-center justify-center gap-xs">
+                   Join Meeting
+                </button>
+<button class="flex-1 border border-border-default text-on-surface-variant px-md py-sm rounded-lg font-label-md hover:bg-surface-subtle transition-colors flex items-center justify-center gap-xs">
+                   Prepare
+                </button>
+<button class="px-md py-sm text-text-secondary hover:text-error transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="mt-md pt-md border-t border-border-default">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-surface-variant text-primary font-label-sm">
+                Round 2: Portfolio Review
+              </span>
+</div>
+</div>
+<!-- Interview Card 2: Stratos -->
+<div class="bg-surface-lowest border border-border-default rounded-xl p-lg card-shadow opacity-90">
+<div class="flex flex-col md:flex-row justify-between gap-lg">
+<div class="flex-1">
+<div class="flex items-center gap-md mb-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center border border-border-default overflow-hidden">
+<img class="w-8 h-8 object-contain" data-alt="A sleek corporate shield logo for Stratos representing security and high-level strategy. The logo is navy blue with metallic silver accents on a clean white background, conveying a high-trust professional atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB20toreCpQuT93ILV_U0beUJd54MuZXF9uACQN-qveNJ7EN_XB-udc7-cu9YpepaK87-D1sXJf9adscQozcNhCiB9btPQYW2ue3O1n87vDkWXo9R0dWFqcNO6P7cWT_pBC89yiDmaFmNCWaWkoQ11Fan0iSO5J4oGslFLgkZj8CiVGgDRd0F8W15TwV_kF_okTF9VUQBwh6kYOt2TySmlOFzsX8wLWD7OZdAlRJmMpQxjCY76uX6NFZg"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary">Senior UX Architect</h3>
+<p class="text-body-md text-text-secondary">Stratos Cyber • Enterprise SaaS</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md mb-lg">
+<div class="flex items-center gap-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">calendar_today</span>
+<span class="font-label-md">Nov 5, 10:00 AM - 11:30 AM</span>
+</div>
+<div class="flex items-center gap-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">location_on</span>
+<span class="font-label-md">In-Person (Austin, TX)</span>
+</div>
+</div>
+</div>
+<div class="flex md:flex-col gap-sm justify-end md:w-48">
+<button class="flex-1 border border-secondary text-secondary px-md py-sm rounded-lg font-label-md hover:bg-secondary-fixed transition-colors">
+                  Prepare
+                </button>
+<button class="flex-1 border border-border-default text-on-surface-variant px-md py-sm rounded-lg font-label-md hover:bg-surface-subtle transition-colors">
+                  Reschedule
+                </button>
+</div>
+</div>
+<div class="mt-md pt-md border-t border-border-default">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-surface-variant text-primary font-label-sm">
+                Round 3: Technical Case Study
+              </span>
+</div>
+</div>
+</div>
+<!-- Section: Past Interviews -->
+<div class="space-y-md">
+<h2 class="font-headline-md text-headline-md px-xs">Past Interviews &amp; Feedback</h2>
+<div class="bg-surface-lowest border border-border-default rounded-xl overflow-hidden card-shadow">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-border-default">
+<th class="px-lg py-md font-label-md text-text-secondary">Company &amp; Role</th>
+<th class="px-lg py-md font-label-md text-text-secondary">Date</th>
+<th class="px-lg py-md font-label-md text-text-secondary">Status</th>
+<th class="px-lg py-md font-label-md text-text-secondary text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-default">
+<tr class="hover:bg-surface-subtle transition-colors group">
+<td class="px-lg py-md">
+<div class="font-label-md text-on-surface">Echo Designs</div>
+<div class="text-body-sm text-text-secondary">UX Researcher</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface-variant">Oct 24, 2023</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm">
+                      Completed
+                    </span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="text-secondary font-label-md hover:underline">View Notes</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-subtle transition-colors">
+<td class="px-lg py-md">
+<div class="font-label-md text-on-surface">Vanguard Labs</div>
+<div class="text-body-sm text-text-secondary">Design Lead</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface-variant">Oct 18, 2023</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm">
+                      Feedback Received
+                    </span>
+</td>
+<td class="px-lg py-md text-right">
+<button class="text-secondary font-label-md font-semibold hover:underline">View Feedback</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Column: Sidebar (4 Columns) -->
+<div class="col-span-12 lg:col-span-4 space-y-lg">
+<!-- Calendar Widget -->
+<div class="bg-surface-lowest border border-border-default rounded-xl p-lg card-shadow">
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-label-md font-bold text-on-surface">November 2023</h3>
+<div class="flex gap-xs">
+<button class="p-xs hover:bg-surface-subtle rounded"><span class="material-symbols-outlined scale-75">chevron_left</span></button>
+<button class="p-xs hover:bg-surface-subtle rounded"><span class="material-symbols-outlined scale-75">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-y-sm text-center mb-md">
+<span class="text-body-sm text-text-secondary font-semibold">M</span>
+<span class="text-body-sm text-text-secondary font-semibold">T</span>
+<span class="text-body-sm text-text-secondary font-semibold">W</span>
+<span class="text-body-sm text-text-secondary font-semibold">T</span>
+<span class="text-body-sm text-text-secondary font-semibold">F</span>
+<span class="text-body-sm text-text-secondary font-semibold">S</span>
+<span class="text-body-sm text-text-secondary font-semibold">S</span>
+<span class="text-body-sm py-xs text-text-secondary opacity-30">30</span>
+<span class="text-body-sm py-xs text-text-secondary opacity-30">31</span>
+<span class="text-body-sm py-xs hover:bg-surface-subtle rounded cursor-pointer">1</span>
+<span class="text-body-sm py-xs bg-secondary-container text-on-secondary-container font-bold rounded cursor-pointer shadow-sm">2</span>
+<span class="text-body-sm py-xs hover:bg-surface-subtle rounded cursor-pointer">3</span>
+<span class="text-body-sm py-xs hover:bg-surface-subtle rounded cursor-pointer">4</span>
+<span class="text-body-sm py-xs relative">5<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-secondary rounded-full"></span></span>
+</div>
+<button class="w-full flex items-center justify-center gap-sm border border-border-default py-sm rounded-lg font-label-md hover:bg-surface-subtle transition-colors">
+<span class="material-symbols-outlined text-body-md">sync</span>
+            Sync Calendar
+          </button>
+</div>
+<!-- Preparation Hub -->
+<div class="bg-primary-container text-on-primary-container rounded-xl p-lg card-shadow relative overflow-hidden">
+<!-- Subtle Glow Effect -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed opacity-10 blur-3xl -mr-16 -mt-16 rounded-full"></div>
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-secondary-fixed">auto_awesome</span>
+<h3 class="font-headline-md text-headline-md">Preparation Hub</h3>
+</div>
+<div class="space-y-lg">
+<div class="space-y-sm">
+<h4 class="font-label-md font-bold text-on-primary-container opacity-80 uppercase tracking-wider text-[10px]">Preparation Guide</h4>
+<p class="text-body-md">Your upcoming Portfolio Review at Lumina Tech typically focuses on user-centric problem solving and design systems at scale.</p>
+<button class="text-secondary-fixed font-label-md flex items-center gap-xs hover:gap-sm transition-all">
+                Read Full Guide <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+<div class="space-y-sm">
+<h4 class="font-label-md font-bold text-on-primary-container opacity-80 uppercase tracking-wider text-[10px]">Common Questions</h4>
+<ul class="space-y-xs">
+<li class="text-body-sm flex gap-sm items-start">
+<span class="material-symbols-outlined text-secondary-fixed text-[16px] mt-xs">help_outline</span>
+                  "How do you handle conflicting feedback from product and engineering?"
+                </li>
+<li class="text-body-sm flex gap-sm items-start">
+<span class="material-symbols-outlined text-secondary-fixed text-[16px] mt-xs">help_outline</span>
+                  "Describe a time you used data to pivot a design direction."
+                </li>
+</ul>
+</div>
+<div class="bg-white/10 p-md rounded-lg border border-white/10 backdrop-blur-sm">
+<h4 class="font-label-sm font-bold text-on-primary-container mb-xs">Company Insight: Lumina</h4>
+<p class="text-body-sm opacity-90">Lumina recently expanded their EMEA operations. Expect questions about designing for international localization.</p>
+</div>
+</div>
+</div>
+<!-- Tip of the Day -->
+<div class="p-lg bg-surface-container-high rounded-xl border border-outline-variant flex gap-md">
+<span class="material-symbols-outlined text-secondary">tips_and_updates</span>
+<div>
+<h4 class="font-label-md font-bold mb-xs">Pro Interview Tip</h4>
+<p class="text-body-sm text-on-surface-variant">Check your camera background and microphone levels at least 15 minutes before the call starts.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Interactive script for minor states -->
+<script>
+    // Add hover lift effect to cards via JS for smoother transition control if needed
+    document.querySelectorAll('.card-shadow').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-2px)';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
+      });
+    });
+  </script>
+</body></html>

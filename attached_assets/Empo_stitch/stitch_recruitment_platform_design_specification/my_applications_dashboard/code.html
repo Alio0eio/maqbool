@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>My Applications | EMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #E2E8F0;
+        }
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-container": "#004a32",
+                      "surface-dim": "#cfdaf2",
+                      "inverse-on-surface": "#ecf1ff",
+                      "surface-variant": "#d8e3fb",
+                      "surface-bg": "#F8FAFC",
+                      "text-secondary": "#64748B",
+                      "on-secondary-container": "#fefcff",
+                      "on-background": "#111c2d",
+                      "surface-bright": "#f9f9ff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed-variant": "#004395",
+                      "inverse-surface": "#263143",
+                      "error": "#ba1a1a",
+                      "secondary-container": "#2170e4",
+                      "secondary": "#0058be",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "on-primary-container": "#90a8ff",
+                      "on-secondary": "#ffffff",
+                      "surface-subtle": "#F1F5F9",
+                      "tertiary": "#003120",
+                      "on-surface": "#111c2d",
+                      "outline-variant": "#c5c5d3",
+                      "on-primary-fixed-variant": "#264191",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "on-secondary-fixed": "#001a42",
+                      "primary": "#00236f",
+                      "on-tertiary-fixed-variant": "#005137",
+                      "surface-tint": "#4059aa",
+                      "surface": "#f9f9ff",
+                      "tertiary-fixed": "#85f8c4",
+                      "on-error-container": "#93000a",
+                      "surface-container-highest": "#d8e3fb",
+                      "border-default": "#E2E8F0",
+                      "secondary-fixed": "#d8e2ff",
+                      "on-primary": "#ffffff",
+                      "surface-card": "#FFFFFF",
+                      "on-primary-fixed": "#00164e",
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#dee8ff",
+                      "primary-fixed": "#dce1ff",
+                      "primary-container": "#1e3a8a",
+                      "inverse-primary": "#b6c4ff",
+                      "surface-container-lowest": "#ffffff",
+                      "background": "#f9f9ff",
+                      "tertiary-fixed-dim": "#68dba9",
+                      "outline": "#757682",
+                      "on-surface-variant": "#444651",
+                      "on-tertiary-fixed": "#002114",
+                      "error-container": "#ffdad6",
+                      "surface-container": "#e7eeff",
+                      "status-error": "#DC2626",
+                      "surface-container-low": "#f0f3ff",
+                      "on-tertiary-container": "#4ac08f"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "32px",
+                      "gutter": "24px",
+                      "xs": "4px",
+                      "md": "16px",
+                      "margin": "24px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "body-sm": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-xl": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface-bg min-h-screen text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="bg-surface-container-lowest sticky top-0 z-50 border-b border-border-default shadow-sm h-16">
+<div class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-full">
+<div class="flex items-center gap-xl">
+<span class="text-headline-lg font-headline-lg font-bold text-primary">EMPO</span>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">Find Jobs</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 cursor-pointer active:opacity-80" href="#">My Applications</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">Post a Job</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">Talent Pool</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm mr-md border-r border-border-default pr-md">
+<button class="material-symbols-outlined text-text-secondary hover:text-primary transition-colors cursor-pointer">notifications</button>
+<button class="material-symbols-outlined text-text-secondary hover:text-primary transition-colors cursor-pointer">settings</button>
+</div>
+<button class="text-primary font-label-md hover:underline">Support</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center border border-border-default overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a young professional candidate, minimalist corporate background, soft natural lighting, high resolution, clean and sharp focus, wearing business casual attire." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDB6i52_pvoOfPC6REcWEuXXURaxqAtrywoyCXW41xtMGsfTFA_RMJHlzH-ga_x7PdV0L-OXz3at-UUMXqNypoKTbYNNeGnRowNVBWt2UcOs8aAf6FWSK2vxp4R7W4hOeVFWwnebQkQsQ3hbgcI03UVe_IHFgkPNiytLS-lMt3QU4VHZIJXSO6BbksGq2Bqul23arZK9sxhbTDfm7tYRNyEE7QhcI-RkcuRlftqqo37IdEJs5GO157RWA"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-lg md:px-xl py-xl">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-xl">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-primary mb-xs">My Applications</h1>
+<p class="text-text-secondary font-body-md">Track and manage your active career opportunities in one place.</p>
+</div>
+<div class="flex gap-sm">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 border border-border-default rounded-lg bg-surface-container-lowest focus:ring-2 focus:ring-secondary focus:outline-none text-body-md w-full md:w-64" placeholder="Search applications..." type="text"/>
+</div>
+<button class="flex items-center gap-xs px-md py-2 bg-surface-container-lowest border border-border-default rounded-lg text-label-md font-medium hover:bg-surface-subtle transition-all">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                    Filter
+                </button>
+</div>
+</div>
+<!-- Bento Stats Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-lg mb-xl">
+<div class="bg-surface-container-lowest border border-border-default p-lg rounded-xl shadow-sm">
+<p class="text-label-sm text-text-secondary uppercase tracking-wider mb-xs">Total</p>
+<p class="text-headline-lg font-bold text-primary">12</p>
+<div class="mt-xs text-[11px] text-on-tertiary-container font-medium flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+                    2 new this week
+                </div>
+</div>
+<div class="bg-surface-container-lowest border border-border-default p-lg rounded-xl shadow-sm">
+<p class="text-label-sm text-text-secondary uppercase tracking-wider mb-xs">Interviewing</p>
+<p class="text-headline-lg font-bold text-primary">3</p>
+<div class="mt-xs text-[11px] text-secondary font-medium">Next: Tomorrow, 10 AM</div>
+</div>
+<div class="bg-surface-container-lowest border border-border-default p-lg rounded-xl shadow-sm">
+<p class="text-label-sm text-text-secondary uppercase tracking-wider mb-xs">Offers</p>
+<p class="text-headline-lg font-bold text-tertiary-container">1</p>
+<div class="mt-xs text-[11px] text-tertiary-container font-bold">Expires in 2 days</div>
+</div>
+<div class="bg-surface-container-lowest border border-border-default p-lg rounded-xl shadow-sm">
+<p class="text-label-sm text-text-secondary uppercase tracking-wider mb-xs">Under Review</p>
+<p class="text-headline-lg font-bold text-primary">8</p>
+<div class="mt-xs text-[11px] text-text-secondary">Across 5 companies</div>
+</div>
+</div>
+<!-- Applications List Layout -->
+<div class="bg-surface-container-lowest border border-border-default rounded-xl overflow-hidden shadow-sm">
+<!-- Table Header (Desktop Only) -->
+<div class="hidden md:grid grid-cols-12 gap-md px-lg py-md bg-surface-subtle border-b border-border-default text-label-sm text-text-secondary uppercase font-bold">
+<div class="col-span-5">Job Details</div>
+<div class="col-span-2">Date Applied</div>
+<div class="col-span-3">Status</div>
+<div class="col-span-2 text-right">Actions</div>
+</div>
+<!-- List Items -->
+<div class="divide-y divide-border-default">
+<!-- Entry 1: Offer -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-md items-center px-lg py-lg hover:bg-surface-subtle transition-colors cursor-pointer group">
+<div class="col-span-1 md:col-span-5 flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center border border-border-default overflow-hidden shrink-0">
+<img class="w-10 h-10 object-contain" data-alt="A clean, minimalist tech company logo featuring geometric blue shapes on a white background, professional corporate branding, 4k resolution, modern and sleek aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLq9HkC8gIpOaXhnqH9l56-3SwjscO3UPBfs89KzHp0Kn6RiM9B86pNznvxFEbVemiebuZb4vwS8Z9z-IAwht_4WiCqqQclFTO2-asrjLVVK27Tk5S4wzASE9xoarZR8RbOlVNpuz__gdbVSvsWxi0EpGqSDwW3Nc1LmJZwJnzRGz4DF8BbY49TeJ9b_U1l9E5_M54vOTeUWkt0RTessuGZw7zh4vK390iZGxYlRTrMu9sCyoto9tbBw"/>
+</div>
+<div>
+<h3 class="font-headline-md text-body-lg text-primary group-hover:underline">Senior Product Designer</h3>
+<p class="text-text-secondary text-body-md">Stellar Systems • Remote</p>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 flex flex-col md:block">
+<span class="md:hidden text-label-sm text-text-secondary uppercase font-bold mb-1">Date Applied</span>
+<p class="text-body-md text-on-surface">Oct 24, 2024</p>
+</div>
+<div class="col-span-1 md:col-span-3 flex flex-col md:block">
+<span class="md:hidden text-label-sm text-text-secondary uppercase font-bold mb-1">Status</span>
+<span class="inline-flex items-center gap-sm bg-tertiary-fixed text-on-tertiary-fixed-variant status-pill w-fit">
+<span class="w-2 h-2 rounded-full bg-on-tertiary-fixed-variant animate-pulse"></span>
+                            Offer
+                        </span>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-start md:justify-end gap-sm">
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg text-label-md font-bold hover:bg-primary-container transition-all active:scale-95 shadow-sm">Review Offer</button>
+</div>
+</div>
+<!-- Entry 2: Interviewing -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-md items-center px-lg py-lg hover:bg-surface-subtle transition-colors cursor-pointer group">
+<div class="col-span-1 md:col-span-5 flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center border border-border-default overflow-hidden shrink-0">
+<img class="w-10 h-10 object-contain" data-alt="A sophisticated luxury brand logo, minimalist charcoal typography on a light gray background, elegant corporate identity, clean lines, high-end professional look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyHo9mpqdhwud-YkiEmP8gqNrgrSRIsaRAXnQFEwc4eoMUXJUFzmTj65SgwcYEHksc-HZ3es5N7qyodAjz7bYEypGUV5HPi2jUZB0pGI0_GZVJ0kko0I3FOj5HQfnQuBcBeExRM4zL8xGdrMsC0YdR0DlsOAUQF3rcy3Pxeo3pJ7S1wwvBrr8EyedVYmB9pLfv9EvC7-nxQyQodxBXfV2mULwLGdcz2tdUPepVKd4ekxalo70m1wbzaA"/>
+</div>
+<div>
+<h3 class="font-headline-md text-body-lg text-primary group-hover:underline">UX Researcher</h3>
+<p class="text-text-secondary text-body-md">Vanguard Labs • London, UK</p>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 flex flex-col md:block">
+<span class="md:hidden text-label-sm text-text-secondary uppercase font-bold mb-1">Date Applied</span>
+<p class="text-body-md text-on-surface">Oct 18, 2024</p>
+</div>
+<div class="col-span-1 md:col-span-3 flex flex-col md:block">
+<span class="md:hidden text-label-sm text-text-secondary uppercase font-bold mb-1">Status</span>
+<span class="inline-flex items-center gap-sm bg-secondary-fixed text-on-secondary-fixed-variant status-pill w-fit">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                            Interviewing
+                        </span>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-start md:justify-end gap-sm">
+<button class="border border-primary text-primary px-4 py-2 rounded-lg text-label-md font-bold hover:bg-surface-subtle transition-all active:scale-95">View Details</button>
+</div>
+</div>
+<!-- Entry 3: Under Review -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-md items-center px-lg py-lg hover:bg-surface-subtle transition-colors cursor-pointer group">
+<div class="col-span-1 md:col-span-5 flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center border border-border-default overflow-hidden shrink-0">
+<img class="w-10 h-10 object-contain" data-alt="A modern green fintech company logo, organic shapes and clean typography, white background, high contrast, fresh and innovative professional design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLFGMrd98MsKNRW0UGgAlE7vM-KN0iRW2I04cWXZXFOxrW5BcNWSpOaZhsT8wkOBMY3ggaizlLVxIH1BxZ5q86eRCWvkm0w0kXVDq0ZVaydCvwK5r1w_yjjjeY55dTuH-yQr560sav1NNT7EEX60vl7i5lSjoD-AYw250Rl_Wm17yXdMPspaT9rpnwcP4WiWt_wQPQq1-vHzVwLlanyxCMWiIfMOFJi6iXdTRvSJBdownhAdTpMmJg4g"/>
+</div>
+<div>
+<h3 class="font-headline-md text-body-lg text-primary group-hover:underline">Visual Designer</h3>
+<p class="text-text-secondary text-body-md">GreenFlow Finance • Berlin, DE</p>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 flex flex-col md:block">
+<span class="md:hidden text-label-sm text-text-secondary uppercase font-bold mb-1">Date Applied</span>
+<p class="text-body-md text-on-surface">Oct 12, 2024</p>
+</div>
+<div class="col-span-1 md:col-span-3 flex flex-col md:block">
+<span class="md:hidden text-label-sm text-text-secondary uppercase font-bold mb-1">Status</span>
+<span class="inline-flex items-center gap-sm bg-surface-container-high text-on-surface-variant status-pill w-fit">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+                            Under Review
+                        </span>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-start md:justify-end gap-sm">
+<button class="border border-border-default text-text-secondary px-4 py-2 rounded-lg text-label-md font-bold hover:bg-surface-subtle transition-all">Withdraw</button>
+</div>
+</div>
+<!-- Entry 4: Applied -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-md items-center px-lg py-lg hover:bg-surface-subtle transition-colors cursor-pointer group">
+<div class="col-span-1 md:col-span-5 flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center border border-border-default overflow-hidden shrink-0">
+<img class="w-10 h-10 object-contain" data-alt="A futuristic AI startup logo, vibrant purple and deep blue gradient shapes on a white background, high tech aesthetic, sharp edges, professional digital art style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR3LfyEnN_lkWpY8o38FO9w85u-h_fRzkobWHuuIonN3RhwZSZ_Y1FaGpFF63aq2RP2Siwqn-chzrE4D59c5BDnLvEK4vMKGHcHRXaktEuKn2xK43Sby5yoJKhWN6uu3R9d2Bt5o0e7UIuhYmHHJqUy4WgtwaXwkHJp-bHq-bm4DFWxlWiByJqeCkaJnYaKk7xfR8HDxPuw0voxc4oqdx67H2myzrmhssg_SQLt1sRHO2GgHQZMMut5g"/>
+</div>
+<div>
+<h3 class="font-headline-md text-body-lg text-primary group-hover:underline">Creative Technologist</h3>
+<p class="text-text-secondary text-body-md">Aether Labs • Remote</p>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 flex flex-col md:block">
+<span class="md:hidden text-label-sm text-text-secondary uppercase font-bold mb-1">Date Applied</span>
+<p class="text-body-md text-on-surface">Oct 10, 2024</p>
+</div>
+<div class="col-span-1 md:col-span-3 flex flex-col md:block">
+<span class="md:hidden text-label-sm text-text-secondary uppercase font-bold mb-1">Status</span>
+<span class="inline-flex items-center gap-sm bg-surface-container text-text-secondary status-pill w-fit">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+                            Applied
+                        </span>
+</div>
+<div class="col-span-1 md:col-span-2 flex justify-start md:justify-end gap-sm">
+<button class="border border-border-default text-text-secondary px-4 py-2 rounded-lg text-label-md font-bold hover:bg-surface-subtle transition-all">Withdraw</button>
+</div>
+</div>
+</div>
+<!-- Pagination / Footer -->
+<div class="px-lg py-md bg-surface-container-lowest flex items-center justify-between border-t border-border-default">
+<p class="text-body-sm text-text-secondary">Showing 1-4 of 12 applications</p>
+<div class="flex gap-xs">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-border-default hover:bg-surface-subtle text-text-secondary disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary text-label-md font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-border-default hover:bg-surface-subtle text-text-secondary text-label-md font-bold">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-border-default hover:bg-surface-subtle text-text-secondary text-label-md font-bold">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-border-default hover:bg-surface-subtle text-text-secondary">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Career Insights Side Bento (Mobile: below list, Desktop: could be sidebar but we keep it focused) -->
+<div class="mt-xl grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="md:col-span-2 p-xl rounded-xl bg-primary-container relative overflow-hidden group shadow-lg">
+<div class="relative z-10">
+<h4 class="text-headline-md font-bold text-on-primary-container mb-sm">Level up your profile</h4>
+<p class="text-body-md text-on-primary-container opacity-90 max-w-md mb-lg">Candidates with completed portfolios are 3x more likely to receive an interview request. Update yours now.</p>
+<button class="bg-surface-container-lowest text-primary px-lg py-2 rounded-lg text-label-md font-bold hover:bg-surface-bright transition-all shadow-md active:scale-95">Complete Profile</button>
+</div>
+<div class="absolute right-0 bottom-0 opacity-10 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-[160px]">stars</span>
+</div>
+</div>
+<div class="p-lg rounded-xl bg-surface-container-low border border-border-default flex flex-col justify-between">
+<div>
+<h4 class="text-label-md font-bold text-primary mb-xs">Interview Prep</h4>
+<p class="text-body-sm text-text-secondary mb-md">Practice common questions for your upcoming UX Researcher interview.</p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-tertiary-container border-2 border-white flex items-center justify-center text-[10px] text-white">AI</div>
+<div class="w-8 h-8 rounded-full bg-secondary-container border-2 border-white flex items-center justify-center text-[10px] text-white">UI</div>
+</div>
+<button class="text-secondary font-bold text-label-sm flex items-center gap-xs">
+                        Start Guide
+                        <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest border-t border-border-default mt-xl">
+<div class="w-full py-xl px-lg md:px-xl max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-md">
+<div class="flex flex-col items-center md:items-start gap-xs">
+<span class="text-headline-md font-headline-md font-bold text-primary">EMPO</span>
+<p class="text-body-sm text-text-secondary">© 2024 EMPO Recruitment Solutions. All rights reserved.</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-md">
+<a class="text-text-secondary text-label-sm hover:text-primary transition-all underline" href="#">Privacy Policy</a>
+<a class="text-text-secondary text-label-sm hover:text-primary transition-all underline" href="#">Terms of Service</a>
+<a class="text-text-secondary text-label-sm hover:text-primary transition-all underline" href="#">Cookie Policy</a>
+<a class="text-text-secondary text-label-sm hover:text-primary transition-all underline" href="#">Contact Us</a>
+<a class="text-text-secondary text-label-sm hover:text-primary transition-all underline" href="#">Help Center</a>
+</nav>
+</div>
+</footer>
+<script>
+        // Simple micro-interaction for active scaling
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.classList.add('scale-95'));
+            btn.addEventListener('mouseup', () => btn.classList.remove('scale-95'));
+            btn.addEventListener('mouseleave', () => btn.classList.remove('scale-95'));
+        });
+
+        // Search highlight simulation
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.grid.items-center');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = 'grid';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body></html>

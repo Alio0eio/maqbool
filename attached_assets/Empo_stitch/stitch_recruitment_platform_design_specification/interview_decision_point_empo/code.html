@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO Recruiter Portal | Interview Decision Point</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .decision-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .decision-card:hover {
+            transform: translateY(-4px);
+        }
+        .active-decision {
+            border-color: #0058be !important;
+            background-color: #f0f3ff !important;
+            box-shadow: 0 4px 12px rgba(0, 88, 190, 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #00236f 0%, #0058be 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#c5c5d3",
+                        "secondary": "#0058be",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#4059aa",
+                        "surface-bright": "#f9f9ff",
+                        "outline": "#757682",
+                        "border-default": "#E2E8F0",
+                        "surface-container": "#e7eeff",
+                        "primary-fixed": "#dce1ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "primary": "#00236f",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#00164e",
+                        "surface-card": "#FFFFFF",
+                        "on-tertiary-fixed": "#002114",
+                        "background": "#f9f9ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-primary-fixed-variant": "#264191",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "inverse-on-surface": "#ecf1ff",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#2170e4",
+                        "on-surface": "#111c2d",
+                        "surface-dim": "#cfdaf2",
+                        "on-secondary-container": "#fefcff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-surface-variant": "#444651",
+                        "on-tertiary-container": "#4ac08f",
+                        "surface-container-low": "#f0f3ff",
+                        "on-secondary-fixed": "#001a42",
+                        "status-error": "#DC2626",
+                        "surface-container-highest": "#d8e3fb",
+                        "surface-bg": "#F8FAFC",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-container": "#90a8ff",
+                        "on-error": "#ffffff",
+                        "on-background": "#111c2d",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "surface-container-high": "#dee8ff",
+                        "surface-variant": "#d8e3fb",
+                        "surface": "#f9f9ff",
+                        "inverse-primary": "#b6c4ff",
+                        "tertiary": "#003120",
+                        "tertiary-container": "#004a32",
+                        "inverse-surface": "#263143",
+                        "surface-subtle": "#F1F5F9",
+                        "text-secondary": "#64748B",
+                        "tertiary-fixed": "#85f8c4",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#1e3a8a",
+                        "tertiary-fixed-dim": "#68dba9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "gutter": "24px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "container-max": "1280px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                        "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface-bg font-body-md text-on-surface">
+<!-- Sidebar Component (Anchored) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest border-r border-border-default flex flex-col py-lg px-md z-50">
+<div class="mb-xl flex items-center gap-sm">
+<div class="w-10 h-10 bg-primary rounded flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">neurology</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">EMPO</h1>
+<p class="text-xs text-on-surface-variant font-medium">AI Hiring Suite</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-subtle transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-subtle transition-colors" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="font-body-md">Job Postings</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-primary font-bold border-r-4 border-primary bg-surface-container-low" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-body-md">Talent Pool</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-subtle transition-colors" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-body-md">Analytics</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-subtle transition-colors" href="#">
+<span class="material-symbols-outlined">neurology</span>
+<span class="font-body-md">AI Settings</span>
+</a>
+</nav>
+<div class="pt-lg border-t border-border-default space-y-1">
+<button class="w-full bg-primary text-white py-md rounded-lg font-label-md flex items-center justify-center gap-sm hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+                Post New Job
+            </button>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-subtle transition-colors mt-md" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-subtle transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Bar (Anchored) -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface border-b border-border-default flex justify-between items-center px-lg z-40">
+<div class="flex items-center gap-xl">
+<span class="font-headline-md text-headline-md font-bold text-primary">Recruiter Portal</span>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-lg py-sm bg-surface-container-low border-none rounded-full w-80 text-body-sm focus:ring-2 focus:ring-primary" placeholder="Search candidates..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-md border-r border-border-default pr-lg">
+<a class="text-on-surface-variant font-label-md hover:text-primary transition-colors" href="#">Direct Messages</a>
+<a class="text-on-surface-variant font-label-md hover:text-primary transition-colors" href="#">Calendar</a>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer">history</button>
+<div class="flex items-center gap-sm ml-md">
+<div class="text-right">
+<p class="font-label-md leading-none">Sarah Chen</p>
+<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider">Lead Recruiter</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary-fixed object-cover" data-alt="A professional headshot of Sarah Chen, a tech recruiter with a warm and approachable expression, wearing a navy blue blazer. She is in a bright, modern corporate office with soft natural lighting and a slightly blurred background of a collaborative workspace. The aesthetic is clean, professional, and corporate modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-5JfbDS6dRpsnGMuhdPFQfCTQ3pXR7DY7iD8S9mBSryVWg-5KENEpxKtnnO6tZB1nDwJj9-ktLUH22pYVyXq0ouwsP5ArxRdofdJgwpvGa7G9xnY4MQ4w8tXmPS7K2kwXokdx1hmYjHuuufCnSkEGgRXtS7YqfX6MML8iXjxLDTXf5JMvAm7RMvlCBlXaJ182S7IPex3_Bebq3fokREPObk-7t_TEfhPOiDn0Al7Qmxb3kAR2G9d3BQ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area / Decision Overlay -->
+<main class="ml-64 pt-16 min-h-screen bg-surface-bg flex items-center justify-center p-xl">
+<!-- Decision Modal/Section -->
+<div class="max-w-5xl w-full grid grid-cols-12 gap-gutter">
+<!-- Left Side: Context & Options -->
+<div class="col-span-5 flex flex-col gap-lg">
+<div class="bg-white p-lg rounded-xl shadow-sm border border-border-default">
+<div class="flex items-center gap-md mb-md">
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A professional portrait of Alexander Novak, a male in his early 30s with a sharp, creative look. He has short styled dark hair and wears minimalist glasses. He is wearing a high-quality gray sweater. The background is a clean architectural space with soft shadows, reflecting a professional designer profile. Corporate modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDziK4OkynTb7gH0h3zHp5SrvqyD2Pu88Gmfo1C5eOCqqNXA4fFhrwOEK5d-_ZwmGEuM_PGMCRHKBGI0guvrrEqdKm7mgeLcZyihjhDtvOvLBRt3jh-IP9OgMiWdaf5M7Pmb9raEUukHhhR_EWwFlenU5wN1mHuIvL5uRyN3RA-I-z1-AZ_eMeGYw60MhJeOvZOhR-MnL2N1fni2sIwfiIMiLNcIRThAURfhNFa7ccME-f-YOEFwnwMJA"/>
+</div>
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Alexander Novak</h2>
+<p class="text-secondary font-label-md">Senior Product Designer</p>
+</div>
+</div>
+<div class="flex items-center gap-sm px-md py-sm bg-surface-container-low rounded-lg border border-primary-container/10">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span class="text-body-sm text-on-surface-variant">Top 5% Global Match — 9.4/10 Expert Score</span>
+</div>
+</div>
+<div class="space-y-md">
+<h3 class="font-label-md uppercase tracking-widest text-on-surface-variant">Select Decision</h3>
+<!-- Shortlist Card -->
+<button class="decision-card w-full text-left bg-white p-lg rounded-xl border-2 border-border-default active-decision flex items-start gap-md group" id="shortlist-btn" onclick="switchMode('shortlist')">
+<div class="w-12 h-12 rounded-full bg-secondary-container/10 text-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline-md text-headline-md mb-xs">Shortlist for Interview</h4>
+<p class="text-on-surface-variant text-body-sm leading-relaxed">Advance to Round 1. AI will draft a warm invitation with your Calendly link.</p>
+</div>
+<span class="material-symbols-outlined text-secondary opacity-100 check-icon">check_circle</span>
+</button>
+<!-- Reject Card -->
+<button class="decision-card w-full text-left bg-white p-lg rounded-xl border-2 border-border-default flex items-start gap-md group" id="reject-btn" onclick="switchMode('reject')">
+<div class="w-12 h-12 rounded-full bg-status-error/10 text-status-error flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">block</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline-md text-headline-md mb-xs">Not a Fit</h4>
+<p class="text-on-surface-variant text-body-sm leading-relaxed">Decline candidate. AI will draft a personalized, respectful rejection email.</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 check-icon">check_circle</span>
+</button>
+</div>
+</div>
+<!-- Right Side: AI Draft Panel -->
+<div class="col-span-7">
+<div class="bg-white rounded-xl shadow-sm border border-border-default h-full flex flex-col overflow-hidden">
+<div class="px-lg py-md border-b border-border-default bg-surface-container-lowest flex justify-between items-center">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">neurology</span>
+<span class="font-label-md text-on-surface">AI Communication Draft</span>
+</div>
+<div class="flex gap-sm">
+<button class="p-xs hover:bg-surface-subtle rounded text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+</button>
+<button class="p-xs hover:bg-surface-subtle rounded text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</div>
+<div class="flex-1 p-xl" id="email-content">
+<!-- Content injected via JS -->
+</div>
+<div class="px-lg py-lg bg-surface-container-low border-t border-border-default flex items-center justify-between">
+<div class="flex items-center gap-md">
+<img class="w-8 h-8 rounded-full" data-alt="Small circular profile icon of Sarah Chen, professional tech recruiter. Modern corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt2p0FNJj7Ol10mBZZCfP7DLS9xxFXl6RJicGxgOPZ5nNFVKkJKxNwpoWsSb9DyqSL9dNfOeltBOaKssGg10VejHrtvO_I5ubo0ZcYet587rU67_LyzGlpKQ3g0mMjjYLQE60z4zwiTsyKdANogv2H_j5Inw2aGAoCOuCud1lzkpVUUsa9ZIhePISObsGr3QwyYg6QX6OojX_RMeLgqtnsvoRR60eaV0x062pOkS_01RRULCcB6HKGsA"/>
+<div>
+<p class="text-xs font-bold leading-none">Sarah Chen</p>
+<p class="text-[10px] text-on-surface-variant">Sending from Recruiter Mailbox</p>
+</div>
+</div>
+<div class="flex gap-md">
+<button class="px-lg py-sm font-label-md text-on-surface-variant hover:text-primary transition-colors">Save as Draft</button>
+<button class="px-xl py-sm bg-primary text-white rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all flex items-center gap-sm shadow-md" id="main-cta">
+                                Confirm &amp; Send
+                                <span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        const drafts = {
+            shortlist: {
+                title: "Interview Invitation: Senior Product Designer",
+                body: `
+                    <div class="space-y-md text-body-md text-on-surface">
+                        <p>Hi Alexander,</p>
+                        <p>Our team was incredibly impressed by your portfolio, specifically the detailed case study on the <strong>AI-driven fintech dashboard</strong>. Your approach to complex information architecture perfectly aligns with our current design challenges at EMPO.</p>
+                        <p>We'd love to schedule a 45-minute introductory call to discuss the Senior Product Designer role and learn more about your design philosophy.</p>
+                        <div class="bg-surface-container-low p-md rounded-lg border border-primary-container/10 my-lg">
+                            <p class="font-label-md text-primary mb-xs">Scheduling Link:</p>
+                            <a href="#" class="text-secondary underline font-medium">calendly.com/sarah-chen/empo-interview</a>
+                        </div>
+                        <p>Looking forward to connecting!</p>
+                        <p>Best regards,<br><strong>Sarah Chen</strong><br>Lead Recruiter, EMPO</p>
+                    </div>
+                `,
+                cta: "Send Invitation"
+            },
+            reject: {
+                title: "Application Update: Senior Product Designer",
+                body: `
+                    <div class="space-y-md text-body-md text-on-surface">
+                        <p>Hi Alexander,</p>
+                        <p>Thank you for taking the time to share your background and portfolio with us. I specifically enjoyed reviewing your <strong>visual design work</strong> for the automotive interface projects—the typography and attention to detail are exceptional.</p>
+                        <p>While your skills in visual design are clear, we've decided to move forward with candidates who have deeper experience in <strong>B2B platform scaling</strong> specifically within the HR-tech space for this particular role.</p>
+                        <p>We will keep your profile in our Talent Pool for future opportunities that may be a closer match for your specific expertise. Wishing you the best in your search!</p>
+                        <p>Best,<br><strong>Sarah Chen</strong><br>Lead Recruiter, EMPO</p>
+                    </div>
+                `,
+                cta: "Send Rejection"
+            }
+        };
+
+        function switchMode(mode) {
+            const shortlistBtn = document.getElementById('shortlist-btn');
+            const rejectBtn = document.getElementById('reject-btn');
+            const emailContainer = document.getElementById('email-content');
+            const mainCta = document.getElementById('main-cta');
+
+            // Reset buttons
+            [shortlistBtn, rejectBtn].forEach(btn => {
+                btn.classList.remove('active-decision');
+                btn.querySelector('.check-icon').classList.replace('opacity-100', 'opacity-0');
+                btn.querySelector('.check-icon').classList.replace('text-secondary', 'text-on-surface-variant');
+            });
+
+            // Set active
+            const activeBtn = mode === 'shortlist' ? shortlistBtn : rejectBtn;
+            activeBtn.classList.add('active-decision');
+            activeBtn.querySelector('.check-icon').classList.replace('opacity-0', 'opacity-100');
+            if(mode === 'shortlist') activeBtn.querySelector('.check-icon').classList.add('text-secondary');
+
+            // Update Email Preview
+            const draft = drafts[mode];
+            emailContainer.innerHTML = `
+                <div class="mb-lg animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div class="flex items-center gap-sm mb-md text-on-surface-variant">
+                        <span class="font-label-md w-16">Subject:</span>
+                        <span class="font-medium text-on-surface bg-surface-subtle px-sm py-xs rounded flex-1">${draft.title}</span>
+                    </div>
+                    <div class="flex items-center gap-sm mb-md text-on-surface-variant border-b border-border-default pb-md">
+                        <span class="font-label-md w-16">To:</span>
+                        <span class="font-medium text-on-surface">a.novak@example.com</span>
+                    </div>
+                    <div class="pt-md">
+                        ${draft.body}
+                    </div>
+                </div>
+            `;
+
+            // Update Button
+            mainCta.innerHTML = `
+                ${draft.cta}
+                <span class="material-symbols-outlined text-[18px]">send</span>
+            `;
+            if(mode === 'reject') {
+                mainCta.classList.replace('bg-primary', 'bg-status-error');
+            } else {
+                mainCta.classList.replace('bg-status-error', 'bg-primary');
+            }
+        }
+
+        // Initialize with Shortlist
+        document.addEventListener('DOMContentLoaded', () => {
+            switchMode('shortlist');
+        });
+    </script>
+</body></html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Completion Monitoring Dashboard - EMPO</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#f9f9ff",
+                    "inverse-on-surface": "#ecf1ff",
+                    "on-surface-variant": "#444651",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f9f9ff",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#dce1ff",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#85f8c4",
+                    "surface-dim": "#cfdaf2",
+                    "primary-container": "#1e3a8a",
+                    "on-tertiary-container": "#4ac08f",
+                    "inverse-surface": "#263143",
+                    "error": "#ba1a1a",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "on-primary-container": "#90a8ff",
+                    "tertiary": "#003120",
+                    "outline-variant": "#c5c5d3",
+                    "on-tertiary-fixed": "#002114",
+                    "surface-container-high": "#dee8ff",
+                    "text-secondary": "#64748B",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#e7eeff",
+                    "surface-card": "#FFFFFF",
+                    "primary": "#00236f",
+                    "tertiary-container": "#004a32",
+                    "inverse-primary": "#b6c4ff",
+                    "secondary-container": "#2170e4",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "secondary": "#0058be",
+                    "on-background": "#111c2d",
+                    "border-default": "#E2E8F0",
+                    "surface-container-low": "#f0f3ff",
+                    "surface-container-highest": "#d8e3fb",
+                    "secondary-fixed": "#d8e2ff",
+                    "outline": "#757682",
+                    "surface-tint": "#4059aa",
+                    "background": "#f9f9ff",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "on-secondary-fixed": "#001a42",
+                    "on-primary-fixed-variant": "#264191",
+                    "surface-bg": "#F8FAFC",
+                    "on-surface": "#111c2d",
+                    "on-secondary-container": "#fefcff",
+                    "status-error": "#DC2626",
+                    "surface-variant": "#d8e3fb",
+                    "on-secondary-fixed-variant": "#004395",
+                    "surface-subtle": "#F1F5F9",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "on-primary-fixed": "#00164e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin": "24px",
+                    "xs": "4px",
+                    "gutter": "24px",
+                    "md": "16px",
+                    "container-max": "1280px",
+                    "xl": "32px",
+                    "lg": "24px",
+                    "sm": "8px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "body-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto;
+            gap: 24px;
+        }
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface">
+<!-- SideNavBar (Fixed) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface border-r border-border-default flex flex-col p-md space-y-sm z-50">
+<div class="px-sm py-md mb-md">
+<span class="text-headline-md font-headline-md font-bold text-primary">EMPO</span>
+<p class="text-label-sm text-text-secondary">Talent Suite</p>
+</div>
+<nav class="flex-1 space-y-xs">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm bg-secondary-container text-on-secondary-container font-semibold rounded-lg" href="#">
+<span class="material-symbols-outlined">work</span>
+<span class="font-label-md text-label-md">Active Jobs</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Candidates</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">event_available</span>
+<span class="font-label-md text-label-md">Interviews</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-border-default pt-md space-y-xs">
+<button class="w-full bg-primary text-on-primary py-sm rounded-lg font-label-md text-label-md mb-md">Post New Job</button>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="ml-64 min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="w-full h-16 bg-surface-container-lowest border-b border-border-default shadow-sm flex justify-between items-center px-lg sticky top-0 z-40">
+<div class="flex items-center gap-lg">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">Monitoring</h1>
+<div class="h-8 w-px bg-border-default mx-sm"></div>
+<div class="flex items-center gap-sm bg-surface-subtle px-md py-sm rounded-lg border border-border-default">
+<span class="material-symbols-outlined text-text-secondary text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-64" placeholder="Search candidates..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm hover:bg-surface-subtle rounded-full text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-sm hover:bg-surface-subtle rounded-full text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="flex items-center gap-sm ml-sm cursor-pointer hover:bg-surface-subtle p-xs pr-md rounded-full transition-colors">
+<img class="w-8 h-8 rounded-full border border-border-default object-cover" data-alt="A professional headshot of a corporate recruiter in a clean, high-key studio setting. The subject is wearing a navy blazer, smiling confidently with soft lighting that emphasizes a trustworthy and approachable professional persona. Background is a neutral, out-of-focus modern office environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANR1oZVu9X_DbVK_Q8YkgI5hczHhZicje5W4s6KsCQec7e9XAEJK-XavnPEyT8-cF2DNzoRHAS7Ddokf5vzDC0qSh7ZDN8UCoI3NMJi6UQ-sqVK1nHd6YRDDOTV6SLZ6i07NmfWGM-mgq6OiZy93DWOP9asijL9NSanWrNLdsf9Sr9WJFqVDTk4kKZqjnLzdeeZpGhr7FRDo4_2EK7HFKumEALjYkvNP-M01y2RB3m30sbFjDGYd396g"/>
+<span class="font-label-md text-label-md text-on-surface">Alex Recruiter</span>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 p-lg max-w-container-max mx-auto w-full">
+<!-- Breadcrumbs / Title Row -->
+<div class="flex justify-between items-end mb-xl">
+<div>
+<div class="flex items-center gap-xs text-text-secondary mb-xs">
+<span class="font-label-sm text-label-sm">Active Jobs</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="font-label-sm text-label-sm">Senior Product Designer</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl">Senior Product Designer <span class="text-text-secondary font-medium ml-sm">#SP-442</span></h2>
+</div>
+<div class="flex gap-md">
+<button class="flex items-center gap-sm px-lg py-sm border border-border-default rounded-lg font-label-md text-label-md hover:bg-surface-subtle transition-colors">
+<span class="material-symbols-outlined text-md">share</span>
+                        Share Dashboard
+                    </button>
+<button class="flex items-center gap-sm px-lg py-sm bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-md" style="font-variation-settings: 'FILL' 1;">add</span>
+                        Invite Candidate
+                    </button>
+</div>
+</div>
+<!-- Stats Overview Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-lg mb-xl">
+<div class="bg-surface-card p-lg rounded-xl border border-border-default shadow-sm">
+<div class="flex justify-between items-start mb-md">
+<span class="material-symbols-outlined text-primary p-sm bg-surface-container-low rounded-lg">send</span>
+<span class="text-primary font-bold text-label-sm">+12% vs last week</span>
+</div>
+<p class="text-text-secondary font-label-md text-label-md">Total Invited</p>
+<h3 class="text-headline-xl font-headline-xl mt-xs">156</h3>
+</div>
+<div class="bg-surface-card p-lg rounded-xl border border-border-default shadow-sm">
+<div class="flex justify-between items-start mb-md">
+<span class="material-symbols-outlined text-secondary p-sm bg-surface-container-low rounded-lg">pending_actions</span>
+<span class="text-text-secondary font-bold text-label-sm">42% total</span>
+</div>
+<p class="text-text-secondary font-label-md text-label-md">In-Progress</p>
+<h3 class="text-headline-xl font-headline-xl mt-xs">64</h3>
+</div>
+<div class="bg-surface-card p-lg rounded-xl border border-border-default shadow-sm">
+<div class="flex justify-between items-start mb-md">
+<span class="material-symbols-outlined text-on-tertiary-container p-sm bg-tertiary-fixed rounded-lg">check_circle</span>
+<span class="text-on-tertiary-container font-bold text-label-sm">52% total</span>
+</div>
+<p class="text-text-secondary font-label-md text-label-md">Completed</p>
+<h3 class="text-headline-xl font-headline-xl mt-xs">82</h3>
+</div>
+<div class="bg-surface-card p-lg rounded-xl border border-border-default shadow-sm border-l-4 border-l-status-error">
+<div class="flex justify-between items-start mb-md">
+<span class="material-symbols-outlined text-status-error p-sm bg-error-container rounded-lg">history</span>
+<span class="text-status-error font-bold text-label-sm">Needs attention</span>
+</div>
+<p class="text-text-secondary font-label-md text-label-md">Overdue</p>
+<h3 class="text-headline-xl font-headline-xl mt-xs">10</h3>
+</div>
+</div>
+<!-- Dashboard Body: Two Columns -->
+<div class="flex flex-col lg:flex-row gap-lg">
+<!-- Monitoring Table Container (Left Column) -->
+<div class="flex-1 bg-surface-card rounded-xl border border-border-default shadow-sm overflow-hidden flex flex-col">
+<div class="px-lg py-md border-b border-border-default flex justify-between items-center bg-surface-subtle/30">
+<h4 class="font-headline-md text-headline-md">Real-time Completion Monitoring</h4>
+<div class="flex gap-sm">
+<button class="p-xs hover:bg-surface-subtle rounded-md border border-border-default"><span class="material-symbols-outlined text-md">filter_list</span></button>
+<button class="p-xs hover:bg-surface-subtle rounded-md border border-border-default"><span class="material-symbols-outlined text-md">download</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low border-b border-border-default">
+<tr>
+<th class="px-lg py-md font-label-md text-label-md text-text-secondary uppercase">Candidate</th>
+<th class="px-lg py-md font-label-md text-label-md text-text-secondary uppercase text-center">Status</th>
+<th class="px-lg py-md font-label-md text-label-md text-text-secondary uppercase text-center">Progress</th>
+<th class="px-lg py-md font-label-md text-label-md text-text-secondary uppercase text-center">Remaining</th>
+<th class="px-lg py-md font-label-md text-label-md text-text-secondary uppercase text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-default">
+<!-- Row 1: In Progress -->
+<tr class="hover:bg-surface-subtle transition-colors group">
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">AS</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Sterling</p>
+<p class="text-body-sm text-text-secondary">alex.s@design.co</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg text-center">
+<span class="inline-flex items-center gap-xs px-md py-1 rounded-full bg-secondary-container/10 text-secondary text-label-sm font-semibold">
+<span class="status-dot bg-secondary animate-pulse"></span> Started
+                                        </span>
+</td>
+<td class="px-lg py-lg text-center">
+<p class="font-label-md text-label-md">Question 3 of 5</p>
+<div class="w-24 h-1.5 bg-surface-container mx-auto mt-xs rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 60%"></div>
+</div>
+</td>
+<td class="px-lg py-lg text-center">
+<p class="font-body-md text-body-md font-medium text-on-surface">12m 45s</p>
+</td>
+<td class="px-lg py-lg text-right">
+<button class="text-primary hover:underline font-label-md text-label-md">Ping Candidate</button>
+</td>
+</tr>
+<!-- Row 2: Completed -->
+<tr class="hover:bg-surface-subtle transition-colors">
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="Close-up portrait of a female professional candidate with a warm smile and dark rimmed glasses. High quality photographic lighting, neutral professional background, soft focus depth of field. Modern recruitment headshot aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBAguTkcXuAe1_c8qOPU91hZUmaYjArxwcxVom_F1Cx2_knhTe0A_98erkYJ_uKwGSdyOHs0JJjNEAXIIsYBAVVR-ID5q5dTy0LwBtCwj3y1cPZKwXo2TtS7lOeBb00gVBf-tiHd3c_pUGHggTmLdXEu3qfFL8iw0qppbRr0OzXcyPNzs80U7B2sgnpjEHf95Xu3tS7d-072Ve_DrOGIFufu5OW4DSRUAwR0R2dG9iFljCR9WC8UIsIvg"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Elena Rodriguez</p>
+<p class="text-body-sm text-text-secondary">e.rod@portfolio.com</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg text-center">
+<span class="inline-flex items-center gap-xs px-md py-1 rounded-full bg-tertiary-fixed text-on-tertiary-container text-label-sm font-semibold">
+<span class="status-dot bg-on-tertiary-container"></span> Completed
+                                        </span>
+</td>
+<td class="px-lg py-lg text-center">
+<p class="font-label-md text-label-md">5 of 5</p>
+<div class="w-24 h-1.5 bg-surface-container mx-auto mt-xs rounded-full overflow-hidden">
+<div class="h-full bg-on-tertiary-container rounded-full" style="width: 100%"></div>
+</div>
+</td>
+<td class="px-lg py-lg text-center">
+<p class="font-body-md text-body-md text-text-secondary">Finished</p>
+</td>
+<td class="px-lg py-lg text-right">
+<button class="bg-primary-container text-on-primary-container px-md py-1.5 rounded-lg text-label-sm font-semibold hover:opacity-90 transition-opacity">View Report</button>
+</td>
+</tr>
+<!-- Row 3: Not Started -->
+<tr class="hover:bg-surface-subtle transition-colors">
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant font-bold">MK</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Marcus Kinsley</p>
+<p class="text-body-sm text-text-secondary">marcus@devmail.net</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg text-center">
+<span class="inline-flex items-center gap-xs px-md py-1 rounded-full bg-surface-variant text-on-surface-variant text-label-sm font-semibold">
+<span class="status-dot bg-outline"></span> Not Started
+                                        </span>
+</td>
+<td class="px-lg py-lg text-center">
+<p class="font-label-md text-label-md text-text-secondary">Pending</p>
+</td>
+<td class="px-lg py-lg text-center">
+<p class="font-body-md text-body-md text-text-secondary">--</p>
+</td>
+<td class="px-lg py-lg text-right">
+<button class="border border-primary text-primary px-md py-1.5 rounded-lg text-label-sm font-semibold hover:bg-primary/5 transition-colors">Send Reminder</button>
+</td>
+</tr>
+<!-- Row 4: Overdue -->
+<tr class="hover:bg-surface-subtle transition-colors">
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-error font-bold">LT</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Li Thompson</p>
+<p class="text-body-sm text-text-secondary">lithom@web.io</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg text-center">
+<span class="inline-flex items-center gap-xs px-md py-1 rounded-full bg-error-container text-error text-label-sm font-semibold">
+<span class="status-dot bg-error"></span> Overdue
+                                        </span>
+</td>
+<td class="px-lg py-lg text-center">
+<p class="font-label-md text-label-md text-status-error">0 of 5</p>
+</td>
+<td class="px-lg py-lg text-center">
+<p class="font-body-md text-body-md text-status-error font-semibold">Expired</p>
+</td>
+<td class="px-lg py-lg text-right">
+<div class="flex justify-end gap-sm">
+<button class="p-sm text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">calendar_today</span></button>
+<button class="border border-status-error text-status-error px-md py-1.5 rounded-lg text-label-sm font-semibold hover:bg-error/5 transition-colors">Reschedule</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-auto px-lg py-md border-t border-border-default flex justify-between items-center bg-surface">
+<span class="text-body-sm text-text-secondary">Showing 4 of 156 candidates</span>
+<div class="flex gap-xs">
+<button class="p-xs rounded border border-border-default bg-surface hover:bg-surface-subtle disabled:opacity-50" disabled=""><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="px-sm py-xs rounded border border-primary bg-primary-fixed text-primary text-label-sm font-bold">1</button>
+<button class="px-sm py-xs rounded border border-border-default text-label-sm hover:bg-surface-subtle">2</button>
+<button class="px-sm py-xs rounded border border-border-default text-label-sm hover:bg-surface-subtle">3</button>
+<button class="p-xs rounded border border-border-default bg-surface hover:bg-surface-subtle"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Live Activity Feed (Right Column) -->
+<div class="w-full lg:w-80 space-y-lg">
+<div class="bg-surface-card rounded-xl border border-border-default shadow-sm flex flex-col p-lg">
+<div class="flex items-center justify-between mb-lg">
+<h4 class="font-label-md text-label-md uppercase tracking-wider text-text-secondary">Live Activity</h4>
+<span class="flex items-center gap-1 text-[10px] font-bold text-on-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded-full uppercase">
+<span class="w-1.5 h-1.5 bg-on-tertiary-container rounded-full animate-ping"></span> Live
+                            </span>
+</div>
+<div class="space-y-lg relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-surface-container">
+<!-- Feed Item 1 -->
+<div class="relative pl-lg">
+<div class="absolute left-0 top-1 w-[24px] h-[24px] bg-secondary rounded-full border-4 border-surface-card z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-white">edit</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface"><span class="font-bold">Alex Sterling</span> started Question 3</p>
+<p class="text-body-sm text-text-secondary">Just now</p>
+</div>
+</div>
+<!-- Feed Item 2 -->
+<div class="relative pl-lg">
+<div class="absolute left-0 top-1 w-[24px] h-[24px] bg-on-tertiary-container rounded-full border-4 border-surface-card z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-white">check</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface"><span class="font-bold">Elena Rodriguez</span> completed the interview</p>
+<p class="text-body-sm text-text-secondary">14 mins ago</p>
+</div>
+</div>
+<!-- Feed Item 3 -->
+<div class="relative pl-lg">
+<div class="absolute left-0 top-1 w-[24px] h-[24px] bg-primary rounded-full border-4 border-surface-card z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-white">mail</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface">Reminder sent to <span class="font-bold">Marcus Kinsley</span></p>
+<p class="text-body-sm text-text-secondary">2 hours ago</p>
+</div>
+</div>
+<!-- Feed Item 4 -->
+<div class="relative pl-lg">
+<div class="absolute left-0 top-1 w-[24px] h-[24px] bg-status-error rounded-full border-4 border-surface-card z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-white">priority_high</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface"><span class="font-bold">Li Thompson</span> invite expired</p>
+<p class="text-body-sm text-text-secondary">3 hours ago</p>
+</div>
+</div>
+</div>
+<button class="mt-xl w-full py-md text-primary font-label-md text-label-md border border-border-default rounded-lg hover:bg-surface-subtle transition-colors">
+                            View Full History
+                        </button>
+</div>
+<!-- Task Quick Access -->
+<div class="bg-primary-container text-on-primary-container rounded-xl p-lg shadow-lg">
+<h4 class="font-headline-md text-headline-md mb-xs">Insights</h4>
+<p class="text-body-sm opacity-80 mb-lg">Candidate completion rate is 15% higher this morning compared to yesterday.</p>
+<div class="space-y-md">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-primary-container/60">lightbulb</span>
+<p class="text-label-sm font-label-sm">Try sending reminders at 10 AM for 20% higher engagement.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Integrated into main scroll) -->
+<footer class="w-full py-lg border-t border-border-default bg-surface-container-low mt-xl">
+<div class="flex flex-col md:flex-row justify-between items-center px-lg w-full max-w-container-max mx-auto gap-md">
+<div class="flex flex-col items-center md:items-start">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">EMPO</span>
+<p class="font-body-sm text-body-sm text-text-secondary mt-1">© 2024 EMPO Recruitment. All rights reserved.</p>
+</div>
+<div class="flex gap-lg">
+<a class="font-label-sm text-label-sm text-text-secondary hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-text-secondary hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-text-secondary hover:text-primary transition-colors" href="#">Cookie Policy</a>
+<a class="font-label-sm text-label-sm text-text-secondary hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+</div>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.97)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = '';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = '';
+            });
+        });
+
+        // Simple real-time clock or simulation for activity feed if needed
+        const liveDot = document.querySelector('.animate-ping');
+        setInterval(() => {
+            liveDot.style.opacity = liveDot.style.opacity === '0.5' ? '1' : '0.5';
+        }, 1000);
+    </script>
+</body></html>

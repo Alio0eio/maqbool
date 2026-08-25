@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EMPO | Find Your Next Career Milestone</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Design System Implementation -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#00164e",
+                    "on-error-container": "#93000a",
+                    "on-background": "#111c2d",
+                    "on-secondary-fixed-variant": "#004395",
+                    "on-primary-container": "#90a8ff",
+                    "primary-fixed-dim": "#b6c4ff",
+                    "on-tertiary-fixed-variant": "#005137",
+                    "border-default": "#E2E8F0",
+                    "inverse-primary": "#b6c4ff",
+                    "outline-variant": "#c5c5d3",
+                    "outline": "#757682",
+                    "tertiary-fixed-dim": "#68dba9",
+                    "surface-variant": "#d8e3fb",
+                    "on-secondary-container": "#fefcff",
+                    "on-tertiary": "#ffffff",
+                    "primary": "#00236f",
+                    "surface-container": "#e7eeff",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#f9f9ff",
+                    "tertiary-container": "#004a32",
+                    "inverse-surface": "#263143",
+                    "surface-container-low": "#f0f3ff",
+                    "error": "#ba1a1a",
+                    "text-secondary": "#64748B",
+                    "on-surface": "#111c2d",
+                    "on-secondary-fixed": "#001a42",
+                    "surface-dim": "#cfdaf2",
+                    "primary-fixed": "#dce1ff",
+                    "background": "#f9f9ff",
+                    "on-error": "#ffffff",
+                    "on-surface-variant": "#444651",
+                    "secondary-container": "#2170e4",
+                    "on-tertiary-container": "#4ac08f",
+                    "status-error": "#DC2626",
+                    "on-secondary": "#ffffff",
+                    "surface-card": "#FFFFFF",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#4059aa",
+                    "secondary": "#0058be",
+                    "surface": "#f9f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#002114",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "inverse-on-surface": "#ecf1ff",
+                    "surface-container-high": "#dee8ff",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-bg": "#F8FAFC",
+                    "surface-subtle": "#F1F5F9",
+                    "on-primary-fixed-variant": "#264191",
+                    "tertiary-fixed": "#85f8c4",
+                    "surface-container-highest": "#d8e3fb",
+                    "tertiary": "#003120",
+                    "primary-container": "#1e3a8a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "container-max": "1280px",
+                    "gutter": "24px",
+                    "sm": "8px",
+                    "margin": "24px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-xl-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                    "body-sm": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-on-surface antialiased">
+<!-- TopNavBar (Shared Component) -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest border-b border-border-default h-16">
+<div class="flex justify-between items-center w-full px-lg md:px-xl max-w-container-max mx-auto h-full">
+<!-- Brand Logo -->
+<div class="flex items-center space-x-md">
+<div class="text-headline-lg font-bold text-primary tracking-tight cursor-pointer active:opacity-80 transition-all">EMPO</div>
+</div>
+<!-- Desktop Navigation -->
+<nav class="hidden md:flex items-center space-x-xl h-full">
+<a class="text-primary font-bold border-b-2 border-primary py-5 font-label-md text-label-md cursor-pointer active:opacity-80 transition-all" href="#">Find Jobs</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md cursor-pointer active:opacity-80 transition-all" href="#">My Applications</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md cursor-pointer active:opacity-80 transition-all" href="#">Post a Job</a>
+<a class="text-text-secondary font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md cursor-pointer active:opacity-80 transition-all" href="#">Talent Pool</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center space-x-lg">
+<div class="hidden sm:flex items-center space-x-md">
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors">chat_bubble</span>
+</div>
+<div class="flex items-center space-x-sm border-l border-border-default pl-md">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-border-default cursor-pointer">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDt3mB56TQln82R9iFT9axVc9j79Ti3hRA3OXMPvj_doVWMBxedpR20NR0aEQk039Lr61Erooi89MI88qvIHxKkbjeBF9QTb2hAmq2jRR18-ztdyNjdhYvjt_7udRVvGv4KdfQN19CZR90KZ3QbyFULFlcV2mEkUbEqvZ36dbppbOmNMh_gxOi-QqDvHPzH60WqTp2KbxeIjaVo5L6yWpoeBwzkFwHFzqxDMAAjDFFE3uN8uydrhkTu3g"/>
+</div>
+<span class="material-symbols-outlined text-outline text-sm cursor-pointer">expand_more</span>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-16 min-h-screen">
+<!-- Hero Section with Premium Search -->
+<section class="relative py-xl md:py-32 overflow-hidden bg-primary-container text-white">
+<!-- Background Image with Overlay -->
+<div class="absolute inset-0 z-0">
+<img alt="Collaborative office environment" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASgmonaE5XGpSDY-VdjDBD0fiW7IuGQWgG_WNdmFWnzIsDr497DAHiroi889Ss5ClpSW03oksdAqNvLMsF9DetzD3X81bG45vtmClQdPanbA3ZA9-IesmSnKKHE03y78nl9enS8Ge68RgzBKIeo_YU41Uv3SDlcE1F9jGII9NZ_yyODpF3A8f9MKh0_wA7Pkea1motam2TdSxlFLHjDKEBnfRk17IUZKqFoXyKxOp_pBFiBN4I4LlADg"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-container-max mx-auto px-lg">
+<div class="max-w-3xl">
+<h1 class="font-headline-xl text-4xl md:text-5xl lg:text-6xl mb-md leading-tight text-white">
+                    Find your next <br/>
+<span class="text-on-secondary-container">career milestone.</span>
+</h1>
+<p class="font-body-lg text-body-lg mb-xl text-white/90 max-w-xl">
+                    Discover 45,000+ opportunities from high-growth startups to Fortune 500 companies. Let EMPO's intelligent engine match your skills with your aspirations.
+                </p>
+<!-- Main Search Bar -->
+<div class="flex flex-col md:flex-row bg-white rounded-xl shadow-2xl p-sm gap-sm items-stretch">
+<div class="flex-1 flex items-center px-md border-b md:border-b-0 md:border-r border-border-default">
+<span class="material-symbols-outlined text-outline mr-sm">search</span>
+<input class="w-full border-none focus:ring-0 text-on-background font-body-md text-body-md placeholder-text-secondary py-3" placeholder="Job title, keywords, or company" type="text"/>
+</div>
+<div class="flex-1 flex items-center px-md">
+<span class="material-symbols-outlined text-outline mr-sm">location_on</span>
+<input class="w-full border-none focus:ring-0 text-on-background font-body-md text-body-md placeholder-text-secondary py-3" placeholder="City, state, or remote" type="text"/>
+</div>
+<button class="bg-secondary text-on-secondary px-xl py-md rounded-lg font-semibold text-headline-md hover:bg-on-secondary-fixed transition-all shadow-md active:scale-95">
+                        Search Jobs
+                    </button>
+</div>
+<div class="mt-md flex flex-wrap gap-sm items-center">
+<span class="font-label-sm text-label-sm text-white/70">Popular:</span>
+<span class="px-sm py-xs bg-white/10 hover:bg-white/20 rounded-full text-label-sm font-label-sm cursor-pointer transition-colors backdrop-blur-sm border border-white/10">Product Designer</span>
+<span class="px-sm py-xs bg-white/10 hover:bg-white/20 rounded-full text-label-sm font-label-sm cursor-pointer transition-colors backdrop-blur-sm border border-white/10">Software Engineer</span>
+<span class="px-sm py-xs bg-white/10 hover:bg-white/20 rounded-full text-label-sm font-label-sm cursor-pointer transition-colors backdrop-blur-sm border border-white/10">Marketing Manager</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Content Section -->
+<section class="max-w-container-max mx-auto px-lg py-xl">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Left Column: Filters (Desktop) -->
+<aside class="hidden lg:block lg:col-span-3">
+<div class="bg-surface-card border border-border-default rounded-xl p-lg sticky top-24 shadow-sm">
+<div class="flex items-center justify-between mb-lg border-b border-border-default pb-md">
+<h3 class="font-bold text-lg text-on-surface">Filters</h3>
+<button class="text-secondary text-xs font-semibold hover:underline">Clear all</button>
+</div>
+<div class="space-y-lg">
+<div>
+<label class="font-semibold text-label-md block mb-sm text-on-surface">Employment Type</label>
+<div class="space-y-sm">
+<label class="flex items-center space-x-sm cursor-pointer group">
+<input class="rounded text-secondary focus:ring-secondary h-4 w-4 border-outline" type="checkbox"/>
+<span class="font-body-md text-on-surface-variant group-hover:text-primary transition-colors">Full-time</span>
+</label>
+<label class="flex items-center space-x-sm cursor-pointer group">
+<input checked="" class="rounded text-secondary focus:ring-secondary h-4 w-4 border-outline" type="checkbox"/>
+<span class="font-body-md text-on-surface-variant group-hover:text-primary transition-colors">Contract</span>
+</label>
+<label class="flex items-center space-x-sm cursor-pointer group">
+<input class="rounded text-secondary focus:ring-secondary h-4 w-4 border-outline" type="checkbox"/>
+<span class="font-body-md text-on-surface-variant group-hover:text-primary transition-colors">Remote</span>
+</label>
+</div>
+</div>
+<div class="pt-md border-t border-border-default">
+<label class="font-semibold text-label-md block mb-sm text-on-surface">Experience Level</label>
+<select class="w-full border border-border-default rounded-lg px-md py-sm focus:ring-2 focus:ring-secondary/20 focus:border-secondary outline-none font-body-md text-on-surface-variant bg-surface-subtle">
+<option>All Levels</option>
+<option>Entry Level</option>
+<option>Mid-Senior</option>
+<option>Executive</option>
+</select>
+</div>
+<div class="pt-md border-t border-border-default">
+<label class="font-semibold text-label-md block mb-sm text-on-surface">Salary Range</label>
+<div class="space-y-sm">
+<input class="w-full accent-secondary" type="range"/>
+<div class="flex justify-between text-label-sm font-label-sm text-text-secondary">
+<span>$50k</span>
+<span>$200k+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Right Column: Main Content -->
+<div class="lg:col-span-9 space-y-xl">
+<!-- Recommended For You Section -->
+<div>
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg font-bold">Recommended for you</h2>
+<p class="font-body-md text-body-md text-text-secondary">Based on your Senior Product Designer profile</p>
+</div>
+<button class="text-secondary font-semibold text-label-md hover:underline flex items-center group">
+                            View all <span class="material-symbols-outlined ml-xs transition-transform group-hover:translate-x-1" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Job Card 1 (Stratos) -->
+<div class="bg-surface-card border border-border-default rounded-xl p-xl shadow-sm hover:shadow-md transition-all group relative border-t-4 border-t-primary">
+<div class="absolute top-0 right-0 p-lg">
+<span class="material-symbols-outlined text-outline hover:text-error cursor-pointer transition-colors" data-icon="favorite">favorite</span>
+</div>
+<div class="flex items-start space-x-lg mb-lg">
+<div class="w-16 h-16 rounded-lg bg-surface-container-low flex-shrink-0 flex items-center justify-center overflow-hidden border border-border-default">
+<img alt="Stratos Financial Logo" class="w-12 h-12 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI5ABeMr86yNETdyNxX52pQ2ctnyDxeb7YpC9rmyF1hENtA4Bc4LqjnvZa3G8aStkK60bLTG8h6aLYpCvEy6mUBWsj-13xtBG4pzo3KSMC2NwaLG68l5BTKmTzilPWEDN_xczK04ALHZbGTrH1e-9R8cNiHXFlI6mMtTE8gudohuadNHDjE5SCKlbqAdeb6FKKOO4vkKeqedoQTkbyeXlVpvlWNA7dgK3QHFbqhYhHeSUfWwF6CETC1A"/>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-headline-md group-hover:text-primary transition-colors leading-tight">Senior Product Designer</h4>
+<p class="text-primary font-semibold text-body-md mt-1">Stratos Financial</p>
+<p class="text-text-secondary text-body-sm mt-1">San Francisco, CA • Hybrid</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-xs mb-xl">
+<span class="px-sm py-1 bg-surface-subtle text-on-surface-variant rounded font-label-sm text-xs">Figma</span>
+<span class="px-sm py-1 bg-surface-subtle text-on-surface-variant rounded font-label-sm text-xs">SaaS</span>
+<span class="px-sm py-1 bg-surface-subtle text-on-surface-variant rounded font-label-sm text-xs">Design Ops</span>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div>
+<p class="text-headline-md font-bold text-on-surface">$140k - $185k</p>
+<p class="text-xs text-text-secondary mt-1">3 days ago • 12 applicants</p>
+</div>
+<button class="bg-secondary text-on-secondary px-lg py-sm rounded-lg font-semibold hover:bg-on-secondary-fixed transition-colors shadow-sm">Apply</button>
+</div>
+</div>
+<!-- Job Card 2 (Lumina) -->
+<div class="bg-surface-card border border-border-default rounded-xl p-xl shadow-sm hover:shadow-md transition-all group relative border-t-4 border-t-secondary-container">
+<div class="absolute top-0 right-0 p-lg">
+<span class="material-symbols-outlined text-outline hover:text-error cursor-pointer transition-colors" data-icon="favorite">favorite</span>
+</div>
+<div class="flex items-start space-x-lg mb-lg">
+<div class="w-16 h-16 rounded-lg bg-surface-container-low flex-shrink-0 flex items-center justify-center overflow-hidden border border-border-default">
+<img alt="Lumina Tech Logo" class="w-12 h-12 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASecY_OgyAQhmuD3zGYLmeqPcA9NuGDCzPdD-EoQ10ETL57VzFiwWR4d7dPEUcSh_Tj73GaLWrAQ_QaInKB-KSIGdxMLwpCoejIQit_ndFMJCZBp-FQIPYkBLN-y0mhzXzO3hBAFIVfIZxal_xx9XZN-Zc4a5dskwfOpya48KCU69b5BA-qjVLnS3WDmQNSRnLezJ3pHWEdUMwwIr6cQkjyDroZ5fzS28n88Et7MTR4sse8g7d1fQLFg"/>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-headline-md group-hover:text-primary transition-colors leading-tight">Mobile Product Designer</h4>
+<p class="text-secondary font-semibold text-body-md mt-1">Lumina Tech</p>
+<p class="text-text-secondary text-body-sm mt-1">Austin, TX • Remote</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-xs mb-xl">
+<span class="px-sm py-1 bg-surface-subtle text-on-surface-variant rounded font-label-sm text-xs">iOS/Android</span>
+<span class="px-sm py-1 bg-surface-subtle text-on-surface-variant rounded font-label-sm text-xs">React Native</span>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div>
+<p class="text-headline-md font-bold text-on-surface">$120k - $160k</p>
+<p class="text-xs text-text-secondary mt-1">Yesterday • 45 applicants</p>
+</div>
+<button class="bg-secondary text-on-secondary px-lg py-sm rounded-lg font-semibold hover:bg-on-secondary-fixed transition-colors shadow-sm">Apply</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Featured Jobs Section -->
+<div>
+<div class="flex items-center justify-between mb-lg">
+<h2 class="font-headline-lg text-headline-lg font-bold">Featured Jobs</h2>
+<div class="flex items-center space-x-sm bg-surface-card border border-border-default rounded-lg px-md py-1 shadow-sm">
+<span class="font-label-md text-xs text-text-secondary">Sort by:</span>
+<select class="bg-transparent border-none focus:ring-0 font-bold text-xs text-primary cursor-pointer py-1 pr-8">
+<option>Most Recent</option>
+<option>Relevance</option>
+<option>Salary: High to Low</option>
+</select>
+</div>
+</div>
+<div class="space-y-md">
+<!-- Redesigned Job List Item 1 -->
+<div class="bg-surface-card border border-border-default p-lg rounded-xl flex flex-col md:flex-row md:items-center justify-between hover:border-secondary shadow-sm transition-all cursor-pointer group relative">
+<div class="flex items-center space-x-lg">
+<div class="w-16 h-16 bg-surface-container-low rounded-lg flex-shrink-0 flex items-center justify-center border border-border-default">
+<img class="w-12 h-12 object-contain opacity-80" data-alt="Fintech logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBw32xLWFmAieMrDGq9exouF3o9JQBw7ciqilhomjKgeWMTs-kPvGirZa-_dGXgLGmNOM5I1tngwt5wnD3y7IbOHP--qapmjOOIlD_GqYG4Q_3pGCvtc7voOJY2GGGw0z_WukLICr64o1CGokq79g5IeDnwFj7oqA-flQ3omHdMvNX9I3rIjlfhdk5-AhGFQI4dDVyGG9NhZ0Y2CMX2CTy6wYI6s4PAQXy_ezKP8XP4bvCf81XAiTCT5A"/>
+</div>
+<div>
+<h3 class="font-bold text-headline-md group-hover:text-secondary transition-colors">Principal UX Researcher</h3>
+<p class="text-primary font-medium text-body-md">Eagle Finance • Remote</p>
+<div class="mt-2 flex flex-wrap gap-md items-center">
+<span class="flex items-center text-xs text-text-secondary">
+<span class="material-symbols-outlined text-sm mr-1">payments</span> $150k - $190k
+                                        </span>
+<span class="flex items-center text-xs text-text-secondary">
+<span class="material-symbols-outlined text-sm mr-1">schedule</span> Full-time
+                                        </span>
+<span class="flex items-center text-xs text-text-secondary">
+<span class="material-symbols-outlined text-sm mr-1">people</span> 12 applicants
+                                        </span>
+<span class="text-xs text-on-tertiary-container bg-tertiary-container/10 px-2 py-0.5 rounded font-semibold">2 days ago</span>
+</div>
+</div>
+</div>
+<div class="mt-lg md:mt-0 flex items-center space-x-md">
+<button class="p-2 border border-outline-variant rounded-lg text-outline hover:text-error hover:bg-surface-subtle transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="px-xl py-2 bg-primary text-on-primary rounded-lg font-bold hover:bg-on-primary-fixed transition-colors shadow-sm">Details</button>
+</div>
+</div>
+<!-- Redesigned Job List Item 2 -->
+<div class="bg-surface-card border border-border-default p-lg rounded-xl flex flex-col md:flex-row md:items-center justify-between hover:border-secondary shadow-sm transition-all cursor-pointer group relative">
+<div class="flex items-center space-x-lg">
+<div class="w-16 h-16 bg-surface-container-low rounded-lg flex-shrink-0 flex items-center justify-center border border-border-default">
+<img class="w-12 h-12 object-contain opacity-80" data-alt="Logistics logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdKxAchR6s6lyTjgm6SQnyDtjG-A2ESB7N4iHN_OahxeHxhN9MBABWaLDeVyicfspTrn7mKvcilMv38nnYOl6I0onbi4Td3XQkMlk3t3FA42GEdWaQAfD3HGxq0N9lIhtgSwMlp-LtWgP4TjpB8gpW6EXsfBPRdttGf_FUnh9bwsIIfW-7DvyjnpNcGYss4IB6eUgIfsn_ejuHP7MPx2_NHLeT0ci69oFZpLPHohlf-jxv09V0-hld7Q"/>
+</div>
+<div>
+<h3 class="font-bold text-headline-md group-hover:text-secondary transition-colors">Senior Front-end Architect</h3>
+<p class="text-primary font-medium text-body-md">SwiftLogix • Chicago, IL</p>
+<div class="mt-2 flex flex-wrap gap-md items-center">
+<span class="flex items-center text-xs text-text-secondary">
+<span class="material-symbols-outlined text-sm mr-1">payments</span> $170k - $210k
+                                        </span>
+<span class="flex items-center text-xs text-text-secondary">
+<span class="material-symbols-outlined text-sm mr-1">location_on</span> Hybrid
+                                        </span>
+<span class="flex items-center text-xs text-text-secondary">
+<span class="material-symbols-outlined text-sm mr-1">people</span> 8 applicants
+                                        </span>
+<span class="text-xs text-on-tertiary-container bg-tertiary-container/10 px-2 py-0.5 rounded font-semibold">4 hours ago</span>
+</div>
+</div>
+</div>
+<div class="mt-lg md:mt-0 flex items-center space-x-md">
+<button class="p-2 border border-outline-variant rounded-lg text-outline hover:text-error hover:bg-surface-subtle transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="px-xl py-2 bg-primary text-on-primary rounded-lg font-bold hover:bg-on-primary-fixed transition-colors shadow-sm">Details</button>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-xl flex justify-center items-center space-x-2">
+<button class="w-10 h-10 rounded-lg border border-border-default flex items-center justify-center hover:bg-surface-subtle transition-colors text-text-secondary">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-lg bg-primary text-on-primary flex items-center justify-center font-bold">1</button>
+<button class="w-10 h-10 rounded-lg border border-border-default flex items-center justify-center hover:bg-surface-subtle font-medium text-on-surface">2</button>
+<button class="w-10 h-10 rounded-lg border border-border-default flex items-center justify-center hover:bg-surface-subtle font-medium text-on-surface">3</button>
+<span class="text-text-secondary px-2">...</span>
+<button class="w-10 h-10 rounded-lg border border-border-default flex items-center justify-center hover:bg-surface-subtle font-medium text-on-surface">12</button>
+<button class="w-10 h-10 rounded-lg border border-border-default flex items-center justify-center hover:bg-surface-subtle transition-colors text-text-secondary">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Humanized CTA Section -->
+<section class="bg-primary-container px-lg py-24 relative overflow-hidden">
+<div class="max-w-container-max mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-xl">
+<div class="max-w-2xl text-center lg:text-left">
+<h2 class="font-bold text-4xl text-white mb-md leading-tight">Ready to accelerate your career journey?</h2>
+<p class="font-body-lg text-white/80 text-lg">Join a community of 2 million professionals discovering their potential. Personalized matching, insightful analytics, and premium opportunities await.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-md w-full lg:w-auto">
+<button class="bg-white text-primary px-xl py-lg rounded-xl font-bold text-xl shadow-xl hover:bg-surface-container transition-all text-center">Create Profile</button>
+<button class="bg-primary-container border border-white/30 text-white px-xl py-lg rounded-xl font-bold text-xl hover:bg-white/10 transition-all text-center backdrop-blur-sm">Learn More</button>
+</div>
+</div>
+<!-- Decorative Background Element -->
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-secondary/20 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-24 -right-24 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface-container-lowest border-t border-border-default py-xl">
+<div class="w-full px-lg md:px-xl max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-lg border-b border-border-default pb-xl">
+<div class="text-headline-lg font-bold text-primary">EMPO</div>
+<div class="flex flex-wrap gap-x-xl gap-y-md">
+<a class="text-label-md text-text-secondary hover:text-primary transition-colors" href="#">Find Jobs</a>
+<a class="text-label-md text-text-secondary hover:text-primary transition-colors" href="#">Companies</a>
+<a class="text-label-md text-text-secondary hover:text-primary transition-colors" href="#">Salaries</a>
+<a class="text-label-md text-text-secondary hover:text-primary transition-colors" href="#">Resources</a>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-center mt-xl gap-md">
+<div class="flex space-x-lg">
+<a class="text-label-sm text-text-secondary hover:text-primary" href="#">Privacy</a>
+<a class="text-label-sm text-text-secondary hover:text-primary" href="#">Terms</a>
+<a class="text-label-sm text-text-secondary hover:text-primary" href="#">Cookies</a>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary">© 2024 EMPO Recruitment Solutions. Humanizing the job search experience.</p>
+</div>
+</div>
+</footer>
+<script>
+    // Button interaction micro-animations
+    document.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('mousedown', () => {
+            btn.classList.add('scale-95');
+        });
+        btn.addEventListener('mouseup', () => {
+            btn.classList.remove('scale-95');
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.classList.remove('scale-95');
+        });
+    });
+    
+    // Favorite toggle logic with visual feedback
+    document.querySelectorAll('[data-icon="favorite"]').forEach(heart => {
+        heart.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isFilled = heart.style.fontVariationSettings.includes("'FILL' 1");
+            heart.style.fontVariationSettings = isFilled ? "'FILL' 0" : "'FILL' 1";
+            heart.classList.toggle('text-error', !isFilled);
+            heart.classList.toggle('text-outline', isFilled);
+            
+            // Subtle bounce animation
+            heart.animate([
+                { transform: 'scale(1)' },
+                { transform: 'scale(1.3)' },
+                { transform: 'scale(1)' }
+            ], { duration: 300 });
+        });
+    });
+</script>
+</body></html>

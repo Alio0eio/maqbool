@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Review &amp; Send Status Updates | EMPO Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+        }
+        /* Custom scrollbar for better info density */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-variant": "#d8e3fb",
+                      "surface-container-highest": "#d8e3fb",
+                      "primary": "#00236f",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f0f3ff",
+                      "surface-subtle": "#F1F5F9",
+                      "on-primary-container": "#90a8ff",
+                      "secondary-container": "#2170e4",
+                      "surface-bg": "#F8FAFC",
+                      "on-secondary": "#ffffff",
+                      "primary-fixed": "#dce1ff",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "tertiary": "#003120",
+                      "surface-container-high": "#dee8ff",
+                      "surface-tint": "#4059aa",
+                      "on-tertiary-fixed": "#002114",
+                      "on-primary-fixed-variant": "#264191",
+                      "text-secondary": "#64748B",
+                      "on-surface": "#111c2d",
+                      "surface-container": "#e7eeff",
+                      "background": "#f9f9ff",
+                      "on-primary": "#ffffff",
+                      "surface-dim": "#cfdaf2",
+                      "secondary-fixed": "#d8e2ff",
+                      "on-tertiary-container": "#4ac08f",
+                      "on-background": "#111c2d",
+                      "inverse-primary": "#b6c4ff",
+                      "on-tertiary-fixed-variant": "#005137",
+                      "tertiary-fixed": "#85f8c4",
+                      "surface": "#f9f9ff",
+                      "on-secondary-container": "#fefcff",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "outline": "#757682",
+                      "surface-card": "#FFFFFF",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed": "#001a42",
+                      "surface-bright": "#f9f9ff",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed-variant": "#004395",
+                      "border-default": "#E2E8F0",
+                      "secondary": "#0058be",
+                      "outline-variant": "#c5c5d3",
+                      "inverse-on-surface": "#ecf1ff",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#004a32",
+                      "status-error": "#DC2626",
+                      "primary-container": "#1e3a8a",
+                      "on-primary-fixed": "#00164e",
+                      "tertiary-fixed-dim": "#68dba9",
+                      "inverse-surface": "#263143",
+                      "on-surface-variant": "#444651",
+                      "error": "#ba1a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "xl": "32px",
+                      "container-max": "1280px",
+                      "margin": "24px",
+                      "gutter": "24px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-xl": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "headline-xl": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface-bg text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-md h-screen w-64 border-r border-border-default bg-surface-card dark:bg-inverse-surface z-50">
+<div class="mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">EMPO Portal</h1>
+<p class="font-label-md text-label-md text-text-secondary">Enterprise Recruitment</p>
+</div>
+<nav class="flex-1 space-y-sm">
+<a class="flex items-center gap-md px-md py-sm text-text-secondary dark:text-on-surface-variant hover:bg-surface-subtle dark:hover:bg-surface-variant rounded-lg transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center gap-md px-md py-sm bg-surface-container-low dark:bg-primary-container text-primary dark:text-on-primary-container rounded-lg font-bold font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">work</span> Jobs Manager
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary dark:text-on-surface-variant hover:bg-surface-subtle dark:hover:bg-surface-variant rounded-lg transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">group</span> Candidates
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary dark:text-on-surface-variant hover:bg-surface-subtle dark:hover:bg-surface-variant rounded-lg transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">analytics</span> Analytics
+            </a>
+<a class="flex items-center gap-md px-md py-sm text-text-secondary dark:text-on-surface-variant hover:bg-surface-subtle dark:hover:bg-surface-variant rounded-lg transition-colors font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+            </a>
+</nav>
+<div class="mt-auto pt-md border-t border-border-default">
+<div class="flex items-center gap-sm px-sm py-sm">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional headshot of a corporate recruiter, featuring a friendly smile, clean lighting, and a blurred modern office background. The recruiter is wearing professional business attire in dark navy, aligning with the EMPO brand colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqFMDJDmRFAJ7aeFXUfq9EGhuH3WNU15RQinPUUwQs6JEMzUyzSGfhuBhjk-X8OSU2LSILqpf7rEXGJu1Jplzc1uVlDwXzygmbhY0dlldImg3w8cEHsavi9ZfooSiyn4Lvs45nXcGE_JX4HN7JhxRohKKvORS1ogigLvrJgMF0Nky7gmg328AiyUlurj9VrouPvz-i-zPAdTFALZ-Wa1uY9MH3JWM6W1i-1nDJpmfYbNMj0R2PRkd50A"/>
+<div class="overflow-hidden">
+<p class="font-label-md text-label-md font-bold truncate">Sarah Jenkins</p>
+<p class="text-xs text-text-secondary truncate">Senior Recruiter</p>
+</div>
+</div>
+<button class="w-full mt-md py-sm px-md bg-primary text-white rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">
+                Post New Job
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex flex-col min-h-screen">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-40 flex items-center justify-between px-lg w-full h-16 bg-surface/80 backdrop-blur-md border-b border-border-default">
+<div class="flex items-center gap-lg flex-1">
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-subtle border-none rounded-lg text-body-md focus:ring-2 focus:ring-secondary transition-all" placeholder="Search candidates or tasks..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-sm text-text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-sm text-text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-6 w-[1px] bg-border-default mx-sm"></div>
+<button class="flex items-center gap-sm px-md py-sm bg-secondary-container text-white rounded-lg font-label-md text-label-md hover:bg-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]">psychology</span>
+                    AI Insights
+                </button>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-lg max-w-container-max mx-auto w-full space-y-lg pb-32">
+<!-- Header Section -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-primary">Review &amp; Send Status Updates</h2>
+<p class="font-body-md text-body-md text-text-secondary max-w-2xl">This action will trigger automated notifications to the following candidates regarding their final outcome. Review the AI-generated drafts before finalizing.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm border border-border-default rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-subtle transition-colors">
+                        Edit All Templates
+                    </button>
+<button class="px-md py-sm border border-border-default rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-subtle transition-colors">
+                        Save as Draft
+                    </button>
+<button class="px-lg py-sm bg-primary text-white rounded-lg font-label-md text-label-md hover:opacity-95 shadow-sm transition-opacity">
+                        Schedule All Notifications
+                    </button>
+</div>
+</section>
+<!-- Summary Bar -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="p-md bg-surface-card rounded-xl border border-border-default flex items-center gap-md shadow-sm">
+<div class="w-12 h-12 bg-green-100 text-green-700 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">check_circle</span>
+</div>
+<div>
+<p class="text-xs text-text-secondary font-bold uppercase tracking-wider">Shortlisted</p>
+<h4 class="font-headline-lg text-headline-lg text-primary">3 Candidates</h4>
+</div>
+</div>
+<div class="p-md bg-surface-card rounded-xl border border-border-default flex items-center gap-md shadow-sm">
+<div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">trending_up</span>
+</div>
+<div>
+<p class="text-xs text-text-secondary font-bold uppercase tracking-wider">Progressed</p>
+<h4 class="font-headline-lg text-headline-lg text-primary">2 Candidates</h4>
+</div>
+</div>
+<div class="p-md bg-surface-card rounded-xl border border-border-default flex items-center gap-md shadow-sm">
+<div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px]">cancel</span>
+</div>
+<div>
+<p class="text-xs text-text-secondary font-bold uppercase tracking-wider">Rejected</p>
+<h4 class="font-headline-lg text-headline-lg text-primary">8 Candidates</h4>
+</div>
+</div>
+</section>
+<!-- Main Layout: Table + Preview Sidebar -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+<!-- Candidate List Table -->
+<div class="lg:col-span-8 bg-surface-card rounded-xl border border-border-default shadow-sm overflow-hidden">
+<div class="px-md py-sm bg-surface-subtle border-b border-border-default flex justify-between items-center">
+<h3 class="font-label-md text-label-md text-primary font-bold">Queue (13 Candidates)</h3>
+<div class="flex items-center gap-sm">
+<span class="text-xs text-text-secondary italic">Sorted by Action Required</span>
+<span class="material-symbols-outlined text-text-secondary text-sm">filter_list</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-subtle/50 text-text-secondary font-label-md text-[12px] uppercase">
+<tr>
+<th class="px-md py-sm font-semibold">Candidate</th>
+<th class="px-md py-sm font-semibold">Final Decision</th>
+<th class="px-md py-sm font-semibold text-center">Notification</th>
+<th class="px-md py-sm font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-default font-body-md">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-subtle/30 transition-colors group">
+<td class="px-md py-md">
+<div class="flex items-center gap-sm">
+<img class="w-8 h-8 rounded-full border border-border-default object-cover" data-alt="Close-up professional portrait of a woman with a confident expression, soft natural lighting, high-end business professional attire. The background is a minimalist, light-toned office interior, consistent with the EMPO UI theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvKpaEjzpD9is8Y42SByjiC5ikQhXpK4lNnFi5t8uvUI-XU31f7ra2uJ40UtwZ3lE8rROI9Va5TcK1qqIY3sLwPihM0fAjPBU4V_VIZM2KxQV0J9RSU_GouTJGZHnzZv8VObu3vTt7KL3rs4g4AeDAv09cgYge2U7WPSh9AQJTuxzshA4eoyK_-3JU42LFKDvZYyAesfa7Xmj1Oz5B7VFDFZGr9ViFp2OjlOF6chAIi7rzXeY8rAXxiA"/>
+<div>
+<p class="font-bold text-on-surface">Elena Rodriguez</p>
+<p class="text-xs text-text-secondary">Senior UX Designer</p>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="px-sm py-xs bg-green-100 text-green-700 text-[11px] font-bold rounded-full uppercase">Shortlist</span>
+</td>
+<td class="px-md py-md text-center">
+<span class="flex items-center justify-center gap-1 text-green-600 text-xs font-medium">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                                            Ready
+                                        </span>
+</td>
+<td class="px-md py-md text-right">
+<button class="text-primary hover:underline font-label-md text-sm">Preview</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-subtle/30 transition-colors bg-blue-50/20">
+<td class="px-md py-md">
+<div class="flex items-center gap-sm">
+<img class="w-8 h-8 rounded-full border border-border-default object-cover" data-alt="A professional corporate headshot of a man in his 30s, short dark hair, wearing a grey blazer over a white shirt. Bright, clean studio lighting with a neutral soft grey background. Professional and reliable aesthetic for a recruiter portal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVWX7X56IfgWaRtR_ETREd5t2-hnqbOFlb3XffHJzYnSu8J6WSrq8VtidZWgWwo8ikziQj1i5wmsCNnDafn-5ZW34D2tWAn_HVLmQpBDej-gCl-lPm9ZsJ37NOhNtGscT7oTjBKsX3D4CiF0Hk2QSPNgKEYtNwAG00S0WUd6VbJCRsrXtctjR4W7GctZzQ4ZiNHhLp7qKyWGKPbjNEuYEx5NrzYePrB0hjW1A2WRZj4nam3aWY_Ljp4g"/>
+<div>
+<p class="font-bold text-on-surface">Marcus Chen</p>
+<p class="text-xs text-text-secondary">Full Stack Lead</p>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="px-sm py-xs bg-blue-100 text-blue-700 text-[11px] font-bold rounded-full uppercase">Progress</span>
+</td>
+<td class="px-md py-md text-center">
+<span class="flex items-center justify-center gap-1 text-green-600 text-xs font-medium">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                                            Ready
+                                        </span>
+</td>
+<td class="px-md py-md text-right">
+<button class="text-primary hover:underline font-label-md text-sm">Preview</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-subtle/30 transition-colors">
+<td class="px-md py-md">
+<div class="flex items-center gap-sm">
+<img class="w-8 h-8 rounded-full border border-border-default object-cover" data-alt="A professional headshot of a woman in corporate attire, wearing glasses, smiling warmly. Soft light, high-definition quality, set against a modern office with light wood and white accents, reflecting a clean and professional business environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdtdALgPxaUUZp9xl3ev48iqJ9cfK8cFRi1-mz3FanMAMlw4oIbdfBms7nR2oFJ6xClQ3VyjIQlkVCfgeWQSbybZW8Lfkc4edACH_Qqxh7EC416t2aq3GVIs0vhgrPWN97d4udbqk1es5KwUno1fbi5vh6y4scbKbLJrxvJQKX7fQzoKZp5KQd2cx9T-R9tghTFt9dyxfQsq8p96Yqe-w5FHIl0BI7dvWFfcAQLgezUFnWg-IYYWYRog"/>
+<div>
+<p class="font-bold text-on-surface">Sarah Miller</p>
+<p class="text-xs text-text-secondary">Project Coordinator</p>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="px-sm py-xs bg-slate-100 text-slate-700 text-[11px] font-bold rounded-full uppercase">Reject</span>
+</td>
+<td class="px-md py-md text-center">
+<span class="flex items-center justify-center gap-1 text-green-600 text-xs font-medium">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                                            Ready
+                                        </span>
+</td>
+<td class="px-md py-md text-right">
+<button class="text-primary hover:underline font-label-md text-sm">Preview</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-subtle/30 transition-colors">
+<td class="px-md py-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-xs font-bold text-primary">DW</div>
+<div>
+<p class="font-bold text-on-surface">David Wilson</p>
+<p class="text-xs text-text-secondary">DevOps Engineer</p>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="px-sm py-xs bg-slate-100 text-slate-700 text-[11px] font-bold rounded-full uppercase">Reject</span>
+</td>
+<td class="px-md py-md text-center">
+<span class="flex items-center justify-center gap-1 text-green-600 text-xs font-medium">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                                            Ready
+                                        </span>
+</td>
+<td class="px-md py-md text-right">
+<button class="text-primary hover:underline font-label-md text-sm">Preview</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-subtle/30 transition-colors">
+<td class="px-md py-md">
+<div class="flex items-center gap-sm">
+<img class="w-8 h-8 rounded-full border border-border-default object-cover" data-alt="A professional portrait of a creative professional man, bearded, wearing a dark turtleneck. Clean, soft lighting emphasizing a modern tech-industry professional look. Softly out of focus architectural background with clean lines." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLkKuVG687xJYIzrnQXD2yCOoYW32AhcOVaNDz7uaEdOOmnD1JAsBYO9kMvaHSbSAMju3xgSke0hozIl62oxdGHJygFU9maI-wUQwm2dbaKul0fnEu_daT3tyq_pt7LshgmU1j4yx7P37P2LXA6qeyyhSiBqtV-2Ck-cAGuqnFR8F6GA4rQCXLV9fds9ooQ1vYuq59ItrzrVvAd5eAV5V8x9nFzDOxOha1EtoXr557gJQ1iyyNagvpPA"/>
+<div>
+<p class="font-bold text-on-surface">Julian Grant</p>
+<p class="text-xs text-text-secondary">UI Engineer</p>
+</div>
+</div>
+</td>
+<td class="px-md py-md">
+<span class="px-sm py-xs bg-green-100 text-green-700 text-[11px] font-bold rounded-full uppercase">Shortlist</span>
+</td>
+<td class="px-md py-md text-center">
+<span class="flex items-center justify-center gap-1 text-green-600 text-xs font-medium">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+                                            Ready
+                                        </span>
+</td>
+<td class="px-md py-md text-right">
+<button class="text-primary hover:underline font-label-md text-sm">Preview</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-md py-sm bg-surface-subtle/50 text-center">
+<button class="text-xs font-bold text-primary hover:text-secondary-container transition-colors uppercase tracking-widest">
+                            View all 13 candidates
+                        </button>
+</div>
+</div>
+<!-- AI Communication Workspace -->
+<div class="lg:col-span-4 space-y-md">
+<!-- Preview Card 1: Shortlisted -->
+<div class="bg-surface-card rounded-xl border border-border-default shadow-md overflow-hidden animate-in fade-in duration-500">
+<div class="p-md bg-green-50 border-b border-green-100 flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-green-600" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h4 class="font-label-md text-label-md text-green-800 font-bold">Draft: Shortlisted</h4>
+</div>
+<span class="text-[10px] bg-white px-2 py-0.5 rounded border border-green-200 text-green-700 font-bold uppercase">Elena Rodriguez</span>
+</div>
+<div class="p-md space-y-md">
+<div class="space-y-sm bg-surface-bg p-sm rounded border border-border-default">
+<p class="text-[12px] text-text-secondary">Subject: <span class="text-on-surface font-medium">Exciting Update Regarding Your Application at EMPO</span></p>
+</div>
+<div class="font-body-md text-sm text-on-surface leading-relaxed whitespace-pre-line border-l-2 border-primary/20 pl-md italic">
+                                Dear <span class="bg-primary/10 text-primary px-1 rounded font-medium">Elena Rodriguez</span>,
+
+                                We've carefully reviewed your portfolio and were specifically impressed by your <span class="bg-primary/10 text-primary px-1 rounded font-medium">complex design system architecture at GlobalTech</span>.
+
+                                You have been shortlisted for the final interview round. We are excited to discuss how your skills align with our mission...
+                            </div>
+<div class="flex gap-sm">
+<button class="flex-1 py-xs border border-border-default rounded text-[12px] font-bold hover:bg-surface-subtle">Manual Edit</button>
+<button class="flex-1 py-xs bg-primary text-white rounded text-[12px] font-bold hover:opacity-90">Approve Draft</button>
+</div>
+</div>
+</div>
+<!-- Preview Card 2: Rejection -->
+<div class="bg-surface-card rounded-xl border border-border-default shadow-md overflow-hidden opacity-90 hover:opacity-100 transition-opacity">
+<div class="p-md bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-slate-500">mail</span>
+<h4 class="font-label-md text-label-md text-slate-800 font-bold">Draft: Rejection</h4>
+</div>
+<span class="text-[10px] bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-700 font-bold uppercase">Sarah Miller</span>
+</div>
+<div class="p-md space-y-sm">
+<div class="font-body-md text-[13px] text-text-secondary line-clamp-3">
+                                Hi Sarah, thank you for your interest in the Project Coordinator role. While we appreciated your <span class="bg-slate-200 text-slate-800 px-1 rounded">detailed case study on operational efficiency</span>, we have decided to move forward with other...
+                            </div>
+<button class="w-full py-xs text-primary font-bold text-[12px] hover:bg-surface-subtle rounded transition-colors flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm">visibility</span> View Full Draft
+                            </button>
+</div>
+</div>
+<!-- Helpful Tip -->
+<div class="p-md bg-secondary-container/10 border border-secondary-container/20 rounded-xl flex gap-sm">
+<span class="material-symbols-outlined text-secondary text-[20px]">lightbulb</span>
+<p class="text-xs text-on-secondary-fixed-variant leading-relaxed">
+<strong class="block mb-1">Recruiter Pro Tip</strong>
+                            AI-drafted emails use data points from the initial screen to personalize the 'Specific Strength' field. This has been shown to improve candidate NPS by 24%.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Footer Progress Indicator -->
+<footer class="fixed bottom-0 left-64 right-0 bg-white border-t border-border-default px-lg py-sm flex items-center justify-between shadow-lg z-40">
+<div class="flex items-center gap-md flex-1 max-w-md">
+<div class="flex-1 bg-surface-subtle h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[100%] transition-all duration-1000 ease-out"></div>
+</div>
+<span class="font-label-md text-label-md text-primary whitespace-nowrap">13 of 13 notifications prepared</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex items-center gap-sm text-green-600 font-bold text-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
+                    All Drafts Validated
+                </div>
+<button class="px-xl py-md bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary-container shadow-md transition-all active:scale-95 flex items-center gap-2">
+                    Send All Notifications
+                    <span class="material-symbols-outlined text-[20px]">send</span>
+</button>
+</div>
+</footer>
+</main>
+<script>
+        // Simple micro-interaction for the preview cards
+        document.querySelectorAll('table tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // In a real app, this would swap the preview sidebar content
+                row.classList.add('bg-primary-fixed/30');
+                setTimeout(() => row.classList.remove('bg-primary-fixed/30'), 500);
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-secondary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-secondary/20');
+        });
+    </script>
+</body></html>
