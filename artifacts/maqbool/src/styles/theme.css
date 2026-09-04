@@ -1,0 +1,123 @@
+/**
+ * maqbool-specific theme overrides, layered on top of @workspace/design-system's
+ * styles.css. mockup-sandbox shares that base file — these tokens are maqbool's
+ * own point of view (the async-video-interview "waveform" motif) and are
+ * intentionally NOT promoted into the shared package. Semantic tokens
+ * (--success, --surface-bg, etc.) now have sane defaults in the shared
+ * package itself; maqbool doesn't need to redeclare them.
+ */
+:root {
+  /* Monospace reserved for genuinely tabular data: interview timers,
+     durations, timestamps. Never used for labels or eyebrows — one
+     typeface (Inter) carries the rest of the UI. */
+  --app-font-mono: 'JetBrains Mono', Menlo, monospace;
+
+  /* Signature "record" accent — reserved for the video-interview surfaces
+     (recording indicators, the scrubber waveform). Not a wash across the
+     general UI. */
+  --accent-record: 38 88% 55%;         /* #EB9C2C */
+  --accent-record-tint: 42 82% 94%;    /* #FDF3E1 */
+  --accent-record-ink: 32 74% 40%;     /* #B8721B, contrast-safe on light */
+
+  /* Wordmark type, reserved for the logo lockup only (nav brand, splash,
+     auth hero). The rest of the product stays on one UI typeface (Inter,
+     see --font-display below) — Barlow never leaks into headings or body
+     copy, exactly like a real brand mark differs from its product's UI font. */
+  --font-wordmark: 'Barlow', var(--app-font-sans);
+
+  /* Mark colors, from the approved logo spec (ink circle, steel check).
+     "Steel" reuses --secondary so the mark and the product's own accent
+     color are always the same blue, never a one-off brand color. */
+  --brand-ink: var(--foreground);
+  --brand-ink-reversed: 0 0% 100%;
+  --brand-steel: var(--secondary);
+  --brand-steel-reversed: 210 92% 72%;  /* lightened steel, for the navy sidebar/hero */
+}
+
+.dark {
+  --accent-record: 38 88% 64%;
+  --accent-record-tint: 32 35% 18%;
+  --accent-record-ink: 40 90% 72%;
+}
+
+@theme inline {
+  /* `font-display` now resolves to the same Inter stack as the rest of the
+     UI — one typeface, carried entirely by weight/size/tracking instead of
+     a second display face. Kept as an alias so existing call sites don't
+     need a mechanical find-and-replace. */
+  --font-display: var(--app-font-sans);
+
+  --color-accent-record: hsl(var(--accent-record));
+  --color-accent-record-tint: hsl(var(--accent-record-tint));
+  --color-accent-record-ink: hsl(var(--accent-record-ink));
+
+  --color-brand-ink: hsl(var(--brand-ink));
+  --color-brand-ink-reversed: hsl(var(--brand-ink-reversed));
+  --color-brand-steel: hsl(var(--brand-steel));
+  --color-brand-steel-reversed: hsl(var(--brand-steel-reversed));
+}
+
+@layer utilities {
+  /**
+   * Corner-bracket "viewfinder" hover/focus treatment. Coexists with
+   * hover-elevate (that uses ::after for the background wash; this uses
+   * ::before for the corner marks, layered above it).
+   *
+   * <div className="relative hover-elevate viewfinder-hover rounded-lg ..." />
+   */
+  .viewfinder-hover {
+    position: relative;
+  }
+
+  .viewfinder-hover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 150ms ease;
+    background-image:
+      linear-gradient(to right, hsl(var(--accent-record)) 2px, transparent 2px),
+      linear-gradient(to bottom, hsl(var(--accent-record)) 2px, transparent 2px),
+      linear-gradient(to left, hsl(var(--accent-record)) 2px, transparent 2px),
+      linear-gradient(to bottom, hsl(var(--accent-record)) 2px, transparent 2px),
+      linear-gradient(to left, hsl(var(--accent-record)) 2px, transparent 2px),
+      linear-gradient(to top, hsl(var(--accent-record)) 2px, transparent 2px),
+      linear-gradient(to right, hsl(var(--accent-record)) 2px, transparent 2px),
+      linear-gradient(to top, hsl(var(--accent-record)) 2px, transparent 2px);
+    background-repeat: no-repeat;
+    background-size: 14px 14px;
+    background-position:
+      top left, top left,
+      top right, top right,
+      bottom right, bottom right,
+      bottom left, bottom left;
+  }
+
+  .viewfinder-hover:hover::before,
+  .viewfinder-hover:focus-within::before {
+    opacity: 1;
+  }
+}
+
+/**
+ * prefers-reduced-transparency: the sticky app header and sticky PageHeader
+ * bar are the two "floating over content" translucent surfaces in the
+ * product (see .app-translucent-header below); every other backdrop-blur
+ * use (the recording-timer pill, the command-palette/dialog scrim) just
+ * drops its blur and leans on its own already-opaque-enough background.
+ */
+@media (prefers-reduced-transparency: reduce) {
+  .app-translucent-header {
+    background-color: var(--color-surface-bg) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  [class*='backdrop-blur'] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}

@@ -2,7 +2,7 @@
   "version": 3,
   "builds": [
     {
-      "src": "artifacts/empo/package.json",
+      "src": "artifacts/maqbool/package.json",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist/public"

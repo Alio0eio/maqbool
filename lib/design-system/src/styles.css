@@ -3,6 +3,12 @@
 @import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
 
+/* Automatic source detection misses some files in this package (observed:
+   components/ui/sheet.tsx) when consumed from a sibling app's build —
+   force explicit scanning of every component/hook source file so their
+   Tailwind classes always get generated regardless. */
+@source "./**/*.{ts,tsx}";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -39,6 +45,15 @@
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
   --color-destructive-border: var(--destructive-border);
+
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+  --color-surface-bg: hsl(var(--surface-bg));
+  --color-surface-subtle: hsl(var(--surface-subtle));
 
   --color-chart-1: hsl(var(--chart-1));
   --color-chart-2: hsl(var(--chart-2));
@@ -106,7 +121,7 @@
   --elevate-1: rgba(0, 0, 0, 0.03);
   --elevate-2: rgba(0, 0, 0, 0.08);
 
-  /* EMPO Brand: deep navy #00236f */
+  /* Maqbool brand: deep navy #00236f, paired with the logo's ink + steel mark */
   --background: 240 100% 99%;       /* #f9f9ff */
   --foreground: 218 45% 12%;        /* #111c2d */
   --border: 214 32% 91%;            /* #E2E8F0 */
@@ -144,6 +159,15 @@
   --destructive: 0 66% 47%;         /* #ba1a1a */
   --destructive-foreground: 0 0% 100%;
 
+  --success: 152 58% 24%;
+  --success-foreground: 0 0% 100%;
+  --warning: 32 88% 32%;
+  --warning-foreground: 0 0% 100%;
+  --info: 213 84% 40%;
+  --info-foreground: 0 0% 100%;
+  --surface-bg: 210 40% 98.5%;
+  --surface-subtle: 220 30% 96%;
+
   --input: 214 32% 91%;
   --ring: 210 100% 37%;
   --chart-1: 222 100% 22%;
@@ -155,25 +179,32 @@
   --app-font-sans: 'Inter', sans-serif;
   --app-font-serif: Georgia, serif;
   --app-font-mono: Menlo, monospace;
-  --radius: 0.5rem; /* 8px */
-  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0); /*replace with H S L */
-  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0); /*replace with H S L */
+  /* A slightly more generous base than the shadcn default (8px): cards and
+     sheets read as soft, considered surfaces rather than boxy chrome, while
+     --radius-sm (buttons, inputs, chips) stays a crisp, confident 8px. */
+  --radius: 0.75rem; /* 12px */
+  /* Elevation scale: soft, neutral navy-tinted shadows (matches --foreground's
+     hue) so depth reads as material weight rather than a generic gray smudge.
+     Bigger surfaces (lg/xl) get a longer, softer throw; small chips (2xs/xs)
+     stay tight and barely-there. */
+  --shadow-2xs: 0px 1px 2px 0px hsl(218 45% 12% / 0.04);
+  --shadow-xs: 0px 1px 2px 0px hsl(218 45% 12% / 0.06);
   --shadow-sm:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+    0px 1px 3px 0px hsl(218 45% 12% / 0.08),
+    0px 1px 2px -1px hsl(218 45% 12% / 0.06);
   --shadow:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+    0px 2px 4px -1px hsl(218 45% 12% / 0.08),
+    0px 1px 3px -1px hsl(218 45% 12% / 0.06);
   --shadow-md:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+    0px 4px 8px -2px hsl(218 45% 12% / 0.10),
+    0px 2px 4px -2px hsl(218 45% 12% / 0.06);
   --shadow-lg:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+    0px 8px 16px -4px hsl(218 45% 12% / 0.12),
+    0px 4px 6px -4px hsl(218 45% 12% / 0.08);
   --shadow-xl:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
+    0px 16px 32px -8px hsl(218 45% 12% / 0.16),
+    0px 8px 12px -6px hsl(218 45% 12% / 0.08);
+  --shadow-2xl: 0px 24px 48px -12px hsl(218 45% 12% / 0.22);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
@@ -275,6 +306,15 @@
   --destructive: 0 66% 47%;
   --destructive-foreground: 0 0% 100%;
 
+  --success: 152 50% 48%;
+  --success-foreground: 152 60% 8%;
+  --warning: 38 90% 58%;
+  --warning-foreground: 38 60% 10%;
+  --info: 213 90% 65%;
+  --info-foreground: 213 70% 10%;
+  --surface-bg: 222 45% 8%;
+  --surface-subtle: 222 32% 15%;
+
   --input: 222 32% 22%;
   --ring: 210 100% 55%;
   --chart-1: 217 91% 60%;
@@ -283,24 +323,27 @@
   --chart-4: 38 96% 50%;
   --chart-5: 0 80% 60%;
 
-  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
+  /* Dark surfaces need more contrast than light ones to read as elevated,
+     so these lean on near-black at higher alpha rather than scaling the
+     light-mode navy tint down. */
+  --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.20);
+  --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.24);
   --shadow-sm:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+    0px 1px 3px 0px hsl(0 0% 0% / 0.32),
+    0px 1px 2px -1px hsl(0 0% 0% / 0.24);
   --shadow:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+    0px 2px 4px -1px hsl(0 0% 0% / 0.32),
+    0px 1px 3px -1px hsl(0 0% 0% / 0.24);
   --shadow-md:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+    0px 4px 8px -2px hsl(0 0% 0% / 0.36),
+    0px 2px 4px -2px hsl(0 0% 0% / 0.24);
   --shadow-lg:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+    0px 8px 16px -4px hsl(0 0% 0% / 0.40),
+    0px 4px 6px -4px hsl(0 0% 0% / 0.28);
   --shadow-xl:
-    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
-    0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0);
-  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
+    0px 16px 32px -8px hsl(0 0% 0% / 0.48),
+    0px 8px 12px -6px hsl(0 0% 0% / 0.28);
+  --shadow-2xl: 0px 24px 48px -12px hsl(0 0% 0% / 0.56);
 }
 
 @layer base {
@@ -422,5 +465,38 @@
   .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
+  }
+}
+
+/**
+ * tw-animate-css's animate-in/animate-out utilities (used for every page's
+ * entrance transition and every dialog/popover/dropdown/tooltip/sheet) drive
+ * slide/zoom/spin via transform — exactly the vestibular-triggering motion
+ * prefers-reduced-motion exists to suppress. Collapse the translate/scale/
+ * rotate inputs to identity and cut the duration so what's left is a quick
+ * opacity cross-fade, never a full removal of feedback.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .animate-in,
+  .animate-out {
+    animation-duration: 120ms !important;
+  }
+
+  [class*='fade-in-'],
+  [class*='fade-out-'],
+  [class*='zoom-in-'],
+  [class*='zoom-out-'],
+  [class*='slide-in-from-'],
+  [class*='slide-out-to-'],
+  [class*='spin-in-'],
+  [class*='spin-out-'] {
+    --tw-enter-translate-x: 0 !important;
+    --tw-enter-translate-y: 0 !important;
+    --tw-enter-scale: 1 !important;
+    --tw-enter-rotate: 0 !important;
+    --tw-exit-translate-x: 0 !important;
+    --tw-exit-translate-y: 0 !important;
+    --tw-exit-scale: 1 !important;
+    --tw-exit-rotate: 0 !important;
   }
 }
