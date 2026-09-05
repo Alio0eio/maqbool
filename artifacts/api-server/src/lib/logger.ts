@@ -1,20 +1,24 @@
 import pino from "pino";
-
-const isProduction = process.env.NODE_ENV === "production";
+import { config } from "../config";
 
 export const logger = pino({
-  level: process.env.LOG_LEVEL ?? "info",
+  level: config.logLevel,
+  timestamp: pino.stdTimeFunctions.isoTime,
   redact: [
     "req.headers.authorization",
     "req.headers.cookie",
-    "res.headers['set-cookie']",
+    "res.headers.set-cookie",
   ],
-  ...(isProduction
+  ...(config.isProduction
     ? {}
     : {
         transport: {
           target: "pino-pretty",
-          options: { colorize: true },
+          options: {
+            colorize: true,
+            translateTime: "SYS:standard",
+            singleLine: true,
+          },
         },
       }),
 });
