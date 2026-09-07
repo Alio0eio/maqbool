@@ -176,13 +176,15 @@ This document outlines the step-by-step implementation plan for the **Empo Recru
 **Duration**: 2-3 days
 
 #### 3.1 User Registration & Authentication
-- [ ] 3.1.1 Install auth dependencies: `bcryptjs`, `jsonwebtoken`
-- [ ] 3.1.2 Create authentication utilities
+- [x] 3.1.1 Install auth dependencies: `bcryptjs`, `jsonwebtoken`, `@types/jsonwebtoken`
+- [x] 3.1.2 Create authentication utilities
   - Password hashing/verification functions
   - JWT token generation/verification
   - Token refresh logic
 
-- [ ] 3.1.3 Implement registration endpoint
+**Progress update (2026-09-07)**: Authentication dependencies, reusable password/JWT utilities, and the registration endpoint are implemented. Login, logout, and refresh routes remain pending.
+
+- [x] 3.1.3 Implement registration endpoint
   - `POST /auth/register` - User signup
   - Email validation
   - Password strength validation using Zod
@@ -615,6 +617,8 @@ This document outlines the step-by-step implementation plan for the **Empo Recru
 - [ ] 10.2.2 Test database operations
 - [ ] 10.2.3 Test authentication flows
 - [ ] 10.2.4 Test error handling
+
+---
 
 #### 10.3 Performance Testing
 - [ ] 10.3.1 Load testing with k6 or Artillery

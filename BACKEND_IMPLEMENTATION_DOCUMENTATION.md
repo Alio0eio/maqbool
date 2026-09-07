@@ -1,0 +1,340 @@
+# Empo Backend Implementation Documentation
+
+This document records the database and backend implementation completed so far, following `BACKEND_IMPLEMENTATION_PLAN.md` through Phase 3.1. It describes the code currently present in the repository. The final subsection of Phase 3.1, authentication route implementation, is identified as pending where it has not yet been built.
+
+## 1. Repository and Backend Foundation
+
+1. The project uses a pnpm workspace monorepo.
+2. The API server lives in `artifacts/api-server` and is a private ESM package.
+3. The backend uses Node.js, Express 5, TypeScript, Drizzle ORM, PostgreSQL, Pino, dotenv, JWT, bcryptjs, and Zod-related workspace packages.
+4. The API server has separate source areas for configuration, middleware, routes, and reusable libraries.
+5. The server is built with the existing ESBuild-based build script and typechecked with the package TypeScript configuration.
+
+## 2. Database Implementation
+
+### 2.1 Database and ORM setup
+
+1. PostgreSQL is the target database, with PostgreSQL 14 or newer specified by the plan.
+2. Drizzle ORM is used for the schema and native query-building layer.
+3. The database schema is defined in `lib/db/src/schema/core.ts`.
+4. The database package exports the schema through its existing schema index and database package entry points.
+5. Drizzle-Zod creates insert validation schemas from the database definitions.
+6. The schema exports both table objects and TypeScript select/insert types for application code.
+
+### 2.2 PostgreSQL enums
+
+The schema defines the following PostgreSQL enums before defining the tables that use them:
+
+1. `user_role`: `candidate`, `recruiter`, `admin`.
+2. `company_member_status`: `active`, `invited`, `inactive`.
+3. `job_status`: `draft`, `published`, `closed`, `paused`.
+4. `job_location_type`: `remote`, `hybrid`, `onsite`.
+5. `job_type`: `full_time`, `part_time`, `contract`, `internship`.
+6. `application_status`: `applied`, `reviewing`, `shortlisted`, `interviewing`, `offered`, `rejected`, `withdrawn`.
+7. `application_stage`: `applied`, `screening`, `interview`, `decision`, `offer`, `hired`, `rejected`.
+8. `interview_type`: `async_video`, `live_video`, `phone`, `in_person`.
+9. `interview_status`: `pending`, `invited`, `in_progress`, `completed`, `cancelled`.
+
+Using database enums keeps role, status, stage, type, and workflow values constrained at the database level.
+
+### 2.3 `users` table
+
+The `users` table is the central identity and authentication table.
+
+1. `id` is an auto-incrementing serial primary key.
+2. `email` is required and supports up to 320 characters.
+3. `password_hash` stores the bcrypt password hash, never the plaintext password.
+4. `role` uses the `user_role` enum and is required.
+5. `name` is required and supports up to 200 characters.
+6. `avatar_url` is optional.
+7. `created_at` and `updated_at` use timezone-aware timestamps and default to the current time.
+8. `users_email_unique` is a unique index, preventing duplicate email addresses.
+
+### 2.4 `candidate_profiles` table
+
+This table stores candidate-specific information separately from the core user identity.
+
+1. `id` is an auto-incrementing serial primary key.
+2. `user_id` references `users.id` and cascades on user deletion.
+3. The candidate profile includes headline, location, phone, address, resume URL, portfolio URL, LinkedIn URL, GitHub URL, and summary fields.
+4. `skills` is a required JSONB string array with an empty-array default.
+5. `years_of_experience` uses numeric precision and scale suitable for fractional years.
+6. Availability and salary expectation are stored as optional fields.
+7. Created and updated timestamps are included.
+8. `candidate_profiles_user_unique` ensures each user has at most one candidate profile.
+
+### 2.5 `companies` table
+
+This table stores employer information.
+
+1. It has a serial primary key and required company name.
+2. Optional fields include industry, website, logo URL, company size, location, description, and culture.
+3. `benefits` is a required JSONB string array with an empty-array default.
+4. Created and updated timestamps are included.
+
+### 2.6 `company_members` table
+
+This junction table connects users to companies.
+
+1. `company_id` references `companies.id` and cascades when a company is deleted.
+2. `user_id` references `users.id` and cascades when a user is deleted.
+3. A required role string stores the member's company-specific role.
+4. `status` uses `company_member_status` and defaults to `invited`.
+5. `joined_at` records when membership began and is optional.
+6. `created_at` records membership creation.
+7. `company_members_company_user_unique` prevents duplicate membership rows for the same company and user pair.
+
+### 2.7 `jobs` table
+
+This table stores recruiter-created job postings.
+
+1. `company_id` references `companies.id` with restrict-on-delete behavior, preventing deletion of a company that still owns jobs.
+2. Required job fields include title, location, location type, and job type.
+3. Optional fields include department, salary range, salary currency, description, requirements, responsibilities, benefits, experience level, posted time, and closing date.
+4. `skills` is a required JSONB string array with an empty-array default.
+5. `status` uses `job_status` and defaults to `draft`.
+6. `view_count` is required and defaults to zero.
+7. Created and updated timestamps are included.
+8. `jobs_company_id_idx` supports company-based job queries.
+9. `jobs_status_idx` supports filtering by publication status.
+
+### 2.8 `applications` table
+
+This table connects candidates to jobs and tracks the recruitment workflow.
+
+1. `job_id` references `jobs.id` and cascades when a job is deleted.
+2. `candidate_id` references `candidate_profiles.id` and cascades when a candidate profile is deleted.
+3. `status` uses `application_status` and defaults to `applied`.
+4. `stage` uses `application_stage` and defaults to `applied`.
+5. Resume URL and cover letter fields support application materials.
+6. `ai_score`, `ai_summary`, notes, and rejection reason support later evaluation features.
+7. Created and updated timestamps are included.
+8. `applications_job_candidate_unique` prevents a candidate from applying to the same job more than once.
+9. Indexes support job lookup, candidate lookup, and stage filtering.
+
+### 2.9 `interviews` table
+
+This table stores interviews associated with applications.
+
+1. `application_id` references `applications.id` and cascades when an application is deleted.
+2. `type` uses `interview_type`.
+3. `status` uses `interview_status` and defaults to `pending`.
+4. Scheduling, deadline, duration, invitation note, and completion timestamp fields are available.
+5. Created and updated timestamps are included.
+6. `interviews_application_id_idx` supports application-based interview lookup.
+
+### 2.10 Generated database schemas and types
+
+For each core table, the schema creates a Drizzle-Zod insert schema with the auto-generated `id` omitted:
+
+- `insertUserSchema`
+- `insertCandidateProfileSchema`
+- `insertCompanySchema`
+- `insertCompanyMemberSchema`
+- `insertJobSchema`
+- `insertApplicationSchema`
+- `insertInterviewSchema`
+
+The schema also exports inferred types for select and insert operations, including `User`, `CandidateProfile`, `Company`, `CompanyMember`, `Job`, `Application`, and `Interview`.
+
+### 2.11 Database phase status
+
+The core database schema is already designed and implemented in code. The plan still lists environment provisioning, pushing the schema to a live PostgreSQL database, verifying the generated database objects, and creating a backup strategy as operational tasks. Those database operations are not represented as completed by the current source files.
+
+## 3. Backend Server Implementation
+
+### 3.1 API server entry point
+
+1. `artifacts/api-server/src/index.ts` imports the Express app, configuration, and logger.
+2. The server calls `app.listen(config.port, ...)`.
+3. A listen error is logged and exits the process with status `1`.
+4. A successful startup logs the active port.
+
+### 3.2 Express application and middleware order
+
+The application in `artifacts/api-server/src/app.ts` configures the following request pipeline:
+
+1. CORS is configured from `config.corsOrigins`; no configured list uses the default CORS behavior.
+2. `express.json()` parses JSON bodies.
+3. `cookie-parser` parses request cookies.
+4. `pino-http` attaches request and response logging.
+5. Request serialization records request id, method, and path without query parameters.
+6. Response serialization records the status code.
+7. `express.urlencoded({ extended: true })` parses URL-encoded bodies.
+8. The application router is mounted at `/api`.
+9. Unmatched routes use the not-found handler.
+10. Errors use the centralized error handler.
+
+### 3.3 Authentication middleware and RBAC
+
+The authentication middleware is implemented in `artifacts/api-server/src/middlewares/auth.ts`.
+
+1. Supported user roles are restricted to `candidate`, `recruiter`, and `admin`.
+2. Express's `Request` type is extended with an optional authenticated user containing id, role, email, and name values.
+3. `authenticate` reads the `Authorization` header.
+4. The header must match `Bearer <token>`.
+5. Missing authorization returns a `401` authentication-required error.
+6. Malformed authorization returns a `401` invalid-credentials error.
+7. The token is verified with the configured access secret and allowed algorithm.
+8. The token payload must contain a non-empty string `sub` claim and a supported role.
+9. Valid claims are copied to `req.user`.
+10. `authorize(...roles)` checks that authentication exists and that the user role is allowed.
+11. Missing authentication returns `401`; a disallowed role returns `403`.
+
+### 3.4 Logging configuration
+
+The logger is implemented in `artifacts/api-server/src/lib/logger.ts`.
+
+1. Pino uses the validated configured log level.
+2. Log timestamps use ISO time formatting.
+3. Authorization headers, cookies, and `Set-Cookie` headers are redacted.
+4. Development and test environments use `pino-pretty` for readable local logs.
+5. Production uses structured Pino output without the pretty transport.
+6. `pino-http` uses this logger for request and response events.
+
+### 3.5 Environment configuration
+
+The configuration module is implemented in `artifacts/api-server/src/config/index.ts`.
+
+1. `dotenv/config` loads environment variables before configuration is evaluated.
+2. `NODE_ENV` accepts `development`, `production`, or `test`, defaulting to `development`.
+3. `PORT` is required and must be between 1 and 65535.
+4. `LOG_LEVEL` is validated against the supported Pino levels.
+5. Development defaults to `debug`; other environments default to `info`.
+6. `JWT_ALGORITHM` accepts `HS256`, `HS384`, or `HS512`, defaulting to `HS256`.
+7. `CORS_ORIGIN` supports comma-separated, trimmed origins.
+8. `DATABASE_URL` is loaded when provided.
+9. Access and refresh JWT secrets can be configured independently.
+10. Legacy `JWT_SECRET` is supported as a fallback for both token secrets.
+11. Test mode has a test-only fallback secret.
+12. Production requires effective access and refresh secrets of at least 32 characters.
+13. Access tokens default to a 15-minute lifetime and refresh tokens default to 7 days.
+
+The root `.env.example` documents the server, CORS, logging, JWT, and database variables.
+
+### 3.6 Authentication dependencies and development command (Task 3.1.1)
+
+1. `bcryptjs` was added to hash and verify passwords.
+2. `jsonwebtoken` is used for JWT creation and verification.
+3. `@types/jsonwebtoken` supplies JWT TypeScript definitions.
+4. `cross-env` was added for cross-platform environment variable assignment.
+5. The API server development script now sets `NODE_ENV=development`, builds the server, and starts the generated output.
+6. The pnpm lockfile records the added dependency versions and resolutions.
+
+### 3.7 Reusable authentication utilities (Task 3.1.2)
+
+The reusable utilities are implemented in `artifacts/api-server/src/lib/auth.ts`.
+
+#### Password functions
+
+1. `hashPassword(password)` hashes passwords with bcrypt using 12 salt rounds.
+2. `verifyPassword(password, passwordHash)` compares a supplied password to its stored bcrypt hash.
+
+#### Access-token functions
+
+1. `generateAccessToken(userId)` creates a JWT with the user id in the `sub` claim.
+2. It uses the access secret, configured algorithm, and access expiration setting.
+3. `verifyAccessToken(token)` verifies the signature, algorithm, expiration, and required subject claim.
+
+#### Refresh-token functions
+
+1. `generateRefreshToken(userId)` creates a JWT with the user id in the `sub` claim.
+2. It uses the separate refresh secret, configured algorithm, and refresh expiration setting.
+3. `verifyRefreshToken(token)` verifies the refresh token with the refresh secret.
+
+#### Shared token validation
+
+1. String JWT payloads are rejected.
+2. A non-empty string `sub` claim is required.
+3. Invalid, expired, malformed, or subject-less tokens become a consistent `401` error.
+4. Separate access and refresh secrets prevent cross-purpose token acceptance.
+
+### 3.8 User registration endpoint (Task 3.1.3)
+
+The registration endpoint is implemented through the existing API router hierarchy. Because the Express application mounts the root router at `/api`, the complete runtime URL is `POST /api/auth/register`.
+
+#### Request validation
+
+1. `registerRequestSchema` is defined in the shared `@workspace/api-zod/auth` module.
+2. The request requires `email`, `password`, and `name`, matching the required fields in the `users` table.
+3. Email input is trimmed and must pass Zod email validation.
+4. Password input must be at least 8 characters and include an uppercase letter, lowercase letter, number, and special character.
+5. Name input is trimmed, must not be empty, and is limited to the database column's 200-character maximum.
+6. Failed validation is converted to a safe `400 Invalid registration data` error through the existing centralized error handler.
+
+#### User creation
+
+1. The route normalizes the validated email to lowercase before querying or inserting it.
+2. It checks the `users` table for an existing email before hashing or inserting.
+3. Existing accounts return `409 An account with that email already exists` without database details.
+4. The password is hashed with the existing `hashPassword` bcrypt utility using the configured 12 salt rounds.
+5. New users receive the default `candidate` role.
+6. The insert supplies only email, password hash, role, and name. The database generates the serial id and timestamp defaults.
+7. A PostgreSQL unique-constraint violation (`23505`) is translated to the same safe `409` response, covering concurrent registration race conditions.
+
+#### Response and security
+
+1. Successful registration returns HTTP `201 Created`.
+2. The response contains `message` and a public `user` object with only `id`, `email`, and `name`.
+3. Plaintext passwords, password hashes, roles, timestamps, and database error details are not returned.
+4. Unexpected errors are passed to the existing centralized error handler rather than handled in the route.
+
+#### Tests added
+
+The native Node test suite in `artifacts/api-server/src/register.test.ts` covers:
+
+1. Successful registration and HTTP 201 response.
+2. Email trimming and lowercase normalization.
+3. Password hashing and verification against the stored hash.
+4. Absence of password and password hash in the response.
+5. Invalid email.
+6. Password shorter than eight characters.
+7. Missing uppercase, lowercase, number, and special character requirements.
+8. Missing required fields.
+9. Duplicate email conflict responses without internal database details.
+
+The API server package now exposes a `test` script using the workspace's existing `tsx` runtime and Node's built-in test module. The router also exports `createAuthRouter(database)` so endpoint tests can use an isolated fake database without a live PostgreSQL instance.
+
+## 4. Completion Boundary Through Phase 3.1
+
+### Completed
+
+- Core Drizzle/PostgreSQL schema definitions for users, candidates, companies, company members, jobs, applications, and interviews.
+- Database enums, foreign keys, delete behavior, uniqueness constraints, indexes, generated insert schemas, and inferred types.
+- Express application entry point and middleware stack.
+- JWT authentication middleware and role-based authorization.
+- Structured Pino logging with credential redaction.
+- Environment loading and startup validation.
+- Authentication dependencies from task 3.1.1.
+- Password, access-token, and refresh-token utilities from task 3.1.2.
+- User registration endpoint from task 3.1.3.
+
+### Not yet implemented
+
+The following tasks remain planned in the implementation plan:
+
+- 3.1.4: `POST /auth/login`
+- 3.1.5: `POST /auth/logout`
+- 3.1.6: `POST /auth/refresh`
+- Phase 3.2 profile-management endpoints
+- Later candidate, recruiter, interview, AI, notification, admin, testing, deployment, and API documentation work
+
+## 5. Source Reference
+
+- `lib/db/src/schema/core.ts`
+- `lib/db/src/schema/index.ts`
+- `lib/db/src/index.ts`
+- `artifacts/api-server/src/index.ts`
+- `artifacts/api-server/src/app.ts`
+- `artifacts/api-server/src/config/index.ts`
+- `artifacts/api-server/src/lib/auth.ts`
+- `artifacts/api-server/src/routes/auth.ts`
+- `artifacts/api-server/src/register.test.ts`
+- `lib/api-zod/src/auth.ts`
+- `lib/api-zod/package.json`
+- `artifacts/api-server/src/lib/logger.ts`
+- `artifacts/api-server/src/middlewares/auth.ts`
+- `artifacts/api-server/src/middlewares/error.ts`
+- `artifacts/api-server/src/routes/index.ts`
+- `artifacts/api-server/package.json`
+- `.env.example`

@@ -62,7 +62,7 @@ export const authenticate: RequestHandler = (req, _res, next) => {
   }
 
   try {
-    const payload = jwt.verify(match[1], config.jwt.secret, {
+    const payload = jwt.verify(match[1], config.jwt.accessSecret, {
       algorithms: [config.jwt.algorithm],
     });
     req.user = getAuthenticatedUser(payload);
