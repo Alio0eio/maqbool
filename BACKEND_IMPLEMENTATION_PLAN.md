@@ -182,7 +182,7 @@ This document outlines the step-by-step implementation plan for the **Empo Recru
   - JWT token generation/verification
   - Token refresh logic
 
-**Progress update (2026-09-07)**: Authentication dependencies, reusable password/JWT utilities, and the registration endpoint are implemented. Login, logout, and refresh routes remain pending.
+**Progress update (2026-09-08)**: Authentication dependencies, reusable password/JWT utilities, registration, login, logout, and refresh-token rotation endpoints are implemented.
 
 - [x] 3.1.3 Implement registration endpoint
   - `POST /auth/register` - User signup
@@ -191,17 +191,17 @@ This document outlines the step-by-step implementation plan for the **Empo Recru
   - Duplicate email check
   - Auto-generate user record
 
-- [ ] 3.1.4 Implement login endpoint
+- [x] 3.1.4 Implement login endpoint
   - `POST /auth/login` - User login
   - Email/password verification
   - JWT token generation
   - Return user profile data
 
-- [ ] 3.1.5 Implement logout endpoint
+- [x] 3.1.5 Implement logout endpoint
   - `POST /auth/logout` - Token invalidation
   - Token blacklist strategy (optional)
 
-- [ ] 3.1.6 Implement refresh token endpoint
+- [x] 3.1.6 Implement refresh token endpoint
   - `POST /auth/refresh` - Get new access token
   - Token rotation strategy
 

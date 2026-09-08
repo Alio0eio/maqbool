@@ -295,6 +295,76 @@ The native Node test suite in `artifacts/api-server/src/register.test.ts` covers
 
 The API server package now exposes a `test` script using the workspace's existing `tsx` runtime and Node's built-in test module. The router also exports `createAuthRouter(database)` so endpoint tests can use an isolated fake database without a live PostgreSQL instance.
 
+### 3.9 User login endpoint (Task 3.1.4)
+
+The login endpoint is implemented through the same auth router and is available at `POST /api/auth/login` because the Express application mounts the root router at `/api`.
+
+#### Request validation and authentication
+
+1. `loginRequestSchema` in the shared `@workspace/api-zod/auth` module requires a valid email and a provided password.
+2. The validated email is trimmed by Zod and normalized to lowercase before the user lookup.
+3. The route selects only the user id, email, password hash, and name needed for authentication and the response.
+4. The stored password hash is checked with the existing `verifyPassword` bcrypt utility; plaintext comparison and duplicate password logic are not used.
+5. Missing users and incorrect passwords return the same generic `401 Invalid email or password` response.
+6. Successful authentication creates an access JWT with the existing `generateAccessToken` utility and the user id in the `sub` claim.
+
+#### Response and security
+
+1. Successful login returns HTTP `200` with `message`, `token`, and a user object containing only `id`, `email`, and `name`.
+2. Passwords, password hashes, JWT secrets, roles, and other database fields are not returned.
+3. Invalid email or missing password input returns HTTP `400 Invalid login data` through the existing centralized error handler.
+4. Unexpected route errors are forwarded to the existing centralized error handler.
+
+#### Tests added
+
+The API server test suite covers successful login, JWT subject generation, safe user response fields, nonexistent email, incorrect password, invalid email, and missing password. The authentication failure cases verify that nonexistent and incorrect credentials receive the same generic response.
+
+### 3.10 User logout endpoint (Task 3.1.5)
+
+The logout endpoint is implemented through the existing auth router and is available at `POST /api/auth/logout` because the Express application mounts the root router at `/api`.
+
+#### Token revocation flow
+
+1. Access tokens now include a unique `jti` claim alongside the user `sub`, standard `iat`, and `exp` claims. Refresh tokens also receive a `jti` so existing refresh-token verification remains compatible.
+2. The route uses the existing `Authorization: Bearer <token>` convention and the shared `authenticate` middleware.
+3. The middleware verifies access tokens through the existing `verifyAccessToken` utility, then checks the token's `jti` against the revocation store.
+4. Logout stores only the `jti` and original expiration timestamp, never the raw JWT or user credentials.
+5. A revoked token returns `401 Invalid authentication token` from protected routes, while a different valid token remains accepted.
+6. Logout returns HTTP `200` with `{ "message": "Logout successful" }` and no token data.
+
+#### Revocation storage and limitation
+
+No Redis, cache, or revocation table exists in the current project. Revocations are therefore stored in an in-memory `Map` in `artifacts/api-server/src/lib/token-revocation.ts`. Expired entries are removed lazily and are never retained beyond the JWT expiration time. This is suitable for the current development/student implementation, but it is not sufficient for a multi-instance production deployment because each process has its own store; a shared Redis or database-backed store should be introduced before horizontal scaling.
+
+#### Tests added
+
+The API server tests cover successful logout, missing and malformed credentials, repeated logout, protected-route rejection for revoked tokens, acceptance of a different valid token, expiration cleanup, and the absence of sensitive token data in the logout response.
+
+### 3.11 Refresh token endpoint (Task 3.1.6)
+
+The refresh endpoint is implemented through the existing auth router and is available at `POST /api/auth/refresh`. The project consistently returns tokens in JSON, so the request body contains `{ "refreshToken": "<token>" }` rather than using a cookie.
+
+#### Refresh-token architecture
+
+1. Login now issues a short-lived access token and a long-lived refresh token. The existing `token` response field remains the access-token alias, and `accessToken` plus `refreshToken` are also returned explicitly.
+2. Access tokens use the configured access secret and include `sub`, unique `jti`, `type: "access"`, `iat`, `exp`, and the claims required by the existing RBAC middleware.
+3. Refresh tokens use the separate configured refresh secret and include `sub`, unique `jti`, `type: "refresh"`, `iat`, and `exp`.
+4. Shared verification utilities enforce the expected secret and token type, so refresh tokens cannot authenticate protected endpoints and access tokens cannot call the refresh endpoint.
+
+#### Rotation and server-side state
+
+1. Refresh-token state is stored in the in-memory `Map` in `artifacts/api-server/src/lib/refresh-token-store.ts`, keyed by `jti` and containing only the user id, expiration, and revoked status.
+2. A valid refresh request verifies the JWT, checks its stored state, confirms the user still exists, revokes the presented refresh token, and creates a new access/refresh token pair.
+3. Reusing a revoked refresh token returns a generic `401 Invalid refresh token` response and revokes the remaining active refresh tokens for that user.
+4. Logout revokes the user's active refresh-token session in addition to the access-token blacklist, so a logged-out refresh token cannot issue new credentials.
+5. Expired refresh records are removed lazily and are never usable after their original expiration.
+
+#### Storage limitation and tests
+
+No Redis, cache, or token-session database table exists in the current project. The in-memory refresh store is appropriate for the current development/student implementation but is not suitable for a multi-instance production deployment because each process has independent state. A shared Redis or database-backed token-session store should replace it before horizontal scaling.
+
+The API server tests cover successful refresh, new access-token use on protected routes, refresh-token rotation, old-token reuse rejection, expired/invalid/access-token rejection, revoked-token rejection, nonexistent-user rejection, logout invalidation, and protection against exposing refresh tokens from protected responses.
+
 ## 4. Completion Boundary Through Phase 3.1
 
 ### Completed
@@ -308,14 +378,14 @@ The API server package now exposes a `test` script using the workspace's existin
 - Authentication dependencies from task 3.1.1.
 - Password, access-token, and refresh-token utilities from task 3.1.2.
 - User registration endpoint from task 3.1.3.
+- User login endpoint from task 3.1.4.
+- User logout endpoint from task 3.1.5.
+- Refresh token endpoint from task 3.1.6.
 
 ### Not yet implemented
 
 The following tasks remain planned in the implementation plan:
 
-- 3.1.4: `POST /auth/login`
-- 3.1.5: `POST /auth/logout`
-- 3.1.6: `POST /auth/refresh`
 - Phase 3.2 profile-management endpoints
 - Later candidate, recruiter, interview, AI, notification, admin, testing, deployment, and API documentation work
 
@@ -328,6 +398,7 @@ The following tasks remain planned in the implementation plan:
 - `artifacts/api-server/src/app.ts`
 - `artifacts/api-server/src/config/index.ts`
 - `artifacts/api-server/src/lib/auth.ts`
+- `artifacts/api-server/src/lib/refresh-token-store.ts`
 - `artifacts/api-server/src/routes/auth.ts`
 - `artifacts/api-server/src/register.test.ts`
 - `lib/api-zod/src/auth.ts`

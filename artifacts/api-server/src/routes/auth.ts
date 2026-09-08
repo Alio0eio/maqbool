@@ -1,8 +1,26 @@
 import { Router, type IRouter } from "express";
-import { registerRequestSchema } from "@workspace/api-zod/auth";
+import {
+  loginRequestSchema,
+  refreshRequestSchema,
+  registerRequestSchema,
+} from "@workspace/api-zod/auth";
 import { db, users } from "@workspace/db";
 import { eq } from "drizzle-orm";
-import { hashPassword } from "../lib/auth";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  hashPassword,
+  verifyPassword,
+  verifyRefreshToken,
+} from "../lib/auth";
+import { authenticate } from "../middlewares/auth";
+import { revokeAccessToken } from "../lib/token-revocation";
+import {
+  getRefreshToken,
+  revokeRefreshToken,
+  revokeRefreshTokensForUser,
+  storeRefreshToken,
+} from "../lib/refresh-token-store";
 
 type HttpError = Error & { statusCode: number };
 
@@ -23,6 +41,130 @@ function isUniqueViolation(error: unknown): boolean {
 
 export function createAuthRouter(database: typeof db = db): IRouter {
   const router: IRouter = Router();
+
+  router.post("/auth/login", async (req, res, next) => {
+    const parsed = loginRequestSchema.safeParse(req.body);
+    if (!parsed.success) {
+      next(createHttpError("Invalid login data", 400));
+      return;
+    }
+
+    const email = parsed.data.email.toLowerCase();
+    const { password } = parsed.data;
+
+    try {
+      const [user] = await database
+        .select({
+          id: users.id,
+          email: users.email,
+          passwordHash: users.passwordHash,
+          name: users.name,
+          role: users.role,
+        })
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      if (!user || !(await verifyPassword(password, user.passwordHash))) {
+        next(createHttpError("Invalid email or password", 401));
+        return;
+      }
+
+      const accessToken = generateAccessToken(user.id, {
+        role: user.role,
+        email: user.email,
+        name: user.name,
+      });
+      const refreshToken = generateRefreshToken(user.id);
+      const refreshPayload = verifyRefreshToken(refreshToken);
+      storeRefreshToken(refreshPayload.jti, String(user.id), refreshPayload.exp * 1000);
+
+      res.status(200).json({
+        message: "Login successful",
+        token: accessToken,
+        accessToken,
+        refreshToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/auth/logout", authenticate, (req, res, next) => {
+    if (!req.authToken) {
+      next(createHttpError("Invalid authentication token", 401));
+      return;
+    }
+
+    revokeAccessToken(req.authToken.jti, req.authToken.exp * 1000);
+    revokeRefreshTokensForUser(req.user?.id ?? req.authToken.sub);
+    res.status(200).json({ message: "Logout successful" });
+  });
+
+  router.post("/auth/refresh", async (req, res, next) => {
+    const parsed = refreshRequestSchema.safeParse(req.body);
+    if (!parsed.success) {
+      next(createHttpError("Invalid refresh token", 401));
+      return;
+    }
+
+    try {
+      const refreshPayload = verifyRefreshToken(parsed.data.refreshToken);
+      const storedToken = getRefreshToken(refreshPayload.jti);
+
+      if (
+        !storedToken ||
+        storedToken.revoked ||
+        storedToken.userId !== refreshPayload.sub ||
+        storedToken.expiresAt <= Date.now()
+      ) {
+        if (storedToken?.revoked) {
+          revokeRefreshTokensForUser(storedToken.userId);
+        }
+        next(createHttpError("Invalid refresh token", 401));
+        return;
+      }
+
+      const [user] = await database
+        .select({ id: users.id, email: users.email, name: users.name, role: users.role })
+        .from(users)
+        .where(eq(users.id, Number(refreshPayload.sub)))
+        .limit(1);
+
+      if (!user) {
+        revokeRefreshToken(refreshPayload.jti);
+        next(createHttpError("Invalid refresh token", 401));
+        return;
+      }
+
+      revokeRefreshToken(refreshPayload.jti);
+      const accessToken = generateAccessToken(user.id, {
+        role: user.role,
+        email: user.email,
+        name: user.name,
+      });
+      const refreshToken = generateRefreshToken(user.id);
+      const nextRefreshPayload = verifyRefreshToken(refreshToken);
+      storeRefreshToken(
+        nextRefreshPayload.jti,
+        String(user.id),
+        nextRefreshPayload.exp * 1000,
+      );
+
+      res.status(200).json({
+        message: "Token refreshed successfully",
+        accessToken,
+        refreshToken,
+      });
+    } catch (_error) {
+      next(createHttpError("Invalid refresh token", 401));
+    }
+  });
 
   router.post("/auth/register", async (req, res, next) => {
     const parsed = registerRequestSchema.safeParse(req.body);

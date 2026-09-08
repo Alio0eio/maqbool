@@ -1,6 +1,7 @@
 import type { RequestHandler } from "express";
-import jwt, { type Algorithm, type JwtPayload } from "jsonwebtoken";
-import { config } from "../config";
+import type { JwtPayload } from "jsonwebtoken";
+import { verifyAccessToken } from "../lib/auth";
+import { isAccessTokenRevoked } from "../lib/token-revocation";
 
 export const userRoles = ["candidate", "recruiter", "admin"] as const;
 export type UserRole = (typeof userRoles)[number];
@@ -12,10 +13,17 @@ export type AuthenticatedUser = {
   name?: string;
 };
 
+export type AuthenticatedToken = JwtPayload & {
+  sub: string;
+  jti: string;
+  exp: number;
+};
+
 declare global {
   namespace Express {
     interface Request {
       user?: AuthenticatedUser;
+      authToken?: AuthenticatedToken;
     }
   }
 }
@@ -30,12 +38,15 @@ function isUserRole(value: unknown): value is UserRole {
   return typeof value === "string" && userRoles.includes(value as UserRole);
 }
 
-function getAuthenticatedUser(payload: string | JwtPayload): AuthenticatedUser {
+function getAuthenticatedUser(payload: JwtPayload): AuthenticatedUser {
   if (
     typeof payload === "string" ||
     typeof payload.sub !== "string" ||
     !payload.sub ||
-    !isUserRole(payload.role)
+    !isUserRole(payload.role) ||
+    typeof payload.jti !== "string" ||
+    payload.jti.length === 0 ||
+    typeof payload.exp !== "number"
   ) {
     throw createAuthError("Invalid authentication token");
   }
@@ -62,10 +73,15 @@ export const authenticate: RequestHandler = (req, _res, next) => {
   }
 
   try {
-    const payload = jwt.verify(match[1], config.jwt.accessSecret, {
-      algorithms: [config.jwt.algorithm],
-    });
-    req.user = getAuthenticatedUser(payload);
+    const payload = verifyAccessToken(match[1]);
+    if (isAccessTokenRevoked(payload.jti)) {
+      next(createAuthError("Invalid authentication token"));
+      return;
+    }
+
+    const authToken = payload as AuthenticatedToken;
+    req.user = getAuthenticatedUser(authToken);
+    req.authToken = authToken;
     next();
   } catch (error) {
     if (error instanceof Error && "statusCode" in error) {

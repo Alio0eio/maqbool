@@ -13,3 +13,16 @@ export const registerRequestSchema = z.object({
 });
 
 export type RegisterRequest = z.infer<typeof registerRequestSchema>;
+
+export const loginRequestSchema = z.object({
+  email: z.string().trim().email("Email must be a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export type LoginRequest = z.infer<typeof loginRequestSchema>;
+
+export const refreshRequestSchema = z.object({
+  refreshToken: z.string().min(1, "Refresh token is required"),
+});
+
+export type RefreshRequest = z.infer<typeof refreshRequestSchema>;
