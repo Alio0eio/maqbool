@@ -26,3 +26,15 @@ export const refreshRequestSchema = z.object({
 });
 
 export type RefreshRequest = z.infer<typeof refreshRequestSchema>;
+
+export const updateProfileRequestSchema = z
+  .object({
+    name: z.string().trim().min(1, "Name is required").max(200, "Name is too long").optional(),
+    avatarUrl: z.string().trim().url("Avatar URL must be a valid URL").nullable().optional(),
+  })
+  .strict()
+  .refine((value) => value.name !== undefined || value.avatarUrl !== undefined, {
+    message: "At least one profile field is required",
+  });
+
+export type UpdateProfileRequest = z.infer<typeof updateProfileRequestSchema>;

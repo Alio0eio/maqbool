@@ -1,6 +1,6 @@
 # Empo Backend Implementation Documentation
 
-This document records the database and backend implementation completed so far, following `BACKEND_IMPLEMENTATION_PLAN.md` through Phase 3.1. It describes the code currently present in the repository. The final subsection of Phase 3.1, authentication route implementation, is identified as pending where it has not yet been built.
+This document records the database and backend implementation completed so far, following `BACKEND_IMPLEMENTATION_PLAN.md` through Phase 3.2.1. It describes the code currently present in the repository.
 
 ## 1. Repository and Backend Foundation
 
@@ -365,7 +365,55 @@ No Redis, cache, or token-session database table exists in the current project. 
 
 The API server tests cover successful refresh, new access-token use on protected routes, refresh-token rotation, old-token reuse rejection, expired/invalid/access-token rejection, revoked-token rejection, nonexistent-user rejection, logout invalidation, and protection against exposing refresh tokens from protected responses.
 
-## 4. Completion Boundary Through Phase 3.1
+### 3.12 Get current user endpoint (Task 3.2.1)
+
+The current-user endpoint is available at `GET /api/auth/me` because the root router is mounted under `/api`.
+
+#### Request and lookup flow
+
+1. The route reuses the existing `authenticate` middleware; it does not parse or verify JWTs independently.
+2. The middleware validates the bearer access token and stores the verified subject in `req.user.id`.
+3. The route converts only that verified subject to the numeric database id and rejects invalid subject values with the existing `401` error format.
+4. The user query uses Drizzle and `eq(users.id, userId)`, so request body, query parameters, and client-provided user ids cannot select another user.
+5. The user projection includes id, email, role, name, avatar URL, and creation timestamp only.
+6. A missing database user returns `404 User not found` through the centralized error handler.
+
+#### Role-specific profile data and security
+
+1. Candidate users are looked up in the existing `candidate_profiles` table and receive a `profile` object when a profile row exists.
+2. Recruiter-specific and admin-specific profile tables are not currently implemented, so those roles return the public user object without a profile property.
+3. Password hashes, refresh tokens, and other authentication secrets are not selected or returned.
+4. The response is a direct JSON user object, matching the generated client contract for `getMe`.
+
+#### Tests added
+
+The API server test suite verifies that the endpoint rejects unauthenticated requests, uses the JWT subject even when a conflicting query parameter is supplied, includes candidate profile data, excludes sensitive fields, and returns `404` when the authenticated user is absent.
+
+### 3.13 Update user profile endpoint (Task 3.2.2)
+
+The basic profile update endpoint is available at `PUT /api/auth/profile` because the root router is mounted under `/api`.
+
+#### Validation and authorization
+
+1. The route reuses the existing `authenticate` middleware and reads the target user id only from `req.user.id`.
+2. `updateProfileRequestSchema` in the shared API Zod package accepts optional `name` and `avatarUrl` fields.
+3. Names are trimmed, required to be non-empty when supplied, and limited to 200 characters to match the database column.
+4. Avatar values must be valid URLs; `null` is accepted to clear an existing avatar URL.
+5. The schema is strict and requires at least one update field, so protected fields such as id, email, role, passwordHash, and createdAt are rejected rather than ignored.
+
+#### Database update and response
+
+1. The route updates only `users.name`, `users.avatarUrl`, and `users.updatedAt`.
+2. The Drizzle `where(eq(users.id, userId))` condition scopes the update to the authenticated user.
+3. A missing user returns `404 User not found` through the existing error handler.
+4. The response returns only id, email, role, name, avatar URL, and creation timestamp.
+5. Password hashes, refresh tokens, and other authentication data are never returned or accepted as update fields.
+
+#### Tests added
+
+The API server test suite covers updating name only, avatar URL only, both fields together, unauthenticated requests, invalid names, invalid avatar URLs, and attempts to modify protected fields. The shared API Zod declaration output was rebuilt so the API server consumes the new schema through the existing workspace package boundary.
+
+## 4. Completion Boundary Through Phase 3.2.2
 
 ### Completed
 
@@ -381,12 +429,13 @@ The API server tests cover successful refresh, new access-token use on protected
 - User login endpoint from task 3.1.4.
 - User logout endpoint from task 3.1.5.
 - Refresh token endpoint from task 3.1.6.
+- Get current user endpoint from task 3.2.1.
+- Update user profile endpoint from task 3.2.2.
 
 ### Not yet implemented
 
 The following tasks remain planned in the implementation plan:
 
-- Phase 3.2 profile-management endpoints
 - Later candidate, recruiter, interview, AI, notification, admin, testing, deployment, and API documentation work
 
 ## 5. Source Reference

@@ -14,6 +14,7 @@ const { config } = await import("./config");
 const { errorHandler } = await import("./middlewares/error");
 const { authenticate } = await import("./middlewares/auth");
 const {
+  generateAccessToken,
   generateRefreshToken,
   verifyAccessToken,
   verifyPassword,
@@ -26,7 +27,7 @@ const {
   clearRefreshTokensForTests,
   storeRefreshToken,
 } = await import("./lib/refresh-token-store");
-const { users } = await import("@workspace/db");
+const { candidateProfiles, users } = await import("@workspace/db");
 
 type StoredUser = {
   id: number;
@@ -36,16 +37,41 @@ type StoredUser = {
   name: string;
 };
 
-function createFakeDatabase(initialUsers: StoredUser[] = []) {
-  const storedUsers = [...initialUsers];
+type StoredCandidateProfile = {
+  id: number;
+  userId: number;
+  headline: string | null;
+};
+
+function createFakeDatabase(
+  initialUsers: StoredUser[] = [],
+  initialProfiles: StoredCandidateProfile[] = [],
+) {
+  const storedUsers = initialUsers.map((user) => ({ ...user }));
+  const storedProfiles = [...initialProfiles];
   let nextId = storedUsers.length + 1;
 
   const database = {
     select: () => ({
-      from: () => ({
+      from: (table: unknown) => ({
         where: (_condition: unknown) => ({
           limit: async () => {
-            return storedUsers;
+            return table === candidateProfiles ? storedProfiles : storedUsers;
+          },
+        }),
+      }),
+    }),
+    update: () => ({
+      set: (values: Record<string, unknown>) => ({
+        where: (_condition: unknown) => ({
+          returning: async () => {
+            const user = storedUsers[0];
+            if (!user) {
+              return [];
+            }
+
+            Object.assign(user, values);
+            return [user];
           },
         }),
       }),
@@ -68,8 +94,11 @@ function createFakeDatabase(initialUsers: StoredUser[] = []) {
   return { database, storedUsers };
 }
 
-async function createTestServer(initialUsers: StoredUser[] = []) {
-  const fake = createFakeDatabase(initialUsers);
+async function createTestServer(
+  initialUsers: StoredUser[] = [],
+  initialProfiles: StoredCandidateProfile[] = [],
+) {
+  const fake = createFakeDatabase(initialUsers, initialProfiles);
   const app = express();
   app.use(express.json());
   app.use(createAuthRouter(fake.database as never));
@@ -95,6 +124,17 @@ async function postAuth(url: string, body: unknown) {
   return fetch(url, {
     method: "POST",
     headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+async function putAuth(url: string, token: string, body: unknown) {
+  return fetch(url, {
+    method: "PUT",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(body),
   });
 }
@@ -236,6 +276,162 @@ describe("POST /auth/login", () => {
       assert.equal(response.status, 400);
     });
   }
+});
+
+describe("GET /auth/me", () => {
+  it("requires authentication", async () => {
+    const testServer = await createTestServer();
+    servers.push(testServer.server);
+
+    const response = await fetch(testServer.url + "/auth/me");
+    const body = await response.json();
+
+    assert.equal(response.status, 401);
+    assert.deepEqual(body, { error: { message: "Authentication required" } });
+  });
+
+  it("returns public user data and the candidate profile for the JWT subject", async () => {
+    const testServer = await createTestServer(
+      [{ id: 1, email: "user@example.com", passwordHash: "secret-hash", role: "candidate", name: "User" }],
+      [{ id: 1, userId: 1, headline: "Senior engineer" }],
+    );
+    servers.push(testServer.server);
+
+    const token = generateAccessToken(1, {
+      role: "candidate",
+      email: "stale@example.com",
+      name: "Stale token name",
+    });
+    const response = await fetch(testServer.url + "/auth/me?userId=999", {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    const body = (await response.json()) as {
+      id: number;
+      email: string;
+      role: string;
+      name: string;
+      profile: StoredCandidateProfile;
+      passwordHash?: string;
+      refreshToken?: string;
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(body.id, 1);
+    assert.equal(body.email, "user@example.com");
+    assert.equal(body.role, "candidate");
+    assert.equal(body.name, "User");
+    assert.deepEqual(body.profile, { id: 1, userId: 1, headline: "Senior engineer" });
+    assert.equal("passwordHash" in body, false);
+    assert.equal("refreshToken" in body, false);
+  });
+
+  it("returns not found when the authenticated user no longer exists", async () => {
+    const testServer = await createTestServer();
+    servers.push(testServer.server);
+
+    const token = generateAccessToken(999, { role: "candidate" });
+    const response = await fetch(testServer.url + "/auth/me", {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 404);
+    assert.deepEqual(body, { error: { message: "User not found" } });
+  });
+});
+
+describe("PUT /auth/profile", () => {
+  const user = {
+    id: 1,
+    email: "user@example.com",
+    passwordHash: "secret-hash",
+    role: "candidate" as const,
+    name: "Original name",
+  };
+
+  async function updateProfile(body: unknown) {
+    const testServer = await createTestServer([user]);
+    servers.push(testServer.server);
+    const token = generateAccessToken(user.id, { role: user.role });
+    return {
+      testServer,
+      response: await putAuth(testServer.url + "/auth/profile", token, body),
+    };
+  }
+
+  it("updates only the authenticated user's name", async () => {
+    const { testServer, response } = await updateProfile({ name: "Updated name" });
+    const body = (await response.json()) as Record<string, unknown>;
+
+    assert.equal(response.status, 200);
+    assert.equal(body.name, "Updated name");
+    assert.equal(testServer.fake.storedUsers[0].name, "Updated name");
+    assert.equal("passwordHash" in body, false);
+  });
+
+  it("updates only the authenticated user's avatar URL", async () => {
+    const { testServer, response } = await updateProfile({
+      avatarUrl: "https://example.com/avatar.png",
+    });
+    const body = (await response.json()) as Record<string, unknown>;
+
+    assert.equal(response.status, 200);
+    assert.equal(body.avatarUrl, "https://example.com/avatar.png");
+    assert.equal(testServer.fake.storedUsers[0].name, "Original name");
+  });
+
+  it("updates name and avatar URL together", async () => {
+    const { testServer, response } = await updateProfile({
+      name: "Updated name",
+      avatarUrl: "https://example.com/avatar.png",
+    });
+    const body = (await response.json()) as Record<string, unknown>;
+
+    assert.equal(response.status, 200);
+    assert.equal(body.name, "Updated name");
+    assert.equal(body.avatarUrl, "https://example.com/avatar.png");
+  });
+
+  it("rejects unauthenticated requests", async () => {
+    const testServer = await createTestServer([user]);
+    servers.push(testServer.server);
+
+    const response = await fetch(testServer.url + "/auth/profile", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name: "Updated name" }),
+    });
+
+    assert.equal(response.status, 401);
+  });
+
+  it("rejects invalid names and avatar URLs", async () => {
+    const invalidCases = [
+      { name: "" },
+      { avatarUrl: "not-a-url" },
+    ];
+
+    for (const body of invalidCases) {
+      const { response } = await updateProfile(body);
+      assert.equal(response.status, 400);
+    }
+  });
+
+  it("rejects attempts to modify protected fields", async () => {
+    const { testServer, response } = await updateProfile({
+      name: "Updated name",
+      id: 999,
+      email: "attacker@example.com",
+      role: "admin",
+      passwordHash: "attacker-hash",
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 400);
+    assert.deepEqual(body, { error: { message: "Invalid profile data" } });
+    assert.equal(testServer.fake.storedUsers[0].name, "Original name");
+    assert.equal(testServer.fake.storedUsers[0].email, "user@example.com");
+  });
 });
 
 describe("POST /auth/logout", () => {

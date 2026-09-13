@@ -3,8 +3,9 @@ import {
   loginRequestSchema,
   refreshRequestSchema,
   registerRequestSchema,
+  updateProfileRequestSchema,
 } from "@workspace/api-zod/auth";
-import { db, users } from "@workspace/db";
+import { candidateProfiles, db, users } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import {
   generateAccessToken,
@@ -41,6 +42,116 @@ function isUniqueViolation(error: unknown): boolean {
 
 export function createAuthRouter(database: typeof db = db): IRouter {
   const router: IRouter = Router();
+
+  router.get("/auth/me", authenticate, async (req, res, next) => {
+    if (!req.user) {
+      next(createHttpError("Authentication required", 401));
+      return;
+    }
+
+    const userId = Number(req.user.id);
+    if (!Number.isSafeInteger(userId) || userId <= 0) {
+      next(createHttpError("Invalid authentication token", 401));
+      return;
+    }
+
+    try {
+      const [user] = await database
+        .select({
+          id: users.id,
+          email: users.email,
+          role: users.role,
+          name: users.name,
+          avatarUrl: users.avatarUrl,
+          createdAt: users.createdAt,
+        })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+      if (!user) {
+        next(createHttpError("User not found", 404));
+        return;
+      }
+
+      let profile;
+      if (user.role === "candidate") {
+        [profile] = await database
+          .select()
+          .from(candidateProfiles)
+          .where(eq(candidateProfiles.userId, user.id))
+          .limit(1);
+      }
+
+      res.status(200).json({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        avatarUrl: user.avatarUrl,
+        createdAt: user.createdAt,
+        ...(profile ? { profile } : {}),
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.put("/auth/profile", authenticate, async (req, res, next) => {
+    const parsed = updateProfileRequestSchema.safeParse(req.body);
+    if (!parsed.success) {
+      next(createHttpError("Invalid profile data", 400));
+      return;
+    }
+
+    if (!req.user) {
+      next(createHttpError("Authentication required", 401));
+      return;
+    }
+
+    const userId = Number(req.user.id);
+    if (!Number.isSafeInteger(userId) || userId <= 0) {
+      next(createHttpError("Invalid authentication token", 401));
+      return;
+    }
+
+    try {
+      const [user] = await database
+        .update(users)
+        .set({
+          ...(parsed.data.name !== undefined ? { name: parsed.data.name } : {}),
+          ...(parsed.data.avatarUrl !== undefined
+            ? { avatarUrl: parsed.data.avatarUrl }
+            : {}),
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, userId))
+        .returning({
+          id: users.id,
+          email: users.email,
+          role: users.role,
+          name: users.name,
+          avatarUrl: users.avatarUrl,
+          createdAt: users.createdAt,
+        });
+
+      if (!user) {
+        next(createHttpError("User not found", 404));
+        return;
+      }
+
+      res.status(200).json({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        avatarUrl: user.avatarUrl,
+        createdAt: user.createdAt,
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 
   router.post("/auth/login", async (req, res, next) => {
     const parsed = loginRequestSchema.safeParse(req.body);

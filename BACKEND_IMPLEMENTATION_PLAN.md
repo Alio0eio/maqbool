@@ -206,13 +206,17 @@ This document outlines the step-by-step implementation plan for the **Empo Recru
   - Token rotation strategy
 
 #### 3.2 User Profile Management
-- [ ] 3.2.1 Get current user endpoint
+- [x] 3.2.1 Get current user endpoint
   - `GET /auth/me` - Fetch authenticated user info
   - Join with role-specific profile data
 
-- [ ] 3.2.2 Update user profile endpoint
+**Implementation update (2026-09-14)**: `GET /auth/me` is implemented at `/api/auth/me` using the existing JWT middleware. It loads the user by the verified JWT subject, returns only public user fields, includes a candidate profile when one exists, and returns centralized `401` or `404` errors for authentication and missing-user cases. Tests cover authentication enforcement, JWT-subject lookup, profile inclusion, safe responses, and missing users.
+
+- [x] 3.2.2 Update user profile endpoint
   - `PUT /auth/profile` - Update basic user info
   - Update name, avatar, etc.
+
+**Implementation update (2026-09-14)**: `PUT /auth/profile` is implemented at `/api/auth/profile` using the existing JWT middleware, strict partial Zod validation, and Drizzle updates scoped to the authenticated JWT subject. It supports name and avatar URL updates, rejects protected or unknown fields, returns safe public user data, and is covered by authenticated, validation, and protected-field tests.
 
 **Files to Create**:
 - `artifacts/api-server/src/routes/auth.ts` - Auth routes
