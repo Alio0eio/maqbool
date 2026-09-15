@@ -242,7 +242,7 @@ This document outlines the step-by-step implementation plan for the **Empo Recru
 **Duration**: 2-3 days
 
 #### 4.1 Candidate Profile Management
-- [ ] 4.1.1 Create/Setup candidate profile endpoint
+- [x] 4.1.1 Create/Setup candidate profile endpoint
   - `POST /candidates/profile` - Create initial profile
   - `GET /candidates/profile` - Get own profile
   - `PUT /candidates/profile` - Update profile
