@@ -413,7 +413,48 @@ The basic profile update endpoint is available at `PUT /api/auth/profile` becaus
 
 The API server test suite covers updating name only, avatar URL only, both fields together, unauthenticated requests, invalid names, invalid avatar URLs, and attempts to modify protected fields. The shared API Zod declaration output was rebuilt so the API server consumes the new schema through the existing workspace package boundary.
 
-## 4. Completion Boundary Through Phase 3.2.2
+## 3.14 Candidate profile management (Task 4.1.1)
+
+Candidate profile management is available at `/api/candidates/profile` because
+the root router is mounted under `/api`.
+
+### Endpoints and authorization
+
+1. `POST /api/candidates/profile` creates the authenticated candidate's profile.
+2. `GET /api/candidates/profile` returns the authenticated candidate's profile.
+3. `PUT /api/candidates/profile` applies partial updates to the authenticated
+	candidate's profile.
+4. All three routes reuse `authenticate` and `authorize("candidate")`; the
+	authenticated JWT subject is the only source of profile ownership.
+5. Requests cannot provide or change `userId`, `id`, role, or authentication
+	fields. Duplicate creation returns `409`, missing profiles return `404`, and
+	non-candidate users receive `403`.
+
+### Validation and persistence
+
+1. Candidate request schemas use strict Zod validation for phone, location,
+	education, experience, and a bounded array of non-empty string skills.
+2. `candidate_profiles.skills` remains a typed PostgreSQL JSONB string array.
+3. The existing one-to-one `candidate_profiles.user_id` unique index and users
+	foreign key are reused.
+4. Education and experience are stored as candidate-owned text fields; user
+	name, email, and avatar URL are returned through the existing users join
+	rather than duplicated in the candidate profile table.
+5. Updates set `candidate_profiles.updated_at` and only write supplied fields.
+
+### Tests and database migration
+
+The API test command now runs both `register.test.ts` and `candidates.test.ts`.
+Candidate profile tests cover successful create/get/update flows, partial
+updates, duplicate creation, invalid skills, ownership-field rejection,
+authentication, candidate-role enforcement, and missing profiles. The complete
+API suite passes with 32 tests.
+
+Drizzle generated `lib/db/drizzle/0000_fuzzy_kid_colt.sql`. This is an initial
+full-schema snapshot because the repository had no previous migration history;
+it includes the two candidate profile columns and was not applied automatically.
+
+## 4. Completion Boundary Through Phase 4.1.1
 
 ### Completed
 
@@ -431,6 +472,7 @@ The API server test suite covers updating name only, avatar URL only, both field
 - Refresh token endpoint from task 3.1.6.
 - Get current user endpoint from task 3.2.1.
 - Update user profile endpoint from task 3.2.2.
+- Candidate profile management endpoints from task 4.1.1.
 
 ### Not yet implemented
 
