@@ -249,11 +249,17 @@ This document outlines the step-by-step implementation plan for the **Empo Recru
   - Autofill from user data
   - Handle JSONB skills array
 
-- [ ] 4.1.2 Implement profile validation schemas
+- [x] 4.1.2 Implement profile validation schemas
   - Headline validation
   - Years of experience validation
   - Skills list validation
   - URL validation for portfolio, LinkedIn, GitHub
+
+**Implementation update (2026-09-15)**: Candidate profile create and update
+schemas now validate trimmed headlines, whole-number experience from 0 to 100,
+bounded non-empty skills with duplicate prevention, and optional valid portfolio,
+LinkedIn, and GitHub URLs. The update schema remains partial while requiring at
+least one field.
 
 #### 4.2 Job Browsing & Search
 - [ ] 4.2.1 Get all jobs endpoint

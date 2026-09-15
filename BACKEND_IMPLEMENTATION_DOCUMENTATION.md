@@ -454,7 +454,30 @@ Drizzle generated `lib/db/drizzle/0000_fuzzy_kid_colt.sql`. This is an initial
 full-schema snapshot because the repository had no previous migration history;
 it includes the two candidate profile columns and was not applied automatically.
 
-## 4. Completion Boundary Through Phase 4.1.1
+### 3.15 Candidate profile validation schemas (Task 4.1.2)
+
+Candidate profile request validation is defined in
+`lib/api-zod/src/candidates.ts` and exported through the existing
+`@workspace/api-zod/candidates` package entry point. The existing create and
+partial update schemas now share these rules:
+
+1. `headline` is trimmed, required when supplied, and limited to 255 characters.
+2. `yearsOfExperience` must be a finite, non-negative integer from 0 through 100.
+3. `skills` must contain 1 to 100 trimmed, non-empty skill names, each no longer
+	than 100 characters; duplicate names are rejected after trimming.
+4. `portfolioUrl`, `linkedinUrl`, and `githubUrl` are optional trimmed URLs;
+	empty strings and malformed URLs are rejected.
+5. Unknown fields remain rejected by the existing strict object schemas, and the
+	update schema continues to require at least one supplied field.
+
+Focused schema tests live in
+`artifacts/api-server/src/candidate-profile-schema.test.ts`. They cover valid
+values, trimming, partial updates, omitted optional fields, invalid experience
+values, empty skills, duplicate skills, and valid or invalid URLs. No endpoint,
+authentication, database schema, frontend, or dependency changes were made for
+this task.
+
+## 4. Completion Boundary Through Phase 4.1.2
 
 ### Completed
 
