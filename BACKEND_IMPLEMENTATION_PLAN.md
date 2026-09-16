@@ -262,7 +262,7 @@ LinkedIn, and GitHub URLs. The update schema remains partial while requiring at
 least one field.
 
 #### 4.2 Job Browsing & Search
-- [ ] 4.2.1 Get all jobs endpoint
+- [x] 4.2.1 Get all jobs endpoint
   - `GET /jobs` - List all published jobs
   - Pagination support
   - Filter by:
@@ -273,6 +273,14 @@ least one field.
     - Salary range
     - Skills
   - Sort by (posted date, relevance, salary, etc.)
+
+**Implementation update (2026-09-16)**: `GET /api/jobs` is implemented as a
+public published-job listing. It supports validated pagination, company, job
+type, location type, experience level, salary range, and JSONB skill filters,
+plus `postedAt` and `salary` sorting with `asc` or `desc` order. Salary filters
+use range-overlap behavior and treat an open-ended salary bound as unbounded.
+Relevance ranking remains a future enhancement because the current schema has
+no relevance/search mechanism.
 
 - [ ] 4.2.2 Get single job endpoint
   - `GET /jobs/:id` - Fetch job details

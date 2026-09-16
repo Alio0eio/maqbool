@@ -477,7 +477,28 @@ values, empty skills, duplicate skills, and valid or invalid URLs. No endpoint,
 authentication, database schema, frontend, or dependency changes were made for
 this task.
 
-## 4. Completion Boundary Through Phase 4.1.2
+### 3.16 Published jobs listing (Task 4.2.1)
+
+`GET /api/jobs` is public and is registered by the existing `/api` router. It
+returns only rows where `jobs.status = 'published'`, joins the existing
+`companies` table, and returns `{ jobs, pagination }` with `page`, `limit`,
+`total`, and `totalPages` metadata.
+
+The validated query parameters are `page`, `limit` (default 20, maximum 100),
+`companyId`, `jobType`, `locationType`, `experienceLevel`, `minSalary`,
+`maxSalary`, `skills`, `sortBy`, and `sortOrder`. Sorting is restricted to
+`postedAt` or `salary` and `asc` or `desc`; arbitrary column names are rejected.
+Salary filtering uses overlap semantics against `salaryMin` and `salaryMax`,
+with null bounds treated as open-ended. Skills are matched against the
+existing `jobs.skills` JSONB string array and all requested comma-separated
+skills must be present.
+
+Focused coverage is in `artifacts/api-server/src/jobs.test.ts` and includes
+pagination, every filter and supported sort, invalid queries, empty results,
+and protection against returning unpublished jobs. No database schema change
+was required.
+
+## 4. Completion Boundary Through Phase 4.2.1
 
 ### Completed
 
@@ -496,6 +517,7 @@ this task.
 - Get current user endpoint from task 3.2.1.
 - Update user profile endpoint from task 3.2.2.
 - Candidate profile management endpoints from task 4.1.1.
+- Published jobs listing endpoint from task 4.2.1.
 
 ### Not yet implemented
 
@@ -521,5 +543,8 @@ The following tasks remain planned in the implementation plan:
 - `artifacts/api-server/src/middlewares/auth.ts`
 - `artifacts/api-server/src/middlewares/error.ts`
 - `artifacts/api-server/src/routes/index.ts`
+- `artifacts/api-server/src/routes/jobs.ts`
+- `artifacts/api-server/src/jobs.test.ts`
 - `artifacts/api-server/package.json`
+- `lib/api-zod/src/jobs.ts`
 - `.env.example`

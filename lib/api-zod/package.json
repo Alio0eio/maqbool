@@ -6,7 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./auth": "./src/auth.ts",
-    "./candidates": "./src/candidates.ts"
+    "./candidates": "./src/candidates.ts",
+    "./jobs": "./src/jobs.ts"
   },
   "dependencies": {
     "zod": "catalog:"
