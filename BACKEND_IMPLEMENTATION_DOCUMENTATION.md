@@ -454,7 +454,51 @@ Drizzle generated `lib/db/drizzle/0000_fuzzy_kid_colt.sql`. This is an initial
 full-schema snapshot because the repository had no previous migration history;
 it includes the two candidate profile columns and was not applied automatically.
 
-## 4. Completion Boundary Through Phase 4.1.1
+### 3.15 Candidate profile validation schemas (Task 4.1.2)
+
+Candidate profile request validation is defined in
+`lib/api-zod/src/candidates.ts` and exported through the existing
+`@workspace/api-zod/candidates` package entry point. The existing create and
+partial update schemas now share these rules:
+
+1. `headline` is trimmed, required when supplied, and limited to 255 characters.
+2. `yearsOfExperience` must be a finite, non-negative integer from 0 through 100.
+3. `skills` must contain 1 to 100 trimmed, non-empty skill names, each no longer
+	than 100 characters; duplicate names are rejected after trimming.
+4. `portfolioUrl`, `linkedinUrl`, and `githubUrl` are optional trimmed URLs;
+	empty strings and malformed URLs are rejected.
+5. Unknown fields remain rejected by the existing strict object schemas, and the
+	update schema continues to require at least one supplied field.
+
+Focused schema tests live in
+`artifacts/api-server/src/candidate-profile-schema.test.ts`. They cover valid
+values, trimming, partial updates, omitted optional fields, invalid experience
+values, empty skills, duplicate skills, and valid or invalid URLs. No endpoint,
+authentication, database schema, frontend, or dependency changes were made for
+this task.
+
+### 3.16 Published jobs listing (Task 4.2.1)
+
+`GET /api/jobs` is public and is registered by the existing `/api` router. It
+returns only rows where `jobs.status = 'published'`, joins the existing
+`companies` table, and returns `{ jobs, pagination }` with `page`, `limit`,
+`total`, and `totalPages` metadata.
+
+The validated query parameters are `page`, `limit` (default 20, maximum 100),
+`companyId`, `jobType`, `locationType`, `experienceLevel`, `minSalary`,
+`maxSalary`, `skills`, `sortBy`, and `sortOrder`. Sorting is restricted to
+`postedAt` or `salary` and `asc` or `desc`; arbitrary column names are rejected.
+Salary filtering uses overlap semantics against `salaryMin` and `salaryMax`,
+with null bounds treated as open-ended. Skills are matched against the
+existing `jobs.skills` JSONB string array and all requested comma-separated
+skills must be present.
+
+Focused coverage is in `artifacts/api-server/src/jobs.test.ts` and includes
+pagination, every filter and supported sort, invalid queries, empty results,
+and protection against returning unpublished jobs. No database schema change
+was required.
+
+## 4. Completion Boundary Through Phase 4.2.1
 
 ### Completed
 
@@ -473,6 +517,7 @@ it includes the two candidate profile columns and was not applied automatically.
 - Get current user endpoint from task 3.2.1.
 - Update user profile endpoint from task 3.2.2.
 - Candidate profile management endpoints from task 4.1.1.
+- Published jobs listing endpoint from task 4.2.1.
 
 ### Not yet implemented
 
@@ -498,5 +543,8 @@ The following tasks remain planned in the implementation plan:
 - `artifacts/api-server/src/middlewares/auth.ts`
 - `artifacts/api-server/src/middlewares/error.ts`
 - `artifacts/api-server/src/routes/index.ts`
+- `artifacts/api-server/src/routes/jobs.ts`
+- `artifacts/api-server/src/jobs.test.ts`
 - `artifacts/api-server/package.json`
+- `lib/api-zod/src/jobs.ts`
 - `.env.example`
