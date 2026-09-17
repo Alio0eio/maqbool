@@ -1,5 +1,25 @@
 import { z } from "zod";
 
+export const applicationStatuses = [
+  "applied",
+  "reviewing",
+  "shortlisted",
+  "interviewing",
+  "offered",
+  "rejected",
+  "withdrawn",
+] as const;
+
+export const applicationStages = [
+  "applied",
+  "screening",
+  "interview",
+  "decision",
+  "offer",
+  "hired",
+  "rejected",
+] as const;
+
 const candidateProfileFields = {
   headline: z.string().trim().min(1, "Headline cannot be empty").max(255, "Headline is too long").optional(),
   phone: z.string().trim().max(30, "Phone number is too long").nullable().optional(),
@@ -30,9 +50,22 @@ export const updateCandidateProfileRequestSchema = z
     message: "At least one candidate profile field is required",
   });
 
+export const listCandidateApplicationsQuerySchema = z
+  .object({
+    status: z.enum(applicationStatuses).optional(),
+    stage: z.enum(applicationStages).optional(),
+    sortOrder: z.enum(["asc", "desc"]).default("desc"),
+    page: z.coerce.number().int().min(1).default(1),
+    limit: z.coerce.number().int().min(1).max(100).default(20),
+  })
+  .strict();
+
 export type CreateCandidateProfileRequest = z.infer<
   typeof createCandidateProfileRequestSchema
 >;
 export type UpdateCandidateProfileRequest = z.infer<
   typeof updateCandidateProfileRequestSchema
+>;
+export type ListCandidateApplicationsQuery = z.infer<
+  typeof listCandidateApplicationsQuerySchema
 >;

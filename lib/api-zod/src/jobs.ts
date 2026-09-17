@@ -2,6 +2,12 @@ import { z } from "zod";
 
 const optionalNonNegativeInteger = z.coerce.number().int().min(0).optional();
 
+export const getJobParamsSchema = z
+  .object({
+    id: z.coerce.number().int().positive(),
+  })
+  .strict();
+
 export const listJobsQuerySchema = z
   .object({
     page: z.coerce.number().int().min(1).default(1),
@@ -26,4 +32,5 @@ export const listJobsQuerySchema = z
     { message: "minSalary must be less than or equal to maxSalary", path: ["minSalary"] },
   );
 
+export type GetJobParams = z.infer<typeof getJobParamsSchema>;
 export type ListJobsQuery = z.infer<typeof listJobsQuerySchema>;

@@ -318,12 +318,17 @@ candidate-scoped listing, and unsaving.
   - Auto-attach candidate's resume
   - Optional cover letter
 
-- [ ] 4.3.2 Get application list endpoint
+- [x] 4.3.2 Get application list endpoint
   - `GET /candidates/applications` - List all applications
   - Include job details
   - Include current stage/status
   - Filter by status/stage
   - Sort by date
+  - Implemented in `artifacts/api-server/src/routes/candidates.ts`
+  - Resolves candidate ownership from the authenticated JWT user only
+  - Supports `status`, `stage`, `sortOrder`, `page`, and `limit` query validation
+  - Returns nested job and company information plus pagination metadata
+  - Covered by `artifacts/api-server/src/candidate-applications.test.ts`
 
 - [ ] 4.3.3 Get single application endpoint
   - `GET /applications/:id` - Application details

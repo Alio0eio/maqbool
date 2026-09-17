@@ -1,10 +1,11 @@
 import { Router, type IRouter } from "express";
 import {
   createCandidateProfileRequestSchema,
+  listCandidateApplicationsQuerySchema,
   updateCandidateProfileRequestSchema,
 } from "@workspace/api-zod/candidates";
-import { candidateProfiles, companies, db, jobs, savedJobs, users } from "@workspace/db";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { applications, candidateProfiles, companies, db, jobs, savedJobs, users } from "@workspace/db";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { listJobsQuerySchema } from "@workspace/api-zod/jobs";
 import { authenticate, authorize } from "../middlewares/auth";
 
@@ -198,6 +199,126 @@ export function createCandidatesRouter(database: typeof db = db): IRouter {
 
         res.status(200).json({
           jobs: result,
+          pagination: { page, limit, total, totalPages: total === 0 ? 0 : Math.ceil(total / limit) },
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  router.get(
+    "/candidates/applications",
+    authenticate,
+    authorize("candidate"),
+    async (req, res, next) => {
+      const parsed = listCandidateApplicationsQuerySchema.safeParse(req.query);
+      if (!parsed.success) {
+        next(createHttpError("Invalid application query parameters", 400));
+        return;
+      }
+
+      try {
+        const userId = getUserId(req);
+        const [candidate] = await database
+          .select({ id: candidateProfiles.id })
+          .from(candidateProfiles)
+          .where(eq(candidateProfiles.userId, userId))
+          .limit(1);
+        if (!candidate) {
+          next(createHttpError("Candidate profile not found", 404));
+          return;
+        }
+
+        const { page, limit, status, stage, sortOrder } = parsed.data;
+        const filters = [eq(applications.candidateId, candidate.id)];
+        if (status !== undefined) filters.push(eq(applications.status, status));
+        if (stage !== undefined) filters.push(eq(applications.stage, stage));
+
+        const where = and(...filters);
+        const [{ count }] = await database
+          .select({ count: sql<number>`count(*)` })
+          .from(applications)
+          .where(where);
+        const total = Number(count);
+
+        const order = sortOrder === "asc" ? asc(applications.createdAt) : desc(applications.createdAt);
+        const result = await database
+          .select({
+            id: applications.id,
+            status: applications.status,
+            stage: applications.stage,
+            appliedAt: applications.createdAt,
+            createdAt: applications.createdAt,
+            companyId: companies.id,
+            companyName: companies.name,
+            companyIndustry: companies.industry,
+            companyWebsite: companies.website,
+            companyLogoUrl: companies.logoUrl,
+            companySize: companies.size,
+            companyLocation: companies.location,
+            companyDescription: companies.description,
+            job: {
+              id: jobs.id,
+              title: jobs.title,
+              companyId: jobs.companyId,
+              location: jobs.location,
+              locationType: jobs.locationType,
+              type: jobs.type,
+              salaryMin: jobs.salaryMin,
+              salaryMax: jobs.salaryMax,
+              salaryCurrency: jobs.salaryCurrency,
+              description: jobs.description,
+              requirements: jobs.requirements,
+              responsibilities: jobs.responsibilities,
+              benefits: jobs.benefits,
+              skills: jobs.skills,
+              status: jobs.status,
+              viewCount: jobs.viewCount,
+              postedAt: jobs.postedAt,
+              closingDate: jobs.closingDate,
+              createdAt: jobs.createdAt,
+              department: jobs.department,
+              experienceLevel: jobs.experienceLevel,
+            },
+          })
+          .from(applications)
+          .innerJoin(jobs, eq(applications.jobId, jobs.id))
+          .innerJoin(companies, eq(jobs.companyId, companies.id))
+          .where(where)
+          .orderBy(order)
+          .limit(limit)
+          .offset((page - 1) * limit);
+
+        res.status(200).json({
+          applications: result.map(
+            ({
+              companyId,
+              companyName,
+              companyIndustry,
+              companyWebsite,
+              companyLogoUrl,
+              companySize,
+              companyLocation,
+              companyDescription,
+              ...application
+            }) => ({
+              ...application,
+              job: {
+                ...application.job,
+                company: {
+                  id: companyId,
+                  name: companyName,
+                  industry: companyIndustry,
+                  website: companyWebsite,
+                  logoUrl: companyLogoUrl,
+                  size: companySize,
+                  location: companyLocation,
+                  description: companyDescription,
+                },
+              },
+            }),
+          ),
           pagination: { page, limit, total, totalPages: total === 0 ? 0 : Math.ceil(total / limit) },
         });
       } catch (error) {

@@ -569,7 +569,54 @@ pnpm --filter @workspace/db run push
 This requires `DATABASE_URL` in the root environment. No frontend files were
 changed.
 
-## 4. Completion Boundary Through Phase 4.2.3
+### 3.19 Candidate application list (Task 4.3.2)
+
+Candidate application listing is implemented at
+`GET /api/candidates/applications` in
+`artifacts/api-server/src/routes/candidates.ts`.
+
+#### Endpoint behavior and security
+
+1. The endpoint requires `authenticate` and `authorize("candidate")`.
+2. Candidate ownership is resolved from the JWT subject with
+   `candidate_profiles.user_id = req.user.id`; no `candidateId` is accepted
+   from query parameters or request bodies.
+3. If the authenticated user has no candidate profile, the endpoint returns
+   the existing `404 Candidate profile not found` behavior.
+4. Results are scoped to `applications.candidate_id` for that profile only.
+5. Each item includes application `id`, `status`, `stage`, `appliedAt`,
+   `createdAt`, nested job details, and nested company information.
+6. Optional filters are `status` and `stage`.
+7. `sortOrder` supports `asc` and `desc`; the default is `desc` so newest
+   applications appear first.
+8. Pagination supports `page` default `1`, `limit` default `20`, maximum
+   `100`, and returns `{ page, limit, total, totalPages }`.
+
+#### Validation and tests
+
+1. `lib/api-zod/src/candidates.ts` defines
+   `listCandidateApplicationsQuerySchema` with strict Zod validation for
+   filters, sort order, and pagination.
+2. `lib/api-zod/src/jobs.ts` now also exports the existing
+   `getJobParamsSchema` dependency used by `artifacts/api-server/src/routes/jobs.ts`
+   so rebuilt `api-zod` declarations continue to satisfy existing job routes.
+3. Focused coverage is in
+   `artifacts/api-server/src/candidate-applications.test.ts` and covers
+   authenticated retrieval, candidate scoping, status filtering, stage
+   filtering, sorting, pagination, unauthenticated access, invalid query
+   parameters, and missing candidate profiles.
+4. Verification run:
+
+```text
+pnpm --filter @workspace/api-zod exec tsc -p tsconfig.json
+pnpm --filter @workspace/api-server typecheck
+pnpm --filter @workspace/api-server test
+```
+
+The API server typecheck passed, and the API server test suite passed with
+57 tests.
+
+## 4. Completion Boundary Through Phase 4.3.2
 
 ### Completed
 
@@ -590,6 +637,8 @@ changed.
 - Candidate profile management endpoints from task 4.1.1.
 - Published jobs listing endpoint from task 4.2.1.
 - Single published job details endpoint from task 4.2.2.
+- Saved jobs endpoints from task 4.2.3.
+- Candidate application list endpoint from task 4.3.2.
 
 ### Not yet implemented
 
@@ -618,7 +667,9 @@ The following tasks remain planned in the implementation plan:
 - `artifacts/api-server/src/routes/jobs.ts`
 - `artifacts/api-server/src/jobs.test.ts`
 - `artifacts/api-server/src/saved-jobs.test.ts`
+- `artifacts/api-server/src/candidate-applications.test.ts`
 - `lib/db/drizzle/0001_saved_jobs.sql`
 - `artifacts/api-server/package.json`
 - `lib/api-zod/src/jobs.ts`
+- `lib/api-zod/src/candidates.ts`
 - `.env.example`
