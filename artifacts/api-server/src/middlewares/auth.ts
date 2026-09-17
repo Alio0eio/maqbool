@@ -93,6 +93,15 @@ export const authenticate: RequestHandler = (req, _res, next) => {
   }
 };
 
+export const optionalAuthenticate: RequestHandler = (req, _res, next) => {
+  if (!req.get("authorization")) {
+    next();
+    return;
+  }
+
+  authenticate(req, _res, next);
+};
+
 export function authorize(...roles: UserRole[]): RequestHandler {
   return (req, _res, next) => {
     if (!req.user) {
