@@ -3,8 +3,9 @@ import {
   createCandidateProfileRequestSchema,
   updateCandidateProfileRequestSchema,
 } from "@workspace/api-zod/candidates";
-import { candidateProfiles, db, users } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { candidateProfiles, companies, db, jobs, savedJobs, users } from "@workspace/db";
+import { and, desc, eq, sql } from "drizzle-orm";
+import { listJobsQuerySchema } from "@workspace/api-zod/jobs";
 import { authenticate, authorize } from "../middlewares/auth";
 
 type HttpError = Error & { statusCode: number };
@@ -131,6 +132,76 @@ export function createCandidatesRouter(database: typeof db = db): IRouter {
         res.status(200).json(profile);
       } catch (_error) {
         next(createHttpError("Candidate profile retrieval failed", 500));
+      }
+    },
+  );
+
+  router.get(
+    "/candidates/saved-jobs",
+    authenticate,
+    authorize("candidate"),
+    async (req, res, next) => {
+      const parsed = listJobsQuerySchema.safeParse(req.query);
+      if (!parsed.success) {
+        next(createHttpError("Invalid saved jobs query parameters", 400));
+        return;
+      }
+
+      try {
+        const userId = getUserId(req);
+        const [candidate] = await database
+          .select({ id: candidateProfiles.id })
+          .from(candidateProfiles)
+          .where(eq(candidateProfiles.userId, userId))
+          .limit(1);
+        if (!candidate) {
+          next(createHttpError("Candidate profile not found", 404));
+          return;
+        }
+
+        const { page, limit } = parsed.data;
+        const where = eq(savedJobs.candidateId, candidate.id);
+        const [{ count }] = await database
+          .select({ count: sql<number>`count(*)` })
+          .from(savedJobs)
+          .where(where);
+        const total = Number(count);
+        const result = await database
+          .select({
+            id: savedJobs.id,
+            jobId: jobs.id,
+            savedAt: savedJobs.createdAt,
+            job: {
+              id: jobs.id,
+              title: jobs.title,
+              companyId: jobs.companyId,
+              company: companies.name,
+              companyLogoUrl: companies.logoUrl,
+              location: jobs.location,
+              locationType: jobs.locationType,
+              type: jobs.type,
+              experienceLevel: jobs.experienceLevel,
+              salaryMin: jobs.salaryMin,
+              salaryMax: jobs.salaryMax,
+              salaryCurrency: jobs.salaryCurrency,
+              postedAt: jobs.postedAt,
+              createdAt: jobs.createdAt,
+            },
+          })
+          .from(savedJobs)
+          .innerJoin(jobs, eq(savedJobs.jobId, jobs.id))
+          .innerJoin(companies, eq(jobs.companyId, companies.id))
+          .where(where)
+          .orderBy(desc(savedJobs.createdAt))
+          .limit(limit)
+          .offset((page - 1) * limit);
+
+        res.status(200).json({
+          jobs: result,
+          pagination: { page, limit, total, totalPages: total === 0 ? 0 : Math.ceil(total / limit) },
+        });
+      } catch (error) {
+        next(error);
       }
     },
   );

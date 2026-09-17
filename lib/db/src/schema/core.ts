@@ -169,6 +169,25 @@ export const jobs = pgTable(
   (table) => [index("jobs_company_id_idx").on(table.companyId), index("jobs_status_idx").on(table.status)],
 );
 
+export const savedJobs = pgTable(
+  "saved_jobs",
+  {
+    id: serial("id").primaryKey(),
+    candidateId: integer("candidate_id")
+      .notNull()
+      .references(() => candidateProfiles.id, { onDelete: "cascade" }),
+    jobId: integer("job_id")
+      .notNull()
+      .references(() => jobs.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    unique("saved_jobs_candidate_job_unique").on(table.candidateId, table.jobId),
+    index("saved_jobs_candidate_id_idx").on(table.candidateId),
+    index("saved_jobs_job_id_idx").on(table.jobId),
+  ],
+);
+
 export const applications = pgTable(
   "applications",
   {
@@ -223,6 +242,7 @@ export const insertCandidateProfileSchema = createInsertSchema(candidateProfiles
 export const insertCompanySchema = createInsertSchema(companies).omit({ id: true });
 export const insertCompanyMemberSchema = createInsertSchema(companyMembers).omit({ id: true });
 export const insertJobSchema = createInsertSchema(jobs).omit({ id: true });
+export const insertSavedJobSchema = createInsertSchema(savedJobs).omit({ id: true });
 export const insertApplicationSchema = createInsertSchema(applications).omit({ id: true });
 export const insertInterviewSchema = createInsertSchema(interviews).omit({ id: true });
 
@@ -236,6 +256,8 @@ export type CompanyMember = typeof companyMembers.$inferSelect;
 export type InsertCompanyMember = z.infer<typeof insertCompanyMemberSchema>;
 export type Job = typeof jobs.$inferSelect;
 export type InsertJob = z.infer<typeof insertJobSchema>;
+export type SavedJob = typeof savedJobs.$inferSelect;
+export type InsertSavedJob = z.infer<typeof insertSavedJobSchema>;
 export type Application = typeof applications.$inferSelect;
 export type InsertApplication = z.infer<typeof insertApplicationSchema>;
 export type Interview = typeof interviews.$inferSelect;
@@ -247,6 +269,7 @@ export type CoreSchema = {
   companies: typeof companies;
   companyMembers: typeof companyMembers;
   jobs: typeof jobs;
+  savedJobs: typeof savedJobs;
   applications: typeof applications;
   interviews: typeof interviews;
 };

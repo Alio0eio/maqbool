@@ -282,17 +282,33 @@ use range-overlap behavior and treat an open-ended salary bound as unbounded.
 Relevance ranking remains a future enhancement because the current schema has
 no relevance/search mechanism.
 
-- [ ] 4.2.2 Get single job endpoint
+- [x] 4.2.2 Get single job endpoint
   - `GET /jobs/:id` - Fetch job details
   - Include company info
   - Increment view count
   - Include application status (if candidate applied)
 
-- [ ] 4.2.3 Save/unsave job endpoints
+**Implementation update (2026-09-16)**: `GET /api/jobs/:id` is implemented as
+a public published-job detail endpoint. It validates the path ID, atomically
+increments `viewCount`, includes company information, and returns the
+authenticated candidate's application status when available. Missing and
+unpublished jobs return the existing `404` error format; unauthenticated
+requests receive `applicationStatus: null`.
+
+- [x] 4.2.3 Save/unsave job endpoints
   - `POST /jobs/:id/save` - Save job as favorite
   - `DELETE /jobs/:id/save` - Unsave job
   - `GET /candidates/saved-jobs` - List saved jobs
-  - *Note: Requires additional `saved_jobs` junction table*
+
+**Implementation update (2026-09-17)**: Added the `saved_jobs` junction table
+with candidate-profile and job foreign keys, cascade deletes, candidate/job
+indexes, and a unique candidate/job constraint. The three authenticated
+candidate endpoints use the JWT subject to resolve ownership, reject duplicate
+saves with `409`, return `404` for missing jobs or unsaved records, and return
+paginated saved jobs with company, location, type, experience, salary, posted,
+created, and saved timestamps. Focused endpoint tests cover authentication,
+candidate authorization, invalid and missing job IDs, duplicate saves,
+candidate-scoped listing, and unsaving.
 
 #### 4.3 Job Application
 - [ ] 4.3.1 Submit application endpoint

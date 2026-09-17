@@ -498,7 +498,78 @@ pagination, every filter and supported sort, invalid queries, empty results,
 and protection against returning unpublished jobs. No database schema change
 was required.
 
-## 4. Completion Boundary Through Phase 4.2.1
+### 3.17 Single published job details (Task 4.2.2)
+
+`GET /api/jobs/:id` is public and returns details only for published jobs. The
+path parameter is validated as a positive integer, and the endpoint atomically
+increments the existing `jobs.view_count` column before returning the updated
+count. The response includes company information as a nested `company` object.
+
+When a valid candidate JWT is supplied, the endpoint joins `applications` to
+`candidate_profiles` by the JWT subject's user ID and returns the application
+status for that job. Requests without authentication, or candidates who have
+not applied, receive `applicationStatus: null`. Invalid IDs return `400`, and
+missing or unpublished jobs return the existing `404` error response.
+
+Focused coverage is in `artifacts/api-server/src/jobs.test.ts` and includes
+published, missing, unpublished, invalid-ID, unauthenticated, candidate
+without an application, candidate with an application, and view-count
+increment behavior.
+
+### 3.18 Saved jobs (Task 4.2.3)
+
+Saved jobs are implemented at `/api/jobs/:id/save` and
+`/api/candidates/saved-jobs` using the existing JWT middleware, candidate role
+authorization, Drizzle query patterns, and centralized error handler.
+
+#### Database and migration
+
+1. `lib/db/src/schema/core.ts` defines `savedJobs` with `id`, `candidateId`,
+	`jobId`, and timezone-aware `createdAt` columns.
+2. `saved_jobs.candidate_id` references `candidate_profiles.id`, matching the
+	existing applications relationship; `job_id` references `jobs.id`.
+3. Both foreign keys cascade on deletion. Candidate and job indexes support
+	ownership and join lookups.
+4. `saved_jobs_candidate_job_unique` prevents duplicate saves for one
+	candidate and job pair.
+5. `lib/db/drizzle/0001_saved_jobs.sql` and the Drizzle journal record the
+	migration. The schema also exports insert and inferred saved-job types.
+
+#### Endpoint behavior and security
+
+1. `POST /api/jobs/:id/save` requires an authenticated candidate, validates a
+	positive integer job ID, verifies the job exists, resolves the candidate
+	profile from `req.user.id`, and returns the created saved record with `201`.
+2. Duplicate saves return `409 Job already saved`, including a database unique
+	violation race-condition fallback.
+3. `DELETE /api/jobs/:id/save` deletes only the row matching the authenticated
+	candidate profile and requested job. Missing rows return `404`; successful
+	deletion returns `{ success: true, message: "Job unsaved" }`.
+4. `GET /api/candidates/saved-jobs` uses the existing jobs-list pagination
+	defaults and returns `{ jobs, pagination }`. Each result includes saved-row
+	metadata and a nested job projection with company, location, type,
+	experience, salary, posted, and created dates.
+5. No endpoint accepts candidate or user ownership IDs from request bodies or
+	query parameters. Unauthenticated users receive `401`, non-candidates
+	receive `403`, invalid IDs receive `400`, and missing jobs receive `404`.
+
+#### Tests and migration command
+
+Focused coverage is in `artifacts/api-server/src/saved-jobs.test.ts` and covers
+successful saves, duplicate prevention, candidate-scoped unsaving and listing,
+unsaving a missing record, unauthenticated access, non-candidate access,
+invalid IDs, and nonexistent jobs.
+
+Apply the migration with the repository's configured Drizzle command:
+
+```text
+pnpm --filter @workspace/db run push
+```
+
+This requires `DATABASE_URL` in the root environment. No frontend files were
+changed.
+
+## 4. Completion Boundary Through Phase 4.2.3
 
 ### Completed
 
@@ -518,6 +589,7 @@ was required.
 - Update user profile endpoint from task 3.2.2.
 - Candidate profile management endpoints from task 4.1.1.
 - Published jobs listing endpoint from task 4.2.1.
+- Single published job details endpoint from task 4.2.2.
 
 ### Not yet implemented
 
@@ -545,6 +617,8 @@ The following tasks remain planned in the implementation plan:
 - `artifacts/api-server/src/routes/index.ts`
 - `artifacts/api-server/src/routes/jobs.ts`
 - `artifacts/api-server/src/jobs.test.ts`
+- `artifacts/api-server/src/saved-jobs.test.ts`
+- `lib/db/drizzle/0001_saved_jobs.sql`
 - `artifacts/api-server/package.json`
 - `lib/api-zod/src/jobs.ts`
 - `.env.example`
