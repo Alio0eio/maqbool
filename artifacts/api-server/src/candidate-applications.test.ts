@@ -36,7 +36,23 @@ type ApplicationRecord = {
   candidateId: number;
   status: ApplicationStatus;
   stage: ApplicationStage;
+  resumeUrl: string | null;
+  coverLetter: string | null;
+  rejectionReason: string | null;
   createdAt: Date;
+  updatedAt: Date;
+  interview: {
+    id: number;
+    type: "async_video" | "live_video" | "phone" | "in_person";
+    status: "pending" | "invited" | "in_progress" | "completed" | "cancelled";
+    scheduledAt: Date | null;
+    deadline: Date | null;
+    durationMinutes: number | null;
+    invitationNote: string | null;
+    completedAt: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+  } | null;
   job: {
     id: number;
     title: string;
@@ -78,13 +94,24 @@ function createApplication(
   createdAt: string,
   status: ApplicationStatus,
   stage: ApplicationStage,
+  options: {
+    interview?: ApplicationRecord["interview"];
+    rejectionReason?: string | null;
+  } = {},
 ): ApplicationRecord {
+  const createdDate = new Date(createdAt);
+
   return {
     id,
     candidateId,
     status,
     stage,
-    createdAt: new Date(createdAt),
+    resumeUrl: `https://example.com/resume-${id}.pdf`,
+    coverLetter: `Cover letter ${id}`,
+    rejectionReason: options.rejectionReason ?? null,
+    createdAt: createdDate,
+    updatedAt: createdDate,
+    interview: options.interview ?? null,
     job: {
       id: id * 100,
       title: `Role ${id}`,
@@ -127,7 +154,15 @@ function createFakeDatabase(
   options: { hasCandidateProfile?: boolean } = {},
 ) {
   let currentQuery: Record<string, unknown> = {};
+  let currentPath = "";
   const activeCandidate = { id: activeUserId * 10, userId: activeUserId };
+
+  function currentApplicationId() {
+    const match = currentPath.match(/^\/applications\/([^/]+)$/);
+    if (!match) return undefined;
+    const id = Number(match[1]);
+    return Number.isSafeInteger(id) ? id : undefined;
+  }
 
   function matchingApplications() {
     const status = typeof currentQuery.status === "string" ? currentQuery.status : undefined;
@@ -149,6 +184,9 @@ function createFakeDatabase(
     setCurrentQuery(query: Record<string, unknown>) {
       currentQuery = query;
     },
+    setCurrentPath(path: string) {
+      currentPath = path;
+    },
     select: (selection: Record<string, unknown>) => ({
       from: (table: unknown) => {
         if ("count" in selection) {
@@ -159,6 +197,7 @@ function createFakeDatabase(
 
         const builder = {
           innerJoin: () => builder,
+          leftJoin: () => builder,
           where: () => builder,
           orderBy: () => builder,
           limit: (limitValue?: number) => {
@@ -167,6 +206,69 @@ function createFakeDatabase(
             }
 
             if (table === applications) {
+              if ("resumeUrl" in selection) {
+                const applicationId = currentApplicationId();
+                const application = initialApplications.find(
+                  (item) => item.id === applicationId && item.candidateId === activeCandidate.id,
+                );
+                if (!application) return Promise.resolve([]);
+
+                return Promise.resolve([
+                  {
+                    id: application.id,
+                    status: application.status,
+                    stage: application.stage,
+                    appliedAt: application.createdAt,
+                    createdAt: application.createdAt,
+                    updatedAt: application.updatedAt,
+                    resumeUrl: application.resumeUrl,
+                    coverLetter: application.coverLetter,
+                    rejectionReason: application.rejectionReason,
+                    companyId: application.job.company.id,
+                    companyName: application.job.company.name,
+                    companyIndustry: application.job.company.industry,
+                    companyWebsite: application.job.company.website,
+                    companyLogoUrl: application.job.company.logoUrl,
+                    companySize: application.job.company.size,
+                    companyLocation: application.job.company.location,
+                    companyDescription: application.job.company.description,
+                    job: {
+                      id: application.job.id,
+                      title: application.job.title,
+                      companyId: application.job.companyId,
+                      location: application.job.location,
+                      locationType: application.job.locationType,
+                      type: application.job.type,
+                      salaryMin: application.job.salaryMin,
+                      salaryMax: application.job.salaryMax,
+                      salaryCurrency: application.job.salaryCurrency,
+                      description: application.job.description,
+                      requirements: application.job.requirements,
+                      responsibilities: application.job.responsibilities,
+                      benefits: application.job.benefits,
+                      skills: application.job.skills,
+                      status: application.job.status,
+                      viewCount: application.job.viewCount,
+                      postedAt: application.job.postedAt,
+                      closingDate: application.job.closingDate,
+                      createdAt: application.job.createdAt,
+                      department: application.job.department,
+                      experienceLevel: application.job.experienceLevel,
+                    },
+                    interviewId: application.interview?.id ?? null,
+                    interviewType: application.interview?.type ?? null,
+                    interviewStatus: application.interview?.status ?? null,
+                    interviewScheduledAt: application.interview?.scheduledAt ?? null,
+                    interviewDeadline: application.interview?.deadline ?? null,
+                    interviewDurationMinutes: application.interview?.durationMinutes ?? null,
+                    interviewInvitationNote: application.interview?.invitationNote ?? null,
+                    interviewCompletedAt: application.interview?.completedAt ?? null,
+                    interviewCreatedAt: application.interview?.createdAt ?? null,
+                    interviewUpdatedAt: application.interview?.updatedAt ?? null,
+                  },
+                ]);
+              }
+
               return {
                 offset: async (offsetValue: number) =>
                   matchingApplications()
@@ -232,6 +334,7 @@ async function createTestServer(
   const app = express();
   app.use((req, _res, next) => {
     fake.setCurrentQuery(req.query);
+    fake.setCurrentPath(req.path);
     next();
   });
   app.use(createCandidatesRouter(fake as never));
@@ -264,8 +367,24 @@ afterEach(() => {
 const applicationFixtures = [
   createApplication(1, 10, "2026-09-10T00:00:00.000Z", "applied", "applied"),
   createApplication(2, 10, "2026-09-12T00:00:00.000Z", "reviewing", "screening"),
-  createApplication(3, 10, "2026-09-14T00:00:00.000Z", "interviewing", "interview"),
+  createApplication(3, 10, "2026-09-14T00:00:00.000Z", "interviewing", "interview", {
+    interview: {
+      id: 300,
+      type: "live_video",
+      status: "invited",
+      scheduledAt: new Date("2026-09-20T12:00:00.000Z"),
+      deadline: null,
+      durationMinutes: 45,
+      invitationNote: "Please join on time.",
+      completedAt: null,
+      createdAt: new Date("2026-09-15T00:00:00.000Z"),
+      updatedAt: new Date("2026-09-15T00:00:00.000Z"),
+    },
+  }),
   createApplication(4, 20, "2026-09-16T00:00:00.000Z", "offered", "offer"),
+  createApplication(5, 10, "2026-09-18T00:00:00.000Z", "rejected", "rejected", {
+    rejectionReason: "The role requires more platform experience.",
+  }),
 ];
 
 describe("candidate applications", () => {
@@ -280,13 +399,13 @@ describe("candidate applications", () => {
     };
 
     assert.equal(response.status, 200);
-    assert.deepEqual(body.applications.map(({ id }) => id), [3, 2, 1]);
-    assert.equal(body.applications[0].status, "interviewing");
-    assert.equal(body.applications[0].stage, "interview");
-    assert.equal(body.applications[0].job.title, "Role 3");
-    assert.equal(body.applications[0].job.company.name, "Company 3");
+    assert.deepEqual(body.applications.map(({ id }) => id), [5, 3, 2, 1]);
+    assert.equal(body.applications[0].status, "rejected");
+    assert.equal(body.applications[0].stage, "rejected");
+    assert.equal(body.applications[0].job.title, "Role 5");
+    assert.equal(body.applications[0].job.company.name, "Company 5");
     assert.equal(typeof body.applications[0].appliedAt, "string");
-    assert.deepEqual(body.pagination, { page: 1, limit: 20, total: 3, totalPages: 1 });
+    assert.deepEqual(body.pagination, { page: 1, limit: 20, total: 4, totalPages: 1 });
   });
 
   it("does not return another candidate's applications", async () => {
@@ -340,10 +459,10 @@ describe("candidate applications", () => {
     };
 
     assert.equal(sortResponse.status, 200);
-    assert.deepEqual(sortBody.applications.map(({ id }) => id), [1, 2, 3]);
+    assert.deepEqual(sortBody.applications.map(({ id }) => id), [1, 2, 3, 5]);
     assert.equal(pageResponse.status, 200);
-    assert.deepEqual(pageBody.applications.map(({ id }) => id), [1]);
-    assert.deepEqual(pageBody.pagination, { page: 2, limit: 2, total: 3, totalPages: 2 });
+    assert.deepEqual(pageBody.applications.map(({ id }) => id), [2, 1]);
+    assert.deepEqual(pageBody.pagination, { page: 2, limit: 2, total: 4, totalPages: 2 });
   });
 
   it("rejects unauthenticated, non-candidate, invalid query, and missing-profile requests", async () => {
@@ -368,5 +487,87 @@ describe("candidate applications", () => {
       (await request(`${missingProfileServer.url}/candidates/applications`, tokenFor(1))).status,
       404,
     );
+  });
+
+  it("lets an authenticated candidate retrieve one application with job and company details", async () => {
+    const testServer = await createTestServer(1, applicationFixtures);
+    servers.push(testServer.server);
+
+    const response = await request(`${testServer.url}/applications/1`, tokenFor(1));
+    const body = (await response.json()) as {
+      id: number;
+      status: string;
+      stage: string;
+      appliedAt: string;
+      resumeUrl: string;
+      coverLetter: string;
+      job: { id: number; title: string; company: { id: number; name: string } };
+      interview: null;
+      feedback: null;
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(body.id, 1);
+    assert.equal(body.status, "applied");
+    assert.equal(body.stage, "applied");
+    assert.equal(typeof body.appliedAt, "string");
+    assert.equal(body.resumeUrl, "https://example.com/resume-1.pdf");
+    assert.equal(body.coverLetter, "Cover letter 1");
+    assert.equal(body.job.title, "Role 1");
+    assert.equal(body.job.company.name, "Company 1");
+    assert.equal(body.interview, null);
+    assert.equal(body.feedback, null);
+  });
+
+  it("includes interview information when the application has an interview", async () => {
+    const testServer = await createTestServer(1, applicationFixtures);
+    servers.push(testServer.server);
+
+    const response = await request(`${testServer.url}/applications/3`, tokenFor(1));
+    const body = (await response.json()) as {
+      interview: {
+        id: number;
+        type: string;
+        status: string;
+        scheduledAt: string;
+        durationMinutes: number;
+        invitationNote: string;
+      };
+      feedback: null;
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(body.interview.id, 300);
+    assert.equal(body.interview.type, "live_video");
+    assert.equal(body.interview.status, "invited");
+    assert.equal(typeof body.interview.scheduledAt, "string");
+    assert.equal(body.interview.durationMinutes, 45);
+    assert.equal(body.interview.invitationNote, "Please join on time.");
+    assert.equal(body.feedback, null);
+  });
+
+  it("returns candidate-visible feedback only for rejected applications", async () => {
+    const testServer = await createTestServer(1, applicationFixtures);
+    servers.push(testServer.server);
+
+    const rejectedResponse = await request(`${testServer.url}/applications/5`, tokenFor(1));
+    const rejectedBody = (await rejectedResponse.json()) as { feedback: string };
+    const activeResponse = await request(`${testServer.url}/applications/2`, tokenFor(1));
+    const activeBody = (await activeResponse.json()) as { feedback: null };
+
+    assert.equal(rejectedResponse.status, 200);
+    assert.equal(rejectedBody.feedback, "The role requires more platform experience.");
+    assert.equal(activeResponse.status, 200);
+    assert.equal(activeBody.feedback, null);
+  });
+
+  it("rejects invalid, nonexistent, cross-candidate, and unauthenticated detail requests", async () => {
+    const testServer = await createTestServer(1, applicationFixtures);
+    servers.push(testServer.server);
+
+    assert.equal((await request(`${testServer.url}/applications/not-a-number`, tokenFor(1))).status, 400);
+    assert.equal((await request(`${testServer.url}/applications/999`, tokenFor(1))).status, 404);
+    assert.equal((await request(`${testServer.url}/applications/4`, tokenFor(1))).status, 404);
+    assert.equal((await request(`${testServer.url}/applications/1`)).status, 401);
   });
 });

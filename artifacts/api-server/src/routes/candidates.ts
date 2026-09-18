@@ -1,10 +1,11 @@
 import { Router, type IRouter } from "express";
 import {
   createCandidateProfileRequestSchema,
+  getApplicationParamsSchema,
   listCandidateApplicationsQuerySchema,
   updateCandidateProfileRequestSchema,
 } from "@workspace/api-zod/candidates";
-import { applications, candidateProfiles, companies, db, jobs, savedJobs, users } from "@workspace/db";
+import { applications, candidateProfiles, companies, db, interviews, jobs, savedJobs, users } from "@workspace/db";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { listJobsQuerySchema } from "@workspace/api-zod/jobs";
 import { authenticate, authorize } from "../middlewares/auth";
@@ -320,6 +321,151 @@ export function createCandidatesRouter(database: typeof db = db): IRouter {
             }),
           ),
           pagination: { page, limit, total, totalPages: total === 0 ? 0 : Math.ceil(total / limit) },
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  router.get(
+    "/applications/:id",
+    authenticate,
+    authorize("candidate"),
+    async (req, res, next) => {
+      const parsed = getApplicationParamsSchema.safeParse(req.params);
+      if (!parsed.success) {
+        next(createHttpError("Invalid application ID", 400));
+        return;
+      }
+
+      try {
+        const userId = getUserId(req);
+        const [application] = await database
+          .select({
+            id: applications.id,
+            status: applications.status,
+            stage: applications.stage,
+            appliedAt: applications.createdAt,
+            createdAt: applications.createdAt,
+            updatedAt: applications.updatedAt,
+            resumeUrl: applications.resumeUrl,
+            coverLetter: applications.coverLetter,
+            rejectionReason: applications.rejectionReason,
+            companyId: companies.id,
+            companyName: companies.name,
+            companyIndustry: companies.industry,
+            companyWebsite: companies.website,
+            companyLogoUrl: companies.logoUrl,
+            companySize: companies.size,
+            companyLocation: companies.location,
+            companyDescription: companies.description,
+            job: {
+              id: jobs.id,
+              title: jobs.title,
+              companyId: jobs.companyId,
+              location: jobs.location,
+              locationType: jobs.locationType,
+              type: jobs.type,
+              salaryMin: jobs.salaryMin,
+              salaryMax: jobs.salaryMax,
+              salaryCurrency: jobs.salaryCurrency,
+              description: jobs.description,
+              requirements: jobs.requirements,
+              responsibilities: jobs.responsibilities,
+              benefits: jobs.benefits,
+              skills: jobs.skills,
+              status: jobs.status,
+              viewCount: jobs.viewCount,
+              postedAt: jobs.postedAt,
+              closingDate: jobs.closingDate,
+              createdAt: jobs.createdAt,
+              department: jobs.department,
+              experienceLevel: jobs.experienceLevel,
+            },
+            interviewId: interviews.id,
+            interviewType: interviews.type,
+            interviewStatus: interviews.status,
+            interviewScheduledAt: interviews.scheduledAt,
+            interviewDeadline: interviews.deadline,
+            interviewDurationMinutes: interviews.durationMinutes,
+            interviewInvitationNote: interviews.invitationNote,
+            interviewCompletedAt: interviews.completedAt,
+            interviewCreatedAt: interviews.createdAt,
+            interviewUpdatedAt: interviews.updatedAt,
+          })
+          .from(applications)
+          .innerJoin(candidateProfiles, eq(applications.candidateId, candidateProfiles.id))
+          .innerJoin(jobs, eq(applications.jobId, jobs.id))
+          .innerJoin(companies, eq(jobs.companyId, companies.id))
+          .leftJoin(interviews, eq(interviews.applicationId, applications.id))
+          .where(
+            and(
+              eq(applications.id, parsed.data.id),
+              eq(candidateProfiles.userId, userId),
+            ),
+          )
+          .limit(1);
+
+        if (!application) {
+          next(createHttpError("Application not found", 404));
+          return;
+        }
+
+        const {
+          companyId,
+          companyName,
+          companyIndustry,
+          companyWebsite,
+          companyLogoUrl,
+          companySize,
+          companyLocation,
+          companyDescription,
+          rejectionReason,
+          interviewId,
+          interviewType,
+          interviewStatus,
+          interviewScheduledAt,
+          interviewDeadline,
+          interviewDurationMinutes,
+          interviewInvitationNote,
+          interviewCompletedAt,
+          interviewCreatedAt,
+          interviewUpdatedAt,
+          ...applicationDetails
+        } = application;
+
+        res.status(200).json({
+          ...applicationDetails,
+          job: {
+            ...applicationDetails.job,
+            company: {
+              id: companyId,
+              name: companyName,
+              industry: companyIndustry,
+              website: companyWebsite,
+              logoUrl: companyLogoUrl,
+              size: companySize,
+              location: companyLocation,
+              description: companyDescription,
+            },
+          },
+          interview:
+            interviewId === null
+              ? null
+              : {
+                  id: interviewId,
+                  type: interviewType,
+                  status: interviewStatus,
+                  scheduledAt: interviewScheduledAt,
+                  deadline: interviewDeadline,
+                  durationMinutes: interviewDurationMinutes,
+                  invitationNote: interviewInvitationNote,
+                  completedAt: interviewCompletedAt,
+                  createdAt: interviewCreatedAt,
+                  updatedAt: interviewUpdatedAt,
+                },
+          feedback: application.status === "rejected" ? rejectionReason : null,
         });
       } catch (error) {
         next(error);
