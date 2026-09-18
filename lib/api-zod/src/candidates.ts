@@ -60,6 +60,12 @@ export const listCandidateApplicationsQuerySchema = z
   })
   .strict();
 
+export const getApplicationParamsSchema = z
+  .object({
+    id: z.coerce.number().int().positive(),
+  })
+  .strict();
+
 export type CreateCandidateProfileRequest = z.infer<
   typeof createCandidateProfileRequestSchema
 >;
@@ -69,3 +75,4 @@ export type UpdateCandidateProfileRequest = z.infer<
 export type ListCandidateApplicationsQuery = z.infer<
   typeof listCandidateApplicationsQuerySchema
 >;
+export type GetApplicationParams = z.infer<typeof getApplicationParamsSchema>;

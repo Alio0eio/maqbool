@@ -330,10 +330,17 @@ candidate-scoped listing, and unsaving.
   - Returns nested job and company information plus pagination metadata
   - Covered by `artifacts/api-server/src/candidate-applications.test.ts`
 
-- [ ] 4.3.3 Get single application endpoint
+- [x] 4.3.3 Get single application endpoint
   - `GET /applications/:id` - Application details
   - Include interview info if applicable
   - Include feedback if rejected
+  - Implemented in `artifacts/api-server/src/routes/candidates.ts`
+  - Validates route ID with Zod
+  - Resolves ownership from the authenticated JWT user only
+  - Returns nested job and company information
+  - Returns nullable interview details
+  - Returns rejected-application feedback from candidate-visible `rejectionReason`
+  - Covered by `artifacts/api-server/src/candidate-applications.test.ts`
 
 - [ ] 4.3.4 Withdraw application endpoint
   - `DELETE /applications/:id` - Withdraw application

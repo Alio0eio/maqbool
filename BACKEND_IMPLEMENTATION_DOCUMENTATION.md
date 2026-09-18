@@ -616,7 +616,52 @@ pnpm --filter @workspace/api-server test
 The API server typecheck passed, and the API server test suite passed with
 57 tests.
 
-## 4. Completion Boundary Through Phase 4.3.2
+### 3.20 Single candidate application details (Task 4.3.3)
+
+Single application retrieval is implemented at `GET /api/applications/:id` in
+`artifacts/api-server/src/routes/candidates.ts`.
+
+#### Endpoint behavior and security
+
+1. The endpoint requires `authenticate` and `authorize("candidate")`.
+2. `:id` is validated with `getApplicationParamsSchema` from
+   `lib/api-zod/src/candidates.ts`.
+3. Candidate ownership is never accepted from the route, query, or body. The
+   query joins `applications` to `candidate_profiles` and requires both
+   `applications.id = :id` and `candidate_profiles.user_id = req.user.id`.
+4. Missing applications and applications owned by another candidate both return
+   `404 Application not found`, avoiding ownership disclosure.
+5. The response includes application `id`, `status`, `stage`, `appliedAt`,
+   `createdAt`, `updatedAt`, `resumeUrl`, and `coverLetter`.
+6. The response reuses the application-list job projection and nests company
+   information under `job.company`.
+7. Interview information is loaded with a left join. Applications without an
+   interview return `"interview": null`.
+8. Feedback currently uses the existing candidate-visible
+   `applications.rejection_reason` column. Rejected applications return that
+   value as `feedback`; non-rejected applications return `"feedback": null`.
+   Internal fields such as `notes`, `aiScore`, and `aiSummary` are not exposed.
+
+#### Validation and tests
+
+Focused coverage is in `artifacts/api-server/src/candidate-applications.test.ts`
+and covers successful detail retrieval, nested job/company details,
+applications with and without interviews, rejected and non-rejected feedback,
+invalid IDs, nonexistent applications, cross-candidate access, and
+unauthenticated access.
+
+Verification run:
+
+```text
+pnpm --filter @workspace/api-zod exec tsc -p tsconfig.json
+pnpm --filter @workspace/api-server typecheck
+pnpm --filter @workspace/api-server test
+```
+
+The API server typecheck passed, and the API server test suite passed with
+61 tests. No lint script exists in `@workspace/api-server`.
+
+## 4. Completion Boundary Through Phase 4.3.3
 
 ### Completed
 
@@ -639,6 +684,7 @@ The API server typecheck passed, and the API server test suite passed with
 - Single published job details endpoint from task 4.2.2.
 - Saved jobs endpoints from task 4.2.3.
 - Candidate application list endpoint from task 4.3.2.
+- Single candidate application details endpoint from task 4.3.3.
 
 ### Not yet implemented
 
