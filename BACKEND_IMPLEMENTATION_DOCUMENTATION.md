@@ -218,6 +218,38 @@ The root `.env.example` documents the server, CORS, logging, JWT, and database v
 2. `jsonwebtoken` is used for JWT creation and verification.
 3. `@types/jsonwebtoken` supplies JWT TypeScript definitions.
 4. `cross-env` was added for cross-platform environment variable assignment.
+
+## 4. Application Submission Endpoint (Task 4.3.1)
+
+### 4.1 Endpoint summary
+
+The recruitment flow now includes `POST /jobs/:id/apply` in `artifacts/api-server/src/routes/jobs.ts`.
+
+1. The route requires authentication and the `candidate` role via the existing middleware chain.
+2. It validates the path ID and request body using Zod.
+3. It resolves the authenticated candidate profile and reads any existing `resumeUrl` from `candidateProfiles`.
+4. It rejects non-existent, unpublished, or already-applied jobs with the correct HTTP errors.
+5. It inserts the application with the default `status` and `stage` values set to `applied`.
+6. It returns the newly created application payload with `201 Created`.
+
+### 4.2 Schema and data model reuse
+
+No duplicate database schema changes were necessary for this task.
+
+1. Existing `jobs` table rows already include publication status.
+2. Existing `candidateProfiles` already store the candidate `resume_url` / `resumeUrl`.
+3. Existing `applications` table already stores `job_id`, `candidate_id`, `resume_url`, `cover_letter`, `status`, and `stage`.
+4. The unique index on `(job_id, candidate_id)` is the existing duplicate-prevention guard.
+
+### 4.3 Validation and test coverage
+
+1. `lib/api-zod/src/jobs.ts` adds a strict `applyJobBodySchema` with cover-letter size validation.
+2. Route-level tests exercise successful application creation, duplicate submissions, invalid cover letters, and candidate-role auth enforcement.
+3. The implementation also guards against missing candidate profiles and non-published jobs.
+
+### 4.4 Status
+
+This task is implemented and validated by the relevant backend tests. The route uses the project’s existing schema and auth patterns rather than creating a duplicate application sub-model.
 5. The API server development script now sets `NODE_ENV=development`, builds the server, and starts the generated output.
 6. The pnpm lockfile records the added dependency versions and resolutions.
 

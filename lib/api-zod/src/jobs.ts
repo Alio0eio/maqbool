@@ -8,6 +8,12 @@ export const getJobParamsSchema = z
   })
   .strict();
 
+export const applyJobBodySchema = z
+  .object({
+    coverLetter: z.string().trim().max(5000, "Cover letter is too long").optional(),
+  })
+  .strict();
+
 export const listJobsQuerySchema = z
   .object({
     page: z.coerce.number().int().min(1).default(1),
@@ -33,4 +39,5 @@ export const listJobsQuerySchema = z
   );
 
 export type GetJobParams = z.infer<typeof getJobParamsSchema>;
+export type ApplyJobBody = z.infer<typeof applyJobBodySchema>;
 export type ListJobsQuery = z.infer<typeof listJobsQuerySchema>;

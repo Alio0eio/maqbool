@@ -25,7 +25,9 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {
     : httpError.statusCode ?? httpError.status ?? 500;
   const safeStatusCode = statusCode >= 400 && statusCode < 600 ? statusCode : 500;
   if (safeStatusCode >= 500) {
-    req.log.error({ err: error }, "Unhandled request error");
+    if (req.log && typeof req.log.error === "function") {
+      req.log.error({ err: error }, "Unhandled request error");
+    }
   }
 
   res.status(safeStatusCode).json({

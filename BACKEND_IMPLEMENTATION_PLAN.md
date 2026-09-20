@@ -175,6 +175,16 @@ This document outlines the step-by-step implementation plan for the **Empo Recru
 ### Phase 3: Authentication & User Management
 **Duration**: 2-3 days
 
+#### Task 4.3.1: Submit Application Endpoint ✅
+- [x] Implement `POST /jobs/:id/apply` for authenticated candidates
+- [x] Reuse existing `candidateProfiles.resume_url` / `resumeUrl` as the application resume source
+- [x] Validate payloads with Zod, including cover-letter length checks
+- [x] Prevent duplicate applications using the existing unique `(job_id, candidate_id)` constraint
+- [x] Enforce published-job gating and candidate-only auth/role checks
+- [x] Return `201` with the inserted application record; return `409` for duplicates and closed jobs
+
+**Implementation update (2026-09-20)**: The endpoint was implemented in `artifacts/api-server/src/routes/jobs.ts` using the existing Drizzle schema. No new migration or schema table was needed because `applications`, `candidateProfiles`, and `jobs` already satisfied the required fields and constraints. The route uses `candidateProfiles.resumeUrl` as the resume source, attaches optional cover letters, and defaults the status/stage to `applied`.
+
 #### 3.1 User Registration & Authentication
 - [x] 3.1.1 Install auth dependencies: `bcryptjs`, `jsonwebtoken`, `@types/jsonwebtoken`
 - [x] 3.1.2 Create authentication utilities

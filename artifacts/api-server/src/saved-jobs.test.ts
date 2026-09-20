@@ -117,6 +117,7 @@ async function createTestServer(
 ) {
   const fake = createFakeDatabase(userId, initialSaved, options);
   const app = express();
+  app.use(express.json());
   app.use(createJobsRouter(fake.database as never));
   app.use(createCandidatesRouter(fake.database as never));
   app.use(errorHandler);
@@ -132,10 +133,11 @@ function tokenFor(userId: number, role: "candidate" | "recruiter" = "candidate")
   return generateAccessToken(userId, { role });
 }
 
-async function request(url: string, method: "POST" | "DELETE" | "GET", token?: string) {
+async function request(url: string, method: "POST" | "DELETE" | "GET", token?: string, body?: unknown) {
   return fetch(url, {
     method,
-    ...(token ? { headers: { authorization: `Bearer ${token}` } } : {}),
+    ...(body !== undefined ? { headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) } } : token ? { headers: { authorization: `Bearer ${token}` } } : {}),
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   });
 }
 
@@ -197,5 +199,129 @@ describe("saved jobs", () => {
     assert.equal((await request(saveUrl, "POST", tokenFor(2, "recruiter"))).status, 403);
     assert.equal((await request(`${testServer.url}/jobs/not-a-number/save`, "POST", tokenFor(1))).status, 400);
     assert.equal((await request(saveUrl, "POST", tokenFor(1))).status, 404);
+  });
+});
+
+describe("job application submission", () => {
+  it("lets a candidate apply with their existing resume and default status", async () => {
+    const applications: Array<{ id: number; jobId: number; candidateId: number; status: string; stage: string; resumeUrl: string | null; coverLetter: string | null; createdAt: Date; updatedAt: Date }> = [];
+    const candidate = { id: 10, userId: 1, resumeUrl: "https://example.com/resume.pdf" };
+    const publishedJob = { id: 1, status: "published" };
+
+    const database = {
+      select: () => ({
+        from: (table: unknown) => {
+          const builder = {
+            where: () => ({
+              limit: async () => {
+                if (table === candidateProfiles) return [candidate];
+                if (table === jobs) return [publishedJob];
+                return [];
+              },
+            }),
+          };
+          return builder;
+        },
+      }),
+      insert: () => ({
+        values: (value: { jobId: number; candidateId: number; resumeUrl: string | null; coverLetter: string | null }) => ({
+          returning: async () => {
+            const record = {
+              id: applications.length + 1,
+              ...value,
+              status: "applied",
+              stage: "applied",
+              createdAt: new Date("2026-09-20T00:00:00.000Z"),
+              updatedAt: new Date("2026-09-20T00:00:00.000Z"),
+            };
+            applications.push(record);
+            return [record];
+          },
+        }),
+      }),
+    };
+
+    const app = express();
+    app.use(express.json());
+    app.use(createJobsRouter(database as never));
+    app.use(errorHandler);
+    const server = http.createServer(app);
+    server.listen(0, "127.0.0.1");
+    await once(server, "listening");
+    const address = server.address();
+    assert.ok(address && typeof address !== "string");
+    servers.push(server);
+
+    const response = await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(1), {
+      coverLetter: "I am interested in this position because...",
+    });
+
+    assert.equal(response.status, 201);
+    const body = await response.json() as { jobId: number; candidateId: number; status: string; stage: string; resumeUrl: string | null; coverLetter: string | null };
+    assert.equal(body.status, "applied");
+    assert.equal(body.stage, "applied");
+    assert.equal(body.jobId, 1);
+    assert.equal(body.candidateId, 10);
+    assert.equal(body.resumeUrl, "https://example.com/resume.pdf");
+    assert.equal(body.coverLetter, "I am interested in this position because...");
+    assert.equal(applications.length, 1);
+  });
+
+  it("rejects duplicate applications and invalid cover letters", async () => {
+    const applications: Array<{ id: number; jobId: number; candidateId: number; status: string; stage: string; resumeUrl: string | null; coverLetter: string | null }> = [
+      { id: 1, jobId: 1, candidateId: 10, status: "applied", stage: "applied", resumeUrl: "https://example.com/resume.pdf", coverLetter: null },
+    ];
+    const candidate = { id: 10, userId: 1, resumeUrl: "https://example.com/resume.pdf" };
+    const publishedJob = { id: 1, status: "published" };
+
+    const database = {
+      select: () => ({
+        from: (table: unknown) => {
+          const builder = {
+            where: () => ({
+              limit: async () => {
+                if (table === candidateProfiles) return [candidate];
+                if (table === jobs) return [publishedJob];
+                if (table === applications) {
+                  return applications.filter(
+                    (application) => application.candidateId === candidate.id && application.jobId === publishedJob.id,
+                  );
+                }
+                return [];
+              },
+            }),
+          };
+          return builder;
+        },
+      }),
+      insert: () => ({
+        values: () => ({
+          returning: async () => {
+            const error = new Error("duplicate key value violates unique constraint");
+            (error as Error & { code?: string }).code = "23505";
+            throw error;
+          },
+        }),
+      }),
+    };
+
+    const app = express();
+    app.use(express.json());
+    app.use(createJobsRouter(database as never));
+    app.use(errorHandler);
+    const server = http.createServer(app);
+    server.listen(0, "127.0.0.1");
+    await once(server, "listening");
+    const address = server.address();
+    assert.ok(address && typeof address !== "string");
+    servers.push(server);
+
+    const duplicateResponse = await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(1));
+    assert.equal(duplicateResponse.status, 409);
+
+    const invalidLetterResponse = await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(1), {
+      coverLetter: "x".repeat(20000),
+    });
+    assert.equal(invalidLetterResponse.status, 400);
   });
 });

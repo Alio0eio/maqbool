@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { getJobParamsSchema, listJobsQuerySchema } from "@workspace/api-zod/jobs";
+import { applyJobBodySchema, getJobParamsSchema, listJobsQuerySchema } from "../../../../lib/api-zod/src/jobs";
 import { applications, candidateProfiles, companies, db, jobs, savedJobs } from "@workspace/db";
 import { and, asc, desc, eq, gte, isNull, lte, or, sql } from "drizzle-orm";
 import { authenticate, authorize, optionalAuthenticate } from "../middlewares/auth";
@@ -173,6 +173,90 @@ export function createJobsRouter(database: typeof db = db): IRouter {
       res.status(200).json({ ...job, company, applicationStatus });
     } catch (error) {
       next(error);
+    }
+  });
+
+  router.post("/jobs/:id/apply", authenticate, authorize("candidate"), async (req, res, next) => {
+    const params = getJobParamsSchema.safeParse(req.params);
+    if (!params.success) {
+      next(createHttpError("Invalid job ID", 400));
+      return;
+    }
+
+    const body = applyJobBodySchema.safeParse(req.body ?? {});
+    if (!body.success) {
+      next(createHttpError("Invalid application data", 400));
+      return;
+    }
+
+    try {
+      const userId = getUserId(req);
+      const [candidate] = await database
+        .select({ id: candidateProfiles.id, resumeUrl: candidateProfiles.resumeUrl })
+        .from(candidateProfiles)
+        .where(eq(candidateProfiles.userId, userId))
+        .limit(1);
+      if (!candidate) {
+        next(createHttpError("Candidate profile not found", 404));
+        return;
+      }
+
+      const [job] = await database
+        .select({ id: jobs.id, status: jobs.status })
+        .from(jobs)
+        .where(eq(jobs.id, params.data.id))
+        .limit(1);
+      if (!job) {
+        next(createHttpError("Job not found", 404));
+        return;
+      }
+      if (job.status !== "published") {
+        next(createHttpError("Job is not accepting applications", 409));
+        return;
+      }
+
+      const [existing] = await database
+        .select({ id: applications.id })
+        .from(applications)
+        .where(and(eq(applications.jobId, job.id), eq(applications.candidateId, candidate.id)))
+        .limit(1);
+      if (existing) {
+        next(createHttpError("Application already exists", 409));
+        return;
+      }
+
+      const [application] = await database
+        .insert(applications)
+        .values({
+          jobId: job.id,
+          candidateId: candidate.id,
+          resumeUrl: candidate.resumeUrl ?? null,
+          coverLetter: body.data.coverLetter ?? null,
+          status: "applied",
+          stage: "applied",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning({
+          id: applications.id,
+          jobId: applications.jobId,
+          candidateId: applications.candidateId,
+          status: applications.status,
+          stage: applications.stage,
+          resumeUrl: applications.resumeUrl,
+          coverLetter: applications.coverLetter,
+          createdAt: applications.createdAt,
+          updatedAt: applications.updatedAt,
+        });
+
+      if (!application) {
+        next(createHttpError("Application could not be created", 500));
+        return;
+      }
+
+      res.status(201).json(application);
+    } catch (error) {
+      next(isUniqueViolation(error) ? createHttpError("Application already exists", 409) : error);
     }
   });
 
