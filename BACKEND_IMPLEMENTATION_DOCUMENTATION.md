@@ -218,6 +218,38 @@ The root `.env.example` documents the server, CORS, logging, JWT, and database v
 2. `jsonwebtoken` is used for JWT creation and verification.
 3. `@types/jsonwebtoken` supplies JWT TypeScript definitions.
 4. `cross-env` was added for cross-platform environment variable assignment.
+
+## 4. Application Submission Endpoint (Task 4.3.1)
+
+### 4.1 Endpoint summary
+
+The recruitment flow now includes `POST /jobs/:id/apply` in `artifacts/api-server/src/routes/jobs.ts`.
+
+1. The route requires authentication and the `candidate` role via the existing middleware chain.
+2. It validates the path ID and request body using Zod.
+3. It resolves the authenticated candidate profile and reads any existing `resumeUrl` from `candidateProfiles`.
+4. It rejects non-existent, unpublished, or already-applied jobs with the correct HTTP errors.
+5. It inserts the application with the default `status` and `stage` values set to `applied`.
+6. It returns the newly created application payload with `201 Created`.
+
+### 4.2 Schema and data model reuse
+
+No duplicate database schema changes were necessary for this task.
+
+1. Existing `jobs` table rows already include publication status.
+2. Existing `candidateProfiles` already store the candidate `resume_url` / `resumeUrl`.
+3. Existing `applications` table already stores `job_id`, `candidate_id`, `resume_url`, `cover_letter`, `status`, and `stage`.
+4. The unique index on `(job_id, candidate_id)` is the existing duplicate-prevention guard.
+
+### 4.3 Validation and test coverage
+
+1. `lib/api-zod/src/jobs.ts` adds a strict `applyJobBodySchema` with cover-letter size validation.
+2. Route-level tests exercise successful application creation, duplicate submissions, invalid cover letters, and candidate-role auth enforcement.
+3. The implementation also guards against missing candidate profiles and non-published jobs.
+
+### 4.4 Status
+
+This task is implemented and validated by the relevant backend tests. The route uses the project’s existing schema and auth patterns rather than creating a duplicate application sub-model.
 5. The API server development script now sets `NODE_ENV=development`, builds the server, and starts the generated output.
 6. The pnpm lockfile records the added dependency versions and resolutions.
 
@@ -661,7 +693,46 @@ pnpm --filter @workspace/api-server test
 The API server typecheck passed, and the API server test suite passed with
 61 tests. No lint script exists in `@workspace/api-server`.
 
-## 4. Completion Boundary Through Phase 4.3.3
+### 3.21 Withdraw candidate application (Task 4.3.4)
+
+Application withdrawal is implemented at `DELETE /api/applications/:id` in
+`artifacts/api-server/src/routes/candidates.ts`.
+
+#### Endpoint behavior and security
+
+1. The endpoint requires `authenticate` and `authorize("candidate")`.
+2. `:id` is validated with the existing `getApplicationParamsSchema`.
+3. The candidate profile is resolved from the JWT subject. The application
+	lookup requires both the requested application ID and that profile's ID.
+4. Missing applications and applications owned by another candidate return
+	`404 Application not found`, matching the existing ownership-hiding
+	convention used by the single-application endpoint.
+5. Only `applied`, `reviewing`, `shortlisted`, and `interviewing` statuses are
+	withdrawable. `offered`, `rejected`, and `withdrawn` return `409 Application
+	cannot be withdrawn in its current status`.
+6. Withdrawal updates the existing application row to `withdrawn` and refreshes
+	`updatedAt`; the row is never physically deleted.
+7. A successful request returns `200` with the updated application fields.
+
+#### Validation and tests
+
+Focused coverage is in `artifacts/api-server/src/candidate-applications.test.ts`
+and covers successful withdrawal, missing applications, cross-candidate
+access, invalid IDs, non-withdrawable applications, and repeated withdrawal of
+an already withdrawn application.
+
+Verification run:
+
+```text
+pnpm --dir artifacts/api-server typecheck
+pnpm --dir artifacts/api-server test -- src/candidate-applications.test.ts
+```
+
+The API server typecheck passed, and the test command passed all 66 tests. No
+schema or migration change was required because the existing application enum
+already includes `withdrawn` and the table already has `updatedAt`.
+
+## 4. Completion Boundary Through Phase 4.3.4
 
 ### Completed
 
@@ -685,6 +756,7 @@ The API server typecheck passed, and the API server test suite passed with
 - Saved jobs endpoints from task 4.2.3.
 - Candidate application list endpoint from task 4.3.2.
 - Single candidate application details endpoint from task 4.3.3.
+- Candidate application withdrawal endpoint from task 4.3.4.
 
 ### Not yet implemented
 

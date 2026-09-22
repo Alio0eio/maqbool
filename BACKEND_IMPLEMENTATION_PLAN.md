@@ -175,6 +175,16 @@ This document outlines the step-by-step implementation plan for the **Empo Recru
 ### Phase 3: Authentication & User Management
 **Duration**: 2-3 days
 
+#### Task 4.3.1: Submit Application Endpoint ✅
+- [x] Implement `POST /jobs/:id/apply` for authenticated candidates
+- [x] Reuse existing `candidateProfiles.resume_url` / `resumeUrl` as the application resume source
+- [x] Validate payloads with Zod, including cover-letter length checks
+- [x] Prevent duplicate applications using the existing unique `(job_id, candidate_id)` constraint
+- [x] Enforce published-job gating and candidate-only auth/role checks
+- [x] Return `201` with the inserted application record; return `409` for duplicates and closed jobs
+
+**Implementation update (2026-09-20)**: The endpoint was implemented in `artifacts/api-server/src/routes/jobs.ts` using the existing Drizzle schema. No new migration or schema table was needed because `applications`, `candidateProfiles`, and `jobs` already satisfied the required fields and constraints. The route uses `candidateProfiles.resumeUrl` as the resume source, attaches optional cover letters, and defaults the status/stage to `applied`.
+
 #### 3.1 User Registration & Authentication
 - [x] 3.1.1 Install auth dependencies: `bcryptjs`, `jsonwebtoken`, `@types/jsonwebtoken`
 - [x] 3.1.2 Create authentication utilities
@@ -342,9 +352,20 @@ candidate-scoped listing, and unsaving.
   - Returns rejected-application feedback from candidate-visible `rejectionReason`
   - Covered by `artifacts/api-server/src/candidate-applications.test.ts`
 
-- [ ] 4.3.4 Withdraw application endpoint
+- [x] 4.3.4 Withdraw application endpoint
   - `DELETE /applications/:id` - Withdraw application
-  - Only if in withdrawable status
+  - Only if in an active withdrawable status
+
+**Implementation update (2026-09-22)**: `DELETE /api/applications/:id` is implemented
+in `artifacts/api-server/src/routes/candidates.ts`. The route requires an
+authenticated candidate, validates the application ID, scopes lookup to the
+candidate profile resolved from the JWT subject, and returns `404` for missing
+or cross-candidate applications. Applications in `applied`, `reviewing`,
+`shortlisted`, or `interviewing` status can transition to `withdrawn`; offered,
+rejected, and already withdrawn applications return `409`. The existing row is
+updated in place and its `updatedAt` timestamp is refreshed. Focused tests cover
+successful withdrawal, missing and cross-candidate applications, invalid IDs,
+non-withdrawable statuses, and repeated withdrawal attempts.
 
 **Files to Create**:
 - `artifacts/api-server/src/routes/candidates.ts`

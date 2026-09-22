@@ -320,6 +320,30 @@ function createFakeDatabase(
         return builder;
       },
     }),
+    update: () => ({
+      set: (values: { status: ApplicationStatus; updatedAt: Date }) => ({
+        where: () => ({
+          returning: async () => {
+            const applicationId = currentApplicationId();
+            const application = initialApplications.find((item) => item.id === applicationId);
+            if (!application) return [];
+
+            application.status = values.status;
+            application.updatedAt = values.updatedAt;
+            return [{
+              id: application.id,
+              status: application.status,
+              stage: application.stage,
+              resumeUrl: application.resumeUrl,
+              coverLetter: application.coverLetter,
+              rejectionReason: application.rejectionReason,
+              createdAt: application.createdAt,
+              updatedAt: application.updatedAt,
+            }];
+          },
+        }),
+      }),
+    }),
   };
 
   return database;
@@ -352,9 +376,9 @@ function tokenFor(userId: number, role: "candidate" | "recruiter" = "candidate")
   return generateAccessToken(userId, { role });
 }
 
-async function request(url: string, token?: string) {
+async function request(url: string, token?: string, method = "GET") {
   return fetch(url, {
-    method: "GET",
+    method,
     ...(token ? { headers: { authorization: `Bearer ${token}` } } : {}),
   });
 }
@@ -569,5 +593,42 @@ describe("candidate applications", () => {
     assert.equal((await request(`${testServer.url}/applications/999`, tokenFor(1))).status, 404);
     assert.equal((await request(`${testServer.url}/applications/4`, tokenFor(1))).status, 404);
     assert.equal((await request(`${testServer.url}/applications/1`)).status, 401);
+  });
+
+  it("withdraws an owned application and updates its status", async () => {
+    const testServer = await createTestServer(1, applicationFixtures);
+    servers.push(testServer.server);
+
+    const response = await request(`${testServer.url}/applications/1`, tokenFor(1), "DELETE");
+    const body = (await response.json()) as { id: number; status: string; updatedAt: string };
+
+    assert.equal(response.status, 200);
+    assert.equal(body.id, 1);
+    assert.equal(body.status, "withdrawn");
+    assert.equal(typeof body.updatedAt, "string");
+  });
+
+  it("returns not found for missing and cross-candidate applications", async () => {
+    const testServer = await createTestServer(1, applicationFixtures);
+    servers.push(testServer.server);
+
+    assert.equal((await request(`${testServer.url}/applications/999`, tokenFor(1), "DELETE")).status, 404);
+    assert.equal((await request(`${testServer.url}/applications/4`, tokenFor(1), "DELETE")).status, 404);
+  });
+
+  it("rejects invalid, non-withdrawable, and already withdrawn applications", async () => {
+    const testServer = await createTestServer(1, applicationFixtures);
+    servers.push(testServer.server);
+
+    assert.equal(
+      (await request(`${testServer.url}/applications/not-a-number`, tokenFor(1), "DELETE")).status,
+      400,
+    );
+    assert.equal((await request(`${testServer.url}/applications/5`, tokenFor(1), "DELETE")).status, 409);
+
+    const firstWithdrawal = await request(`${testServer.url}/applications/2`, tokenFor(1), "DELETE");
+    const secondWithdrawal = await request(`${testServer.url}/applications/2`, tokenFor(1), "DELETE");
+    assert.equal(firstWithdrawal.status, 200);
+    assert.equal(secondWithdrawal.status, 409);
   });
 });

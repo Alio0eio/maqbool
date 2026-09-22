@@ -27,6 +27,13 @@ function isUniqueViolation(error: unknown): boolean {
   );
 }
 
+const withdrawableApplicationStatuses = [
+  "applied",
+  "reviewing",
+  "shortlisted",
+  "interviewing",
+] as const;
+
 function getUserId(req: Express.Request): number {
   const userId = Number(req.user?.id);
   if (!Number.isSafeInteger(userId) || userId <= 0) {
@@ -467,6 +474,87 @@ export function createCandidatesRouter(database: typeof db = db): IRouter {
                 },
           feedback: application.status === "rejected" ? rejectionReason : null,
         });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  router.delete(
+    "/applications/:id",
+    authenticate,
+    authorize("candidate"),
+    async (req, res, next) => {
+      const parsed = getApplicationParamsSchema.safeParse(req.params);
+      if (!parsed.success) {
+        next(createHttpError("Invalid application ID", 400));
+        return;
+      }
+
+      try {
+        const userId = getUserId(req);
+        const [candidate] = await database
+          .select({ id: candidateProfiles.id })
+          .from(candidateProfiles)
+          .where(eq(candidateProfiles.userId, userId))
+          .limit(1);
+        if (!candidate) {
+          next(createHttpError("Candidate profile not found", 404));
+          return;
+        }
+
+        const [application] = await database
+          .select({
+            id: applications.id,
+            candidateId: applications.candidateId,
+            status: applications.status,
+            stage: applications.stage,
+            resumeUrl: applications.resumeUrl,
+            coverLetter: applications.coverLetter,
+            rejectionReason: applications.rejectionReason,
+            createdAt: applications.createdAt,
+            updatedAt: applications.updatedAt,
+          })
+          .from(applications)
+          .where(
+            and(
+              eq(applications.id, parsed.data.id),
+              eq(applications.candidateId, candidate.id),
+            ),
+          )
+          .limit(1);
+
+        if (!application) {
+          next(createHttpError("Application not found", 404));
+          return;
+        }
+
+        if (!withdrawableApplicationStatuses.includes(application.status as (typeof withdrawableApplicationStatuses)[number])) {
+          next(createHttpError("Application cannot be withdrawn in its current status", 409));
+          return;
+        }
+
+        const [updatedApplication] = await database
+          .update(applications)
+          .set({ status: "withdrawn", updatedAt: new Date() })
+          .where(eq(applications.id, application.id))
+          .returning({
+            id: applications.id,
+            status: applications.status,
+            stage: applications.stage,
+            resumeUrl: applications.resumeUrl,
+            coverLetter: applications.coverLetter,
+            rejectionReason: applications.rejectionReason,
+            createdAt: applications.createdAt,
+            updatedAt: applications.updatedAt,
+          });
+
+        if (!updatedApplication) {
+          next(createHttpError("Application could not be withdrawn", 500));
+          return;
+        }
+
+        res.status(200).json(updatedApplication);
       } catch (error) {
         next(error);
       }
