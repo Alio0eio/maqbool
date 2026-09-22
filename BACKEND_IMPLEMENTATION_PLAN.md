@@ -352,9 +352,20 @@ candidate-scoped listing, and unsaving.
   - Returns rejected-application feedback from candidate-visible `rejectionReason`
   - Covered by `artifacts/api-server/src/candidate-applications.test.ts`
 
-- [ ] 4.3.4 Withdraw application endpoint
+- [x] 4.3.4 Withdraw application endpoint
   - `DELETE /applications/:id` - Withdraw application
-  - Only if in withdrawable status
+  - Only if in an active withdrawable status
+
+**Implementation update (2026-09-22)**: `DELETE /api/applications/:id` is implemented
+in `artifacts/api-server/src/routes/candidates.ts`. The route requires an
+authenticated candidate, validates the application ID, scopes lookup to the
+candidate profile resolved from the JWT subject, and returns `404` for missing
+or cross-candidate applications. Applications in `applied`, `reviewing`,
+`shortlisted`, or `interviewing` status can transition to `withdrawn`; offered,
+rejected, and already withdrawn applications return `409`. The existing row is
+updated in place and its `updatedAt` timestamp is refreshed. Focused tests cover
+successful withdrawal, missing and cross-candidate applications, invalid IDs,
+non-withdrawable statuses, and repeated withdrawal attempts.
 
 **Files to Create**:
 - `artifacts/api-server/src/routes/candidates.ts`

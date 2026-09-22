@@ -693,7 +693,46 @@ pnpm --filter @workspace/api-server test
 The API server typecheck passed, and the API server test suite passed with
 61 tests. No lint script exists in `@workspace/api-server`.
 
-## 4. Completion Boundary Through Phase 4.3.3
+### 3.21 Withdraw candidate application (Task 4.3.4)
+
+Application withdrawal is implemented at `DELETE /api/applications/:id` in
+`artifacts/api-server/src/routes/candidates.ts`.
+
+#### Endpoint behavior and security
+
+1. The endpoint requires `authenticate` and `authorize("candidate")`.
+2. `:id` is validated with the existing `getApplicationParamsSchema`.
+3. The candidate profile is resolved from the JWT subject. The application
+	lookup requires both the requested application ID and that profile's ID.
+4. Missing applications and applications owned by another candidate return
+	`404 Application not found`, matching the existing ownership-hiding
+	convention used by the single-application endpoint.
+5. Only `applied`, `reviewing`, `shortlisted`, and `interviewing` statuses are
+	withdrawable. `offered`, `rejected`, and `withdrawn` return `409 Application
+	cannot be withdrawn in its current status`.
+6. Withdrawal updates the existing application row to `withdrawn` and refreshes
+	`updatedAt`; the row is never physically deleted.
+7. A successful request returns `200` with the updated application fields.
+
+#### Validation and tests
+
+Focused coverage is in `artifacts/api-server/src/candidate-applications.test.ts`
+and covers successful withdrawal, missing applications, cross-candidate
+access, invalid IDs, non-withdrawable applications, and repeated withdrawal of
+an already withdrawn application.
+
+Verification run:
+
+```text
+pnpm --dir artifacts/api-server typecheck
+pnpm --dir artifacts/api-server test -- src/candidate-applications.test.ts
+```
+
+The API server typecheck passed, and the test command passed all 66 tests. No
+schema or migration change was required because the existing application enum
+already includes `withdrawn` and the table already has `updatedAt`.
+
+## 4. Completion Boundary Through Phase 4.3.4
 
 ### Completed
 
@@ -717,6 +756,7 @@ The API server typecheck passed, and the API server test suite passed with
 - Saved jobs endpoints from task 4.2.3.
 - Candidate application list endpoint from task 4.3.2.
 - Single candidate application details endpoint from task 4.3.3.
+- Candidate application withdrawal endpoint from task 4.3.4.
 
 ### Not yet implemented
 
