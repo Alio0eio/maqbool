@@ -121,18 +121,25 @@ pages.
 
 ### Phase 1: Authentication and session migration
 
-1. Wire the sign-in form to `POST /api/auth/login` with email and password.
-2. Wire sign-up to `POST /api/auth/register`, then log in or use the returned
+1. [x] Wire the sign-in form to `POST /api/auth/login` with email and password.
+2. [ ] Wire sign-up to `POST /api/auth/register`, then log in or use the returned
    session according to the chosen UX.
-3. Store the returned access and refresh tokens through the auth provider.
-4. Restore the session with `GET /api/auth/me` before rendering candidate
+3. [x] Store the returned access and refresh tokens through the auth provider.
+4. [ ] Restore the session with `GET /api/auth/me` before rendering candidate
    routes.
-5. Wire logout to `POST /api/auth/logout` and clear client state regardless of
+5. [ ] Wire logout to `POST /api/auth/logout` and clear client state regardless of
    the response.
-6. Map backend `401` and validation errors to the existing form error/toast
+6. [x] Map backend `401` and validation errors to the existing form error/toast
    system.
-7. Test candidate and recruiter role gating with real backend roles. Recruiter
+7. [ ] Test candidate and recruiter role gating with real backend roles. Recruiter
    pages should remain blocked from candidate-only operations.
+
+**Progress update (2026-10-07)**: Sign-in now posts JSON credentials to the
+backend, resolves the authenticated user's role through `GET /api/auth/me`,
+stores the returned access and refresh tokens in the existing auth provider,
+and displays backend or network errors in the form. Token refresh, validated
+session bootstrap, backend logout, registration, and real-role route-gating
+tests remain incomplete, so the Phase 1 exit check is not yet met.
 
 **Exit check:** a newly registered candidate can refresh the browser, remain
 authenticated, and reach `/candidate/dashboard`; an invalid session returns to

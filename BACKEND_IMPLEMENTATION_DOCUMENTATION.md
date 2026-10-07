@@ -732,6 +732,33 @@ The API server typecheck passed, and the test command passed all 66 tests. No
 schema or migration change was required because the existing application enum
 already includes `withdrawn` and the table already has `updatedAt`.
 
+## 3.22 Frontend Sign-In Integration
+
+The candidate frontend sign-in form in `artifacts/maqbool/src/pages/auth.tsx`
+now calls `POST /api/auth/login` through the existing `AuthProvider` in
+`artifacts/maqbool/src/lib/auth.tsx`. It sends the entered email and password
+as JSON with `Content-Type: application/json`. The API base is
+`VITE_API_BASE_URL`, defaulting to the existing same-origin `/api` convention;
+set it to the backend origin plus `/api` when the frontend and API are hosted
+separately. The backend does not use cookies for login, so authentication
+tokens are returned in JSON.
+
+The frontend consumes the backend's actual `message`, `token`, `accessToken`,
+`refreshToken`, and safe `user` response fields. Because the login response's
+user object does not include a role, the provider requests `GET /api/auth/me`
+with the returned bearer access token, then stores that authoritative user and
+both tokens in its existing localStorage-backed session state. The form routes
+recruiters to `/recruiter/dashboard` and candidates to
+`/candidate/dashboard`. Backend errors are shown inline, network failures get a
+connection message, and the submit button is disabled while the request is in
+flight. Requests use same-origin credentials; the backend currently relies on
+bearer tokens rather than cookies.
+
+This completes only the sign-in slice of frontend Phase 1. Tokens are stored in
+localStorage for this bearer-token implementation. Automatic refresh, `/me`
+validation during page-load session restoration, backend logout/revocation,
+sign-up integration, and real-role route-gating tests remain follow-up work.
+
 ## 4. Completion Boundary Through Phase 4.3.4
 
 ### Completed
