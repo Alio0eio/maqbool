@@ -14,27 +14,45 @@ import { MaqboolWordmark } from "@/components/shared/logo";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
-  const { signIn } = useAuth();
+  const { login, signIn } = useAuth();
   const [role, setRole] = useState<"candidate" | "recruiter">("candidate");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const heroWave = useMemo(
     () => Array.from({ length: 64 }, (_, i) => 0.15 + 0.75 * Math.abs(Math.sin(i * 0.4) * Math.cos(i * 0.17)),),
     [],
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    const email = (e.currentTarget as HTMLFormElement).email?.value
+    setError(null);
+    const formData = new FormData(e.currentTarget);
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    try {
+      const user = await login(email, password);
+      setLocation(user.role === "recruiter" ? "/recruiter/dashboard" : "/candidate/dashboard");
+    } catch (cause) {
+      setError(cause instanceof TypeError
+        ? "Unable to connect to the server. Check your connection and try again."
+        : cause instanceof Error
+          ? cause.message
+          : "Sign in failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const email = new FormData(e.currentTarget).get("email")?.toString()
       || (role === "recruiter" ? MOCK_USERS.recruiter.email : MOCK_USERS.candidate.email);
-    // Simulate network request
     setTimeout(() => {
       signIn(email, role);
-      if (role === "recruiter") {
-        setLocation("/recruiter/dashboard");
-      } else {
-        setLocation("/candidate/dashboard");
-      }
+      setLocation(role === "recruiter" ? "/recruiter/dashboard" : "/candidate/dashboard");
     }, 800);
   };
 
@@ -149,7 +167,6 @@ export default function AuthPage() {
                       name="email"
                       type="email"
                       placeholder={role === "recruiter" ? "sarah.jenkins@stratos.com" : "alex.rivera@example.com"}
-                      defaultValue={role === "recruiter" ? MOCK_USERS.recruiter.email : MOCK_USERS.candidate.email}
                       required
                     />
                   </div>
@@ -158,8 +175,9 @@ export default function AuthPage() {
                       <Label htmlFor="password">Password</Label>
                       <a href="#" className="text-[12.5px] text-primary font-medium hover:underline">Forgot password?</a>
                     </div>
-                    <Input id="password" type="password" defaultValue="password123" required />
+                    <Input id="password" name="password" type="password" required />
                   </div>
+                  {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
                   <Button type="submit" size="lg" className="w-full mt-2" disabled={isLoading}>
                     {isLoading ? "Signing in…" : "Sign In"}
                   </Button>
@@ -167,7 +185,7 @@ export default function AuthPage() {
               </TabsContent>
 
               <TabsContent value="signup" className="space-y-4 outline-none">
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="signup-name">Full Name</Label>
                     <Input id="signup-name" type="text" placeholder="John Doe" required />
