@@ -122,8 +122,10 @@ pages.
 ### Phase 1: Authentication and session migration
 
 1. [x] Wire the sign-in form to `POST /api/auth/login` with email and password.
-2. [ ] Wire sign-up to `POST /api/auth/register`, then log in or use the returned
-   session according to the chosen UX.
+2. [x] Wire sign-up to `POST /api/auth/register` with the backend schema's
+   `{ email, password, name }` JSON body. Registration returns no session, so
+   the UI directs the new candidate to sign in. Email verification remains
+   blocked on backend support (see below).
 3. [x] Store the returned access and refresh tokens through the auth provider.
 4. [ ] Restore the session with `GET /api/auth/me` before rendering candidate
    routes.
@@ -138,12 +140,34 @@ pages.
 backend, resolves the authenticated user's role through `GET /api/auth/me`,
 stores the returned access and refresh tokens in the existing auth provider,
 and displays backend or network errors in the form. Token refresh, validated
-session bootstrap, backend logout, registration, and real-role route-gating
-tests remain incomplete, so the Phase 1 exit check is not yet met.
+session bootstrap, backend logout, and real-role route-gating tests remain
+incomplete, so the Phase 1 exit check is not yet met.
+
+**Progress update (2026-10-08)**: The sign-up form now posts trimmed email and
+name plus the password to `POST /api/auth/register`, prevents duplicate
+submissions, applies the server's password and name constraints in the browser,
+and shows server/network errors. On `201`, it switches to Sign In with the
+registered email and does not create a session. The backend has no email
+verification implementation, so `/verify-email`, verification-code submission,
+and resend are intentionally not simulated. Registration and verification are
+not equivalent: email verification is still a backend prerequisite before the
+requested verification flow and its end-to-end exit check can be completed.
+
+#### Email verification backend prerequisites
+
+- Add an email-verification status field to `users` and a migration.
+- Add secure verification-code storage with expiration and one-time-use handling.
+- Add an email delivery service and configuration.
+- Implement `POST /api/auth/verify-email` with its actual request/response schema.
+- Implement `POST /api/auth/resend-verification` with server-enforced cooldowns
+  if resend throttling is part of the contract.
+- Decide whether successful verification returns an authenticated session or
+  requires the user to sign in, then cover that behavior with backend tests.
 
 **Exit check:** a newly registered candidate can refresh the browser, remain
 authenticated, and reach `/candidate/dashboard`; an invalid session returns to
-the auth page.
+the auth page. This remains blocked until session bootstrap is complete; the
+email-verification user flow additionally requires the backend prerequisites.
 
 ### Phase 2: Candidate profile foundation
 

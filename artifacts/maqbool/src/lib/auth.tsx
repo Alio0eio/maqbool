@@ -25,6 +25,7 @@ interface AuthContextValue {
   accessToken: string | null;
   refreshToken: string | null;
   login: (email: string, password: string) => Promise<User>;
+  register: (email: string, password: string, name: string) => Promise<void>;
   signIn: (email: string, role: Role) => void;
   signOut: () => void;
   isAuthenticated: boolean;
@@ -138,6 +139,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return authenticatedUser;
   }, []);
 
+  const register = useCallback(async (email: string, password: string, name: string) => {
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, name }),
+    });
+    if (!response.ok) throw new Error(await getErrorMessage(response));
+  }, []);
+
   const signIn = useCallback((email: string, selectedRole: Role) => {
     // Find matching user or create a mock one
     let found = USERS.find(u => u.email === email && u.role === selectedRole);
@@ -165,7 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, role, accessToken, refreshToken, login, signIn, signOut, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, role, accessToken, refreshToken, login, register, signIn, signOut, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
