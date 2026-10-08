@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@workspace/design-system/button";
 import { Input } from "@workspace/design-system/input";
 import { Label } from "@workspace/design-system/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/design-system/tabs";
-import { MOCK_USERS } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth";
 import { motion } from "framer-motion";
 import { Building2, Check, UserCircle } from "lucide-react";
@@ -14,10 +13,14 @@ import { MaqboolWordmark } from "@/components/shared/logo";
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
-  const { login, signIn } = useAuth();
+  const { login, register } = useAuth();
   const [role, setRole] = useState<"candidate" | "recruiter">("candidate");
+  const [activeTab, setActiveTab] = useState("signin");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [registeredEmail, setRegisteredEmail] = useState("");
+  const submitting = useRef(false);
   const heroWave = useMemo(
     () => Array.from({ length: 64 }, (_, i) => 0.15 + 0.75 * Math.abs(Math.sin(i * 0.4) * Math.cos(i * 0.17)),),
     [],
@@ -25,8 +28,11 @@ export default function AuthPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (submitting.current) return;
+    submitting.current = true;
     setIsLoading(true);
     setError(null);
+    setNotice(null);
     const formData = new FormData(e.currentTarget);
     const email = String(formData.get("email") ?? "").trim();
     const password = String(formData.get("password") ?? "");
@@ -41,19 +47,43 @@ export default function AuthPage() {
           ? cause.message
           : "Sign in failed. Please try again.");
     } finally {
+      submitting.current = false;
       setIsLoading(false);
     }
   };
 
-  const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (submitting.current) return;
+    if (role !== "candidate") {
+      setError("Recruiter accounts cannot be created through this registration form. Choose Candidate to sign up.");
+      return;
+    }
+    submitting.current = true;
     setIsLoading(true);
-    const email = new FormData(e.currentTarget).get("email")?.toString()
-      || (role === "recruiter" ? MOCK_USERS.recruiter.email : MOCK_USERS.candidate.email);
-    setTimeout(() => {
-      signIn(email, role);
-      setLocation(role === "recruiter" ? "/recruiter/dashboard" : "/candidate/dashboard");
-    }, 800);
+    setError(null);
+    setNotice(null);
+    const formData = new FormData(e.currentTarget);
+    const name = String(formData.get("name") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    try {
+      await register(email, password, name);
+      setRegisteredEmail(email);
+      setRole("candidate");
+      setNotice("Your candidate account was created. Sign in with your email and password to continue.");
+      setActiveTab("signin");
+    } catch (cause) {
+      setError(cause instanceof TypeError
+        ? "Unable to connect to the server. Check your connection and try again."
+        : cause instanceof Error
+          ? cause.message
+          : "Sign up failed. Please try again.");
+    } finally {
+      submitting.current = false;
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -152,7 +182,15 @@ export default function AuthPage() {
               </div>
             </div>
 
-            <Tabs defaultValue="signin" className="w-full">
+            <Tabs
+              value={activeTab}
+              onValueChange={(value) => {
+                setActiveTab(value);
+                setError(null);
+                setNotice(null);
+              }}
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -160,12 +198,14 @@ export default function AuthPage() {
 
               <TabsContent value="signin" className="space-y-4 outline-none">
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {notice && <p role="status" className="text-sm text-primary">{notice}</p>}
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
                       id="email"
                       name="email"
                       type="email"
+                      defaultValue={registeredEmail}
                       placeholder={role === "recruiter" ? "sarah.jenkins@stratos.com" : "alex.rivera@example.com"}
                       required
                     />
@@ -188,7 +228,7 @@ export default function AuthPage() {
                 <form onSubmit={handleSignUp} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="signup-name">Full Name</Label>
-                    <Input id="signup-name" type="text" placeholder="John Doe" required />
+                    <Input id="signup-name" name="name" type="text" placeholder="John Doe" maxLength={200} required />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
@@ -196,8 +236,17 @@ export default function AuthPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">Password</Label>
-                    <Input id="signup-password" type="password" required />
+                    <Input
+                      id="signup-password"
+                      name="password"
+                      type="password"
+                      minLength={8}
+                      pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}"
+                      title="Use at least 8 characters with uppercase and lowercase letters, a number, and a special character."
+                      required
+                    />
                   </div>
+                  {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
                   <Button type="submit" size="lg" className="w-full mt-2" disabled={isLoading}>
                     {isLoading ? "Creating account…" : "Create Account"}
                   </Button>

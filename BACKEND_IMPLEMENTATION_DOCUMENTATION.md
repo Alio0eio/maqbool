@@ -326,6 +326,24 @@ The native Node test suite in `artifacts/api-server/src/register.test.ts` covers
 9. Duplicate email conflict responses without internal database details.
 
 The API server package now exposes a `test` script using the workspace's existing `tsx` runtime and Node's built-in test module. The router also exports `createAuthRouter(database)` so endpoint tests can use an isolated fake database without a live PostgreSQL instance.
+#### Email verification status
+
+Email verification is not implemented by the current backend. The `users`
+table has no verification-status column, there is no verification-code storage
+or expiry handling, and no email delivery service is connected. The auth router
+does not expose `POST /auth/verify-email` or `POST /auth/resend-verification`.
+Registration therefore creates an account immediately and returns only public
+user data; it does not send a code or issue an authenticated session. The
+frontend must not present a verification-code screen until these backend
+capabilities, request/response contracts, and tests exist.
+
+The frontend integration completed on 2026-10-08 sends
+`{ email, password, name }` to `POST /api/auth/register`. On success it keeps
+the user unauthenticated, switches to the existing Sign In tab, and prefills
+the registered email. This reuses the existing login/session mechanism without
+creating a second auth flow. Frontend typecheck and the backend registration
+route test suite passed; email verification scenarios remain untestable until
+the backend endpoints are implemented.
 
 ### 3.9 User login endpoint (Task 3.1.4)
 
