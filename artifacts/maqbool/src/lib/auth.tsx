@@ -1,182 +1,185 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import type { User, Role } from './mock-data';
-import { USERS } from './mock-data';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
+import { ApiError, customFetch } from '@workspace/api-client-react';
+import type { User } from './mock-data';
+import type { Role } from './mock-data';
 
-const SESSION_STORAGE_KEY = 'maqbool_auth_session';
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '');
-
-interface LoginResponse {
-  message: string;
-  token: string;
-  accessToken: string;
-  refreshToken: string;
-  user: Pick<User, 'id' | 'email' | 'name'>;
-}
-
-interface StoredSession {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
-}
+const roles: Role[] = ['candidate', 'recruiter', 'admin'];
 
 interface AuthContextValue {
   user: User | null;
   role: Role | null;
-  accessToken: string | null;
-  refreshToken: string | null;
   login: (email: string, password: string) => Promise<User>;
   register: (email: string, password: string, name: string) => Promise<void>;
-  signIn: (email: string, role: Role) => void;
-  signOut: () => void;
+  signOut: () => Promise<void>;
   isAuthenticated: boolean;
+  isInitializing: boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function getStoredSession(): StoredSession | null {
-  try {
-    const stored = localStorage.getItem(SESSION_STORAGE_KEY);
-    if (!stored) return null;
-
-    const session = JSON.parse(stored) as StoredSession;
-    if (
-      typeof session.accessToken === 'string' &&
-      typeof session.refreshToken === 'string' &&
-      session.user &&
-      typeof session.user.id === 'number' &&
-      typeof session.user.email === 'string' &&
-      typeof session.user.name === 'string' &&
-      ['candidate', 'recruiter', 'admin'].includes(session.user.role)
-    ) {
-      return session;
-    }
-  } catch {}
-  return null;
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  return customFetch<T>(`${API_BASE_URL}${path}`, {
+    ...options,
+    credentials: 'include',
+    responseType: 'json',
+  });
 }
 
-function loadFromStorage(): StoredSession | { user: User | null; role: Role | null } {
-  const session = getStoredSession();
-  if (session) return session;
+function isAuthenticatedUser(value: unknown): value is User {
+  if (!value || typeof value !== 'object') return false;
 
-  try {
-    const role = localStorage.getItem('maqbool_role') as Role | null;
-    const userId = localStorage.getItem('maqbool_user_id');
-    if (role && userId) {
-      const user = USERS.find(u => u.id === Number(userId)) ?? null;
-      return { user, role };
-    }
-  } catch {}
-  return { user: null, role: null };
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.id === 'number' &&
+    typeof candidate.email === 'string' &&
+    typeof candidate.name === 'string' &&
+    typeof candidate.role === 'string' &&
+    roles.includes(candidate.role as Role) &&
+    (candidate.avatarUrl === undefined ||
+      candidate.avatarUrl === null ||
+      typeof candidate.avatarUrl === 'string') &&
+    (candidate.createdAt === undefined || typeof candidate.createdAt === 'string')
+  );
 }
 
-async function getErrorMessage(response: Response): Promise<string> {
+function isAuthenticationFailure(error: unknown): boolean {
+  return error instanceof ApiError && [401, 403, 404].includes(error.status);
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    const data = error.data;
+    if (data && typeof data === 'object') {
+      const body = data as {
+        error?: { message?: unknown };
+        message?: unknown;
+      };
+      if (typeof body.error?.message === 'string') return body.error.message;
+      if (typeof body.message === 'string') return body.message;
+    }
+  }
+  return error instanceof Error ? error.message : 'Request failed.';
+}
+
+async function getCurrentUser(): Promise<User> {
+  const currentUser = await request<unknown>('/auth/me');
+  if (!isAuthenticatedUser(currentUser)) {
+    throw new Error('The server returned an invalid authenticated user.');
+  }
+  return currentUser;
+}
+
+function clearLegacyAuthenticationData(): void {
   try {
-    const body = (await response.json()) as {
-      error?: { message?: string };
-      message?: string;
-    };
-    return body.error?.message || body.message || `Request failed (${response.status}).`;
-  } catch {
-    return `Request failed (${response.status}).`;
+    localStorage.removeItem('maqbool_auth_session');
+    localStorage.removeItem('maqbool_role');
+    localStorage.removeItem('maqbool_user_id');
+  } catch (error) {
+    console.error('Unable to clear legacy authentication data.', error);
   }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [stored] = useState(loadFromStorage);
-  const [user, setUser] = useState<User | null>(stored.user);
-  const [role, setRole] = useState<Role | null>(
-    'role' in stored ? stored.role : stored.user?.role ?? null,
-  );
-  const [accessToken, setAccessToken] = useState<string | null>(
-    'accessToken' in stored ? stored.accessToken : null,
-  );
-  const [refreshToken, setRefreshToken] = useState<string | null>(
-    'refreshToken' in stored ? stored.refreshToken : null,
-  );
+  const [user, setUser] = useState<User | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const authActionVersion = useRef(0);
+
+  useEffect(() => {
+    let mounted = true;
+    clearLegacyAuthenticationData();
+
+    const restoreSession = async () => {
+      const restoreVersion = authActionVersion.current;
+      try {
+        let restoredUser: User;
+        try {
+          restoredUser = await getCurrentUser();
+        } catch (error) {
+          if (!(error instanceof ApiError) || error.status !== 401) throw error;
+          await request<unknown>('/auth/refresh', { method: 'POST' });
+          restoredUser = await getCurrentUser();
+        }
+
+        if (mounted && restoreVersion === authActionVersion.current) {
+          setUser(restoredUser);
+        }
+      } catch (error) {
+        if (!isAuthenticationFailure(error)) {
+          console.error('Unable to restore the authenticated session.', error);
+        }
+        if (mounted && restoreVersion === authActionVersion.current) setUser(null);
+      } finally {
+        if (mounted) setIsInitializing(false);
+      }
+    };
+
+    void restoreSession();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    authActionVersion.current += 1;
+    await request<unknown>('/auth/login', {
       method: 'POST',
-      credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
-    if (!response.ok) throw new Error(await getErrorMessage(response));
 
-    const result = (await response.json()) as LoginResponse;
-    const token = result.accessToken || result.token;
-    if (!token || !result.refreshToken) {
-      throw new Error('The server returned an incomplete login response.');
-    }
-
-    const currentUserResponse = await fetch(`${API_BASE_URL}/auth/me`, {
-      credentials: 'same-origin',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!currentUserResponse.ok) {
-      throw new Error(await getErrorMessage(currentUserResponse));
-    }
-
-    const authenticatedUser = (await currentUserResponse.json()) as User;
-    if (authenticatedUser.role !== 'candidate' && authenticatedUser.role !== 'recruiter') {
-      throw new Error('This account does not have access to a candidate or recruiter dashboard.');
-    }
-
-    const session: StoredSession = {
-      accessToken: token,
-      refreshToken: result.refreshToken,
-      user: authenticatedUser,
-    };
-    try {
-      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
-      localStorage.removeItem('maqbool_role');
-      localStorage.removeItem('maqbool_user_id');
-    } catch {}
+    const authenticatedUser = await getCurrentUser();
     setUser(authenticatedUser);
-    setRole(authenticatedUser.role);
-    setAccessToken(token);
-    setRefreshToken(result.refreshToken);
+    setIsInitializing(false);
     return authenticatedUser;
   }, []);
 
   const register = useCallback(async (email: string, password: string, name: string) => {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    await request<unknown>('/auth/register', {
       method: 'POST',
-      credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, name }),
     });
-    if (!response.ok) throw new Error(await getErrorMessage(response));
   }, []);
 
-  const signIn = useCallback((email: string, selectedRole: Role) => {
-    // Find matching user or create a mock one
-    let found = USERS.find(u => u.email === email && u.role === selectedRole);
-    if (!found) {
-      // Use default user for the role
-      found = USERS.find(u => u.role === selectedRole) ?? USERS[0];
-    }
-    setUser(found);
-    setRole(selectedRole);
-    setAccessToken(null);
-    setRefreshToken(null);
-    localStorage.removeItem(SESSION_STORAGE_KEY);
-    localStorage.setItem('maqbool_role', selectedRole);
-    localStorage.setItem('maqbool_user_id', String(found.id));
-  }, []);
-
-  const signOut = useCallback(() => {
+  const signOut = useCallback(async () => {
+    authActionVersion.current += 1;
     setUser(null);
-    setRole(null);
-    setAccessToken(null);
-    setRefreshToken(null);
-    localStorage.removeItem(SESSION_STORAGE_KEY);
-    localStorage.removeItem('maqbool_role');
-    localStorage.removeItem('maqbool_user_id');
+    setIsInitializing(false);
+
+    try {
+      try {
+        await request<unknown>('/auth/logout', { method: 'POST' });
+      } catch (error) {
+        if (!(error instanceof ApiError) || error.status !== 401) throw error;
+        await request<unknown>('/auth/refresh', { method: 'POST' });
+        await request<unknown>('/auth/logout', { method: 'POST' });
+      }
+    } catch (error) {
+      console.error(`Unable to invalidate the server session: ${getErrorMessage(error)}`, error);
+    }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, role, accessToken, refreshToken, login, register, signIn, signOut, isAuthenticated: !!user }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        role: user?.role ?? null,
+        login,
+        register,
+        signOut,
+        isAuthenticated: !!user,
+        isInitializing,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

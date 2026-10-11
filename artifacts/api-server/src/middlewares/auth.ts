@@ -61,19 +61,24 @@ function getAuthenticatedUser(payload: JwtPayload): AuthenticatedUser {
 
 export const authenticate: RequestHandler = (req, _res, next) => {
   const authorization = req.get("authorization");
-  if (!authorization) {
+  const cookieToken = req.cookies?.maqbool_access_token;
+  if (!authorization && !cookieToken) {
     next(createAuthError("Authentication required"));
     return;
   }
 
-  const match = authorization.match(/^Bearer\s+([^\s]+)$/i);
-  if (!match) {
-    next(createAuthError("Invalid authentication credentials"));
-    return;
+  let token = cookieToken;
+  if (authorization) {
+    const match = authorization.match(/^Bearer\s+([^\s]+)$/i);
+    if (!match) {
+      next(createAuthError("Invalid authentication credentials"));
+      return;
+    }
+    token = match[1];
   }
 
   try {
-    const payload = verifyAccessToken(match[1]);
+    const payload = verifyAccessToken(token);
     if (isAccessTokenRevoked(payload.jti)) {
       next(createAuthError("Invalid authentication token"));
       return;
@@ -94,7 +99,7 @@ export const authenticate: RequestHandler = (req, _res, next) => {
 };
 
 export const optionalAuthenticate: RequestHandler = (req, _res, next) => {
-  if (!req.get("authorization")) {
+  if (!req.get("authorization") && !req.cookies?.maqbool_access_token) {
     next();
     return;
   }

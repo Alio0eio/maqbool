@@ -39,7 +39,13 @@ export default function AuthPage() {
 
     try {
       const user = await login(email, password);
-      setLocation(user.role === "recruiter" ? "/recruiter/dashboard" : "/candidate/dashboard");
+      setLocation(
+        user.role === "recruiter"
+          ? "/recruiter/dashboard"
+          : user.role === "candidate"
+            ? "/candidate/dashboard"
+            : "/",
+      );
     } catch (cause) {
       setError(cause instanceof TypeError
         ? "Unable to connect to the server. Check your connection and try again."

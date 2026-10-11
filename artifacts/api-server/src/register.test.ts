@@ -8,6 +8,7 @@ process.env.PORT ??= "5000";
 process.env.JWT_SECRET ??= "test-secret";
 
 const { default: express } = await import("express");
+const { default: cookieParser } = await import("cookie-parser");
 const { default: jwt } = await import("jsonwebtoken");
 const { createAuthRouter } = await import("./routes/auth");
 const { config } = await import("./config");
@@ -101,6 +102,7 @@ async function createTestServer(
   const fake = createFakeDatabase(initialUsers, initialProfiles);
   const app = express();
   app.use(express.json());
+  app.use(cookieParser());
   app.use(createAuthRouter(fake.database as never));
   app.get("/protected", authenticate, (_req, res) => {
     res.json({ message: "Access granted" });
@@ -236,6 +238,9 @@ describe("POST /auth/login", () => {
     assert.equal(body.message, "Login successful");
     assert.equal(typeof body.token, "string");
     assert.equal(verifyAccessToken(body.token).sub, "1");
+    assert.match(response.headers.get("set-cookie") ?? "", /maqbool_access_token=.*HttpOnly/);
+    assert.match(response.headers.get("set-cookie") ?? "", /maqbool_refresh_token=.*HttpOnly/);
+    assert.match(response.headers.get("set-cookie") ?? "", /Path=\/api/);
     assert.deepEqual(body.user, { id: 1, email: "user@example.com", name: "User" });
     assert.equal("password" in body.user, false);
     assert.equal("passwordHash" in body.user, false);
@@ -323,6 +328,23 @@ describe("GET /auth/me", () => {
     assert.deepEqual(body.profile, { id: 1, userId: 1, headline: "Senior engineer" });
     assert.equal("passwordHash" in body, false);
     assert.equal("refreshToken" in body, false);
+  });
+
+  it("authenticates the current user using the HttpOnly access-token cookie", async () => {
+    const testServer = await createTestServer([
+      { id: 1, email: "user@example.com", passwordHash: "secret-hash", role: "candidate", name: "User" },
+    ]);
+    servers.push(testServer.server);
+
+    const token = generateAccessToken(1, { role: "candidate" });
+    const response = await fetch(testServer.url + "/auth/me", {
+      headers: { cookie: `maqbool_access_token=${token}` },
+    });
+    const body = (await response.json()) as { id: number; role: string };
+
+    assert.equal(response.status, 200);
+    assert.equal(body.id, 1);
+    assert.equal(body.role, "candidate");
   });
 
   it("returns not found when the authenticated user no longer exists", async () => {
@@ -455,6 +477,8 @@ describe("POST /auth/logout", () => {
 
     assert.equal(logoutResponse.status, 200);
     assert.deepEqual(body, { message: "Logout successful" });
+    assert.match(logoutResponse.headers.get("set-cookie") ?? "", /maqbool_access_token=;/);
+    assert.match(logoutResponse.headers.get("set-cookie") ?? "", /maqbool_refresh_token=;/);
     assert.equal(JSON.stringify(body).includes(token), false);
     assert.equal(isAccessTokenRevoked(verifyAccessToken(token).jti), true);
   });
@@ -547,11 +571,19 @@ describe("POST /auth/refresh", () => {
     assert.equal(typeof refreshBody.refreshToken, "string");
     assert.notEqual(refreshBody.accessToken, loginBody.accessToken);
     assert.notEqual(refreshBody.refreshToken, loginBody.refreshToken);
+    assert.match(refreshResponse.headers.get("set-cookie") ?? "", /maqbool_access_token=.*HttpOnly/);
+    assert.match(refreshResponse.headers.get("set-cookie") ?? "", /maqbool_refresh_token=.*HttpOnly/);
 
     const protectedResponse = await fetch(testServer.url + "/protected", {
       headers: { authorization: `Bearer ${refreshBody.accessToken}` },
     });
     assert.equal(protectedResponse.status, 200);
+
+    const cookieRefreshResponse = await fetch(testServer.url + "/auth/refresh", {
+      method: "POST",
+      headers: { cookie: `maqbool_refresh_token=${refreshBody.refreshToken}` },
+    });
+    assert.equal(cookieRefreshResponse.status, 200);
 
     const reusedResponse = await postAuth(testServer.url + "/auth/refresh", {
       refreshToken: loginBody.refreshToken,
