@@ -1,12 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { AnimatePresence, motion } from "framer-motion";
-import { Building2, Check, Eye, EyeOff, ShieldCheck, Sparkles, UserCircle, Video, Wand2 } from "lucide-react";
+import { Building2, Check, Eye, EyeOff, ShieldCheck, Sparkles, UserCircle, Video } from "lucide-react";
 import { Button } from "@workspace/design-system/button";
 import { Input } from "@workspace/design-system/input";
 import { Label } from "@workspace/design-system/label";
 import { cn } from "@workspace/design-system/utils";
-import { MOCK_USERS } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth";
 import { MaqboolWordmark } from "@/components/shared/logo";
 import { Spinner } from "@/components/shared/spinner";
@@ -35,39 +34,77 @@ function passwordStrength(pw: string) {
   if (/[^A-Za-z0-9]/.test(pw) || pw.length >= 14) score++;
   return score; // 0-4
 }
+const PASSWORD_RULE = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/;
+const PASSWORD_RULE_MESSAGE = "Use at least 8 characters with uppercase and lowercase letters, a number, and a special character.";
 const STRENGTH_LABEL = ["Too short", "Weak", "Okay", "Good", "Strong"];
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
-  const { signIn } = useAuth();
+  const { login, register } = useAuth();
   const [role, setRole] = useState<Role>("candidate");
   const [mode, setMode] = useState<Mode>("signin");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [signupPassword, setSignupPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [registeredEmail, setRegisteredEmail] = useState("");
+  const submitting = useRef(false);
   const heroWave = useMemo(
     () => Array.from({ length: 56 }, (_, i) => 0.15 + 0.75 * Math.abs(Math.sin(i * 0.4) * Math.cos(i * 0.17))),
     [],
   );
   const strength = passwordStrength(signupPassword);
 
-  const demoEmail = role === "recruiter" ? MOCK_USERS.recruiter.email : MOCK_USERS.candidate.email;
+  const errorMessage = (cause: unknown, fallback: string) =>
+    cause instanceof TypeError
+      ? "Unable to connect to the server. Check your connection and try again."
+      : cause instanceof Error
+        ? cause.message
+        : fallback;
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (submitting.current) return;
     setError(null);
-    if (mode === "signup" && strength < 2) {
-      setError("Choose a stronger password — at least 8 characters with a mix of letters and numbers.");
-      return;
+    setNotice(null);
+    const formData = new FormData(e.currentTarget);
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    if (mode === "signup") {
+      if (role !== "candidate") {
+        setError("Recruiter accounts cannot be created through this registration form. Choose Candidate to sign up.");
+        return;
+      }
+      if (!PASSWORD_RULE.test(password)) {
+        setError(PASSWORD_RULE_MESSAGE);
+        return;
+      }
     }
+
+    submitting.current = true;
     setIsLoading(true);
-    const email = (e.currentTarget.elements.namedItem("email") as HTMLInputElement | null)?.value || demoEmail;
-    // Simulate network request
-    setTimeout(() => {
-      signIn(email, role);
-      setLocation(role === "recruiter" ? "/recruiter/dashboard" : "/candidate/dashboard");
-    }, 900);
+    try {
+      if (mode === "signup") {
+        const name = String(formData.get("name") ?? "").trim();
+        await register(email, password, name);
+        setRegisteredEmail(email);
+        setSignupPassword("");
+        setNotice("Your candidate account was created. Sign in with your email and password to continue.");
+        setMode("signin");
+      } else {
+        const user = await login(email, password);
+        setLocation(
+          user.role === "recruiter" ? "/recruiter/dashboard" : user.role === "candidate" ? "/candidate/dashboard" : "/",
+        );
+      }
+    } catch (cause) {
+      setError(errorMessage(cause, mode === "signup" ? "Sign up failed. Please try again." : "Sign in failed. Please try again."));
+    } finally {
+      submitting.current = false;
+      setIsLoading(false);
+    }
   };
 
   const roleOptions: { value: Role; label: string; hint: string; icon: React.ElementType }[] = [
@@ -239,6 +276,7 @@ export default function AuthPage() {
                   onClick={() => {
                     setMode(m);
                     setError(null);
+                    setNotice(null);
                   }}
                   className={cn(
                     "relative rounded-full py-2 text-[13.5px] font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
@@ -271,7 +309,7 @@ export default function AuthPage() {
                   {mode === "signup" && (
                     <div className="space-y-2">
                       <Label htmlFor="signup-name">Full name</Label>
-                      <Input id="signup-name" type="text" autoComplete="name" placeholder="Alex Rivera" required />
+                      <Input id="signup-name" name="name" type="text" autoComplete="name" placeholder="Alex Rivera" maxLength={200} required />
                     </div>
                   )}
                   <div className="space-y-2">
@@ -282,7 +320,7 @@ export default function AuthPage() {
                       type="email"
                       autoComplete="email"
                       placeholder={role === "recruiter" ? "sarah.jenkins@stratos.com" : "alex.rivera@example.com"}
-                      defaultValue={mode === "signin" ? demoEmail : ""}
+                      defaultValue={mode === "signin" ? registeredEmail : ""}
                       key={`${mode}-${role}`}
                       required
                     />
@@ -299,9 +337,9 @@ export default function AuthPage() {
                     <div className="relative">
                       <Input
                         id="password"
+                        name="password"
                         type={showPassword ? "text" : "password"}
                         autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                        defaultValue={mode === "signin" ? "password123" : undefined}
                         onChange={mode === "signup" ? (e) => setSignupPassword(e.target.value) : undefined}
                         required
                         className="pr-10"
@@ -338,6 +376,12 @@ export default function AuthPage() {
                 </motion.div>
               </AnimatePresence>
 
+              {notice && (
+                <p role="status" className="rounded-xl bg-primary/[0.07] text-primary text-[13px] px-3.5 py-2.5">
+                  {notice}
+                </p>
+              )}
+
               {error && (
                 <p role="alert" className="rounded-xl bg-destructive/[0.07] text-destructive text-[13px] px-3.5 py-2.5">
                   {error}
@@ -357,12 +401,6 @@ export default function AuthPage() {
               </Button>
             </form>
 
-            {mode === "signin" && (
-              <p className="mt-5 flex items-center justify-center gap-1.5 text-[12.5px] text-muted-foreground">
-                <Wand2 className="w-3.5 h-3.5" />
-                Demo account for {role === "recruiter" ? "recruiters" : "candidates"} is pre-filled.
-              </p>
-            )}
           </div>
         </motion.div>
       </main>

@@ -171,9 +171,11 @@ The authentication middleware is implemented in `artifacts/api-server/src/middle
 
 1. Supported user roles are restricted to `candidate`, `recruiter`, and `admin`.
 2. Express's `Request` type is extended with an optional authenticated user containing id, role, email, and name values.
-3. `authenticate` reads the `Authorization` header.
+3. `authenticate` accepts a bearer access token or the HttpOnly
+   `maqbool_access_token` cookie; an explicitly provided bearer header takes
+   precedence.
 4. The header must match `Bearer <token>`.
-5. Missing authorization returns a `401` authentication-required error.
+5. Missing bearer and cookie credentials return a `401` authentication-required error.
 6. Malformed authorization returns a `401` invalid-credentials error.
 7. The token is verified with the configured access secret and allowed algorithm.
 8. The token payload must contain a non-empty string `sub` claim and a supported role.
@@ -197,6 +199,10 @@ The logger is implemented in `artifacts/api-server/src/lib/logger.ts`.
 The configuration module is implemented in `artifacts/api-server/src/config/index.ts`.
 
 1. `dotenv/config` loads environment variables before configuration is evaluated.
+   The API start command preloads dotenv with `DOTENV_CONFIG_PATH=../../.env`
+   before executing the bundled server. This loads the repository-root file
+   before the bundled database module initializes when pnpm starts the package
+   from its own folder.
 2. `NODE_ENV` accepts `development`, `production`, or `test`, defaulting to `development`.
 3. `PORT` is required and must be between 1 and 65535.
 4. `LOG_LEVEL` is validated against the supported Pino levels.
@@ -212,12 +218,54 @@ The configuration module is implemented in `artifacts/api-server/src/config/inde
 
 The root `.env.example` documents the server, CORS, logging, JWT, and database variables.
 
+### 3.5.1 Combined frontend and API server
+
+The API Express application serves the Vite production build from
+`artifacts/maqbool/dist/public` after mounting `/api`. Static asset requests
+are served directly, and other non-API paths return the SPA entry point so
+client-side routes continue to work. Unmatched `/api` requests still reach the
+API not-found handler.
+
+Run `pnpm --filter @workspace/api-server dev` at the repository root to build
+the frontend with `VITE_API_BASE_URL=/api`, build the API, and start the
+combined server. Set `PORT` in the root `.env` (for example `5000`) and browse
+to `http://localhost:<PORT>`. This same-origin arrangement avoids browser
+credentialed CORS requests. For a separately hosted frontend, configure
+`CORS_ORIGIN` to its exact origin and enable credentialed requests as usual.
+
 ### 3.6 Authentication dependencies and development command (Task 3.1.1)
 
 1. `bcryptjs` was added to hash and verify passwords.
 2. `jsonwebtoken` is used for JWT creation and verification.
 3. `@types/jsonwebtoken` supplies JWT TypeScript definitions.
 4. `cross-env` was added for cross-platform environment variable assignment.
+
+### 3.7 Browser session restoration
+
+The browser frontend uses the same auth routes with HttpOnly cookies while
+preserving bearer-token compatibility for other clients.
+
+1. Login and refresh issue `maqbool_access_token` and
+   `maqbool_refresh_token` cookies scoped to `/api`, marked HttpOnly and
+   SameSite=Lax, with Secure enabled in production and expirations matching
+   their JWTs.
+2. Authentication middleware accepts either the existing bearer header or
+   the access-token cookie; explicit bearer credentials take precedence.
+3. Refresh accepts the refresh-token cookie or the existing JSON body and
+   rotates both cookies. Logout clears both cookies after revoking the session.
+4. The frontend calls `GET /api/auth/me` during provider initialization and
+   waits before rendering candidate or recruiter routes. A `401` triggers one
+   refresh attempt followed by another current-user request.
+5. CORS enables credentials for explicitly configured `CORS_ORIGIN` values.
+   Cross-origin browser deployments must list their frontend origin; same
+   origin deployments need no additional CORS configuration.
+6. The frontend removes legacy localStorage auth entries and never stores
+   token values there. The current-user response is a top-level object with
+   `id` (number), `email`, `role`, `name`, `avatarUrl`, and `createdAt`, plus
+   an optional candidate `profile`.
+7. The API server test suite covers cookie issuance, cookie-based current-user
+   authentication, refresh token rotation, and cookie clearing. The frontend
+   package does not currently define a React component test runner.
 
 ## 4. Application Submission Endpoint (Task 4.3.1)
 
@@ -326,6 +374,24 @@ The native Node test suite in `artifacts/api-server/src/register.test.ts` covers
 9. Duplicate email conflict responses without internal database details.
 
 The API server package now exposes a `test` script using the workspace's existing `tsx` runtime and Node's built-in test module. The router also exports `createAuthRouter(database)` so endpoint tests can use an isolated fake database without a live PostgreSQL instance.
+#### Email verification status
+
+Email verification is not implemented by the current backend. The `users`
+table has no verification-status column, there is no verification-code storage
+or expiry handling, and no email delivery service is connected. The auth router
+does not expose `POST /auth/verify-email` or `POST /auth/resend-verification`.
+Registration therefore creates an account immediately and returns only public
+user data; it does not send a code or issue an authenticated session. The
+frontend must not present a verification-code screen until these backend
+capabilities, request/response contracts, and tests exist.
+
+The frontend integration completed on 2026-10-08 sends
+`{ email, password, name }` to `POST /api/auth/register`. On success it keeps
+the user unauthenticated, switches to the existing Sign In tab, and prefills
+the registered email. This reuses the existing login/session mechanism without
+creating a second auth flow. Frontend typecheck and the backend registration
+route test suite passed; email verification scenarios remain untestable until
+the backend endpoints are implemented.
 
 ### 3.9 User login endpoint (Task 3.1.4)
 
@@ -731,6 +797,33 @@ pnpm --dir artifacts/api-server test -- src/candidate-applications.test.ts
 The API server typecheck passed, and the test command passed all 66 tests. No
 schema or migration change was required because the existing application enum
 already includes `withdrawn` and the table already has `updatedAt`.
+
+## 3.22 Frontend Sign-In Integration
+
+The candidate frontend sign-in form in `artifacts/maqbool/src/pages/auth.tsx`
+now calls `POST /api/auth/login` through the existing `AuthProvider` in
+`artifacts/maqbool/src/lib/auth.tsx`. It sends the entered email and password
+as JSON with `Content-Type: application/json`. The API base is
+`VITE_API_BASE_URL`, defaulting to the existing same-origin `/api` convention;
+set it to the backend origin plus `/api` when the frontend and API are hosted
+separately. The backend does not use cookies for login, so authentication
+tokens are returned in JSON.
+
+The frontend consumes the backend's actual `message`, `token`, `accessToken`,
+`refreshToken`, and safe `user` response fields. Because the login response's
+user object does not include a role, the provider requests `GET /api/auth/me`
+with the returned bearer access token, then stores that authoritative user and
+both tokens in its existing localStorage-backed session state. The form routes
+recruiters to `/recruiter/dashboard` and candidates to
+`/candidate/dashboard`. Backend errors are shown inline, network failures get a
+connection message, and the submit button is disabled while the request is in
+flight. Requests use same-origin credentials; the backend currently relies on
+bearer tokens rather than cookies.
+
+This completes only the sign-in slice of frontend Phase 1. Tokens are stored in
+localStorage for this bearer-token implementation. Automatic refresh, `/me`
+validation during page-load session restoration, backend logout/revocation,
+sign-up integration, and real-role route-gating tests remain follow-up work.
 
 ## 4. Completion Boundary Through Phase 4.3.4
 
