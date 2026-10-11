@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { MOCK_CANDIDATES, MOCK_APPLICATIONS, type Candidate } from "@/lib/mock-data";
 import { CandidateCard } from "@/components/shared/candidate-card";
 import { EmptyState } from "@/components/shared/empty-state";
+import { SummaryStrip } from "@/components/shared/summary-strip";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@workspace/design-system/button";
 import { Input } from "@workspace/design-system/input";
@@ -170,12 +171,21 @@ export default function RecruiterCandidates() {
         }
       />
 
+      <SummaryStrip
+        items={[
+          { label: "Talent pool", value: candidates.length },
+          { label: "Active in pipeline", value: totalActiveInPipeline },
+          { label: "Shortlisted", value: savedIds.length },
+        ]}
+      />
+
       <div className="flex flex-col lg:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search candidates by name, skills, or experience..."
-            className="pl-9"
+            aria-label="Search candidates"
+            placeholder="Search candidates by name, skills, or experience…"
+            className="pl-10 h-11 rounded-full bg-white/80"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -212,6 +222,23 @@ export default function RecruiterCandidates() {
           )}
         </div>
       </div>
+
+      {skillFilters.length > 0 && (
+        <div className="flex flex-wrap gap-2 -mt-2" aria-label="Active skill filters">
+          {skillFilters.map((skill) => (
+            <button
+              key={skill}
+              type="button"
+              onClick={() => setSkillFilters((prev) => prev.filter((s) => s !== skill))}
+              aria-label={`Remove ${skill} filter`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-1 text-[12.5px] font-medium hover:bg-primary/15 transition-colors"
+            >
+              {skill}
+              <span aria-hidden>×</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="mb-6">

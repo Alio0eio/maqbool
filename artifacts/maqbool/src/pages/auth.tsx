@@ -1,194 +1,371 @@
 import React, { useMemo, useState } from "react";
 import { useLocation } from "wouter";
+import { AnimatePresence, motion } from "framer-motion";
+import { Building2, Check, Eye, EyeOff, ShieldCheck, Sparkles, UserCircle, Video, Wand2 } from "lucide-react";
 import { Button } from "@workspace/design-system/button";
 import { Input } from "@workspace/design-system/input";
 import { Label } from "@workspace/design-system/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/design-system/tabs";
+import { cn } from "@workspace/design-system/utils";
 import { MOCK_USERS } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth";
-import { motion } from "framer-motion";
-import { Building2, Check, UserCircle } from "lucide-react";
-import { cn } from "@workspace/design-system/utils";
-import { Waveform } from "@/components/shared/waveform";
 import { MaqboolWordmark } from "@/components/shared/logo";
+import { Spinner } from "@/components/shared/spinner";
+import { CountUp } from "@/components/shared/count-up";
+
+type Role = "candidate" | "recruiter";
+type Mode = "signin" | "signup";
+
+const FEATURES = [
+  { icon: Video, title: "Async video interviews", body: "Candidates answer on their own time. No scheduling back-and-forth." },
+  { icon: Sparkles, title: "AI-assisted matching", body: "Ranked shortlists with the reasoning shown, not hidden." },
+  { icon: ShieldCheck, title: "Fair, focused review", body: "Every response gets the same structured read." },
+];
+
+const STATS = [
+  { value: 68, suffix: "%", label: "faster screening" },
+  { value: 94, suffix: "%", label: "completion rate" },
+  { value: 12, suffix: "k", label: "interviews run" },
+];
+
+function passwordStrength(pw: string) {
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw) || pw.length >= 14) score++;
+  return score; // 0-4
+}
+const STRENGTH_LABEL = ["Too short", "Weak", "Okay", "Good", "Strong"];
 
 export default function AuthPage() {
   const [, setLocation] = useLocation();
   const { signIn } = useAuth();
-  const [role, setRole] = useState<"candidate" | "recruiter">("candidate");
+  const [role, setRole] = useState<Role>("candidate");
+  const [mode, setMode] = useState<Mode>("signin");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [signupPassword, setSignupPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const heroWave = useMemo(
-    () => Array.from({ length: 64 }, (_, i) => 0.15 + 0.75 * Math.abs(Math.sin(i * 0.4) * Math.cos(i * 0.17)),),
+    () => Array.from({ length: 56 }, (_, i) => 0.15 + 0.75 * Math.abs(Math.sin(i * 0.4) * Math.cos(i * 0.17))),
     [],
   );
+  const strength = passwordStrength(signupPassword);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const demoEmail = role === "recruiter" ? MOCK_USERS.recruiter.email : MOCK_USERS.candidate.email;
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
+    if (mode === "signup" && strength < 2) {
+      setError("Choose a stronger password — at least 8 characters with a mix of letters and numbers.");
+      return;
+    }
     setIsLoading(true);
-    const email = (e.currentTarget as HTMLFormElement).email?.value
-      || (role === "recruiter" ? MOCK_USERS.recruiter.email : MOCK_USERS.candidate.email);
+    const email = (e.currentTarget.elements.namedItem("email") as HTMLInputElement | null)?.value || demoEmail;
     // Simulate network request
     setTimeout(() => {
       signIn(email, role);
-      if (role === "recruiter") {
-        setLocation("/recruiter/dashboard");
-      } else {
-        setLocation("/candidate/dashboard");
-      }
-    }, 800);
+      setLocation(role === "recruiter" ? "/recruiter/dashboard" : "/candidate/dashboard");
+    }, 900);
   };
 
+  const roleOptions: { value: Role; label: string; hint: string; icon: React.ElementType }[] = [
+    { value: "candidate", label: "Candidate", hint: "Find and apply to roles", icon: UserCircle },
+    { value: "recruiter", label: "Recruiter", hint: "Hire with your team", icon: Building2 },
+  ];
+
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-surface-bg">
-      {/* Left side - Branding/Hero */}
-      <div className="hidden md:flex md:w-1/2 lg:w-[54%] bg-primary flex-col justify-between p-12 lg:p-16 text-white relative overflow-hidden">
-        <div className="relative z-10 flex items-center">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-surface-bg">
+      {/* Brand / story panel */}
+      <aside className="relative hidden lg:flex lg:w-[52%] xl:w-[55%] flex-col justify-between overflow-hidden bg-gradient-to-br from-primary via-[hsl(222_92%_22%)] to-[hsl(215_95%_30%)] p-12 xl:p-16 text-white">
+        <div aria-hidden className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-40 -right-32 w-[36rem] h-[36rem] rounded-full bg-secondary/40 blur-[110px] float-slower" />
+          <div className="absolute -bottom-48 -left-24 w-[32rem] h-[32rem] rounded-full bg-brand-steel-reversed/20 blur-[110px] float-slow" />
+          <div
+            className="absolute inset-0 opacity-[0.07]"
+            style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "28px 28px" }}
+          />
+        </div>
+
+        <div className="relative z-10">
           <MaqboolWordmark size={30} tone="reversed" />
         </div>
 
-        <div className="relative z-10 max-w-lg mt-auto mb-auto">
+        <div className="relative z-10 max-w-xl">
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="text-[40px] lg:text-[48px] font-semibold leading-[1.08] tracking-[-0.03em] mb-6"
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            className="text-[44px] xl:text-[54px] font-semibold leading-[1.05] tracking-[-0.035em]"
           >
             Hiring, heard clearly.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="text-white/70 text-[17px] leading-relaxed max-w-md"
+            transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-5 text-[17px] leading-relaxed text-white/70 max-w-md"
           >
             Async video interviews and AI-assisted matching, built so every conversation gets a fair, focused read.
           </motion.p>
+
+          <ul className="mt-10 space-y-3">
+            {FEATURES.map((f, i) => (
+              <motion.li
+                key={f.title}
+                initial={{ opacity: 0, x: -14 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.25 + i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="group flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-md px-4 py-3.5 transition-colors hover:bg-white/[0.1]"
+              >
+                <span className="mt-0.5 w-9 h-9 shrink-0 rounded-xl bg-white/15 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                  <f.icon className="w-[18px] h-[18px]" />
+                </span>
+                <div>
+                  <p className="text-[14.5px] font-semibold">{f.title}</p>
+                  <p className="text-[13px] text-white/65 mt-0.5">{f.body}</p>
+                </div>
+              </motion.li>
+            ))}
+          </ul>
         </div>
 
-        {/* The product's own waveform motif, quiet and structural rather than decorative filler. */}
-        <div className="relative z-10 h-12">
-          <Waveform variant="sparkline" values={heroWave} barClassName="bg-white/25" />
-        </div>
-        <div className="relative z-10 text-[13px] text-white/50 mt-4">
-          © {new Date().getFullYear()} Maqbool. All rights reserved.
-        </div>
-      </div>
-
-      {/* Right side - Form */}
-      <div className="flex-1 flex flex-col justify-center items-center p-6 md:p-12 relative">
-        <div className="w-full max-w-[400px]">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-white rounded-2xl shadow-lg p-8"
-          >
-            <div className="mb-7 text-center">
-              <h2 className="text-[22px] font-semibold text-foreground mb-1.5 tracking-[-0.01em]">Welcome to Maqbool</h2>
-              <p className="text-muted-foreground text-[13.5px]">Sign in to your account to continue</p>
-            </div>
-
-            <div className="mb-7">
-              <Label className="text-[12.5px] font-medium text-muted-foreground mb-2.5 block">
-                I am a
-              </Label>
-              <div className="grid grid-cols-2 gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setRole("candidate")}
-                  className={cn(
-                    "relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border transition-colors duration-150",
-                    role === "candidate"
-                      ? "border-primary/30 bg-primary/[0.06] text-primary"
-                      : "border-border text-muted-foreground hover:bg-foreground/[0.03]"
-                  )}
-                  data-testid="role-candidate"
-                >
-                  {role === "candidate" && (
-                    <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary text-white flex items-center justify-center">
-                      <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                    </span>
-                  )}
-                  <UserCircle className="w-5 h-5" strokeWidth={1.75} />
-                  <span className="font-medium text-[13.5px]">Candidate</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRole("recruiter")}
-                  className={cn(
-                    "relative flex flex-col items-center justify-center gap-2 p-4 rounded-xl border transition-colors duration-150",
-                    role === "recruiter"
-                      ? "border-primary/30 bg-primary/[0.06] text-primary"
-                      : "border-border text-muted-foreground hover:bg-foreground/[0.03]"
-                  )}
-                  data-testid="role-recruiter"
-                >
-                  {role === "recruiter" && (
-                    <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-primary text-white flex items-center justify-center">
-                      <Check className="w-2.5 h-2.5" strokeWidth={3} />
-                    </span>
-                  )}
-                  <Building2 className="w-5 h-5" strokeWidth={1.75} />
-                  <span className="font-medium text-[13.5px]">Recruiter</span>
-                </button>
+        <div className="relative z-10">
+          <div className="grid grid-cols-3 gap-6 max-w-md mb-8">
+            {STATS.map((s) => (
+              <div key={s.label}>
+                <p className="text-[30px] font-semibold tracking-[-0.03em] leading-none">
+                  <CountUp value={s.value} duration={1.4} />
+                  {s.suffix}
+                </p>
+                <p className="text-[12.5px] text-white/60 mt-1.5">{s.label}</p>
               </div>
+            ))}
+          </div>
+          <div className="h-10" aria-hidden>
+            <div className="flex items-end gap-[3px] h-full">
+              {heroWave.map((v, i) => (
+                <span
+                  key={i}
+                  className="wave-bar flex-1 rounded-full bg-white/25"
+                  style={{ height: `${v * 100}%`, animationDelay: `${i * 55}ms` }}
+                />
+              ))}
+            </div>
+          </div>
+          <p className="text-[12.5px] text-white/45 mt-4">© {new Date().getFullYear()} Maqbool. All rights reserved.</p>
+        </div>
+      </aside>
+
+      {/* Form */}
+      <main className="flex-1 flex flex-col justify-center items-center p-6 md:p-12 relative overflow-hidden">
+        <div aria-hidden className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-40 right-0 w-[28rem] h-[28rem] rounded-full bg-secondary/10 blur-[100px]" />
+        </div>
+
+        <div className="lg:hidden mb-8 relative">
+          <MaqboolWordmark size={28} />
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-full max-w-[420px]"
+        >
+          <div className="rounded-3xl border border-white/80 bg-white/90 backdrop-blur-xl shadow-[0_30px_80px_-30px_hsl(var(--primary)/0.35),0_2px_6px_rgba(16,24,40,0.05)] p-8">
+            <div className="mb-6">
+              <h2 className="text-[24px] font-semibold text-foreground tracking-[-0.02em]">
+                {mode === "signin" ? "Welcome back" : "Create your account"}
+              </h2>
+              <p className="text-muted-foreground text-[14px] mt-1">
+                {mode === "signin" ? "Sign in to pick up where you left off." : "It takes less than a minute."}
+              </p>
             </div>
 
-            <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              </TabsList>
+            {/* Role */}
+            <div role="radiogroup" aria-label="I am a" className="grid grid-cols-2 gap-2.5 mb-6">
+              {roleOptions.map((o) => {
+                const active = role === o.value;
+                return (
+                  <button
+                    key={o.value}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    data-testid={`role-${o.value}`}
+                    onClick={() => setRole(o.value)}
+                    className={cn(
+                      "relative flex flex-col items-start gap-1 rounded-2xl border p-3.5 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+                      active ? "border-transparent text-primary" : "border-border/70 text-muted-foreground hover:bg-foreground/[0.03]",
+                    )}
+                  >
+                    {active && (
+                      <motion.span
+                        layoutId="role-ring"
+                        aria-hidden
+                        className="absolute inset-0 rounded-2xl border-2 border-primary/50 bg-primary/[0.05] shadow-[0_10px_24px_-14px_hsl(var(--primary)/0.6)]"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                      />
+                    )}
+                    <span className="relative flex items-center justify-between w-full">
+                      <o.icon className="w-5 h-5" strokeWidth={1.75} />
+                      {active && (
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="w-4 h-4 rounded-full bg-primary text-white flex items-center justify-center"
+                        >
+                          <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                        </motion.span>
+                      )}
+                    </span>
+                    <span className="relative text-[14px] font-semibold text-foreground">{o.label}</span>
+                    <span className="relative text-[12px] text-muted-foreground leading-snug">{o.hint}</span>
+                  </button>
+                );
+              })}
+            </div>
 
-              <TabsContent value="signin" className="space-y-4 outline-none">
-                <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Mode */}
+            <div role="tablist" aria-label="Sign in or sign up" className="grid grid-cols-2 rounded-full bg-muted/80 p-1 mb-6">
+              {(["signin", "signup"] as Mode[]).map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === m}
+                  onClick={() => {
+                    setMode(m);
+                    setError(null);
+                  }}
+                  className={cn(
+                    "relative rounded-full py-2 text-[13.5px] font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+                    mode === m ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {mode === m && (
+                    <motion.span
+                      layoutId="auth-mode"
+                      aria-hidden
+                      className="absolute inset-0 rounded-full bg-background shadow-[0_1px_3px_hsl(var(--foreground)/0.12),0_4px_10px_-4px_hsl(var(--foreground)/0.12)]"
+                      transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+                    />
+                  )}
+                  <span className="relative">{m === "signin" ? "Sign in" : "Sign up"}</span>
+                </button>
+              ))}
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate={false}>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={mode}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.18 }}
+                  className="space-y-4"
+                >
+                  {mode === "signup" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-name">Full name</Label>
+                      <Input id="signup-name" type="text" autoComplete="name" placeholder="Alex Rivera" required />
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
                       id="email"
                       name="email"
                       type="email"
+                      autoComplete="email"
                       placeholder={role === "recruiter" ? "sarah.jenkins@stratos.com" : "alex.rivera@example.com"}
-                      defaultValue={role === "recruiter" ? MOCK_USERS.recruiter.email : MOCK_USERS.candidate.email}
+                      defaultValue={mode === "signin" ? demoEmail : ""}
+                      key={`${mode}-${role}`}
                       required
                     />
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="password">Password</Label>
-                      <a href="#" className="text-[12.5px] text-primary font-medium hover:underline">Forgot password?</a>
+                      {mode === "signin" && (
+                        <a href="#" className="text-[12.5px] text-primary font-medium hover:underline">
+                          Forgot password?
+                        </a>
+                      )}
                     </div>
-                    <Input id="password" type="password" defaultValue="password123" required />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                        defaultValue={mode === "signin" ? "password123" : undefined}
+                        onChange={mode === "signup" ? (e) => setSignupPassword(e.target.value) : undefined}
+                        required
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((v) => !v)}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-pressed={showPassword}
+                        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-foreground/[0.05] transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    {mode === "signup" && (
+                      <div aria-live="polite">
+                        <div className="flex gap-1.5 mt-2">
+                          {[0, 1, 2, 3].map((i) => (
+                            <span
+                              key={i}
+                              className={cn(
+                                "h-1.5 flex-1 rounded-full transition-colors duration-300",
+                                i < strength ? (strength <= 1 ? "bg-destructive" : strength === 2 ? "bg-warning" : "bg-success") : "bg-muted",
+                              )}
+                            />
+                          ))}
+                        </div>
+                        <p className="text-[12px] text-muted-foreground mt-1.5">
+                          {signupPassword ? STRENGTH_LABEL[strength] : "Use 8+ characters with letters and numbers."}
+                        </p>
+                      </div>
+                    )}
                   </div>
-                  <Button type="submit" size="lg" className="w-full mt-2" disabled={isLoading}>
-                    {isLoading ? "Signing in…" : "Sign In"}
-                  </Button>
-                </form>
-              </TabsContent>
+                </motion.div>
+              </AnimatePresence>
 
-              <TabsContent value="signup" className="space-y-4 outline-none">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name">Full Name</Label>
-                    <Input id="signup-name" type="text" placeholder="John Doe" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input id="signup-email" name="email" type="email" placeholder="john@example.com" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <Input id="signup-password" type="password" required />
-                  </div>
-                  <Button type="submit" size="lg" className="w-full mt-2" disabled={isLoading}>
-                    {isLoading ? "Creating account…" : "Create Account"}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </motion.div>
-        </div>
-      </div>
+              {error && (
+                <p role="alert" className="rounded-xl bg-destructive/[0.07] text-destructive text-[13px] px-3.5 py-2.5">
+                  {error}
+                </p>
+              )}
+
+              <Button type="submit" size="lg" className="w-full mt-1" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Spinner className="w-4 h-4" /> {mode === "signin" ? "Signing in…" : "Creating account…"}
+                  </>
+                ) : mode === "signin" ? (
+                  "Sign in"
+                ) : (
+                  "Create account"
+                )}
+              </Button>
+            </form>
+
+            {mode === "signin" && (
+              <p className="mt-5 flex items-center justify-center gap-1.5 text-[12.5px] text-muted-foreground">
+                <Wand2 className="w-3.5 h-3.5" />
+                Demo account for {role === "recruiter" ? "recruiters" : "candidates"} is pre-filled.
+              </p>
+            )}
+          </div>
+        </motion.div>
+      </main>
     </div>
   );
 }

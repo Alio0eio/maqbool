@@ -7,6 +7,7 @@ import { Checkbox } from '@workspace/design-system/checkbox';
 import { Textarea } from '@workspace/design-system/textarea';
 import { toast } from '@workspace/design-system/hooks/use-toast';
 import { cn } from '@workspace/design-system/utils';
+import { ConfirmAction } from '@/components/shared/confirm-action';
 import { PageHeader } from '@/components/shared/page-header';
 import { MOCK_CANDIDATES } from '@/lib/mock-data';
 
@@ -69,11 +70,11 @@ export default function StatusUpdates() {
           </div>
           <div className="flex-1 overflow-y-auto divide-y divide-border/60">
             {MOCK_CANDIDATES.map((c) => (
-              <label key={c.id} className="flex items-center gap-3 px-4 py-3 hover-elevate cursor-pointer">
+              <label key={c.id} className={cn("flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors", selected.includes(c.id) ? "bg-primary/[0.05]" : "hover:bg-foreground/[0.03]")}>
                 <Checkbox checked={selected.includes(c.id)} onCheckedChange={() => toggle(c.id)} />
                 <Avatar className="w-8 h-8 shrink-0">
                   <AvatarImage src={c.avatarUrl || ''} alt={c.name} />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground text-xs font-semibold">
                     {c.name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -95,11 +96,13 @@ export default function StatusUpdates() {
                 {STATUS_TEMPLATES.map((t) => (
                   <button
                     key={t.label}
+                    type="button"
+                    aria-pressed={template.label === t.label}
                     onClick={() => handleTemplateChange(t)}
                     data-testid={`template-${t.label}`}
                     className={cn(
-                      'p-3 rounded-lg border text-left text-[12.5px] font-medium transition-colors',
-                      template.label === t.label ? 'border-primary bg-primary/5 text-primary' : 'border-border/70 hover:border-primary/40 text-muted-foreground'
+                      'p-3.5 rounded-2xl border-2 text-left text-[13px] font-medium transition-all active:scale-[0.98]',
+                      template.label === t.label ? 'border-primary bg-primary/[0.05] text-primary shadow-[0_8px_20px_-12px_hsl(var(--primary)/0.5)]' : 'border-border/70 hover:border-primary/40 text-muted-foreground'
                     )}
                   >
                     {t.label}
@@ -118,20 +121,37 @@ export default function StatusUpdates() {
                 rows={8}
                 className="flex-1 resize-none"
               />
-              <p className="text-[12px] text-muted-foreground mt-2">{'Use {role}, {candidate_name} for personalization.'}</p>
+              <div className="flex items-center justify-between mt-2 text-[12px] text-muted-foreground">
+                <p>{'Use {role}, {candidate_name} for personalization.'}</p>
+                <span className="tabular-nums">{message.length} characters</span>
+              </div>
             </CardContent>
           </Card>
 
-          <Button
-            data-testid="btn-send"
-            onClick={handleSend}
-            disabled={selected.length === 0 || sent}
-            size="lg"
-            className={cn('gap-2', sent && 'bg-success text-success-foreground hover:bg-success')}
-          >
-            <Send size={16} />
-            {sent ? 'Updates Sent!' : `Send to ${selected.length} Candidate${selected.length === 1 ? '' : 's'}`}
-          </Button>
+          {(() => {
+            const sendButton = (
+              <Button
+                data-testid="btn-send"
+                onClick={template.label.startsWith('Rejection') ? undefined : handleSend}
+                disabled={selected.length === 0 || sent}
+                size="lg"
+                className={cn('gap-2 w-full', sent && 'bg-success text-success-foreground hover:bg-success')}
+              >
+                <Send size={16} />
+                {sent ? 'Updates Sent!' : `Send to ${selected.length} Candidate${selected.length === 1 ? '' : 's'}`}
+              </Button>
+            );
+            return template.label.startsWith('Rejection') && selected.length > 0 && !sent ? (
+              <ConfirmAction
+                title={`Send rejection to ${selected.length} candidate${selected.length === 1 ? '' : 's'}?`}
+                description="They'll be notified immediately and this can't be recalled."
+                confirmLabel="Send rejection"
+                onConfirm={handleSend}
+              >
+                {sendButton}
+              </ConfirmAction>
+            ) : sendButton;
+          })()}
         </div>
       </div>
     </div>

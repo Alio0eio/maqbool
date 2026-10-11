@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, type PointerEvent } from "react";
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { Card } from "@workspace/design-system/card";
 import { cn } from "@workspace/design-system/utils";
@@ -17,11 +17,18 @@ interface ViewfinderCardProps extends HTMLMotionProps<"div"> {
  *  like something physical rather than a CSS timer. Pass `viewfinder` to
  *  layer on the corner-bracket record motif for interview surfaces. */
 export const ViewfinderCard = forwardRef<HTMLDivElement, ViewfinderCardProps>(
-  ({ className, viewfinder, ...props }, ref) => (
+  ({ className, viewfinder, onPointerMove, ...props }, ref) => (
     <MotionCard
       ref={ref}
+      onPointerMove={(e: PointerEvent<HTMLDivElement>) => {
+        // Feeds the cursor-follow spotlight (.spotlight-card in theme.css).
+        const r = e.currentTarget.getBoundingClientRect();
+        e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+        e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+        onPointerMove?.(e);
+      }}
       className={cn(
-        "transition-shadow duration-200 ease-out hover:shadow-md",
+        "spotlight-card transition-[box-shadow,border-color] duration-200 ease-out hover:shadow-lg hover:border-secondary/25",
         viewfinder && "viewfinder-hover",
         className,
       )}

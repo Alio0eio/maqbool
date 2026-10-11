@@ -75,9 +75,9 @@ function RecruiterSearch() {
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         placeholder="Search jobs, candidates, or interviews…"
-        className="w-full h-9 pl-9 pr-14 rounded-full border-0 bg-foreground/[0.045] text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/40 focus:bg-white transition-colors"
+        className="w-full h-10 pl-10 pr-14 rounded-full border border-border/70 bg-white/80 shadow-[0_1px_2px_rgba(16,24,40,0.04)] text-sm placeholder:text-muted-foreground focus:outline-none focus:border-secondary/40 focus:ring-4 focus:ring-secondary/10 focus:bg-white transition-[box-shadow,border-color,background-color] hover:bg-white"
       />
-      <Kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px]">⌘K</Kbd>
+      <Kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px]">⌘K</Kbd>
       {open && q && (
         <div className="absolute top-11 left-0 w-80 bg-popover border border-border rounded-xl shadow-lg overflow-hidden z-30">
           {hasResults ? (

@@ -53,7 +53,7 @@ export default function FinalDecision() {
         <div className="flex items-center gap-4 mb-5 pb-5 border-b border-border/60">
           <Avatar className="w-16 h-16 shrink-0">
             <AvatarImage src={candidate.avatarUrl || ""} alt={candidate.name} />
-            <AvatarFallback className="bg-primary text-primary-foreground font-semibold text-xl">
+            <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold text-xl">
               {candidate.name.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -80,8 +80,8 @@ export default function FinalDecision() {
           <button data-testid="btn-extend-offer"
             onClick={() => setAction('offer')}
             className={cn(
-              'flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors',
-              action === 'offer' ? 'border-success bg-success/10' : 'border-border/70 hover:border-success/40'
+              'flex flex-col items-center gap-2 p-5 rounded-2xl border-2 transition-all duration-200 active:scale-[0.98] hover:-translate-y-0.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+              action === 'offer' ? 'border-success bg-success/10 shadow-[0_12px_28px_-14px_hsl(var(--success)/0.6)]' : 'border-border/70 hover:border-success/40'
             )}>
             <Gift size={24} className={action === 'offer' ? 'text-success' : 'text-muted-foreground'} />
             <span className={cn('text-[13.5px] font-semibold', action === 'offer' ? 'text-success' : 'text-foreground')}>Extend Offer</span>
@@ -90,8 +90,8 @@ export default function FinalDecision() {
           <button data-testid="btn-reject"
             onClick={() => setAction('reject')}
             className={cn(
-              'flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors',
-              action === 'reject' ? 'border-destructive bg-destructive/10' : 'border-border/70 hover:border-destructive/40'
+              'flex flex-col items-center gap-2 p-5 rounded-2xl border-2 transition-all duration-200 active:scale-[0.98] hover:-translate-y-0.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+              action === 'reject' ? 'border-destructive bg-destructive/10 shadow-[0_12px_28px_-14px_hsl(var(--destructive)/0.6)]' : 'border-border/70 hover:border-destructive/40'
             )}>
             <Mail size={24} className={action === 'reject' ? 'text-destructive' : 'text-muted-foreground'} />
             <span className={cn('text-[13.5px] font-semibold', action === 'reject' ? 'text-destructive' : 'text-foreground')}>Send Rejection</span>

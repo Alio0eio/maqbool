@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Shield, Users, Bell, Mail, Plus, Trash2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { RingGauge } from '@/components/shared/ring-gauge';
 import { PageHeader } from '@/components/shared/page-header';
+import { ConfirmAction } from '@/components/shared/confirm-action';
 import { ViewfinderCard } from '@/components/shared/viewfinder-card';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@workspace/design-system/card';
 import { Button } from '@workspace/design-system/button';
@@ -101,6 +104,7 @@ export default function EnterpriseSettings() {
         </TabsList>
       </Tabs>
 
+      <motion.div key={tab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="space-y-6">
       {tab === 'team' && (
         <div className="space-y-6">
           <Card>
@@ -153,10 +157,10 @@ export default function EnterpriseSettings() {
               </thead>
               <tbody className="divide-y divide-border/60">
                 {team.map((m) => (
-                  <tr key={m.id} className="hover-elevate">
+                  <tr key={m.id} className="hover:bg-foreground/[0.025] transition-colors">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-semibold shrink-0">
+                        <div className="w-9 h-9 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-primary-foreground text-xs font-semibold shrink-0 ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))]">
                           {m.name.split(' ').map((n) => n[0]).join('').toUpperCase()}
                         </div>
                         <div className="min-w-0">
@@ -165,24 +169,31 @@ export default function EnterpriseSettings() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-muted-foreground">{m.role}</td>
+                    <td className="px-5 py-3"><Badge variant="outline" className="font-medium">{m.role}</Badge></td>
                     <td className="px-5 py-3">
-                      <Badge variant={m.status === 'active' ? 'success' : 'warning'}>
+                      <Badge variant={m.status === 'active' ? 'success' : 'warning'} className="gap-1.5">
+                        {m.status === 'invited' && <span aria-hidden className="live-dot" />}
                         {m.status === 'active' ? 'Active' : 'Invited'}
                       </Badge>
                     </td>
                     <td className="px-5 py-3 text-right">
                       {m.id !== 1 && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          data-testid={`btn-remove-${m.id}`}
-                          onClick={() => setTeam((t) => t.filter((x) => x.id !== m.id))}
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                          aria-label={`Remove ${m.name}`}
+                        <ConfirmAction
+                          title={`Remove ${m.name}?`}
+                          description="They'll lose access to this workspace immediately. You can invite them again later."
+                          confirmLabel="Remove member"
+                          onConfirm={() => setTeam((t) => t.filter((x) => x.id !== m.id))}
                         >
-                          <Trash2 size={14} />
-                        </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            data-testid={`btn-remove-${m.id}`}
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                            aria-label={`Remove ${m.name}`}
+                          >
+                            <Trash2 size={14} />
+                          </Button>
+                        </ConfirmAction>
                       )}
                     </td>
                   </tr>
@@ -195,9 +206,17 @@ export default function EnterpriseSettings() {
 
       {tab === 'security' && (
         <Card>
-          <CardHeader>
-            <CardTitle className="text-[15px]">Security Settings</CardTitle>
-            <CardDescription>Controls that apply to every member of your organization.</CardDescription>
+          <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
+            <div>
+              <CardTitle className="text-[15px]">Security Settings</CardTitle>
+              <CardDescription>Controls that apply to every member of your organization.</CardDescription>
+            </div>
+            <RingGauge
+              size={72}
+              value={Math.round((SECURITY_SETTINGS.filter((x) => security[x.key]).length / SECURITY_SETTINGS.length) * 100)}
+              label=""
+              tone={SECURITY_SETTINGS.every((x) => security[x.key]) ? 'text-success' : 'text-primary'}
+            />
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
@@ -210,7 +229,10 @@ export default function EnterpriseSettings() {
                   <Switch
                     data-testid={`toggle-${key}`}
                     checked={security[key]}
-                    onCheckedChange={(checked) => setSecurity((s) => ({ ...s, [key]: checked }))}
+                    onCheckedChange={(checked) => {
+                      setSecurity((s) => ({ ...s, [key]: checked }));
+                      toast({ title: `${label} ${checked ? 'enabled' : 'disabled'}` });
+                    }}
                     className="shrink-0"
                   />
                 </div>
@@ -246,6 +268,7 @@ export default function EnterpriseSettings() {
           </CardContent>
         </Card>
       )}
+      </motion.div>
     </div>
   );
 }

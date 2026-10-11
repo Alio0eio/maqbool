@@ -56,9 +56,9 @@ export default function InterviewDecision() {
       {/* Candidate summary */}
       <ViewfinderCard>
         <CardContent className="p-5 flex items-center gap-4">
-          <Avatar className="w-14 h-14 border border-border/70 shrink-0">
+          <Avatar className="w-14 h-14 ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))] shrink-0">
             <AvatarImage src={candidate?.avatarUrl || ""} alt={candidate?.name ?? ''} />
-            <AvatarFallback className="bg-primary text-primary-foreground font-semibold text-xl">
+            <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold text-xl">
               {candidate?.name ? candidate.name.substring(0, 2).toUpperCase() : 'AR'}
             </AvatarFallback>
           </Avatar>
@@ -96,8 +96,8 @@ export default function InterviewDecision() {
           <button data-testid="btn-hire"
             onClick={() => setDecision('hire')}
             className={cn(
-              'flex flex-col items-center gap-3 p-6 rounded-[10px] border-2 transition-colors',
-              decision === 'hire' ? 'border-success bg-success/10' : 'border-border hover:border-success/40'
+              'flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all duration-200 active:scale-[0.98] hover:-translate-y-0.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+              decision === 'hire' ? 'border-success bg-success/10 shadow-[0_12px_28px_-14px_hsl(var(--success)/0.6)]' : 'border-border hover:border-success/40'
             )}>
             <div className={cn('w-12 h-12 rounded-full flex items-center justify-center', decision === 'hire' ? 'bg-success' : 'bg-muted')}>
               <ThumbsUp className={cn('w-[22px] h-[22px]', decision === 'hire' ? 'text-success-foreground' : 'text-muted-foreground')} strokeWidth={2} />
@@ -108,8 +108,8 @@ export default function InterviewDecision() {
           <button data-testid="btn-reject"
             onClick={() => setDecision('reject')}
             className={cn(
-              'flex flex-col items-center gap-3 p-6 rounded-[10px] border-2 transition-colors',
-              decision === 'reject' ? 'border-destructive bg-destructive/10' : 'border-border hover:border-destructive/40'
+              'flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all duration-200 active:scale-[0.98] hover:-translate-y-0.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+              decision === 'reject' ? 'border-destructive bg-destructive/10 shadow-[0_12px_28px_-14px_hsl(var(--destructive)/0.6)]' : 'border-border hover:border-destructive/40'
             )}>
             <div className={cn('w-12 h-12 rounded-full flex items-center justify-center', decision === 'reject' ? 'bg-destructive' : 'bg-muted')}>
               <ThumbsDown className={cn('w-[22px] h-[22px]', decision === 'reject' ? 'text-destructive-foreground' : 'text-muted-foreground')} strokeWidth={2} />

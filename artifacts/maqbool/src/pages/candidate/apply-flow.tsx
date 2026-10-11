@@ -23,6 +23,8 @@ import NotFound from "@/pages/not-found";
 import { cn } from "@workspace/design-system/utils";
 import { motion } from "framer-motion";
 import { StepTransition, useStepDirection } from "@/components/shared/step-transition";
+import { Stepper } from "@/components/shared/stepper";
+import { Confetti } from "@/components/shared/confetti";
 
 // The application steps a candidate walks through. "success" is a terminal
 // screen, not a form step, so it's excluded from the step-progress affordance.
@@ -51,6 +53,7 @@ function isLinkQuestion(question: string) {
 
 export default function ApplyFlow() {
   const { id, step } = useParams();
+  const [dragActive, setDragActive] = useState(false);
   const [, setLocation] = useLocation();
   const job = MOCK_JOBS.find(j => j.id === Number(id));
   const user = MOCK_USERS.candidate;
@@ -147,7 +150,8 @@ export default function ApplyFlow() {
 
   if (step === "success") {
     return (
-      <div className="max-w-2xl mx-auto py-12 text-center animate-in zoom-in-95 duration-700">
+      <div className="relative max-w-2xl mx-auto py-12 text-center animate-in zoom-in-95 duration-700">
+        <Confetti />
         <div className="w-24 h-24 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto mb-6 relative">
           <motion.div
             initial={{ scale: 0 }}
@@ -211,25 +215,10 @@ export default function ApplyFlow() {
           className="mb-6"
         />
 
-        {/* Step progress */}
-        <div>
-          <div className="flex gap-1.5 mb-2">
-            {steps.slice(0, FORM_STEP_COUNT).map((s, idx) => (
-              <div
-                key={s}
-                className={cn(
-                  "h-1.5 flex-1 rounded-full transition-colors duration-300",
-                  idx <= currentStepIndex ? "bg-primary" : "bg-surface-subtle"
-                )}
-              />
-            ))}
-          </div>
-          <div className="flex justify-between text-[11px] uppercase tracking-wide text-muted-foreground">
-            <span className={cn(step === "details" && "text-primary font-semibold")}>01 Details</span>
-            <span className={cn(step === "screening" && "text-primary font-semibold")}>02 Questions</span>
-            <span className={cn(step === "review" && "text-primary font-semibold")}>03 Review</span>
-          </div>
-        </div>
+        <Stepper
+          steps={[{ label: "Details" }, { label: "Questions" }, { label: "Review" }]}
+          current={Math.min(currentStepIndex, FORM_STEP_COUNT - 1)}
+        />
       </div>
 
       {/* Content */}
@@ -284,8 +273,9 @@ export default function ApplyFlow() {
                 tabIndex={0}
                 aria-label="Upload resume"
                 className={cn(
-                  "border border-dashed rounded-xl p-10 text-center transition-colors cursor-pointer hover:bg-surface-subtle outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                  resumeFile ? "border-primary bg-primary/5" : fileError ? "border-destructive" : "border-border"
+                  "border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-200 cursor-pointer hover:bg-surface-subtle outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  dragActive && "border-secondary bg-secondary/[0.06] scale-[1.01] shadow-[0_0_0_6px_hsl(var(--secondary)/0.1)]",
+                  !dragActive && (resumeFile ? "border-primary bg-primary/5" : fileError ? "border-destructive" : "border-border")
                 )}
                 onClick={() => fileInputRef.current?.click()}
                 onKeyDown={(e) => {
@@ -294,8 +284,9 @@ export default function ApplyFlow() {
                     fileInputRef.current?.click();
                   }
                 }}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={handleDrop}
+                onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+                onDragLeave={() => setDragActive(false)}
+                onDrop={(e) => { setDragActive(false); handleDrop(e); }}
               >
                 <input
                   ref={fileInputRef}
@@ -412,9 +403,14 @@ export default function ApplyFlow() {
                       minLength: { value: 20, message: "Please write at least 20 characters." },
                     })}
                   />
-                  {screeningErrors.motivation && (
-                    <p className="text-sm text-destructive">{screeningErrors.motivation.message}</p>
-                  )}
+                  <div className="flex items-start justify-between gap-4">
+                    {screeningErrors.motivation ? (
+                      <p className="text-sm text-destructive">{screeningErrors.motivation.message}</p>
+                    ) : <span />}
+                    <span className={cn("text-[12px] tabular-nums shrink-0", (screeningValues.motivation?.length ?? 0) >= 20 ? "text-success" : "text-muted-foreground")}>
+                      {screeningValues.motivation?.length ?? 0} / 20 min
+                    </span>
+                  </div>
                 </div>
               </div>
             </form>

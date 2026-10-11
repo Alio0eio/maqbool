@@ -29,7 +29,7 @@ export function StaggerGroup({ children, className }: StaggerProps) {
 
 export function StaggerItem({ children, className }: StaggerProps) {
   return (
-    <motion.div variants={item} className={className}>
+    <motion.div variants={item} className={className ?? "h-full"}>
       {children}
     </motion.div>
   );

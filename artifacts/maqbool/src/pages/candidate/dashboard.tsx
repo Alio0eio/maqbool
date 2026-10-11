@@ -2,6 +2,10 @@ import React from "react";
 import { Link } from "wouter";
 import { MOCK_APPLICATIONS, MOCK_INTERVIEWS, MOCK_CANDIDATES } from "@/lib/mock-data";
 import { useAuth } from "@/lib/auth";
+import { greeting } from "@/lib/greeting";
+import { motion } from "framer-motion";
+import { SummaryStrip } from "@/components/shared/summary-strip";
+import { relativeDay } from "@/components/shared/date-tile";
 import { CardContent } from "@workspace/design-system/card";
 import { Button } from "@workspace/design-system/button";
 import { Badge } from "@workspace/design-system/badge";
@@ -38,9 +42,18 @@ export default function CandidateDashboard() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <PageHeader
-        title="Dashboard"
+        title={greeting(user?.name)}
         eyebrow={`${myApplications.length} application${myApplications.length === 1 ? "" : "s"} · ${pendingInterviews.length} pending interview${pendingInterviews.length === 1 ? "" : "s"}`}
         description="Track your applications and upcoming interviews."
+      />
+
+      <SummaryStrip
+        items={[
+          { label: "Applications", value: myApplications.length },
+          { label: "Interviewing", value: myApplications.filter(a => a.stage === "interview" && a.status !== "rejected").length },
+          { label: "Awaiting your response", value: pendingInterviews.length },
+          { label: "Offers", value: myApplications.filter(a => a.stage === "offer" || a.status === "offered").length },
+        ]}
       />
 
       {pendingInterviews.length > 0 && (
@@ -76,6 +89,11 @@ export default function CandidateDashboard() {
                       <div className="flex items-center gap-2 text-foreground font-medium mb-1">
                         <Clock className="w-3.5 h-3.5 text-muted-foreground" />
                         Complete by: {new Date(interview.deadline!).toLocaleDateString()}
+                        {relativeDay(interview.deadline) && (
+                          <span className="ml-auto rounded-full bg-destructive/10 text-destructive px-2 py-0.5 text-[11px] font-semibold">
+                            {relativeDay(interview.deadline)}
+                          </span>
+                        )}
                       </div>
                       <p className="text-muted-foreground line-clamp-2">{interview.invitationNote}</p>
                     </div>
@@ -131,9 +149,9 @@ export default function CandidateDashboard() {
                 <CardContent className="p-0">
                   <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div className="flex items-center gap-4 flex-1">
-                      <Avatar className="w-11 h-11 rounded-[10px] border border-border/70">
+                      <Avatar className="w-11 h-11 rounded-[10px] ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))]">
                         <AvatarImage src={app.job.companyLogoUrl || ""} />
-                        <AvatarFallback className="rounded-[10px] bg-primary/[0.08] text-primary font-semibold">
+                        <AvatarFallback className="rounded-[10px] bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold">
                           {app.job.company.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -162,7 +180,7 @@ export default function CandidateDashboard() {
                         </p>
                       </div>
                       <Link href={`/candidate/jobs/${app.jobId}`}>
-                        <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
+                        <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full" aria-label="View job details">
                           <ChevronRight className="w-5 h-5 text-muted-foreground" />
                         </Button>
                       </Link>
@@ -181,7 +199,7 @@ export default function CandidateDashboard() {
                           return (
                             <div key={stage} className="flex flex-col items-center relative z-10 w-1/4">
                               <div className={cn(
-                                "w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border-2 transition-colors",
+                                "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold border-2 transition-colors",
                                 isPast ? "bg-success border-success text-white" :
                                 isActive ? "bg-white border-primary text-primary" :
                                 isCurrentRejected ? "bg-destructive border-destructive text-white" :
@@ -190,7 +208,7 @@ export default function CandidateDashboard() {
                                 {isPast ? <CheckCircle2 className="w-3.5 h-3.5" /> : idx + 1}
                               </div>
                               <span className={cn(
-                                "text-[10.5px] font-medium mt-1.5 capitalize",
+                                "text-[11px] font-medium mt-1.5 capitalize",
                                 isActive ? "text-primary" : isCurrentRejected ? "text-destructive" : "text-muted-foreground"
                               )}>
                                 {stage}
@@ -200,12 +218,11 @@ export default function CandidateDashboard() {
                         })}
                         {/* Connecting Lines */}
                         <div className="absolute top-4 left-0 w-full h-0.5 bg-border/70 -z-10 px-8">
-                          <div
-                            className={cn(
-                              "h-full transition-all duration-500",
-                              isRejected ? "bg-destructive" : "bg-success"
-                            )}
-                            style={{ width: `${(Math.max(0, currentStageIndex) / (stages.length - 1)) * 100}%` }}
+                          <motion.div
+                            className={cn("h-full", isRejected ? "bg-destructive" : "bg-success")}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(Math.max(0, currentStageIndex) / (stages.length - 1)) * 100}%` }}
+                            transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
                           />
                         </div>
                       </div>

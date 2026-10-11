@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation, useParams } from 'wouter';
 import { ArrowLeft, Check, X } from 'lucide-react';
 import { MatchScoreBadge, AITag } from '@/components/shared/badges';
+import { motion } from 'framer-motion';
 import { PageHeader } from '@/components/shared/page-header';
 import { ViewfinderCard } from '@/components/shared/viewfinder-card';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@workspace/design-system/table';
@@ -78,11 +79,16 @@ export default function CandidateComparison() {
           <TableHeader>
             <TableRow className="hover:bg-transparent">
               <TableHead className="w-[180px]" />
-              {candidates.map(c => (
-                <TableHead key={c.id} className="text-center align-top py-5 px-3 min-w-[160px]">
-                  <Avatar className="w-14 h-14 mx-auto mb-2 border border-border/70">
+              {candidates.map((c, ci) => (
+                <TableHead key={c.id} className={`text-center align-top py-5 px-3 min-w-[160px] ${ci === 0 ? 'bg-gradient-to-b from-secondary/[0.07] to-transparent' : ''}`}>
+                  {ci === 0 && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-secondary/10 text-secondary px-2.5 py-0.5 text-[11px] font-semibold mb-2">
+                      Top match
+                    </span>
+                  )}
+                  <Avatar className="w-14 h-14 mx-auto mb-2 ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))]">
                     <AvatarImage src={c.avatarUrl || ""} alt={c.name} />
-                    <AvatarFallback className="bg-primary text-primary-foreground font-semibold text-xl">
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold text-xl">
                       {c.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -99,21 +105,35 @@ export default function CandidateComparison() {
                 <AITag>AI Scores</AITag>
               </TableCell>
             </TableRow>
-            {CRITERIA.map(cr => (
-              <TableRow key={cr.label}>
-                <TableCell className="px-4 py-3 text-[13px] text-muted-foreground font-medium">{cr.label}</TableCell>
-                {candidates.map(c => (
-                  <TableCell key={c.id} className="px-3 py-3">
-                    <div className="flex flex-col items-center gap-1.5">
-                      <span className="text-[12.5px] font-semibold text-foreground">{c[cr.key] ?? '-'}%</span>
-                      <div className="h-1.5 w-full max-w-28 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full rounded-full bg-primary" style={{ width: `${c[cr.key] ?? 0}%` }} />
-                      </div>
-                    </div>
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+            {CRITERIA.map(cr => {
+              const best = Math.max(...candidates.map(c => c[cr.key] ?? 0));
+              return (
+                <TableRow key={cr.label}>
+                  <TableCell className="px-4 py-3 text-[13px] text-muted-foreground font-medium">{cr.label}</TableCell>
+                  {candidates.map(c => {
+                    const v = c[cr.key] ?? 0;
+                    const isBest = v === best && candidates.length > 1;
+                    return (
+                      <TableCell key={c.id} className="px-3 py-3">
+                        <div className="flex flex-col items-center gap-1.5">
+                          <span className={`text-[13px] font-semibold ${isBest ? 'text-success' : 'text-foreground'}`}>
+                            {c[cr.key] ?? '-'}%{isBest && <span className="sr-only"> (best)</span>}
+                          </span>
+                          <div className="h-1.5 w-full max-w-28 bg-muted rounded-full overflow-hidden">
+                            <motion.div
+                              className={`h-full rounded-full ${isBest ? 'bg-success' : 'bg-primary/70'}`}
+                              initial={{ width: 0 }}
+                              animate={{ width: `${v}%` }}
+                              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                            />
+                          </div>
+                        </div>
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
 
             <TableRow className="hover:bg-transparent">
               <TableCell colSpan={candidates.length + 1} className="bg-surface-subtle/60 py-2.5 px-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">

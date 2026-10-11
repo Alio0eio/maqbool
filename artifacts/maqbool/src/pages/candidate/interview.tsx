@@ -20,6 +20,63 @@ import {
 } from "lucide-react";
 import NotFound from "@/pages/not-found";
 import { Badge } from "@workspace/design-system/badge";
+import { motion, useReducedMotion } from "framer-motion";
+import { cn } from "@workspace/design-system/utils";
+import { Spinner } from "@/components/shared/spinner";
+import { Confetti } from "@/components/shared/confetti";
+
+type CheckState = "idle" | "testing" | "ok";
+
+/** Device check row: click runs a short simulated test, then settles on a green check. */
+function DeviceCheck({
+  icon: Icon,
+  label,
+  state,
+  onTest,
+  testId,
+  children,
+}: {
+  icon: React.ElementType;
+  label: string;
+  state: CheckState;
+  onTest: () => void;
+  testId: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      data-testid={testId}
+      onClick={onTest}
+      disabled={state === "testing"}
+      className={cn(
+        "w-full flex items-center justify-between gap-4 p-4 rounded-xl border text-left transition-all duration-200",
+        state === "ok" ? "border-success/40 bg-success/[0.05]" : "border-border/70 bg-white hover:border-secondary/40 hover:shadow-md",
+      )}
+    >
+      <div className="flex items-center gap-3 min-w-0">
+        <span className={cn("w-10 h-10 rounded-xl flex items-center justify-center transition-colors", state === "ok" ? "bg-success/10 text-success" : "bg-primary/[0.07] text-primary")}>
+          <Icon className="w-5 h-5" />
+        </span>
+        <div className="min-w-0">
+          <p className="text-[14px] font-medium text-foreground">{label}</p>
+          <p className="text-[12.5px] text-muted-foreground" aria-live="polite">
+            {state === "idle" ? "Click to test" : state === "testing" ? "Testing…" : "Working"}
+          </p>
+        </div>
+      </div>
+      <div className="shrink-0 flex items-center gap-3">
+        {state === "ok" && children}
+        {state === "testing" && <Spinner className="w-5 h-5 text-secondary" />}
+        {state === "ok" && (
+          <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", bounce: 0.5, duration: 0.45 }}>
+            <CheckCircle2 className="w-5 h-5 text-success" />
+          </motion.span>
+        )}
+      </div>
+    </button>
+  );
+}
 
 const QUESTIONS = [
   { id: 1, text: "Tell us about a complex B2B enterprise platform you designed. What were the main challenges?", timeLimit: 120, retakeLimit: 1 },
@@ -37,8 +94,15 @@ export default function CandidateInterview() {
   const interview = MOCK_INTERVIEWS.find(i => i.id === Number(id));
 
   const [phase, setPhase] = useState<Phase>("techcheck");
-  const [cameraChecked, setCameraChecked] = useState(false);
-  const [micChecked, setMicChecked] = useState(false);
+  const [cameraState, setCameraState] = useState<CheckState>("idle");
+  const [micState, setMicState] = useState<CheckState>("idle");
+  const cameraChecked = cameraState === "ok";
+  const micChecked = micState === "ok";
+  const runCheck = (set: (s: CheckState) => void) => {
+    set("testing");
+    window.setTimeout(() => set("ok"), 900);
+  };
+  const [submitProgress, setSubmitProgress] = useState(0);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
@@ -87,7 +151,9 @@ export default function CandidateInterview() {
       setRetakesUsed(0);
     } else {
       setPhase("submitting");
-      setTimeout(() => setPhase("complete"), 2000);
+      setSubmitProgress(8);
+      window.setTimeout(() => setSubmitProgress(100), 60);
+      window.setTimeout(() => setPhase("complete"), 2200);
     }
   };
 
@@ -99,8 +165,9 @@ export default function CandidateInterview() {
   };
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const safe = Math.max(0, seconds);
+    const mins = Math.floor(safe / 60);
+    const secs = safe % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
@@ -122,29 +189,17 @@ export default function CandidateInterview() {
         </div>
 
         <Card className="mb-6">
-          <CardContent className="p-6 space-y-4">
-            <button
-              data-testid="btn-check-camera"
-              onClick={() => setCameraChecked(true)}
-              className={`w-full flex items-center justify-between p-4 rounded-lg border transition-colors ${cameraChecked ? 'border-success bg-success/5' : 'border-border/60 hover:border-primary/40'}`}
-            >
-              <div className="flex items-center gap-3">
-                <Camera className="w-5 h-5 text-muted-foreground" />
-                <span className="text-sm font-medium text-foreground">Test Camera</span>
+          <CardContent className="p-5 space-y-3">
+            <DeviceCheck icon={Camera} label="Camera" state={cameraState} testId="btn-check-camera" onTest={() => runCheck(setCameraState)}>
+              <span className="hidden sm:inline text-[12px] font-medium text-success">HD · 30fps</span>
+            </DeviceCheck>
+            <DeviceCheck icon={Mic} label="Microphone" state={micState} testId="btn-check-mic" onTest={() => runCheck(setMicState)}>
+              <div className="flex items-end gap-[3px] h-5" aria-hidden>
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <span key={i} className="wave-bar w-[3px] h-full rounded-full bg-success" style={{ animationDelay: `${i * 120}ms` }} />
+                ))}
               </div>
-              {cameraChecked ? <CheckCircle2 className="w-5 h-5 text-success" /> : <span className="text-xs text-muted-foreground">Click to test</span>}
-            </button>
-            <button
-              data-testid="btn-check-mic"
-              onClick={() => setMicChecked(true)}
-              className={`w-full flex items-center justify-between p-4 rounded-lg border transition-colors ${micChecked ? 'border-success bg-success/5' : 'border-border/60 hover:border-primary/40'}`}
-            >
-              <div className="flex items-center gap-3">
-                <Mic className="w-5 h-5 text-muted-foreground" />
-                <span className="text-sm font-medium text-foreground">Test Microphone</span>
-              </div>
-              {micChecked ? <CheckCircle2 className="w-5 h-5 text-success" /> : <span className="text-xs text-muted-foreground">Click to test</span>}
-            </button>
+            </DeviceCheck>
           </CardContent>
         </Card>
 
@@ -166,7 +221,10 @@ export default function CandidateInterview() {
           size="lg"
           className="w-full h-14 text-base font-semibold"
           disabled={!cameraChecked || !micChecked}
-          onClick={() => setPhase("practice")}
+          onClick={() => {
+            setTimeLeft(PRACTICE_QUESTION.timeLimit);
+            setPhase("practice");
+          }}
         >
           Continue to Practice Question
         </Button>
@@ -183,7 +241,7 @@ export default function CandidateInterview() {
         </div>
         <h1 className="text-[26px] font-semibold text-foreground tracking-[-0.02em] mb-4">Submitting Interview</h1>
         <p className="text-muted-foreground">Please wait while we upload your responses securely...</p>
-        <Progress value={90} className="h-2 max-w-sm mx-auto mt-8 bg-surface-subtle" />
+        <Progress value={submitProgress} className="h-2 max-w-sm mx-auto mt-8 bg-surface-subtle [&>div]:duration-[2000ms]" />
       </div>
     );
   }
@@ -191,10 +249,16 @@ export default function CandidateInterview() {
   // --- Complete ---
   if (phase === "complete") {
     return (
-      <div className="max-w-2xl mx-auto py-20 text-center animate-in zoom-in duration-500">
-        <div className="w-20 h-20 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="relative max-w-2xl mx-auto py-20 text-center animate-in zoom-in duration-500">
+        <Confetti />
+        <motion.div
+          initial={{ scale: 0, rotate: -20 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", bounce: 0.55, duration: 0.7 }}
+          className="w-20 h-20 bg-success/10 text-success rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_0_10px_hsl(var(--success)/0.06)]"
+        >
           <PartyPopper className="w-10 h-10" />
-        </div>
+        </motion.div>
         <h1 className="text-[26px] font-semibold text-foreground tracking-[-0.02em] mb-3">Interview Complete!</h1>
         <p className="text-muted-foreground max-w-md mx-auto">
           Thanks for taking the time to complete your async interview. The hiring team will review your responses and follow up soon — you can track the status from your dashboard.
@@ -251,14 +315,29 @@ export default function CandidateInterview() {
                   <div className="w-2.5 h-2.5 rounded-full bg-accent-record animate-pulse" />
                   {formatTime(elapsed)}
                 </div>
-                <div className="relative w-20 h-20 rounded-full bg-accent-record/10 flex items-center justify-center mb-8">
-                  <span className="absolute inset-0 rounded-full bg-accent-record/20 animate-ping" />
-                  <div className="w-3.5 h-3.5 rounded-full bg-accent-record relative z-10" />
+                <div className="relative w-28 h-28 flex items-center justify-center mb-8" role="timer" aria-label={`${formatTime(timeLeft)} remaining`}>
+                  <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90" aria-hidden>
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="rgb(255 255 255 / 0.1)" strokeWidth="4" />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="45"
+                      fill="none"
+                      stroke="hsl(var(--accent-record))"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeDasharray={2 * Math.PI * 45}
+                      strokeDashoffset={2 * Math.PI * 45 * (elapsed / currentQuestion.timeLimit)}
+                      className="transition-[stroke-dashoffset] duration-1000 ease-linear"
+                    />
+                  </svg>
+                  <span className="absolute inset-3 rounded-full bg-accent-record/10 animate-ping" aria-hidden />
+                  <span className="relative font-mono text-[22px] font-medium text-white tabular-nums">{formatTime(timeLeft)}</span>
                 </div>
                 <div className="w-full max-w-md h-14 px-8">
                   <Waveform variant="loading" bars={40} barClassName="!bg-accent-record/70" />
                 </div>
-                <p className="text-white/50 text-xs font-mono mt-6 tracking-wide">{formatTime(timeLeft)} remaining</p>
+                <p className="text-white/50 text-xs mt-6 tracking-wide">Recording · speak naturally</p>
               </div>
             ) : hasRecordedCurrent ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 text-white z-10 gap-5 p-6">
@@ -314,6 +393,25 @@ export default function CandidateInterview() {
         <div className="flex flex-col gap-6">
           <ViewfinderCard viewfinder className="flex-1">
             <CardContent className="p-6 h-full flex flex-col">
+              {!isPractice && (
+                <ol className="flex items-center gap-1.5 mb-5" aria-label="Question progress">
+                  {QUESTIONS.map((q, i) => {
+                    const done = i < currentQuestionIndex || (i === currentQuestionIndex && hasRecordedCurrent);
+                    const current = i === currentQuestionIndex;
+                    return (
+                      <li key={q.id} className="flex-1" aria-current={current ? "step" : undefined}>
+                        <span
+                          className={cn(
+                            "block h-1.5 rounded-full transition-colors duration-500",
+                            done ? "bg-success" : current ? "bg-accent-record" : "bg-muted",
+                          )}
+                        />
+                        <span className="sr-only">{`Question ${i + 1}${done ? " done" : ""}`}</span>
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
               <div className="mb-4">
                 <Badge variant="outline" className="bg-accent-record-tint text-accent-record-ink border-accent-record/30 mb-3">
                   {isPractice ? "Practice Question" : `Question ${currentQuestionIndex + 1}`}

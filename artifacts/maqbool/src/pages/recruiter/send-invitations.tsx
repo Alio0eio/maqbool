@@ -33,10 +33,14 @@ export default function SendInvitations() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<InvitationFormValues>({
     defaultValues: { note: DEFAULT_NOTE, deadline: DEFAULT_DEADLINE },
   });
+
+  const noteValue = watch('note');
+  const deadlineValue = watch('deadline');
 
   // Selected candidates from the pipeline
   const selectedCandidates = MOCK_CANDIDATES.slice(0, 3);
@@ -73,7 +77,7 @@ export default function SendInvitations() {
               <div key={c.id} data-testid={`recipient-${c.id}`} className="flex items-center gap-3 py-2.5 border-b border-border/60 last:border-0">
                 <Avatar className="w-8 h-8 shrink-0">
                   <AvatarImage src={c.avatarUrl || ""} alt={c.name} />
-                  <AvatarFallback className="bg-primary text-primary-foreground font-semibold text-xs">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold text-xs">
                     {c.name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -136,6 +140,30 @@ export default function SendInvitations() {
             />
             {errors.note && <p className="text-[12px] text-destructive mt-1">{errors.note.message}</p>}
             <p className="text-[12px] text-muted-foreground mt-2">{'{candidate_name}'} will be replaced with each recipient's name.</p>
+          </CardContent>
+        </Card>
+
+        {/* Live preview of what the first recipient will receive */}
+        <Card className="overflow-hidden">
+          <CardContent className="p-0">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-border/60 bg-surface-subtle/60">
+              <h2 className="text-[13.5px] font-semibold text-foreground">Preview</h2>
+              <span className="text-[12px] text-muted-foreground">As {selectedCandidates[0]?.name} will see it</span>
+            </div>
+            <div className="p-5 space-y-3">
+              <div className="text-[12px] text-muted-foreground">
+                <span className="font-medium text-foreground">Subject:</span> Interview invitation · Stratos Financial
+              </div>
+              <div className="rounded-2xl bg-surface-subtle/60 p-4 text-[13.5px] leading-relaxed whitespace-pre-wrap text-foreground/90">
+                {(noteValue || '').replace(/\{candidate_name\}/g, selectedCandidates[0]?.name.split(' ')[0] ?? 'there')}
+              </div>
+              <div className="flex items-center justify-between rounded-2xl border border-border/70 px-4 py-3">
+                <div className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+                  <Clock size={14} /> Complete by <span className="font-medium text-foreground">{deadlineValue ? new Date(deadlineValue + 'T00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}</span>
+                </div>
+                <span className="rounded-full bg-primary text-primary-foreground px-4 py-1.5 text-[12.5px] font-medium">Start interview</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

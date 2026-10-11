@@ -5,13 +5,21 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@workspace/design-system/button";
 import { Input } from "@workspace/design-system/input";
-import { Search, MapPin, Briefcase, Filter, Sparkles } from "lucide-react";
+import { Search, MapPin, Briefcase, Sparkles } from "lucide-react";
+import { cn } from "@workspace/design-system/utils";
+import { StaggerGroup, StaggerItem } from "@/components/shared/stagger";
 
 const SUGGESTED_SEARCHES = ["Product Design", "Frontend", "React", "Remote"];
+const WORK_TYPES = [
+  { value: "remote", label: "Remote" },
+  { value: "hybrid", label: "Hybrid" },
+  { value: "on_site", label: "On-site" },
+];
 
 export default function CandidateJobs() {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationTerm, setLocationTerm] = useState("");
+  const [workType, setWorkType] = useState<string | null>(null);
 
   // Exclude drafts/closed for candidates
   const publishedJobs = MOCK_JOBS.filter(job => job.status === "published");
@@ -26,14 +34,16 @@ export default function CandidateJobs() {
       locationTerm.trim() === "" ||
       job.location.toLowerCase().includes(locationTerm.toLowerCase()) ||
       (locationTerm.toLowerCase() === "remote" && job.locationType === "remote");
-    return matchesQuery && matchesLocation;
+    const matchesWorkType = !workType || job.locationType === workType;
+    return matchesQuery && matchesLocation && matchesWorkType;
   });
 
-  const hasFilters = searchTerm.trim() !== "" || locationTerm.trim() !== "";
+  const hasFilters = searchTerm.trim() !== "" || locationTerm.trim() !== "" || workType !== null;
 
   const clearFilters = () => {
     setSearchTerm("");
     setLocationTerm("");
+    setWorkType(null);
   };
 
   return (
@@ -44,45 +54,56 @@ export default function CandidateJobs() {
         description="Discover opportunities matched to your skills and experience."
       />
 
-      {/* Hero Search */}
-      <div className="bg-primary text-white rounded-2xl p-8 md:p-12 text-center">
-        <div className="max-w-2xl mx-auto">
-          <p className="text-[26px] md:text-[32px] font-semibold mb-3 tracking-[-0.02em] leading-[1.15]">
+      {/* Hero search */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-[hsl(222_90%_26%)] to-[hsl(215_95%_32%)] text-white p-8 md:p-12 shadow-[0_24px_60px_-24px_hsl(var(--primary)/0.6)]">
+        <div aria-hidden className="absolute -top-24 -right-16 w-80 h-80 rounded-full bg-secondary/40 blur-[90px] float-slower" />
+        <div aria-hidden className="absolute -bottom-28 -left-10 w-72 h-72 rounded-full bg-brand-steel-reversed/20 blur-[90px] float-slow" />
+        <div className="relative max-w-2xl mx-auto text-center">
+          <p className="text-[28px] md:text-[36px] font-semibold mb-3 tracking-[-0.03em] leading-[1.1]">
             Find your next defining role.
           </p>
           <p className="text-white/70 mb-8 text-[15px]">Discover opportunities matched to your unique skills and potential.</p>
 
-          <div className="flex flex-col sm:flex-row gap-2 bg-white/10 p-2 rounded-xl border border-white/15">
+          <div className="flex flex-col sm:flex-row gap-2 bg-white rounded-2xl sm:rounded-full p-2 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.5)]">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
+                aria-label="Job title, skills, or company"
                 placeholder="Job title, skills, or company"
-                className="w-full h-11 pl-10 bg-white/10 border-transparent text-white placeholder:text-white/50 focus-visible:bg-white focus-visible:text-foreground focus-visible:placeholder:text-muted-foreground/70 transition-colors rounded-lg text-[14px]"
+                className="w-full h-11 pl-11 border-transparent shadow-none rounded-full text-[14px] text-foreground focus-visible:ring-0 focus-visible:bg-muted/50"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+            <div className="hidden md:block w-px bg-border my-2" aria-hidden />
             <div className="relative flex-1 hidden md:block">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/50" />
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
+                aria-label="Location"
                 placeholder="Location or 'Remote'"
-                className="w-full h-11 pl-10 bg-white/10 border-transparent text-white placeholder:text-white/50 focus-visible:bg-white focus-visible:text-foreground focus-visible:placeholder:text-muted-foreground/70 transition-colors rounded-lg text-[14px]"
+                className="w-full h-11 pl-11 border-transparent shadow-none rounded-full text-[14px] text-foreground focus-visible:ring-0 focus-visible:bg-muted/50"
                 value={locationTerm}
                 onChange={(e) => setLocationTerm(e.target.value)}
               />
             </div>
-            <Button size="lg" className="h-11 px-8 bg-white text-primary hover:bg-white/90 shrink-0">
+            <Button size="lg" className="h-11 px-8 rounded-full shrink-0">
               Search
             </Button>
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-[13px] text-white/70">
-            <span className="opacity-70">Suggested:</span>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[13px]">
+            <span className="text-white/60">Try</span>
             {SUGGESTED_SEARCHES.map(tag => (
               <button
                 key={tag}
+                type="button"
                 onClick={() => setSearchTerm(tag)}
-                className="hover:text-white hover:underline transition-colors"
+                className={cn(
+                  "rounded-full border px-3 py-1 transition-colors",
+                  searchTerm === tag
+                    ? "bg-white text-primary border-white font-medium"
+                    : "border-white/25 text-white/80 hover:bg-white/10 hover:text-white",
+                )}
               >
                 {tag}
               </button>
@@ -93,7 +114,7 @@ export default function CandidateJobs() {
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-[15px] font-semibold text-foreground tracking-[-0.01em]">
+          <h2 className="text-[17px] font-semibold text-foreground tracking-[-0.01em]">
             {searchTerm
               ? `Results for "${searchTerm}"`
               : locationTerm
@@ -102,22 +123,39 @@ export default function CandidateJobs() {
           </h2>
           <p className="text-muted-foreground text-[13px] flex items-center gap-1.5 mt-1">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            {filteredJobs.length} match{filteredJobs.length === 1 ? "" : "es"}{hasFilters ? "" : " based on your profile and experience"}
+            <span aria-live="polite">
+              {filteredJobs.length} match{filteredJobs.length === 1 ? "" : "es"}{hasFilters ? "" : " based on your profile and experience"}
+            </span>
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
-            <Filter className="w-4 h-4" /> Filters
-          </Button>
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Work type">
+          {WORK_TYPES.map((t) => (
+            <button
+              key={t.value}
+              type="button"
+              aria-pressed={workType === t.value}
+              onClick={() => setWorkType(workType === t.value ? null : t.value)}
+              className={cn(
+                "rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-all active:scale-95",
+                workType === t.value
+                  ? "bg-primary text-primary-foreground border-primary shadow-[0_6px_14px_-6px_hsl(var(--primary)/0.6)]"
+                  : "bg-white/80 text-muted-foreground border-border hover:text-foreground hover:border-foreground/20",
+              )}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
       </div>
 
       {filteredJobs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <StaggerGroup key={`${searchTerm}-${locationTerm}-${workType}`} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredJobs.map(job => (
-            <JobCard key={job.id} job={job} variant="candidate" />
+            <StaggerItem key={job.id}>
+              <JobCard job={job} variant="candidate" />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       ) : (
         <EmptyState
           icon={Briefcase}

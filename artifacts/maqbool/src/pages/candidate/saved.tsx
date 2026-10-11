@@ -9,6 +9,8 @@ import { Card, CardContent } from "@workspace/design-system/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/design-system/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/design-system/select";
 import { Link } from "wouter";
+import { AnimatePresence, motion } from "framer-motion";
+import { StaggerGroup, StaggerItem } from "@/components/shared/stagger";
 import { Bookmark, ArrowRight, Bell, Plus, Trash2 } from "lucide-react";
 
 interface JobAlert {
@@ -75,11 +77,13 @@ export default function CandidateSaved() {
 
         <TabsContent value="saved" className="outline-none mt-0">
           {savedJobs.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <StaggerGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {savedJobs.map((job) => (
-                <JobCard key={job.id} job={job} variant="candidate" />
+                <StaggerItem key={job.id}>
+                  <JobCard job={job} variant="candidate" />
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerGroup>
           ) : (
             <EmptyState
               icon={Bookmark}
@@ -100,12 +104,14 @@ export default function CandidateSaved() {
               <h3 className="text-[15px] font-semibold text-foreground tracking-[-0.01em] mb-4">Create a new alert</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <Input
+                  aria-label="Alert keywords"
                   placeholder="Keywords (e.g. Product Designer)"
                   value={form.keywords}
                   onChange={(e) => setForm(f => ({ ...f, keywords: e.target.value }))}
                   className="sm:col-span-1"
                 />
                 <Input
+                  aria-label="Alert location"
                   placeholder="Location (e.g. Remote)"
                   value={form.location}
                   onChange={(e) => setForm(f => ({ ...f, location: e.target.value }))}
@@ -124,7 +130,7 @@ export default function CandidateSaved() {
                       <SelectItem value="weekly">Weekly</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button onClick={addAlert} size="icon" className="shrink-0">
+                  <Button onClick={addAlert} size="icon" className="shrink-0" aria-label="Add job alert">
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
@@ -133,25 +139,42 @@ export default function CandidateSaved() {
           </Card>
 
           <div className="space-y-3">
+            <AnimatePresence initial={false}>
             {alerts.map(alert => (
-              <Card key={alert.id}>
+              <motion.div
+                key={alert.id}
+                layout
+                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -24 }}
+                transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+              >
+              <Card className={alert.active ? "" : "opacity-70"}>
                 <CardContent className="p-4 flex items-center gap-4">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${alert.active ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${alert.active ? 'bg-gradient-to-br from-primary to-secondary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
                     <Bell className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-foreground truncate">{alert.keywords}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">
-                      {alert.location || "Any location"} · {alert.frequency} alerts
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                      <span>{alert.location || "Any location"}</span>
+                      <span className="rounded-full bg-muted px-2 py-0.5 font-medium capitalize">{alert.frequency}</span>
+                      {!alert.active && <span className="font-medium">Paused</span>}
                     </div>
                   </div>
                   <button
+                    type="button"
+                    role="switch"
+                    aria-checked={alert.active}
+                    aria-label={`${alert.active ? "Pause" : "Resume"} alert for ${alert.keywords}`}
                     onClick={() => toggleAlert(alert.id)}
                     className={`w-11 h-6 rounded-full cursor-pointer transition-colors relative shrink-0 ${alert.active ? 'bg-primary' : 'bg-muted'}`}
                   >
                     <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all ${alert.active ? 'left-6' : 'left-1'}`} />
                   </button>
                   <button
+                    type="button"
+                    aria-label={`Delete alert for ${alert.keywords}`}
                     onClick={() => removeAlert(alert.id)}
                     className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors shrink-0"
                   >
@@ -159,7 +182,9 @@ export default function CandidateSaved() {
                   </button>
                 </CardContent>
               </Card>
+              </motion.div>
             ))}
+            </AnimatePresence>
             {alerts.length === 0 && (
               <EmptyState
                 icon={Bell}
