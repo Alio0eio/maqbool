@@ -171,9 +171,11 @@ The authentication middleware is implemented in `artifacts/api-server/src/middle
 
 1. Supported user roles are restricted to `candidate`, `recruiter`, and `admin`.
 2. Express's `Request` type is extended with an optional authenticated user containing id, role, email, and name values.
-3. `authenticate` reads the `Authorization` header.
+3. `authenticate` accepts a bearer access token or the HttpOnly
+   `maqbool_access_token` cookie; an explicitly provided bearer header takes
+   precedence.
 4. The header must match `Bearer <token>`.
-5. Missing authorization returns a `401` authentication-required error.
+5. Missing bearer and cookie credentials return a `401` authentication-required error.
 6. Malformed authorization returns a `401` invalid-credentials error.
 7. The token is verified with the configured access secret and allowed algorithm.
 8. The token payload must contain a non-empty string `sub` claim and a supported role.
@@ -197,6 +199,10 @@ The logger is implemented in `artifacts/api-server/src/lib/logger.ts`.
 The configuration module is implemented in `artifacts/api-server/src/config/index.ts`.
 
 1. `dotenv/config` loads environment variables before configuration is evaluated.
+   The API start command preloads dotenv with `DOTENV_CONFIG_PATH=../../.env`
+   before executing the bundled server. This loads the repository-root file
+   before the bundled database module initializes when pnpm starts the package
+   from its own folder.
 2. `NODE_ENV` accepts `development`, `production`, or `test`, defaulting to `development`.
 3. `PORT` is required and must be between 1 and 65535.
 4. `LOG_LEVEL` is validated against the supported Pino levels.
@@ -212,12 +218,54 @@ The configuration module is implemented in `artifacts/api-server/src/config/inde
 
 The root `.env.example` documents the server, CORS, logging, JWT, and database variables.
 
+### 3.5.1 Combined frontend and API server
+
+The API Express application serves the Vite production build from
+`artifacts/maqbool/dist/public` after mounting `/api`. Static asset requests
+are served directly, and other non-API paths return the SPA entry point so
+client-side routes continue to work. Unmatched `/api` requests still reach the
+API not-found handler.
+
+Run `pnpm --filter @workspace/api-server dev` at the repository root to build
+the frontend with `VITE_API_BASE_URL=/api`, build the API, and start the
+combined server. Set `PORT` in the root `.env` (for example `5000`) and browse
+to `http://localhost:<PORT>`. This same-origin arrangement avoids browser
+credentialed CORS requests. For a separately hosted frontend, configure
+`CORS_ORIGIN` to its exact origin and enable credentialed requests as usual.
+
 ### 3.6 Authentication dependencies and development command (Task 3.1.1)
 
 1. `bcryptjs` was added to hash and verify passwords.
 2. `jsonwebtoken` is used for JWT creation and verification.
 3. `@types/jsonwebtoken` supplies JWT TypeScript definitions.
 4. `cross-env` was added for cross-platform environment variable assignment.
+
+### 3.7 Browser session restoration
+
+The browser frontend uses the same auth routes with HttpOnly cookies while
+preserving bearer-token compatibility for other clients.
+
+1. Login and refresh issue `maqbool_access_token` and
+   `maqbool_refresh_token` cookies scoped to `/api`, marked HttpOnly and
+   SameSite=Lax, with Secure enabled in production and expirations matching
+   their JWTs.
+2. Authentication middleware accepts either the existing bearer header or
+   the access-token cookie; explicit bearer credentials take precedence.
+3. Refresh accepts the refresh-token cookie or the existing JSON body and
+   rotates both cookies. Logout clears both cookies after revoking the session.
+4. The frontend calls `GET /api/auth/me` during provider initialization and
+   waits before rendering candidate or recruiter routes. A `401` triggers one
+   refresh attempt followed by another current-user request.
+5. CORS enables credentials for explicitly configured `CORS_ORIGIN` values.
+   Cross-origin browser deployments must list their frontend origin; same
+   origin deployments need no additional CORS configuration.
+6. The frontend removes legacy localStorage auth entries and never stores
+   token values there. The current-user response is a top-level object with
+   `id` (number), `email`, `role`, `name`, `avatarUrl`, and `createdAt`, plus
+   an optional candidate `profile`.
+7. The API server test suite covers cookie issuance, cookie-based current-user
+   authentication, refresh token rotation, and cookie clearing. The frontend
+   package does not currently define a React component test runner.
 
 ## 4. Application Submission Endpoint (Task 4.3.1)
 

@@ -1,4 +1,4 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type Response } from "express";
 import {
   loginRequestSchema,
   refreshRequestSchema,
@@ -11,6 +11,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
   hashPassword,
+  verifyAccessToken,
   verifyPassword,
   verifyRefreshToken,
 } from "../lib/auth";
@@ -22,13 +23,44 @@ import {
   revokeRefreshTokensForUser,
   storeRefreshToken,
 } from "../lib/refresh-token-store";
+import { config } from "../config";
 
 type HttpError = Error & { statusCode: number };
+const AUTH_COOKIE_PATH = "/api";
 
 function createHttpError(message: string, statusCode: number): HttpError {
   const error = new Error(message) as HttpError;
   error.statusCode = statusCode;
   return error;
+}
+
+function setAuthCookies(
+  res: Response,
+  accessToken: string,
+  refreshToken: string,
+): void {
+  const cookieOptions = {
+    httpOnly: true,
+    secure: config.isProduction,
+    sameSite: "lax" as const,
+    path: AUTH_COOKIE_PATH,
+  };
+  const accessPayload = verifyAccessToken(accessToken);
+  const refreshPayload = verifyRefreshToken(refreshToken);
+
+  res.cookie("maqbool_access_token", accessToken, {
+    ...cookieOptions,
+    maxAge: Math.max(0, accessPayload.exp * 1000 - Date.now()),
+  });
+  res.cookie("maqbool_refresh_token", refreshToken, {
+    ...cookieOptions,
+    maxAge: Math.max(0, refreshPayload.exp * 1000 - Date.now()),
+  });
+}
+
+function clearAuthCookies(res: Response): void {
+  res.clearCookie("maqbool_access_token", { path: AUTH_COOKIE_PATH });
+  res.clearCookie("maqbool_refresh_token", { path: AUTH_COOKIE_PATH });
 }
 
 function isUniqueViolation(error: unknown): boolean {
@@ -189,6 +221,7 @@ export function createAuthRouter(database: typeof db = db): IRouter {
       const refreshToken = generateRefreshToken(user.id);
       const refreshPayload = verifyRefreshToken(refreshToken);
       storeRefreshToken(refreshPayload.jti, String(user.id), refreshPayload.exp * 1000);
+      setAuthCookies(res, accessToken, refreshToken);
 
       res.status(200).json({
         message: "Login successful",
@@ -214,11 +247,14 @@ export function createAuthRouter(database: typeof db = db): IRouter {
 
     revokeAccessToken(req.authToken.jti, req.authToken.exp * 1000);
     revokeRefreshTokensForUser(req.user?.id ?? req.authToken.sub);
+    clearAuthCookies(res);
     res.status(200).json({ message: "Logout successful" });
   });
 
   router.post("/auth/refresh", async (req, res, next) => {
-    const parsed = refreshRequestSchema.safeParse(req.body);
+    const parsed = refreshRequestSchema.safeParse({
+      refreshToken: req.cookies?.maqbool_refresh_token ?? req.body?.refreshToken,
+    });
     if (!parsed.success) {
       next(createHttpError("Invalid refresh token", 401));
       return;
@@ -266,6 +302,7 @@ export function createAuthRouter(database: typeof db = db): IRouter {
         String(user.id),
         nextRefreshPayload.exp * 1000,
       );
+      setAuthCookies(res, accessToken, refreshToken);
 
       res.status(200).json({
         message: "Token refreshed successfully",

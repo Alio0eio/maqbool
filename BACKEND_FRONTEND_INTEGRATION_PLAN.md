@@ -15,20 +15,20 @@ than a simple endpoint hookup.
 
 ## Current State and Integration Risks
 
-1. `artifacts/maqbool/src/lib/auth.tsx` stores mock user and role IDs in
-   localStorage and never calls the backend authentication endpoints.
+1. Authentication now uses the backend login, registration, current-user,
+   refresh, and logout endpoints. Candidate feature pages still read mock data.
 2. Candidate pages under `artifacts/maqbool/src/pages/candidate` read from
    `@/lib/mock-data`.
 3. `lib/api-client-react` contains generated operations from a broader API
    contract whose application response shapes do not match the implemented
    candidate routes. It should not be used for these routes until the contract
    is aligned.
-4. `artifacts/maqbool/vite.config.ts` has no development proxy for `/api`.
-   The frontend must either use a configured backend base URL or add a Vite
-   proxy for local development.
-5. The backend uses bearer access tokens and refresh tokens. The browser
-   client must attach the access token to protected requests and refresh or
-   sign out cleanly after a `401`.
+4. The API server serves the built frontend and API from one origin. The
+   combined development command builds the frontend with `VITE_API_BASE_URL=/api`
+   so browser authentication cookies and API calls remain same-origin.
+5. The backend supports bearer tokens for existing clients and HttpOnly access
+   and refresh cookies for the browser. A separate frontend origin still
+   requires the backend `CORS_ORIGIN` allowlist and credentialed CORS.
 6. The backend currently has no upload endpoint. The existing apply flow's
    local resume upload cannot become a server upload without a separate storage
    decision. Until then, application submission uses the candidate profile's
@@ -42,15 +42,16 @@ than a simple endpoint hookup.
 
 ### 1. Runtime configuration
 
-Add frontend environment configuration for the API origin, for example:
+For the combined server, the frontend uses the relative API base:
 
 ```text
-VITE_API_BASE_URL=http://localhost:5000/api
+VITE_API_BASE_URL=/api
 ```
 
-For local development, alternatively proxy `/api` from Vite to the API server
-and keep the browser URL relative. Production should use one documented API
-origin and configure CORS accordingly.
+Run `pnpm --filter @workspace/api-server dev` from the repository root. This
+builds the frontend and API, then starts one Express server that serves both on
+the configured backend `PORT`. The frontend and API share one browser origin;
+do not set `VITE_API_BASE_URL` to a different host when using this mode.
 
 ### 2. API client boundary
 
@@ -63,9 +64,9 @@ client must expose these operations:
 | --- | --- | --- |
 | Register | `POST /api/auth/register` | Public |
 | Login | `POST /api/auth/login` | Public |
-| Refresh | `POST /api/auth/refresh` | Public with refresh token |
-| Logout | `POST /api/auth/logout` | Access token |
-| Current user | `GET /api/auth/me` | Access token |
+| Refresh | `POST /api/auth/refresh` | HttpOnly refresh cookie or legacy body token |
+| Logout | `POST /api/auth/logout` | HttpOnly access cookie or bearer token |
+| Current user | `GET /api/auth/me` | HttpOnly access cookie or bearer token |
 | Update user profile | `PUT /api/auth/profile` | Access token |
 | Candidate profile | `GET/POST/PUT /api/candidates/profile` | Candidate |
 | List jobs | `GET /api/jobs` | Public |
@@ -84,19 +85,17 @@ single `ApiError` shape containing at least `status` and `message`. Preserve
 
 ### 3. Authentication state
 
-Replace mock auth with a provider that owns:
+The existing provider owns:
 
-- `accessToken`, `refreshToken`, and the authenticated user;
-- storage and restoration of the session on page load;
-- `login`, `register`, `logout`, and `refresh` actions;
-- a bootstrap request to `GET /api/auth/me`;
-- a single-flight refresh mechanism for concurrent `401` responses;
-- clearing tokens and redirecting to `/` when refresh fails.
+- the authenticated backend user and its role;
+- an initialization/loading state and session restoration from `GET /api/auth/me`;
+- `login`, `register`, and `logout` actions;
+- one refresh attempt after an initialization `401`;
+- clearing auth state and redirecting to `/` when restoration fails.
 
-Do not store passwords. Prefer an in-memory access token plus a protected
-refresh-token strategy when the deployment supports secure cookies. If the
-current API contract remains bearer-token based, document the localStorage
-tradeoff and keep all token access inside the auth provider/client boundary.
+The browser uses HttpOnly access and refresh cookies and does not persist token
+values in localStorage. Bearer authentication remains available to non-browser
+clients.
 
 Update `RequireAuth` to use the backend user role, loading state, and session
 bootstrap result. Remove the candidate lookup by mock email from all protected
@@ -126,24 +125,29 @@ pages.
    `{ email, password, name }` JSON body. Registration returns no session, so
    the UI directs the new candidate to sign in. Email verification remains
    blocked on backend support (see below).
-3. [x] Store the returned access and refresh tokens through the auth provider.
-4. [ ] Restore the session with `GET /api/auth/me` before rendering candidate
-   routes.
-5. [ ] Wire logout to `POST /api/auth/logout` and clear client state regardless of
-   the response.
+3. [x] Set HttpOnly access and refresh cookies on login/refresh; do not persist
+   token values in browser storage.
+4. [x] Restore the session with `GET /api/auth/me` before rendering protected
+   routes, refreshing once after an expired access token.
+5. [x] Wire logout to `POST /api/auth/logout` and clear client auth state even
+   when the server request fails.
 6. [x] Map backend `401` and validation errors to the existing form error/toast
    system.
-7. [ ] Test candidate and recruiter role gating with real backend roles. Recruiter
-   pages should remain blocked from candidate-only operations.
+7. [x] Gate candidate and recruiter routes by the backend user role; admin and
+   other-role users cannot enter either dashboard.
 
-**Progress update (2026-10-07)**: Sign-in now posts JSON credentials to the
-backend, resolves the authenticated user's role through `GET /api/auth/me`,
-stores the returned access and refresh tokens in the existing auth provider,
-and displays backend or network errors in the form. Token refresh, validated
-session bootstrap, backend logout, and real-role route-gating tests remain
-incomplete, so the Phase 1 exit check is not yet met.
+**Progress update (2026-10-11)**: The existing auth provider now initializes
+from the backend's cookie-authenticated `GET /api/auth/me` response before any
+protected route renders. A `401` triggers one refresh attempt; authentication
+failures and network errors fail closed and end the loading state. Login
+updates the provider from the current-user response, logout invalidates the
+backend session and always clears client state, and `RequireAuth` checks the
+actual backend role. Tokens are not persisted in localStorage. Backend tests
+cover HttpOnly cookie issuance, cookie authentication, refresh rotation, and
+cookie clearing; the frontend package currently has no test runner configured
+for React component tests.
 
-**Progress update (2026-10-08)**: The sign-up form now posts trimmed email and
+**Progress update (2026-10-08)**: The sign-up form posts trimmed email and
 name plus the password to `POST /api/auth/register`, prevents duplicate
 submissions, applies the server's password and name constraints in the browser,
 and shows server/network errors. On `201`, it switches to Sign In with the
