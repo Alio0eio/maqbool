@@ -7,7 +7,6 @@ import { CardContent } from "@workspace/design-system/card";
 import { MatchScoreBadge } from "@/components/shared/badges";
 import { PageHeader } from "@/components/shared/page-header";
 import { ViewfinderCard } from "@/components/shared/viewfinder-card";
-import { EmptyState } from "@/components/shared/empty-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/design-system/select";
 import { ScrollArea, ScrollBar } from "@workspace/design-system/scroll-area";
 import { cn } from "@workspace/design-system/utils";
@@ -16,6 +15,17 @@ import { Link, useSearchParams } from "wouter";
 import type { Application, Candidate } from "@workspace/api-client-react";
 
 const STAGES = ["applied", "screening", "interview", "decision", "offer", "hired", "rejected"];
+
+/** Each stage carries a color so a column reads at a glance, not just by label. */
+const STAGE_META: Record<string, { dot: string; bar: string; label: string }> = {
+  applied: { dot: "bg-slate-400", bar: "from-slate-300 to-slate-400", label: "Applied" },
+  screening: { dot: "bg-secondary", bar: "from-secondary/60 to-secondary", label: "Screening" },
+  interview: { dot: "bg-primary", bar: "from-primary/60 to-primary", label: "Interview" },
+  decision: { dot: "bg-warning", bar: "from-amber-300 to-warning", label: "Decision" },
+  offer: { dot: "bg-success", bar: "from-emerald-300 to-success", label: "Offer" },
+  hired: { dot: "bg-success", bar: "from-emerald-400 to-success", label: "Hired" },
+  rejected: { dot: "bg-destructive", bar: "from-red-300 to-destructive", label: "Rejected" },
+};
 
 // A card starts tracking the pointer immediately on press, but only commits
 // to a drag (spawning the portal ghost) past a small movement threshold —
@@ -185,30 +195,36 @@ export default function PipelineKanban() {
                   key={stage}
                   ref={(el) => { columnRefs.current[stage] = el ?? undefined; }}
                   className={cn(
-                    "w-[320px] flex-shrink-0 flex flex-col h-full bg-surface-subtle rounded-xl border transition-colors duration-150",
+                    "relative w-[320px] flex-shrink-0 flex flex-col h-full overflow-hidden bg-white/55 backdrop-blur-sm rounded-2xl border transition-[background-color,border-color,box-shadow,transform] duration-200",
                     isDropTarget
-                      ? "border-primary ring-2 ring-primary/40 bg-primary/[0.04]"
+                      ? "border-secondary/60 bg-secondary/[0.06] shadow-[0_0_0_4px_hsl(var(--secondary)/0.12)] scale-[1.01]"
                       : isHighlighted
                         ? "border-primary ring-2 ring-primary/30"
                         : "border-border/60"
                   )}
                 >
-                  <div className="p-4 border-b border-border/60 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="uppercase tracking-wider text-[11px] font-semibold text-muted-foreground">{stage}</span>
-                      <span className="bg-background text-muted-foreground px-2 py-0.5 rounded-full text-[10px] font-semibold">
-                        {stageApps.length}
-                      </span>
+                  <div aria-hidden className={cn("h-1 w-full bg-gradient-to-r", STAGE_META[stage].bar)} />
+                  <div className="px-4 py-3.5 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <span aria-hidden className={cn("w-2 h-2 rounded-full", STAGE_META[stage].dot)} />
+                      <h3 className="text-[13.5px] font-semibold text-foreground tracking-[-0.01em]">{STAGE_META[stage].label}</h3>
                     </div>
+                    <span className="min-w-6 text-center bg-white border border-border/70 text-foreground px-2 py-0.5 rounded-full text-[12px] font-semibold tabular-nums shadow-[0_1px_2px_rgba(16,24,40,0.05)]">
+                      {stageApps.length}
+                    </span>
                   </div>
 
                   <ScrollArea className="flex-1 p-3">
                     {stageApps.length === 0 ? (
-                      <EmptyState
-                        icon={Inbox}
-                        title="No candidates"
-                        description={`Nobody is in ${stage} right now.`}
-                      />
+                      <div
+                        className={cn(
+                          "flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed py-10 text-center transition-colors",
+                          isDropTarget ? "border-secondary/50 text-secondary" : "border-border text-muted-foreground",
+                        )}
+                      >
+                        <Inbox className="w-5 h-5" strokeWidth={1.75} />
+                        <p className="text-[12.5px] font-medium">{isDropTarget ? "Drop to move here" : `No one in ${STAGE_META[stage].label.toLowerCase()}`}</p>
+                      </div>
                     ) : (
                       <div className="space-y-3">
                         {stageApps.map(app => {
@@ -231,7 +247,7 @@ export default function PipelineKanban() {
                               <CardContent className="p-4">
                                 <div className="flex justify-between items-start gap-2 mb-3">
                                   <div className="flex items-center gap-2 min-w-0 flex-1">
-                                    <Avatar className="w-8 h-8 border border-border/70 shrink-0">
+                                    <Avatar className="w-8 h-8 ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))] shrink-0">
                                       <AvatarImage src={candidate.avatarUrl!} />
                                       <AvatarFallback>{candidate.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                                     </Avatar>
@@ -244,7 +260,7 @@ export default function PipelineKanban() {
                                       </div>
                                     </div>
                                   </div>
-                                  <button className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                                  <button type="button" aria-label={`More actions for ${candidate.name}`} className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity shrink-0 rounded-md p-1 -m-1">
                                     <MoreHorizontal className="w-4 h-4" />
                                   </button>
                                 </div>
@@ -284,7 +300,7 @@ export default function PipelineKanban() {
           <ViewfinderCard className="shadow-2xl ring-1 ring-primary/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-2 min-w-0">
-                <Avatar className="w-8 h-8 border border-border/70 shrink-0">
+                <Avatar className="w-8 h-8 ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))] shrink-0">
                   <AvatarImage src={dragState.candidate.avatarUrl!} />
                   <AvatarFallback>{dragState.candidate.name.substring(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>

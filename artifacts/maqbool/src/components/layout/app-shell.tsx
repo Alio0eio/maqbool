@@ -5,14 +5,13 @@ import { cn } from "@workspace/design-system/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/design-system/avatar";
 import { Button } from "@workspace/design-system/button";
 import { ScrollArea } from "@workspace/design-system/scroll-area";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@workspace/design-system/tooltip";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@workspace/design-system/sheet";
 import { useIsMobile } from "@workspace/design-system/hooks/use-mobile";
 import { Bell, LogOut, ChevronDown, UserCircle, Menu, Pin, PinOff } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { CommandPalette } from "@/components/shared/command-palette";
-import { MaqboolMark, MaqboolWordmark } from "@/components/shared/logo";
+import { MaqboolRollingLogo, MaqboolWordmark } from "@/components/shared/logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,11 +65,12 @@ function transitionKey(location: string) {
   return isWizardStep ? location.replace(/\/[^/]+$/, "") : location;
 }
 
-// Rail's resting, icon-only width. Kept in sync by hand with <main>'s
-// `ml-[68px]` below — Tailwind can't consume a JS constant in an arbitrary
-// value class, so if this changes, update that class too.
+// Rail widths. <main>'s marginLeft is derived from these (+ RAIL_GUTTER), so
+// the content is pushed aside, never covered, as the rail expands.
 const RAIL_COLLAPSED_W = 68;
 const RAIL_EXPANDED_W = 256;
+// Rail sits 12px from the window edge, with a 12px gap before the content.
+const RAIL_GUTTER = 24;
 const PIN_STORAGE_KEY = "maqbool_sidebar_pinned";
 
 /** Label/caption that reveals via width+opacity as the rail expands, without ever moving the icon beside it. */
@@ -98,27 +98,31 @@ function NavItemRow({
   onNavigate?: () => void;
 }) {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Link href={item.href} className="outline-none block" onClick={onNavigate}>
+    <Link href={item.href} aria-current={isActive ? "page" : undefined} className="outline-none block rounded-[9px] focus-visible:ring-2 focus-visible:ring-ring/50" onClick={onNavigate}>
           <motion.span
             whileTap={{ scale: 0.97 }}
             transition={{ type: "spring", bounce: 0, duration: 0.25 }}
             className={cn(
-              "flex items-center h-9 rounded-[9px] text-[13px] font-medium transition-[background-color,color,width,margin] duration-150",
-              expanded ? "w-full gap-3 px-3" : "w-9 mx-auto justify-center",
-              isActive
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-foreground/[0.045] hover:text-foreground",
+              "group/nav relative flex items-center h-10 rounded-[11px] text-[13px] font-medium transition-[background-color,color,width,margin] duration-150",
+              expanded ? "w-full gap-3 px-3" : "w-10 mx-auto justify-center",
+              isActive ? "text-primary-foreground" : "text-muted-foreground hover:bg-foreground/[0.045] hover:text-foreground",
             )}
           >
-            <item.icon className="w-[17px] h-[17px] shrink-0" strokeWidth={2} />
-            <RevealLabel expanded={expanded}>{item.label}</RevealLabel>
+            {isActive && (
+              <motion.span
+                layoutId={`nav-active-${expanded ? "open" : "rail"}`}
+                aria-hidden
+                className="absolute inset-0 rounded-[11px] bg-gradient-to-br from-primary to-[hsl(222_80%_32%)] shadow-[0_6px_16px_-4px_hsl(var(--primary)/0.55)]"
+                transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+              />
+            )}
+            <item.icon
+              className="relative w-[17px] h-[17px] shrink-0 transition-transform duration-200 group-hover/nav:scale-110"
+              strokeWidth={2}
+            />
+            <RevealLabel expanded={expanded} className="relative">{item.label}</RevealLabel>
           </motion.span>
         </Link>
-      </TooltipTrigger>
-      {!expanded && <TooltipContent side="right">{item.label}</TooltipContent>}
-    </Tooltip>
   );
 }
 
@@ -134,7 +138,7 @@ function NavGroups({
   onNavigate?: () => void;
 }) {
   return (
-    <nav className="space-y-5 py-1">
+    <nav aria-label="Primary" className="space-y-5 py-1">
       {navGroups.map((group, gi) => (
         <div key={gi} className="space-y-0.5">
           {expanded && group.label && (
@@ -181,31 +185,8 @@ function SidebarBrand({
         className="flex items-center outline-none transition-transform duration-200 ease-out hover:scale-[1.02] shrink-0"
         onClick={onNavigate}
       >
-        <AnimatePresence mode="wait" initial={false}>
-          {isExpanded ? (
-            <motion.span
-              key="wordmark"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15, delay: 0.05 }}
-              className="flex items-center"
-            >
-              <MaqboolWordmark size={size} />
-            </motion.span>
-          ) : (
-            <motion.span
-              key="mark"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.1 }}
-              className="flex items-center"
-            >
-              <MaqboolMark size={Math.round(size * 0.9)} />
-            </motion.span>
-          )}
-        </AnimatePresence>
+        <span className="sr-only">Maqbool</span>
+        <MaqboolRollingLogo size={size} expanded={isExpanded} />
       </Link>
       {showPin && onTogglePin && (
         <Button
@@ -241,10 +222,8 @@ function SidebarFooter({
   onNavigate?: () => void;
 }) {
   return (
-    <div className="p-3 border-t border-border/60 shrink-0">
+    <div className="p-3 shrink-0">
       <DropdownMenu>
-        <Tooltip>
-          <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
               <button className="flex w-full items-center gap-2.5 rounded-[10px] p-2 hover:bg-foreground/[0.045] transition-colors duration-150 outline-none text-left">
                 <Avatar className="w-8 h-8 shrink-0">
@@ -260,9 +239,6 @@ function SidebarFooter({
                 {expanded && <ChevronDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />}
               </button>
             </DropdownMenuTrigger>
-          </TooltipTrigger>
-          {!expanded && <TooltipContent side="right">{userName}</TooltipContent>}
-        </Tooltip>
         <DropdownMenuContent align="start" side="top" className="w-56">
           <DropdownMenuItem asChild>
             <Link href={profileHref} className="flex items-center gap-2 cursor-pointer" onClick={onNavigate}>
@@ -334,6 +310,35 @@ export function AppShell({
 
   const isExpanded = isPinned || isHovering || isFocusWithin;
 
+  // Because expanding pushes the page content, hover is debounced: a pointer
+  // that merely crosses the rail on its way elsewhere must not shove the
+  // layout around.
+  const hoverTimerRef = React.useRef<number | undefined>(undefined);
+  const scheduleHover = (next: boolean) => {
+    window.clearTimeout(hoverTimerRef.current);
+    hoverTimerRef.current = window.setTimeout(() => setIsHovering(next), next ? 140 : 180);
+  };
+  React.useEffect(() => () => window.clearTimeout(hoverTimerRef.current), []);
+
+  // SPA route changes don't reset focus or the document title the way a full
+  // page load does — without this, keyboard and screen-reader users stay
+  // parked on the link they just activated and the tab title never changes.
+  const mainRef = React.useRef<HTMLElement>(null);
+  const firstRenderRef = React.useRef(true);
+  const routeKey = transitionKey(location);
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const heading = mainRef.current?.querySelector("h1")?.textContent?.trim();
+      document.title = heading ? `${heading} · Maqbool` : "Maqbool";
+      if (firstRenderRef.current) {
+        firstRenderRef.current = false;
+        return;
+      }
+      mainRef.current?.focus({ preventScroll: true });
+    }, 350);
+    return () => window.clearTimeout(timer);
+  }, [routeKey]);
+
   if (!user) return null;
 
   const handleLogout = () => {
@@ -358,13 +363,20 @@ export function AppShell({
 
   return (
     <div className="relative flex h-screen w-full bg-surface-bg overflow-hidden font-sans text-foreground">
+      <div aria-hidden className="app-aurora" />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-[13px] focus:font-medium focus:text-primary-foreground"
+      >
+        Skip to main content
+      </a>
       <CommandPalette />
 
       {/* Desktop: hover-expand icon rail, overlays content rather than pushing it */}
       {!isMobile && (
         <motion.aside
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
+          onMouseEnter={() => scheduleHover(true)}
+          onMouseLeave={() => scheduleHover(false)}
           onFocus={() => {
             if (usingKeyboardRef.current) setIsFocusWithin(true);
           }}
@@ -374,8 +386,9 @@ export function AppShell({
           animate={{ width: isExpanded ? RAIL_EXPANDED_W : RAIL_COLLAPSED_W }}
           transition={widthTransition}
           className={cn(
-            "fixed left-0 top-0 h-full flex flex-col border-r border-border/60 bg-white z-30 overflow-hidden",
-            isExpanded && "shadow-[0_8px_30px_rgba(0,0,0,0.12)]",
+            "fixed left-3 top-3 bottom-3 flex flex-col rounded-[22px] border border-white/70 bg-white/80 backdrop-blur-2xl z-30 overflow-hidden",
+            "shadow-[0_1px_0_0_rgba(255,255,255,0.9)_inset,0_10px_30px_-12px_hsl(var(--primary)/0.25),0_2px_6px_-2px_hsl(var(--primary)/0.08)]",
+            isExpanded && "shadow-[0_1px_0_0_rgba(255,255,255,0.9)_inset,0_24px_60px_-16px_hsl(var(--primary)/0.35)]",
           )}
         >
           <SidebarBrand
@@ -438,8 +451,16 @@ export function AppShell({
       )}
 
       {/* Main */}
-      <main className={cn("flex-1 flex flex-col min-w-0", !isMobile && "ml-[68px]")}>
-        <header className="app-translucent-header h-16 flex items-center justify-between gap-4 px-6 md:px-8 shrink-0 sticky top-0 z-10 bg-surface-bg/85 backdrop-blur-xl [-webkit-backdrop-filter:blur(20px)] border-b border-border/60">
+      <motion.main
+        ref={mainRef}
+        id="main-content"
+        tabIndex={-1}
+        className="flex-1 flex flex-col min-w-0 outline-none"
+        initial={false}
+        animate={{ marginLeft: isMobile ? 0 : (isExpanded ? RAIL_EXPANDED_W : RAIL_COLLAPSED_W) + RAIL_GUTTER }}
+        transition={widthTransition}
+      >
+        <header className="app-translucent-header h-16 flex items-center justify-between gap-4 px-6 md:px-8 shrink-0 sticky top-0 z-10 bg-surface-bg/70 backdrop-blur-xl [-webkit-backdrop-filter:blur(20px)]">
           <div className="flex-1 flex items-center gap-3 min-w-0">
             {isMobile && (
               <>
@@ -460,14 +481,22 @@ export function AppShell({
             {headerLeft}
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <Link href={notificationsHref} className="outline-none">
-              <Button variant="ghost" size="icon" className="relative rounded-full text-muted-foreground hover:text-foreground">
-                <Bell className="w-[18px] h-[18px]" />
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              className="relative rounded-full text-muted-foreground hover:text-foreground"
+            >
+              <Link
+                href={notificationsHref}
+                aria-label={unreadNotifications > 0 ? `Notifications, ${unreadNotifications} unread` : "Notifications"}
+              >
+                <Bell className="w-[18px] h-[18px]" aria-hidden />
                 {unreadNotifications > 0 && (
-                  <span className="absolute top-2 right-2 w-[7px] h-[7px] bg-destructive rounded-full ring-2 ring-white" />
+                  <span aria-hidden className="absolute top-2 right-2 w-[7px] h-[7px] bg-destructive rounded-full ring-2 ring-white" />
                 )}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </header>
 
@@ -479,13 +508,13 @@ export function AppShell({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ type: "spring", bounce: 0, duration: 0.32 }}
-              className="px-6 md:px-8 py-8 max-w-[1280px] mx-auto min-h-full"
+              className="page-stagger relative z-[1] px-6 md:px-8 py-8 max-w-[1280px] mx-auto min-h-full"
             >
               {children}
             </motion.div>
           </AnimatePresence>
         </ScrollArea>
-      </main>
+      </motion.main>
     </div>
   );
 }

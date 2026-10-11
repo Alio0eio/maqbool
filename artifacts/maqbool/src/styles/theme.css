@@ -121,3 +121,246 @@
     -webkit-backdrop-filter: none !important;
   }
 }
+
+/**
+ * Touch & readability baseline (applies app-wide).
+ * - Coarse pointers get >=44px hit areas on icon-only controls whose visual
+ *   size is intentionally small (h-7/h-8/h-9), without changing desktop density.
+ * - Balanced headings avoid single-word orphan lines on narrow screens.
+ * - Sticky headers must not cover the focused element when tabbing.
+ */
+@media (pointer: coarse) {
+  button[class*='h-7'][class*='w-7'],
+  button[class*='w-7'][class*='h-7'],
+  button[class*='h-8'][class*='w-8'],
+  button[class*='w-8'][class*='h-8'],
+  button[class*='h-9'][class*='w-9'],
+  a[class*='h-8'][class*='w-8'] {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
+html {
+  scroll-padding-top: 5rem;
+}
+
+:focus-visible {
+  outline-color: hsl(var(--ring));
+}
+
+/* ------------------------------------------------------------------ *
+ * Life & depth layer
+ * All motion below is decorative-only and disabled under
+ * prefers-reduced-motion at the bottom of this block.
+ * ------------------------------------------------------------------ */
+
+/* Cursor-follow spotlight on interactive cards (--mx/--my set in ViewfinderCard). */
+.spotlight-card {
+  position: relative;
+}
+.spotlight-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 250ms ease;
+  background: radial-gradient(
+    240px circle at var(--mx, 50%) var(--my, 50%),
+    hsl(var(--secondary) / 0.09),
+    transparent 70%
+  );
+}
+.spotlight-card:hover::after {
+  opacity: 1;
+}
+
+/* Ambient backdrop behind app content: two slow-drifting brand-blue glows. */
+.app-aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.app-aurora::before,
+.app-aurora::after {
+  content: '';
+  position: absolute;
+  width: 46vmax;
+  height: 46vmax;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.55;
+}
+.app-aurora::before {
+  top: -22vmax;
+  right: -12vmax;
+  background: radial-gradient(circle, hsl(var(--secondary) / 0.16), transparent 65%);
+  animation: aurora-drift-a 26s ease-in-out infinite alternate;
+}
+.app-aurora::after {
+  bottom: -26vmax;
+  left: 2vmax;
+  background: radial-gradient(circle, hsl(var(--primary) / 0.12), transparent 65%);
+  animation: aurora-drift-b 32s ease-in-out infinite alternate;
+}
+@keyframes aurora-drift-a {
+  to { transform: translate3d(-8vmax, 6vmax, 0) scale(1.1); }
+}
+@keyframes aurora-drift-b {
+  to { transform: translate3d(10vmax, -5vmax, 0) scale(1.15); }
+}
+
+/* Page content cascades in: each top-level section of a page rises in turn. */
+.page-stagger > * > * {
+  animation: rise-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.page-stagger > * > *:nth-child(1) { animation-delay: 0ms; }
+.page-stagger > * > *:nth-child(2) { animation-delay: 70ms; }
+.page-stagger > * > *:nth-child(3) { animation-delay: 140ms; }
+.page-stagger > * > *:nth-child(4) { animation-delay: 210ms; }
+.page-stagger > * > *:nth-child(5) { animation-delay: 280ms; }
+.page-stagger > * > *:nth-child(n + 6) { animation-delay: 340ms; }
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Live status dot (interviewing / in progress): a soft expanding ping. */
+.live-dot {
+  position: relative;
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: currentColor;
+}
+.live-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: live-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes live-ping {
+  0% { transform: scale(1); opacity: 0.6; }
+  80%, 100% { transform: scale(3); opacity: 0; }
+}
+
+/* Primary buttons: a light sweep on hover. */
+.btn-sheen {
+  position: relative;
+  overflow: hidden;
+}
+.btn-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.22) 50%, transparent 65%);
+  transform: translateX(-120%);
+}
+.btn-sheen:hover::after {
+  transform: translateX(120%);
+  transition: transform 650ms ease;
+}
+
+/* Skeleton-style shimmer for any placeholder block. */
+.shimmer {
+  background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--muted-foreground) / 0.12) 50%, hsl(var(--muted)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+/* Floating hero cards on the sign-in screen. */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.float-slow { animation: float-y 6s ease-in-out infinite; }
+.float-slower { animation: float-y 8s ease-in-out -2s infinite; }
+
+/* Bars that breathe like a live audio level. */
+@keyframes wave-bar {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+.wave-bar {
+  transform-origin: bottom;
+  animation: wave-bar 1.6s ease-in-out infinite;
+}
+
+/* Quieter, branded scrollbars. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+}
+::selection {
+  background: hsl(var(--secondary) / 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-aurora::before,
+  .app-aurora::after,
+  .live-dot::after,
+  .shimmer,
+  .float-slow,
+  .float-slower,
+  .wave-bar {
+    animation: none !important;
+  }
+  .page-stagger > * > * {
+    animation: none !important;
+  }
+  .btn-sheen::after {
+    display: none;
+  }
+}
+
+.live-dot-svg {
+  animation: svg-pulse 2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes svg-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot-svg { animation: none; }
+}
+
+/* Ring spinner: a closed track with an arc that draws until the circle
+   closes, then releases from the tail. pathLength=100 keeps offsets unitless. */
+.ring-spinner {
+  animation: ring-rotate 1.6s linear infinite;
+}
+.ring-spinner-arc {
+  stroke-dasharray: 100 100;
+  stroke-dashoffset: 100;
+  animation: ring-close 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes ring-rotate {
+  to { transform: rotate(360deg); }
+}
+@keyframes ring-close {
+  0%   { stroke-dashoffset: 100; }
+  50%  { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -100; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ring-spinner { animation: none; }
+  .ring-spinner-arc { animation: ring-pulse 1.6s ease-in-out infinite; stroke-dashoffset: 0; }
+  @keyframes ring-pulse { 50% { opacity: 0.35; } }
+}

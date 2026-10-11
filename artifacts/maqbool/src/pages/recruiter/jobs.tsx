@@ -3,7 +3,9 @@ import { Link } from "wouter";
 import { MOCK_JOBS } from "@/lib/mock-data";
 import { JobCard } from "@/components/shared/job-card";
 import { EmptyState } from "@/components/shared/empty-state";
+import { StaggerGroup, StaggerItem } from "@/components/shared/stagger";
 import { PageHeader } from "@/components/shared/page-header";
+import { SummaryStrip } from "@/components/shared/summary-strip";
 import { Button } from "@workspace/design-system/button";
 import { Input } from "@workspace/design-system/input";
 import { Badge } from "@workspace/design-system/badge";
@@ -61,12 +63,22 @@ export default function RecruiterJobs() {
         }
       />
 
+      <SummaryStrip
+        items={[
+          { label: "Published", value: publishedCount },
+          { label: "Drafts", value: draftCount },
+          { label: "Closed", value: MOCK_JOBS.filter(j => j.status === 'closed').length },
+          { label: "Total applicants", value: MOCK_JOBS.reduce((n, j) => n + (j.applicantCount ?? 0), 0) },
+        ]}
+      />
+
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
+            aria-label="Search jobs"
             placeholder="Search by title, location..."
-            className="pl-9"
+            className="pl-10 h-11 rounded-full bg-white/80"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -110,11 +122,13 @@ export default function RecruiterJobs() {
 
         <TabsContent value={activeTab} className="outline-none mt-0">
           {filteredJobs.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <StaggerGroup key={`${activeTab}-${searchTerm}-${locationTypeFilters.join()}`} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredJobs.map(job => (
-                <JobCard key={job.id} job={job} variant="recruiter" />
+                <StaggerItem key={job.id}>
+                  <JobCard job={job} variant="recruiter" />
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerGroup>
           ) : (
             <EmptyState
               icon={Briefcase}

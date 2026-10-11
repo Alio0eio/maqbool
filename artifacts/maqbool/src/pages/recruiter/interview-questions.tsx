@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useLocation, useParams } from 'wouter';
 import { ArrowLeft, Plus, ChevronUp, ChevronDown, Trash2, Save, Check, Video, FileText } from 'lucide-react';
 import { INTERVIEW_QUESTIONS } from '@/lib/mock-data';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ConfirmAction } from '@/components/shared/confirm-action';
 import { PageHeader } from '@/components/shared/page-header';
 import { Button } from '@workspace/design-system/button';
 import { Textarea } from '@workspace/design-system/textarea';
@@ -65,11 +67,30 @@ export default function InterviewQuestions() {
         }
       />
 
+      <div className="flex flex-wrap gap-2 text-[12.5px]" aria-label="Set summary">
+        <span className="rounded-full bg-white/80 border border-border/70 px-3 py-1 font-medium">
+          {questions.length} question{questions.length === 1 ? '' : 's'}
+        </span>
+        <span className="rounded-full bg-white/80 border border-border/70 px-3 py-1 font-medium">
+          ~{Math.round(questions.reduce((n, q) => n + q.timeLimit, 0) / 60)} min total recording
+        </span>
+      </div>
+
       <div className="space-y-3">
+        <AnimatePresence initial={false} mode="popLayout">
         {questions.map((q, i) => {
           const isEmpty = showErrors && emptyIds.has(q.id);
           return (
-            <div key={q.id} data-testid={`question-${q.id}`} className="rounded-[10px] border border-border/60 bg-white p-4">
+            <motion.div
+              key={q.id}
+              layout
+              initial={{ opacity: 0, y: 12, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ type: 'spring', bounce: 0.15, duration: 0.4 }}
+              data-testid={`question-${q.id}`}
+              className={cn('rounded-2xl border bg-white p-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)] focus-within:border-secondary/40 focus-within:shadow-md transition-shadow', isEmpty ? 'border-destructive/50' : 'border-border/60')}
+            >
               <div className="flex items-start gap-3">
                 <div className="flex flex-col items-center gap-1 mt-0.5 shrink-0">
                   <button
@@ -146,18 +167,35 @@ export default function InterviewQuestions() {
                     </div>
                   </div>
                 </div>
-                <button
-                  data-testid={`btn-remove-${q.id}`}
-                  onClick={() => remove(q.id)}
-                  className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors shrink-0 mt-0.5"
-                  aria-label="Remove question"
-                >
-                  <Trash2 className="w-[15px] h-[15px]" />
-                </button>
+                {(() => {
+                  const removeBtn = (
+                    <button
+                      type="button"
+                      data-testid={`btn-remove-${q.id}`}
+                      onClick={q.question.trim() ? undefined : () => remove(q.id)}
+                      className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors shrink-0 mt-0.5"
+                      aria-label={`Remove question ${i + 1}`}
+                    >
+                      <Trash2 className="w-[15px] h-[15px]" />
+                    </button>
+                  );
+                  // Only ask before discarding a question that has content.
+                  return q.question.trim() ? (
+                    <ConfirmAction
+                      title="Remove this question?"
+                      description="The question text and its settings will be discarded."
+                      confirmLabel="Remove question"
+                      onConfirm={() => remove(q.id)}
+                    >
+                      {removeBtn}
+                    </ConfirmAction>
+                  ) : removeBtn;
+                })()}
               </div>
-            </div>
+            </motion.div>
           );
         })}
+        </AnimatePresence>
         {questions.length === 0 && (
           <p className="text-[13px] text-muted-foreground text-center py-6">No questions yet — add at least one before saving this set.</p>
         )}

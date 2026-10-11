@@ -63,17 +63,21 @@ export default function CandidateProfile() {
         }
       />
 
-      <Card>
-        <CardContent className="p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-6">
-            <Avatar className="w-24 h-24 border border-border/70 shrink-0">
+      <Card className="overflow-hidden">
+        <div aria-hidden className="relative h-28 sm:h-32 bg-gradient-to-br from-primary via-[hsl(222_90%_26%)] to-secondary">
+          <div className="absolute -top-16 right-10 w-56 h-56 rounded-full bg-white/10 blur-3xl float-slow" />
+          <div className="absolute -bottom-20 left-1/3 w-56 h-56 rounded-full bg-brand-steel-reversed/20 blur-3xl float-slower" />
+        </div>
+        <CardContent className="p-6 sm:p-8 pt-0 sm:pt-0">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-6 -mt-12">
+            <Avatar className="w-24 h-24 ring-4 ring-white shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] shrink-0">
               <AvatarImage src={candidate.avatarUrl || ""} alt={candidate.name} />
-              <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-semibold">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground text-2xl font-semibold">
                 {candidate.name.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 min-w-0">
-              <h2 className="text-[22px] font-semibold text-foreground tracking-[-0.01em]">{candidate.name}</h2>
+            <div className="flex-1 min-w-0 pt-2 sm:pt-0">
+              <h2 className="text-[24px] font-semibold text-foreground tracking-[-0.01em]">{candidate.name}</h2>
               {isEditing ? (
                 <Input
                   value={headlineDraft}

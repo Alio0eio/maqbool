@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "@workspace/design-system/styles.css";
+@import "./styles/theme.css";
+
+/* overflow-x: clip, never hidden — hidden on html/body turns them into scroll
+   containers and silently breaks position: sticky for the nav. */
+html,
+body {
+  overflow-x: clip;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

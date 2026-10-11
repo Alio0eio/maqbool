@@ -2,11 +2,11 @@ import React from "react";
 import { MOCK_STATS, MOCK_JOBS, MOCK_CANDIDATES } from "@/lib/mock-data";
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/design-system/card";
 import { Button } from "@workspace/design-system/button";
-import { Badge } from "@workspace/design-system/badge";
 import { PageHeader } from "@/components/shared/page-header";
+import { FunnelBars } from "@/components/shared/funnel-bars";
+import { RingGauge } from "@/components/shared/ring-gauge";
 import { StatCard } from "@/components/shared/stat-card";
 import { ChartBar, TrendingUp, Users, Briefcase } from "lucide-react";
-import { Link } from "wouter";
 
 /** Turns a list of ISO dates into a real cumulative trend (0-1 normalized),
  *  bucketed over the last 7 days — an honest sparkline, not decoration.
@@ -55,63 +55,44 @@ export default function RecruiterReports() {
           value={MOCK_STATS.pendingReviews}
           icon={TrendingUp}
           helperText="Needs attention"
+          href="/recruiter/candidates"
         />
         <StatCard
           label="Open Offers"
           value={MOCK_STATS.openOffers}
           icon={ChartBar}
           helperText="Awaiting candidate response"
+          href="/recruiter/offers"
         />
       </div>
 
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="py-4">
-            <CardTitle className="text-[15px]">Pipeline by Stage</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="divide-y divide-border/60 border-t border-border/60">
-              {Object.entries(MOCK_STATS.pipelineByStage).map(([stage, count]) => (
-                <Link
-                  key={stage}
-                  href={`/recruiter/pipeline?stage=${encodeURIComponent(stage)}`}
-                  className="flex items-center justify-between gap-4 px-6 py-3 hover-elevate transition-colors outline-none capitalize"
-                >
-                  <div className="text-[13.5px] text-muted-foreground">{stage}</div>
-                  <div className="text-[15px] font-semibold text-foreground">{count}</div>
-                </Link>
-              ))}
+      <section className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <Card className="lg:col-span-3">
+          <CardHeader className="py-4 flex flex-row items-center justify-between space-y-0">
+            <div>
+              <CardTitle className="text-[15px]">Hiring funnel</CardTitle>
+              <p className="text-[12.5px] text-muted-foreground mt-0.5">Share is relative to the largest stage; % is conversion from the stage before.</p>
             </div>
+          </CardHeader>
+          <CardContent className="pt-0 pb-5">
+            <FunnelBars stages={Object.entries(MOCK_STATS.pipelineByStage) as [string, number][]} showConversion />
           </CardContent>
         </Card>
 
-        <Card className="col-span-1 lg:col-span-2">
+        <Card className="lg:col-span-2">
           <CardHeader className="py-4">
-            <CardTitle className="text-[15px]">Conversion Snapshot</CardTitle>
+            <CardTitle className="text-[15px]">Conversion snapshot</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="rounded-2xl bg-surface-subtle p-4">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-[13.5px] text-muted-foreground">Time to hire average</p>
-                <Badge variant="success">{MOCK_STATS.timeToHireAvg} days</Badge>
-              </div>
-              <div className="h-2 rounded-full bg-border/60 overflow-hidden">
-                <div
-                  className="h-full bg-primary"
-                  style={{ width: `${Math.min(100, MOCK_STATS.timeToHireAvg * 3)}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="rounded-2xl bg-surface-subtle p-4">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-[13.5px] text-muted-foreground">Interview completion rate</p>
-                <Badge>82%</Badge>
-              </div>
-              <div className="h-2 rounded-full bg-border/60 overflow-hidden">
-                <div className="h-full bg-success" style={{ width: "82%" }} />
-              </div>
-            </div>
+          <CardContent className="grid grid-cols-2 gap-4 pb-6">
+            <RingGauge
+              value={Math.min(100, Math.round((MOCK_STATS.timeToHireAvg / 30) * 100))}
+              display={MOCK_STATS.timeToHireAvg}
+              suffix="d"
+              label="Time to hire"
+              caption="average · 30-day target"
+              tone="text-primary"
+            />
+            <RingGauge value={82} label="Interview completion" caption="of invited candidates" tone="text-success" />
           </CardContent>
         </Card>
       </section>

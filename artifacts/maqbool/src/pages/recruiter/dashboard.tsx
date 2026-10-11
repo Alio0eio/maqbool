@@ -20,6 +20,9 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Link } from "wouter";
+import { FunnelBars } from "@/components/shared/funnel-bars";
+import { useAuth } from "@/lib/auth";
+import { greeting } from "@/lib/greeting";
 
 /** Turns a list of ISO dates into a real cumulative trend (0-1 normalized),
  *  bucketed over the last 7 days — an honest sparkline, not decoration. */
@@ -39,6 +42,7 @@ function cumulativeTrend(dates: string[], buckets = 8): number[] {
 }
 
 export default function RecruiterDashboard() {
+  const { user } = useAuth();
   const stats = MOCK_STATS;
   const recentJobs = MOCK_JOBS.slice(0, 2);
 
@@ -49,7 +53,7 @@ export default function RecruiterDashboard() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <PageHeader
-        title="Overview"
+        title={greeting(user?.name)}
         eyebrow={`${stats.activeJobs} active jobs · ${stats.pendingReviews} awaiting review`}
         description="Here's what's happening with your hiring pipeline today."
         actions={
@@ -76,6 +80,7 @@ export default function RecruiterDashboard() {
             value={stats.pendingReviews}
             icon={Clock}
             helperText="Needs attention"
+            href="/recruiter/candidates"
           />
         </StaggerItem>
         <StaggerItem>
@@ -84,6 +89,7 @@ export default function RecruiterDashboard() {
             value={stats.scheduledInterviews}
             icon={Calendar}
             helperText="Scheduled this week"
+            href="/recruiter/interviews"
           />
         </StaggerItem>
       </StaggerGroup>
@@ -110,27 +116,17 @@ export default function RecruiterDashboard() {
             </StaggerGroup>
           </section>
 
-          {/* Pipeline Overview */}
+          {/* Pipeline Overview — a proportional funnel, so drop-off is visible at a glance */}
           <section>
             <Card className="overflow-hidden">
-              <CardHeader className="py-4">
+              <CardHeader className="py-4 flex flex-row items-center justify-between space-y-0">
                 <CardTitle className="text-[15px]">Pipeline Health</CardTitle>
+                <Link href="/recruiter/pipeline" className="text-[12.5px] font-medium text-primary hover:underline">
+                  Open pipeline
+                </Link>
               </CardHeader>
-              <CardContent className="p-0">
-                <div className="flex divide-x divide-border/60 border-t border-border/60">
-                  {Object.entries(stats.pipelineByStage).map(([stage]) => (
-                    <Link
-                      key={stage}
-                      href={`/recruiter/pipeline?stage=${encodeURIComponent(stage)}`}
-                      className="flex-1 p-6 text-center hover:bg-foreground/[0.02] transition-colors cursor-pointer outline-none"
-                    >
-                      <div className="text-[26px] font-semibold text-foreground tracking-[-0.02em] mb-1">
-                        {stats.pipelineByStage[stage as keyof typeof stats.pipelineByStage]}
-                      </div>
-                      <div className="text-[11px] font-medium text-muted-foreground capitalize">{stage}</div>
-                    </Link>
-                  ))}
-                </div>
+              <CardContent className="pt-0 pb-5 space-y-1.5">
+                <FunnelBars stages={Object.entries(stats.pipelineByStage) as [string, number][]} />
               </CardContent>
             </Card>
           </section>
@@ -146,7 +142,7 @@ export default function RecruiterDashboard() {
             <CardContent className="p-0">
               <div className="divide-y divide-border/60 border-t border-border/60">
                 {MOCK_ACTIVITY.map((activity, i) => (
-                  <div key={activity.id} className="p-4 flex gap-4">
+                  <div key={activity.id} className="p-4 flex gap-4 hover:bg-foreground/[0.025] transition-colors">
                     <div className="relative mt-1.5">
                       <div className="w-1.5 h-1.5 rounded-full bg-primary relative z-10" />
                       {i !== MOCK_ACTIVITY.length - 1 && (

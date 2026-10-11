@@ -38,7 +38,7 @@ export function Waveform({ variant, values, bars = 28, progress = 0, className, 
           )}
           style={{
             height: `${h}%`,
-            animationDelay: variant === "loading" ? `${i * 40}ms` : undefined,
+            animationDelay: variant === "loading" || barClassName?.includes("wave-bar") ? `${i * 55}ms` : undefined,
           }}
         />
       ))}

@@ -28,9 +28,9 @@ export function CandidateCard({ candidate, application, className, saved, onTogg
         <div className="p-5">
           <div className="flex justify-between items-start gap-4 mb-3">
             <div className="flex items-center gap-3">
-              <Avatar className="w-11 h-11 border border-border/70">
+              <Avatar className="w-12 h-12 ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border)),0_6px_14px_-6px_hsl(var(--primary)/0.4)] transition-transform duration-300 group-hover:scale-105">
                 <AvatarImage src={candidate.avatarUrl || ""} alt={candidate.name} />
-                <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold">
                   {candidate.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -78,12 +78,12 @@ export function CandidateCard({ candidate, application, className, saved, onTogg
               </div>
             )}
             {application?.status && (
-              <StatusBadge status={application.status} className="h-5 text-[10px]" />
+              <StatusBadge status={application.status} className="h-5 text-[11px]" />
             )}
           </div>
 
           {application?.aiSummary && (
-            <div className="bg-info/[0.05] rounded-[10px] p-3 mb-4 text-[13.5px] text-foreground/90 leading-relaxed">
+            <div className="bg-gradient-to-br from-info/[0.07] to-secondary/[0.02] border border-info/10 rounded-xl p-3.5 mb-4 text-[13.5px] text-foreground/90 leading-relaxed">
               <div className="mb-1.5"><AITag /></div>
               <p className="line-clamp-2">{application.aiSummary}</p>
             </div>
@@ -91,12 +91,12 @@ export function CandidateCard({ candidate, application, className, saved, onTogg
 
           <div className="flex flex-wrap gap-1.5 mb-5">
             {candidate.skills?.slice(0, 5).map(skill => (
-              <Badge key={skill} variant="subtle" className="text-[10.5px] h-5 py-0 px-2 font-medium">
+              <Badge key={skill} variant="subtle" className="text-[11px] h-6 py-0 px-2.5 font-medium transition-colors hover:bg-primary/10 hover:text-primary">
                 {skill}
               </Badge>
             ))}
             {candidate.skills && candidate.skills.length > 5 && (
-              <span className="text-[10.5px] text-muted-foreground font-medium self-center ml-1">
+              <span className="text-[11px] text-muted-foreground font-medium self-center ml-1">
                 +{candidate.skills.length - 5}
               </span>
             )}
@@ -111,7 +111,7 @@ export function CandidateCard({ candidate, application, className, saved, onTogg
           <Link href={`/recruiter/candidates/${candidate.id}`}>
             <Button variant="ghost" size="sm" className="h-7 text-xs font-semibold gap-1 text-primary hover:bg-primary/10 -mr-2">
               View Profile
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
             </Button>
           </Link>
         </div>

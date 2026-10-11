@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Maqbool Marketing Site"
+version = "1.0.0"
+id = "artifacts/maqbool-site"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25391
+
+[services.development]
+run = "pnpm --filter @workspace/maqbool-site run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/maqbool-site", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/maqbool-site/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25391"
+BASE_PATH = "/"

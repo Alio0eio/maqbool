@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Building2, Globe, Save, Check } from 'lucide-react';
+import { RingGauge } from '@/components/shared/ring-gauge';
 import { PageHeader } from '@/components/shared/page-header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@workspace/design-system/card';
 import { Button } from '@workspace/design-system/button';
@@ -66,6 +67,22 @@ export default function CompanySettings() {
           </Button>
         }
       />
+
+      <Card className="overflow-hidden">
+        <CardContent className="p-5 flex items-center gap-6 bg-gradient-to-br from-primary/[0.05] to-transparent">
+          <RingGauge size={92} value={completion} label="" tone={completion === 100 ? 'text-success' : 'text-primary'} />
+          <div className="min-w-0">
+            <p className="text-[15px] font-semibold tracking-[-0.01em]">
+              {completion === 100 ? 'Your profile is complete' : 'Finish your company profile'}
+            </p>
+            <p className="text-[13px] text-muted-foreground mt-0.5">
+              {completion === 100
+                ? 'Candidates see everything they need before applying.'
+                : 'Complete profiles get noticeably more applications. Fill in the remaining required fields below.'}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="space-y-6">
         <Card>

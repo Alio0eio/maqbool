@@ -1,6 +1,7 @@
 import { useLocation, useParams } from 'wouter';
 import { ArrowLeft, CheckCircle, AlertTriangle } from 'lucide-react';
 import { AITag, MatchScoreBadge } from '@/components/shared/badges';
+import { motion } from 'framer-motion';
 import { PageHeader } from '@/components/shared/page-header';
 import { ViewfinderCard } from '@/components/shared/viewfinder-card';
 import { VideoScrubber } from '@/components/shared/video-scrubber';
@@ -94,7 +95,12 @@ export default function InterviewFeedback() {
                         <span className={cn('font-semibold', text)}>{score}%</span>
                       </div>
                       <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                        <div className={cn('h-full rounded-full', bg)} style={{ width: `${score}%` }} />
+                        <motion.div
+                          className={cn('h-full rounded-full', bg)}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${score}%` }}
+                          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                        />
                       </div>
                     </div>
                   );
@@ -111,7 +117,7 @@ export default function InterviewFeedback() {
                   data-testid="btn-view-summary"
                   variant="outline"
                   className="w-full"
-                  onClick={() => setLocation(`/recruiter/interviews/${interview.id}/summary`)}
+                  onClick={() => document.getElementById('ai-summary')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                 >
                   View AI Summary
                 </Button>
@@ -132,7 +138,7 @@ export default function InterviewFeedback() {
           {/* Recorded interview playback */}
           <ViewfinderCard viewfinder className="overflow-hidden">
             <CardHeader className="flex flex-row items-center gap-3 border-b border-border/60 bg-surface-subtle/50 py-4">
-              <Avatar className="w-10 h-10 border border-border/70 shrink-0">
+              <Avatar className="w-10 h-10 ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))] shrink-0">
                 <AvatarImage src={candidate?.avatarUrl || ''} alt={candidate?.name ?? ''} />
                 <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
                   {candidate?.name ? candidate.name.substring(0, 2).toUpperCase() : '—'}
@@ -151,7 +157,7 @@ export default function InterviewFeedback() {
           </ViewfinderCard>
 
           {/* AI Summary */}
-          <ViewfinderCard>
+          <ViewfinderCard id="ai-summary" className="scroll-mt-24">
             <CardContent className="p-5">
               <div className="flex items-center gap-1.5 mb-3"><AITag /><span className="font-semibold text-[13.5px]">AI-Generated Summary</span></div>
               <p className="text-[13.5px] text-muted-foreground leading-relaxed">
@@ -163,24 +169,22 @@ export default function InterviewFeedback() {
                     <CheckCircle className="w-3.5 h-3.5 text-success" />
                     <span className="text-[12.5px] font-semibold text-foreground">Strengths</span>
                   </div>
-                  {['Fintech design experience', 'Accessibility expertise', 'Strong systems thinking', 'Excellent portfolio depth'].map(s => (
-                    <div key={s} className="flex items-start gap-1.5 mb-1">
-                      <span className="text-success mt-0.5">·</span>
-                      <span className="text-[12.5px] text-muted-foreground">{s}</span>
-                    </div>
-                  ))}
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Fintech design experience', 'Accessibility expertise', 'Strong systems thinking', 'Excellent portfolio depth'].map(s => (
+                      <span key={s} className="rounded-full bg-success/10 text-success px-2.5 py-1 text-[12px] font-medium">{s}</span>
+                    ))}
+                  </div>
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5 mb-2">
                     <AlertTriangle className="w-3.5 h-3.5 text-warning" />
                     <span className="text-[12.5px] font-semibold text-foreground">Considerations</span>
                   </div>
-                  {['Limited direct B2B enterprise exposure', 'May need onboarding to internal tools'].map(c => (
-                    <div key={c} className="flex items-start gap-1.5 mb-1">
-                      <span className="text-warning mt-0.5">·</span>
-                      <span className="text-[12.5px] text-muted-foreground">{c}</span>
-                    </div>
-                  ))}
+                  <div className="flex flex-wrap gap-1.5">
+                    {['Limited direct B2B enterprise exposure', 'May need onboarding to internal tools'].map(c => (
+                      <span key={c} className="rounded-full bg-warning/10 text-warning px-2.5 py-1 text-[12px] font-medium">{c}</span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </CardContent>

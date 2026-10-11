@@ -44,16 +44,19 @@ export default function JobDetail() {
 
       {/* Header Card */}
       <Card className="overflow-hidden">
-        <CardContent className="px-6 sm:px-10 py-8">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
-            <div className="flex items-start gap-5 min-w-0">
-              <Avatar className="w-16 h-16 rounded-[12px] border border-border/70 shrink-0">
+        <div aria-hidden className="relative h-28 bg-gradient-to-br from-primary via-[hsl(222_90%_26%)] to-secondary">
+          <div className="absolute -top-16 right-10 w-56 h-56 rounded-full bg-white/10 blur-3xl float-slow" />
+        </div>
+        <CardContent className="px-6 sm:px-10 pb-8 pt-0">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-6 -mt-10">
+            <div className="flex items-end gap-5 min-w-0">
+              <Avatar className="w-20 h-20 rounded-2xl ring-4 ring-white shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] shrink-0">
                 <AvatarImage src={job.companyLogoUrl || ""} alt={job.company} />
-                <AvatarFallback className="rounded-[12px] bg-primary/[0.08] text-primary text-xl font-semibold">
+                <AvatarFallback className="rounded-2xl bg-gradient-to-br from-primary to-secondary text-primary-foreground text-xl font-semibold">
                   {job.company.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="min-w-0">
+              <div className="min-w-0 pb-1">
                 <p className="text-[13px] font-medium text-muted-foreground mb-1.5">
                   {job.department || "General"} · Posted {new Date(job.postedAt || job.createdAt).toLocaleDateString()}
                 </p>
@@ -92,35 +95,23 @@ export default function JobDetail() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-y-3 gap-x-8 text-[13.5px] font-medium text-muted-foreground border-t border-border/60 pt-6">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-foreground/60" />
-              <span className="text-foreground">{job.location}</span>
-              <Badge variant="subtle" className="capitalize ml-1">
-                {job.locationType?.replace('_', ' ')}
-              </Badge>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-foreground/60" />
-              <span className="text-foreground capitalize">{job.type.replace('_', ' ')}</span>
-            </div>
-            {job.salaryMin && job.salaryMax && (
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-foreground/60" />
-                <span className="text-foreground">
-                  ${(job.salaryMin / 1000)}k - ${(job.salaryMax / 1000)}k
-                </span>
+          <dl className="grid grid-cols-2 sm:grid-cols-4 gap-3 border-t border-border/60 pt-6">
+            {[
+              { icon: MapPin, label: "Location", value: `${job.location}${job.locationType ? ` · ${job.locationType.replace('_', ' ')}` : ""}` },
+              { icon: Clock, label: "Type", value: job.type.replace('_', ' ') },
+              ...(job.salaryMin && job.salaryMax
+                ? [{ icon: DollarSign, label: "Salary", value: `$${job.salaryMin / 1000}k – $${job.salaryMax / 1000}k` }]
+                : []),
+              { icon: GraduationCap, label: "Level", value: job.experienceLevel || "Mid-Level" },
+            ].map(({ icon: Icon, label, value }) => (
+              <div key={label} className="rounded-2xl bg-surface-subtle/70 px-4 py-3">
+                <dt className="flex items-center gap-1.5 text-[12px] font-medium text-muted-foreground">
+                  <Icon className="w-3.5 h-3.5" /> {label}
+                </dt>
+                <dd className="mt-1 text-[14px] font-semibold text-foreground capitalize">{value}</dd>
               </div>
-            )}
-            <div className="flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-foreground/60" />
-              <span className="text-foreground">{job.department || "General"}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <GraduationCap className="w-4 h-4 text-foreground/60" />
-              <span className="text-foreground">{job.experienceLevel || "Mid-Level"}</span>
-            </div>
-          </div>
+            ))}
+          </dl>
         </CardContent>
       </Card>
 
@@ -155,7 +146,7 @@ export default function JobDetail() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-6 md:sticky md:top-24 md:self-start">
           <Card>
             <CardContent className="p-6">
               <h3 className="text-[15px] font-semibold text-foreground tracking-[-0.01em] mb-4">Required Skills</h3>
@@ -188,7 +179,7 @@ export default function JobDetail() {
           <Link href={`/candidate/company/${job.company.toLowerCase().replace(/\s+/g, '-')}`}>
             <ViewfinderCard>
               <CardContent className="p-5 flex items-center gap-4">
-                <Avatar className="w-11 h-11 rounded-[10px] border border-border/70 shrink-0">
+                <Avatar className="w-11 h-11 rounded-[10px] ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))] shrink-0">
                   <AvatarImage src={job.companyLogoUrl || ""} alt={job.company} />
                   <AvatarFallback className="rounded-[10px] bg-primary/[0.08] text-primary font-semibold">
                     {job.company.substring(0, 2).toUpperCase()}

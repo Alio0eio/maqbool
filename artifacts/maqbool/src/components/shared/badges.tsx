@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { CountUp } from './count-up';
 import { cn } from '@workspace/design-system/utils';
 import { Badge } from '@workspace/design-system/badge';
 import { Sparkles } from 'lucide-react';
@@ -21,8 +22,14 @@ export function MatchScoreBadge({ score, size = 'md', className }: { score: numb
   const strokeWidth = size === 'lg' ? 4 : size === 'sm' ? 2 : 3;
   const sz = (r + strokeWidth) * 2;
   const circumference = 2 * Math.PI * r;
-  const progress = (Math.max(0, Math.min(100, score)) / 100) * circumference;
-  const fontSize = size === 'lg' ? 'text-base font-bold' : size === 'sm' ? 'text-[9px] font-semibold' : 'text-[10px] font-bold';
+  // Ring draws itself in after mount instead of appearing pre-filled.
+  const [drawn, setDrawn] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setDrawn(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+  const progress = drawn ? (Math.max(0, Math.min(100, score)) / 100) * circumference : 0;
+  const fontSize = size === 'lg' ? 'text-base font-bold' : size === 'sm' ? 'text-[11px] font-semibold' : 'text-[11px] font-bold';
 
   return (
     <div className={cn("flex items-center gap-2", className)} data-testid={`match-score-${score}`}>
@@ -45,17 +52,17 @@ export function MatchScoreBadge({ score, size = 'md', className }: { score: numb
             strokeWidth={strokeWidth}
             strokeDasharray={`${progress} ${circumference}`}
             strokeLinecap="round"
-            className="transition-all duration-1000 ease-out"
+            className="transition-[stroke-dasharray] duration-1000 ease-out motion-reduce:transition-none"
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center flex-col">
           <span className={cn(fontSize, "tracking-tighter", colorClass)}>
-            {score}
+            <CountUp value={score} duration={0.8} />
           </span>
         </div>
       </div>
       <div className="flex flex-col">
-        <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold leading-none">AI Match</span>
+        <span className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold leading-none">AI Match</span>
       </div>
     </div>
   );
@@ -94,11 +101,14 @@ export function StatusBadge({ status, className }: { status: string; className?:
       break;
   }
 
+  const live = ['in_progress', 'interviewing', 'invited'].includes(status.toLowerCase());
+
   // Format label: "in_progress" -> "In Progress"
   label = label.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
   return (
-    <Badge variant={variant} className={cn("font-medium", className)}>
+    <Badge variant={variant} className={cn("font-medium gap-1.5", className)}>
+      {live && <span aria-hidden className="live-dot" />}
       {label}
     </Badge>
   );
