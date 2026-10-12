@@ -13,6 +13,8 @@ import { Label } from '@workspace/design-system/label';
 import { Badge } from '@workspace/design-system/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/design-system/select';
 import { cn } from '@workspace/design-system/utils';
+import { Stepper } from '@/components/shared/stepper';
+import { toast } from '@workspace/design-system/hooks/use-toast';
 import { AnimatePresence, motion } from 'framer-motion';
 import { StepTransition, useStepDirection } from '@/components/shared/step-transition';
 
@@ -93,6 +95,7 @@ export default function CreateJobFlow() {
     else setLocation('/recruiter/jobs');
   }
   function publish() {
+    toast({ title: 'Job published', description: `${form.title || 'Your job'} is now live for candidates.` });
     setLocation('/recruiter/jobs');
   }
 
@@ -115,43 +118,7 @@ export default function CreateJobFlow() {
         }
       />
 
-      {/* Step indicator */}
-      <div className="flex items-center">
-        {STEPS.map((s, i) => (
-          <div key={s.key} className="flex items-center flex-1">
-            <div className="flex flex-col items-center">
-              <motion.div
-                animate={i === stepIdx ? { scale: [0.85, 1] } : { scale: 1 }}
-                transition={{ type: 'spring', bounce: 0.35, duration: 0.4 }}
-                className={cn(
-                  'w-9 h-9 rounded-full flex items-center justify-center font-semibold text-sm transition-colors',
-                  i < stepIdx ? 'bg-success text-success-foreground' :
-                  i === stepIdx ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                )}
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
-                    key={i < stepIdx ? 'done' : 'pending'}
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    transition={{ duration: 0.15 }}
-                    className="flex items-center justify-center"
-                  >
-                    {i < stepIdx ? <Check className="w-4 h-4" /> : i + 1}
-                  </motion.span>
-                </AnimatePresence>
-              </motion.div>
-              <div className="text-[11px] font-medium mt-1.5 text-center hidden md:block">
-                <span className={i === stepIdx ? 'text-primary font-semibold' : 'text-muted-foreground'}>{s.label}</span>
-              </div>
-            </div>
-            {i < STEPS.length - 1 && (
-              <div className={cn('flex-1 h-px mx-2 mb-5 transition-colors duration-300', i < stepIdx ? 'bg-success' : 'bg-border')} />
-            )}
-          </div>
-        ))}
-      </div>
+      <Stepper steps={STEPS} current={stepIdx} />
 
       {/* Step content */}
       <ViewfinderCard className="overflow-hidden">
@@ -399,9 +366,41 @@ export default function CreateJobFlow() {
         {step === 'publish' && (
           <div className="space-y-6">
             <h2 className="text-[15px] font-semibold text-foreground tracking-[-0.01em]">Review & publish</h2>
-            <div className="p-4 bg-success/10 border border-success/30 rounded-[10px]">
-              <p className="text-[13.5px] font-semibold text-success">Ready to publish</p>
-              <p className="text-[12.5px] text-success/80 mt-1">Your job posting is complete. Publishing will make it live and visible to candidates.</p>
+            <div className="p-4 bg-success/10 border border-success/30 rounded-2xl flex items-start gap-3">
+              <span className="w-8 h-8 rounded-full bg-success text-success-foreground flex items-center justify-center shrink-0">
+                <Check className="w-4 h-4" strokeWidth={3} />
+              </span>
+              <div>
+                <p className="text-[13.5px] font-semibold text-success">Ready to publish</p>
+                <p className="text-[12.5px] text-success/80 mt-0.5">Your job posting is complete. Publishing will make it live and visible to candidates.</p>
+              </div>
+            </div>
+
+            {/* How candidates will see it */}
+            <div>
+              <p className="text-[12px] font-medium text-muted-foreground mb-2">How candidates will see it</p>
+              <div className="rounded-2xl border border-border/70 bg-white p-5 shadow-[0_8px_24px_-12px_hsl(var(--primary)/0.25)]">
+                <div className="flex items-center gap-3.5">
+                  <span className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary text-primary-foreground flex items-center justify-center font-semibold shrink-0">
+                    SF
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[16px] font-semibold tracking-[-0.01em] truncate">{form.title || 'Untitled role'}</p>
+                    <p className="text-[13px] text-muted-foreground truncate">
+                      Stratos Financial{form.location ? ` · ${form.location}` : ''}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4 flex flex-wrap items-center gap-2 text-[12.5px]">
+                  <span className="rounded-full bg-muted px-2.5 py-1 font-medium capitalize">{form.type.replace('_', ' ')}</span>
+                  {form.locationType && <span className="rounded-full bg-muted px-2.5 py-1 font-medium capitalize">{String(form.locationType).replace('_', ' ')}</span>}
+                  {(form.salaryMin || form.salaryMax) && (
+                    <span className="rounded-full bg-success/[0.08] text-success px-2.5 py-1 font-semibold">
+                      ${form.salaryMin || '0'} – ${form.salaryMax || '0'}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="space-y-3">
               {[

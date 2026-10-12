@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Check, CreditCard } from 'lucide-react';
 import { PageHeader } from '@/components/shared/page-header';
+import { RingGauge } from '@/components/shared/ring-gauge';
+import { ConfirmAction } from '@/components/shared/confirm-action';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@workspace/design-system/card';
 import { Button } from '@workspace/design-system/button';
 import { toast } from '@workspace/design-system/hooks/use-toast';
@@ -51,42 +53,30 @@ export default function Billing() {
       />
 
       {/* Current plan */}
-      <Card>
-        <CardContent className="p-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <Card className="overflow-hidden">
+        <CardContent className="p-0">
+          <div className="grid sm:grid-cols-[1.2fr_1fr_1fr] gap-6 items-center p-6 bg-gradient-to-br from-primary/[0.05] to-transparent">
             <div className="min-w-0">
-              <div className="text-[11.5px] font-medium text-muted-foreground mb-1">Current Plan</div>
-              <div className="text-[19px] font-semibold text-foreground tracking-[-0.01em]">{plan.label}</div>
+              <div className="text-[11.5px] font-medium text-muted-foreground mb-1">Current plan</div>
+              <div className="text-[24px] font-semibold text-foreground tracking-[-0.02em]">{plan.label}</div>
               <div className="text-[13px] text-muted-foreground mt-1">
                 {plan.price !== null ? `$${plan.price}/month` : 'Custom pricing'} · Renews {RENEWAL_DATE.toLocaleDateString()}
               </div>
             </div>
-            <div className="flex gap-6 shrink-0">
-              <div className="text-right">
-                <div className="text-[12px] text-muted-foreground">Jobs Used</div>
-                <div className="text-[17px] font-semibold text-foreground">
-                  4 <span className="text-[13px] font-normal text-muted-foreground">/ {plan.jobs ?? '∞'}</span>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-[12px] text-muted-foreground">Candidates</div>
-                <div className="text-[17px] font-semibold text-foreground">
-                  179 <span className="text-[13px] font-normal text-muted-foreground">/ {plan.candidates ?? '∞'}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="mt-5">
-            <div className="flex justify-between text-[12px] mb-1.5">
-              <span className="text-muted-foreground">Candidates used</span>
-              <span className="font-medium text-foreground">179 / {plan.candidates ?? '∞'}</span>
-            </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-primary rounded-full"
-                style={{ width: plan.candidates ? `${Math.min(100, (179 / plan.candidates) * 100)}%` : '20%' }}
-              />
-            </div>
+            <RingGauge
+              size={104}
+              value={plan.jobs ? Math.min(100, Math.round((4 / plan.jobs) * 100)) : 20}
+              label="Jobs used"
+              caption={`4 of ${plan.jobs ?? '∞'}`}
+              tone="text-primary"
+            />
+            <RingGauge
+              size={104}
+              value={plan.candidates ? Math.min(100, Math.round((179 / plan.candidates) * 100)) : 20}
+              label="Candidates used"
+              caption={`179 of ${plan.candidates ?? '∞'}`}
+              tone="text-secondary"
+            />
           </div>
         </CardContent>
       </Card>
@@ -97,36 +87,40 @@ export default function Billing() {
           <Card
             key={p.key}
             data-testid={`plan-${p.key}`}
-            className={cn('border-2 relative', p.key === currentPlan ? 'border-primary' : 'border-border/70')}
+            className={cn(
+              'relative border-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl',
+              'popular' in p && p.popular && 'bg-gradient-to-b from-primary to-[hsl(222_85%_28%)] text-primary-foreground border-primary shadow-[0_24px_50px_-20px_hsl(var(--primary)/0.7)]',
+              !('popular' in p && p.popular) && (p.key === currentPlan ? 'border-primary' : 'border-border/70'),
+            )}
           >
-            <CardContent className="p-5">
+            <CardContent className="p-6">
               {'popular' in p && p.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[11px] font-semibold px-3 py-0.5 rounded-full">
                   Most Popular
                 </div>
               )}
-              <div className="text-[17px] font-semibold text-foreground tracking-[-0.01em] mb-1">{p.label}</div>
+              <div className="text-[17px] font-semibold tracking-[-0.01em] mb-1">{p.label}</div>
               {p.price !== null ? (
                 <div className="mb-4">
-                  <span className="text-[28px] font-semibold text-foreground tracking-[-0.02em]">${p.price}</span>
-                  <span className="text-muted-foreground text-[13px]">/month</span>
+                  <span className="text-[34px] font-semibold tracking-[-0.03em]">${p.price}</span>
+                  <span className="opacity-70 text-[13px]">/month</span>
                 </div>
               ) : (
-                <div className="text-[24px] font-semibold text-foreground tracking-[-0.02em] mb-4">Custom</div>
+                <div className="text-[30px] font-semibold tracking-[-0.03em] mb-4">Custom</div>
               )}
               <div className="space-y-2 mb-5">
                 {p.features.map((f) => (
-                  <div key={f} className="flex items-center gap-2 text-[13px] text-muted-foreground">
-                    <Check size={14} className="text-success shrink-0" />
+                  <div key={f} className={cn("flex items-center gap-2 text-[13px]", 'popular' in p && p.popular ? "text-primary-foreground/85" : "text-muted-foreground")}>
+                    <Check size={14} className={cn("shrink-0", 'popular' in p && p.popular ? "text-emerald-300" : "text-success")} />
                     {f}
                   </div>
                 ))}
               </div>
               <Button
                 data-testid={`btn-select-${p.key}`}
-                variant={p.key === currentPlan ? 'default' : 'outline'}
+                variant={'popular' in p && p.popular && p.key !== currentPlan ? 'secondary' : p.key === currentPlan ? 'default' : 'outline'}
                 disabled={p.key === currentPlan}
-                className="w-full"
+                className={cn("w-full", 'popular' in p && p.popular && "bg-white text-primary hover:bg-white/90")}
                 onClick={() => selectPlan(p.key)}
               >
                 {p.key === currentPlan ? 'Current Plan' : p.key === 'enterprise' ? 'Contact Sales' : (p.price ?? 0) > (plan.price ?? 0) ? 'Upgrade' : 'Downgrade'}
@@ -176,14 +170,16 @@ export default function Billing() {
                 ? `Subscription cancelled — access continues until ${RENEWAL_DATE.toLocaleDateString()}.`
                 : 'This cannot be undone from this screen once the current period ends.'}
             </div>
-            <Button
-              variant="destructive"
-              disabled={cancelled}
-              onClick={cancelSubscription}
-              className="shrink-0"
+            <ConfirmAction
+              title="Cancel your subscription?"
+              description={`Your plan stays active until ${RENEWAL_DATE.toLocaleDateString()}, then your account moves to the free tier.`}
+              confirmLabel="Cancel subscription"
+              onConfirm={cancelSubscription}
             >
-              {cancelled ? 'Cancelled' : 'Cancel Subscription'}
-            </Button>
+              <Button variant="destructive" disabled={cancelled} className="shrink-0">
+                {cancelled ? 'Cancelled' : 'Cancel Subscription'}
+              </Button>
+            </ConfirmAction>
           </div>
         </CardContent>
       </Card>

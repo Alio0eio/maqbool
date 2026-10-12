@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle, Clock, AlertCircle, RefreshCw } from 'lucide-react';
+import { RingGauge } from '@/components/shared/ring-gauge';
 import { PageHeader } from '@/components/shared/page-header';
 import { StatCard } from '@/components/shared/stat-card';
 import { EmptyState } from '@/components/shared/empty-state';
@@ -61,7 +62,7 @@ export default function CompletionMonitoring() {
             const rate = Math.round((item.completed / item.total) * 100);
             const isUrgent = new Date(item.deadline) <= new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
             return (
-              <Card key={item.jobTitle} className="p-5">
+              <Card key={item.jobTitle} className={`p-5 transition-shadow hover:shadow-md ${isUrgent ? "border-destructive/30" : ""}`}>
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="min-w-0">
                     <h3 className="text-[15px] font-semibold text-foreground tracking-[-0.01em]">{item.jobTitle}</h3>
@@ -73,15 +74,12 @@ export default function CompletionMonitoring() {
                       {isUrgent && <Badge variant="destructive">Urgent</Badge>}
                     </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <div className="text-[26px] font-semibold text-foreground tracking-[-0.02em] leading-none">{rate}%</div>
-                    <div className="text-[12px] text-muted-foreground mt-1">{item.completed}/{item.total} completed</div>
-                  </div>
-                </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden mb-4">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{ width: `${rate}%`, backgroundColor: rate >= 70 ? 'hsl(var(--success))' : rate >= 40 ? 'hsl(var(--warning))' : 'hsl(var(--destructive))' }}
+                  <RingGauge
+                    size={84}
+                    value={rate}
+                    label={`${item.completed}/${item.total}`}
+                    caption="completed"
+                    tone={rate >= 70 ? 'text-success' : rate >= 40 ? 'text-warning' : 'text-destructive'}
                   />
                 </div>
                 <div className="flex gap-2">

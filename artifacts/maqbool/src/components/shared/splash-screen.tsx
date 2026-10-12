@@ -23,7 +23,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(false), reduced ? 150 : 1150);
+    const timer = setTimeout(() => setVisible(false), reduced ? 150 : 1600);
     return () => clearTimeout(timer);
   }, [reduced]);
 
@@ -37,6 +37,7 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
           transition={{ duration: reduced ? 0.15 : 0.45, ease: EASE_SETTLE }}
         >
           <motion.svg
+            style={{ overflow: "visible" }}
             width={96}
             height={96}
             viewBox="0 0 52 52"
@@ -45,19 +46,39 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
             animate={{ scale: 1 }}
             transition={{ type: "spring", bounce: 0, duration: reduced ? 0 : 0.6 }}
           >
+            {/* Faint full track so the ring reads as a circle from frame one. */}
+            <circle cx="26" cy="26" r="21" stroke="var(--color-brand-ink)" strokeWidth={7} opacity={0.08} />
+            {/* Starts at 12 o'clock; round caps overlap at the join so the
+                circle closes with no seam. */}
             <motion.circle
               cx="26"
               cy="26"
               r="21"
               stroke="var(--color-brand-ink)"
               strokeWidth={7}
+              strokeLinecap="round"
+              style={{ rotate: -90, transformOrigin: "26px 26px" }}
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
               transition={{
-                pathLength: { duration: reduced ? 0 : 0.55, ease: EASE_DRAW, delay: reduced ? 0 : 0.05 },
+                pathLength: { duration: reduced ? 0 : 0.75, ease: EASE_DRAW, delay: reduced ? 0 : 0.05 },
                 opacity: { duration: 0.2, delay: reduced ? 0 : 0.05 },
               }}
             />
+            {/* Ripple released the moment the circle closes. */}
+            {!reduced && (
+              <motion.circle
+                cx="26"
+                cy="26"
+                r="21"
+                stroke="var(--color-brand-steel)"
+                strokeWidth={2}
+                style={{ transformOrigin: "26px 26px" }}
+                initial={{ scale: 1, opacity: 0 }}
+                animate={{ scale: 1.35, opacity: [0, 0.5, 0] }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.8 }}
+              />
+            )}
             <motion.path
               d="M17 27l6.5 7 11.5-14"
               stroke="var(--color-brand-steel)"
@@ -67,8 +88,8 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
               transition={{
-                pathLength: { duration: reduced ? 0 : 0.4, ease: EASE_SETTLE, delay: reduced ? 0 : 0.45 },
-                opacity: { duration: 0.15, delay: reduced ? 0 : 0.45 },
+                pathLength: { duration: reduced ? 0 : 0.45, ease: EASE_SETTLE, delay: reduced ? 0 : 0.85 },
+                opacity: { duration: 0.15, delay: reduced ? 0 : 0.85 },
               }}
             />
           </motion.svg>

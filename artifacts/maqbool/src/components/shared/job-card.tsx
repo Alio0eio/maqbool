@@ -26,16 +26,18 @@ interface JobCardProps {
 
 export function JobCard({ job, variant = "candidate", className, saved, onToggleSave }: JobCardProps) {
   const isRecruiter = variant === "recruiter";
+  const postedMs = new Date(job.postedAt || job.createdAt).getTime();
+  const isNew = !isRecruiter && Date.now() - postedMs < 7 * 86_400_000 && Date.now() >= postedMs;
   const primaryHref = isRecruiter ? `/recruiter/jobs/${job.id}/applicants` : `/candidate/jobs/${job.id}`;
 
   return (
-    <ViewfinderCard className={cn("overflow-hidden h-full flex flex-col", className)}>
+    <ViewfinderCard className={cn("group/job overflow-hidden h-full flex flex-col", className)}>
       <CardContent className="p-5 flex flex-col flex-1">
         <div className="flex justify-between items-start gap-3 mb-4">
           <div className="flex items-center gap-3.5 min-w-0 flex-1">
-            <Avatar className="w-11 h-11 rounded-[10px] border border-border/70 shrink-0">
+            <Avatar className="w-12 h-12 rounded-xl ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border)),0_6px_14px_-6px_hsl(var(--primary)/0.35)] shrink-0 transition-transform duration-300 group-hover/job:scale-105">
               <AvatarImage src={job.companyLogoUrl || ""} alt={job.company} />
-              <AvatarFallback className="rounded-[10px] bg-primary/[0.08] text-primary font-semibold">
+              <AvatarFallback className="rounded-xl bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold">
                 {job.company.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
@@ -43,6 +45,11 @@ export function JobCard({ job, variant = "candidate", className, saved, onToggle
               <Link href={primaryHref}>
                 <h3 className="text-[16px] font-semibold text-foreground tracking-[-0.01em] hover:text-primary transition-colors line-clamp-1 outline-none">
                   {job.title}
+                  {isNew && (
+                    <span className="ml-2 align-middle inline-flex items-center rounded-full bg-success/10 text-success px-2 py-0.5 text-[11px] font-semibold">
+                      New
+                    </span>
+                  )}
                 </h3>
               </Link>
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted-foreground mt-1">
@@ -52,7 +59,7 @@ export function JobCard({ job, variant = "candidate", className, saved, onToggle
                   <MapPin className="w-3.5 h-3.5" />
                   {job.location}
                 </span>
-                <Badge variant="subtle" className="h-5 text-[10px] font-semibold px-1.5 capitalize shrink-0">
+                <Badge variant="subtle" className="h-5 text-[11px] font-semibold px-1.5 capitalize shrink-0">
                   {job.locationType?.replace('_', ' ')}
                 </Badge>
               </div>
@@ -77,7 +84,7 @@ export function JobCard({ job, variant = "candidate", className, saved, onToggle
             )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" aria-label={`More actions for ${job.title}`}>
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -119,10 +126,10 @@ export function JobCard({ job, variant = "candidate", className, saved, onToggle
             <span className="capitalize">{job.type.replace('_', ' ')}</span>
           </div>
           {job.salaryMin && job.salaryMax && (
-            <div className="flex items-center gap-1.5">
-              <DollarSign className="w-4 h-4" />
-              <span>
-                ${(job.salaryMin / 1000)}k – ${(job.salaryMax / 1000)}k
+            <div className="flex items-center gap-1.5 rounded-full bg-success/[0.08] text-success px-2.5 py-1 font-semibold">
+              <DollarSign className="w-3.5 h-3.5" />
+              <span className="tabular-nums">
+                {(job.salaryMin / 1000)}k – {(job.salaryMax / 1000)}k
               </span>
             </div>
           )}

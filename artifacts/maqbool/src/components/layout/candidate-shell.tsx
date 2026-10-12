@@ -9,6 +9,9 @@ import {
   UserCircle,
   Upload,
 } from "lucide-react";
+import { Link } from "wouter";
+import { MOCK_NOTIFICATIONS } from "@/lib/mock-data";
+import { useAuth } from "@/lib/auth";
 import { AppShell, type AppNavGroup } from "./app-shell";
 
 const NAV_GROUPS: AppNavGroup[] = [
@@ -35,16 +38,22 @@ const NAV_GROUPS: AppNavGroup[] = [
 ];
 
 export function CandidateShell({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  const unreadNotifications = MOCK_NOTIFICATIONS.filter((n) => n.userId === user?.id && !n.read).length;
+
   return (
     <AppShell
       navGroups={NAV_GROUPS}
       roleLabel="Candidate"
       profileHref="/candidate/profile"
       notificationsHref="/candidate/notifications"
+      unreadNotifications={unreadNotifications}
       sidebarExtra={
-        <Button className="w-full justify-start gap-2" variant="secondary" size="sm">
-          <Upload className="w-4 h-4" />
-          Upload résumé
+        <Button asChild className="w-full justify-start gap-2" variant="secondary" size="sm">
+          <Link href="/candidate/profile">
+            <Upload className="w-4 h-4" />
+            Update résumé
+          </Link>
         </Button>
       }
     >

@@ -2,7 +2,10 @@ import React, { useMemo, useState } from "react";
 import { Link } from "wouter";
 import { Controller, useForm } from "react-hook-form";
 import { MOCK_APPLICATIONS, MOCK_CANDIDATES, type Application } from "@/lib/mock-data";
-import { CardContent, CardHeader, CardTitle } from "@workspace/design-system/card";
+import { CardContent } from "@workspace/design-system/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@workspace/design-system/avatar";
+import { motion } from "framer-motion";
+import { SummaryStrip } from "@/components/shared/summary-strip";
 import { Button } from "@workspace/design-system/button";
 import { Input } from "@workspace/design-system/input";
 import { Label } from "@workspace/design-system/label";
@@ -24,6 +27,7 @@ import {
 import { toast } from "@workspace/design-system/hooks/use-toast";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ConfirmAction } from "@/components/shared/confirm-action";
 import { ViewfinderCard } from "@/components/shared/viewfinder-card";
 import { StatusBadge } from "@/components/shared/badges";
 import { Award, Users, ArrowRight, XCircle } from "lucide-react";
@@ -175,61 +179,99 @@ export default function RecruiterOffers() {
         }
       />
 
+      {offers.length > 0 && (
+        <SummaryStrip
+          items={[
+            { label: "Active offers", value: offers.length },
+            {
+              label: "Total offered",
+              value: offers.reduce((n, a) => n + (offerDetails[a.id]?.amount ?? a.job?.salaryMax ?? 0), 0),
+              format: (n) => `$${(n / 1000).toLocaleString()}k`,
+            },
+            {
+              label: "Expiring in 3 days",
+              value: offers.filter((a) => {
+                const d = offerDetails[a.id]?.expiresAt ?? defaultExpiry();
+                return Math.ceil((new Date(d).getTime() - Date.now()) / 86_400_000) <= 3;
+              }).length,
+            },
+          ]}
+        />
+      )}
+
       {offers.length > 0 ? (
-        <div className="grid gap-4">
+        <div className="grid gap-3">
           {offers.map((application) => {
             const candidate = MOCK_CANDIDATES.find((c) => c.id === application.candidateId);
             const detail = offerDetails[application.id] ?? {
               amount: application.job?.salaryMax ?? 0,
               expiresAt: defaultExpiry(),
             };
+            const daysLeft = Math.ceil((new Date(detail.expiresAt).getTime() - Date.now()) / 86_400_000);
+            const urgent = daysLeft <= 3;
             return (
               <ViewfinderCard key={application.id}>
-                <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-6">
-                  <div className="min-w-0">
-                    <CardTitle className="text-[17px]">{application.job?.title ?? "Open Role"}</CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">{candidate?.name ?? "Candidate unknown"}</p>
-                  </div>
-                  <StatusBadge status={application.status} className="shrink-0" />
-                </CardHeader>
-                <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 pt-0">
-                  <div className="bg-surface-subtle rounded-xl p-4">
-                    <div className="text-[11.5px] font-medium text-muted-foreground">Candidate</div>
-                    <div className="mt-3 text-sm text-foreground">{candidate?.name ?? "—"}</div>
-                    <div className="text-xs text-muted-foreground">{candidate?.headline ?? "No headline"}</div>
-                  </div>
-
-                  <div className="bg-surface-subtle rounded-xl p-4">
-                    <div className="text-[11.5px] font-medium text-muted-foreground">Offer Details</div>
-                    <div className="mt-3 text-sm font-semibold text-foreground">
-                      ${detail.amount.toLocaleString()}/yr
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Expires {new Date(detail.expiresAt).toLocaleDateString()}
+                <CardContent className="p-5 flex flex-col lg:flex-row lg:items-center gap-5">
+                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                    <Avatar className="w-12 h-12 ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))]">
+                      <AvatarImage src={candidate?.avatarUrl ?? undefined} alt="" />
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold">
+                        {(candidate?.name ?? "?").substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0">
+                      <h3 className="text-[15px] font-semibold tracking-[-0.01em] truncate">{candidate?.name ?? "Candidate unknown"}</h3>
+                      <p className="text-[13px] text-muted-foreground truncate">{application.job?.title ?? "Open role"}</p>
                     </div>
                   </div>
 
-                  <div className="bg-surface-subtle rounded-xl p-4 flex flex-col justify-between">
-                    <div>
-                      <div className="text-[11.5px] font-medium text-muted-foreground">Stage</div>
-                      <div className="mt-3 text-sm text-foreground capitalize">{application.stage}</div>
+                  <div className="lg:w-44">
+                    <p className="text-[11.5px] font-medium text-muted-foreground">Offered</p>
+                    <p className="text-[22px] font-semibold tracking-[-0.02em] tabular-nums leading-tight">
+                      ${detail.amount.toLocaleString()}
+                      <span className="text-[12.5px] font-medium text-muted-foreground">/yr</span>
+                    </p>
+                  </div>
+
+                  <div className="lg:w-48">
+                    <div className="flex items-center justify-between text-[12.5px]">
+                      <span className="text-muted-foreground">Expires {new Date(detail.expiresAt).toLocaleDateString()}</span>
+                      <span className={urgent ? "font-semibold text-warning" : "font-medium text-foreground"}>
+                        {daysLeft > 0 ? `${daysLeft}d left` : "Expired"}
+                      </span>
                     </div>
-                    <div className="flex items-center justify-end gap-1 mt-3">
+                    <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">
+                      <motion.div
+                        className={urgent ? "h-full rounded-full bg-warning" : "h-full rounded-full bg-gradient-to-r from-primary to-secondary"}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.max(6, Math.min(100, (daysLeft / 14) * 100))}%` }}
+                        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between lg:justify-end gap-2 shrink-0">
+                    <StatusBadge status={application.status} />
+                    <ConfirmAction
+                      title="Withdraw this offer?"
+                      description="The candidate will be notified and the offer details will be discarded. This can't be undone."
+                      confirmLabel="Withdraw offer"
+                      onConfirm={() => withdrawOffer(application)}
+                    >
                       <Button
                         variant="ghost"
                         size="icon"
                         className="h-9 w-9 text-muted-foreground hover:text-destructive"
-                        onClick={() => withdrawOffer(application)}
                         aria-label="Withdraw offer"
                       >
                         <XCircle className="w-4 h-4" />
                       </Button>
-                      <Link href={`/recruiter/jobs/${application.jobId}/applicants`}>
-                        <Button variant="ghost" size="icon" className="h-9 w-9">
-                          <ArrowRight className="w-4 h-4" />
-                        </Button>
-                      </Link>
-                    </div>
+                    </ConfirmAction>
+                    <Link href={`/recruiter/jobs/${application.jobId}/applicants`}>
+                      <Button variant="outline" size="sm" className="gap-1.5">
+                        Applicants <ArrowRight className="w-3.5 h-3.5" />
+                      </Button>
+                    </Link>
                   </div>
                 </CardContent>
               </ViewfinderCard>

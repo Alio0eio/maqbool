@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // Solid brand color, reserved for the one primary action on a screen.
-        default: 'bg-primary text-primary-foreground shadow-[0_1px_2px_rgba(0,0,0,0.08)] hover:bg-primary/90 active:bg-primary/95',
+        default: 'btn-sheen bg-primary text-primary-foreground shadow-[0_1px_2px_rgba(0,0,0,0.08)] hover:bg-primary/90 hover:-translate-y-px hover:shadow-[0_6px_16px_-4px_hsl(var(--primary)/0.45)] active:translate-y-0 active:bg-primary/95',
         destructive: 'bg-destructive text-destructive-foreground shadow-[0_1px_2px_rgba(0,0,0,0.08)] hover:bg-destructive/90',
         // Hairline border, transparent fill — for secondary actions that sit beside a primary button.
         outline: 'border border-border bg-transparent text-foreground hover:bg-foreground/[0.04] active:bg-foreground/[0.06]',

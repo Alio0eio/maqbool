@@ -51,11 +51,14 @@ export default function CompanyProfile() {
       </Link>
 
       <Card className="overflow-hidden">
-        <CardContent className="px-6 sm:px-10 py-8">
-          <div className="flex items-start gap-5 mb-6">
-            <Avatar className="w-16 h-16 rounded-[12px] border border-border/70 shrink-0">
+        <div aria-hidden className="relative h-32 bg-gradient-to-br from-primary via-[hsl(222_90%_26%)] to-secondary">
+          <div className="absolute -top-16 right-10 w-56 h-56 rounded-full bg-white/10 blur-3xl float-slow" />
+        </div>
+        <CardContent className="px-6 sm:px-10 pb-8 pt-0">
+          <div className="flex items-end gap-5 mb-6 -mt-10">
+            <Avatar className="w-20 h-20 rounded-2xl ring-4 ring-white shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] shrink-0">
               <AvatarImage src={openRoles[0]?.companyLogoUrl || ""} alt={company.name} />
-              <AvatarFallback className="rounded-[12px] bg-primary/[0.08] text-primary text-xl font-semibold">
+              <AvatarFallback className="rounded-2xl bg-gradient-to-br from-primary to-secondary text-primary-foreground text-xl font-semibold">
                 {company.name.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>

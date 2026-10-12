@@ -67,11 +67,12 @@ export default function CandidateProfile() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Profile card */}
         <div className="space-y-4">
-          <Card className="p-5">
-            <div className="flex flex-col items-center text-center mb-4">
-              <Avatar className="w-20 h-20 mb-3 border border-border/70">
+          <Card className="p-5 overflow-hidden relative">
+            <div aria-hidden className="absolute inset-x-0 top-0 h-20 bg-gradient-to-br from-primary/[0.12] to-secondary/[0.08]" />
+            <div className="relative flex flex-col items-center text-center mb-4">
+              <Avatar className="w-24 h-24 mb-3 ring-4 ring-white shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)]">
                 <AvatarImage src={candidate.avatarUrl || ""} alt={candidate.name} />
-                <AvatarFallback className="bg-primary text-primary-foreground font-semibold text-2xl">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold text-2xl">
                   {candidate.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -187,7 +188,7 @@ export default function CandidateProfile() {
                   const years = `${new Date(exp.startDate).getFullYear()}${exp.current ? ' - Present' : exp.endDate ? ' - ' + new Date(exp.endDate).getFullYear() : ''}`;
                   return (
                     <div key={exp.id ?? i} className="flex gap-4">
-                      <Avatar className="w-9 h-9 rounded-[10px] border border-border/70 shrink-0">
+                      <Avatar className="w-9 h-9 rounded-[10px] ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))] shrink-0">
                         <AvatarFallback className="rounded-[10px] bg-muted text-muted-foreground font-semibold text-sm">
                           {exp.company[0]}
                         </AvatarFallback>
@@ -211,7 +212,7 @@ export default function CandidateProfile() {
               <div className="space-y-4">
                 {candidate.education.map((edu, i) => (
                   <div key={edu.id ?? i} className="flex gap-4">
-                    <Avatar className="w-9 h-9 rounded-[10px] border border-border/70 shrink-0">
+                    <Avatar className="w-9 h-9 rounded-[10px] ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))] shrink-0">
                       <AvatarFallback className="rounded-[10px] bg-muted text-muted-foreground font-semibold text-sm">
                         {edu.institution[0]}
                       </AvatarFallback>

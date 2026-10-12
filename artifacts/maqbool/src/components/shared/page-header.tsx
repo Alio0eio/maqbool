@@ -25,14 +25,15 @@ export function PageHeader({ title, eyebrow, description, actions, sticky, class
     >
       <div className="min-w-0">
         {eyebrow && (
-          <p className="text-[12px] font-medium text-muted-foreground mb-1.5 truncate">
-            {eyebrow}
+          <p className="inline-flex items-center gap-2 rounded-full bg-white/80 border border-border/70 px-3 py-1 text-[12px] font-medium text-muted-foreground mb-3 max-w-full truncate shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+            <span aria-hidden className="live-dot text-secondary shrink-0" />
+            <span className="truncate">{eyebrow}</span>
           </p>
         )}
         <h1
           className={cn(
             "font-semibold text-foreground tracking-[-0.02em]",
-            sticky ? "text-[19px]" : "text-[26px] leading-[1.15]",
+            sticky ? "text-[19px]" : "text-[32px] leading-[1.1]",
           )}
         >
           {title}
