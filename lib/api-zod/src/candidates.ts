@@ -21,7 +21,7 @@ export const applicationStages = [
 ] as const;
 
 const candidateProfileFields = {
-  headline: z.string().trim().min(1, "Headline cannot be empty").max(255, "Headline is too long").optional(),
+  headline: z.string().trim().min(1, "Headline cannot be empty").max(255, "Headline is too long").nullable().optional(),
   phone: z.string().trim().max(30, "Phone number is too long").nullable().optional(),
   location: z.string().trim().max(255, "Location is too long").nullable().optional(),
   education: z.string().trim().max(2000, "Education is too long").nullable().optional(),
@@ -32,10 +32,12 @@ const candidateProfileFields = {
     .max(100, "Too many skills")
     .refine((skills) => new Set(skills).size === skills.length, "Skills cannot contain duplicates")
     .optional(),
-  yearsOfExperience: z.number().int("Years of experience must be a whole number").min(0, "Years of experience cannot be negative").max(100, "Years of experience is too high").optional(),
-  portfolioUrl: z.string().trim().min(1, "Portfolio URL cannot be empty").url("Portfolio URL must be a valid URL").optional(),
-  linkedinUrl: z.string().trim().min(1, "LinkedIn URL cannot be empty").url("LinkedIn URL must be a valid URL").optional(),
-  githubUrl: z.string().trim().min(1, "GitHub URL cannot be empty").url("GitHub URL must be a valid URL").optional(),
+  yearsOfExperience: z.number().int("Years of experience must be a whole number").min(0, "Years of experience cannot be negative").max(100, "Years of experience is too high").nullable().optional(),
+  portfolioUrl: z.string().trim().min(1, "Portfolio URL cannot be empty").url("Portfolio URL must be a valid URL").nullable().optional(),
+  linkedinUrl: z.string().trim().min(1, "LinkedIn URL cannot be empty").url("LinkedIn URL must be a valid URL").nullable().optional(),
+  githubUrl: z.string().trim().min(1, "GitHub URL cannot be empty").url("GitHub URL must be a valid URL").nullable().optional(),
+  summary: z.string().trim().max(4000, "Summary is too long").nullable().optional(),
+  availability: z.string().trim().max(100, "Availability is too long").nullable().optional(),
 };
 
 export const createCandidateProfileRequestSchema = z

@@ -49,10 +49,19 @@ async function findCandidateProfile(database: typeof db, userId: number) {
       id: candidateProfiles.id,
       userId: candidateProfiles.userId,
       phone: candidateProfiles.phone,
+      headline: candidateProfiles.headline,
       location: candidateProfiles.location,
       education: candidateProfiles.education,
       experience: candidateProfiles.experience,
       skills: candidateProfiles.skills,
+      resumeUrl: candidateProfiles.resumeUrl,
+      portfolioUrl: candidateProfiles.portfolioUrl,
+      linkedinUrl: candidateProfiles.linkedinUrl,
+      githubUrl: candidateProfiles.githubUrl,
+      summary: candidateProfiles.summary,
+      yearsOfExperience: candidateProfiles.yearsOfExperience,
+      availability: candidateProfiles.availability,
+      salaryExpectation: candidateProfiles.salaryExpectation,
       createdAt: candidateProfiles.createdAt,
       updatedAt: candidateProfiles.updatedAt,
       name: users.name,
@@ -64,7 +73,13 @@ async function findCandidateProfile(database: typeof db, userId: number) {
     .where(eq(candidateProfiles.userId, userId))
     .limit(1);
 
-  return profile;
+  if (!profile) return profile;
+
+  const { yearsOfExperience, ...profileFields } = profile;
+  return {
+    ...profileFields,
+    yearsOfExp: yearsOfExperience === null ? null : Number(yearsOfExperience),
+  };
 }
 
 export function createCandidatesRouter(database: typeof db = db): IRouter {
@@ -83,6 +98,7 @@ export function createCandidatesRouter(database: typeof db = db): IRouter {
 
       try {
         const userId = getUserId(req);
+        const { yearsOfExperience, ...profileData } = parsed.data;
         const [user] = await database
           .select({ id: users.id })
           .from(users)
@@ -101,12 +117,11 @@ export function createCandidatesRouter(database: typeof db = db): IRouter {
         }
 
         await database.insert(candidateProfiles).values({
+          ...profileData,
+          ...(yearsOfExperience !== undefined
+            ? { yearsOfExperience: yearsOfExperience?.toString() ?? null }
+            : {}),
           userId,
-          phone: parsed.data.phone,
-          location: parsed.data.location,
-          education: parsed.data.education,
-          experience: parsed.data.experience,
-          skills: parsed.data.skills,
         });
 
         const profile = await findCandidateProfile(database, userId);
@@ -583,6 +598,7 @@ export function createCandidatesRouter(database: typeof db = db): IRouter {
         await database
           .update(candidateProfiles)
           .set({
+            ...(parsed.data.headline !== undefined ? { headline: parsed.data.headline } : {}),
             ...(parsed.data.phone !== undefined ? { phone: parsed.data.phone } : {}),
             ...(parsed.data.location !== undefined
               ? { location: parsed.data.location }
@@ -594,6 +610,22 @@ export function createCandidatesRouter(database: typeof db = db): IRouter {
               ? { experience: parsed.data.experience }
               : {}),
             ...(parsed.data.skills !== undefined ? { skills: parsed.data.skills } : {}),
+            ...(parsed.data.yearsOfExperience !== undefined
+              ? { yearsOfExperience: parsed.data.yearsOfExperience?.toString() ?? null }
+              : {}),
+            ...(parsed.data.portfolioUrl !== undefined
+              ? { portfolioUrl: parsed.data.portfolioUrl }
+              : {}),
+            ...(parsed.data.linkedinUrl !== undefined
+              ? { linkedinUrl: parsed.data.linkedinUrl }
+              : {}),
+            ...(parsed.data.githubUrl !== undefined
+              ? { githubUrl: parsed.data.githubUrl }
+              : {}),
+            ...(parsed.data.summary !== undefined ? { summary: parsed.data.summary } : {}),
+            ...(parsed.data.availability !== undefined
+              ? { availability: parsed.data.availability }
+              : {}),
             updatedAt: new Date(),
           })
           .where(eq(candidateProfiles.userId, userId));
