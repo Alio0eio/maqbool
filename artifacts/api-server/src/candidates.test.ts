@@ -25,10 +25,19 @@ type TestProfile = {
   id: number;
   userId: number;
   phone: string | null;
+  headline?: string | null;
   location: string | null;
   education: string | null;
   experience: string | null;
   skills: string[];
+  resumeUrl?: string | null;
+  portfolioUrl?: string | null;
+  linkedinUrl?: string | null;
+  githubUrl?: string | null;
+  summary?: string | null;
+  yearsOfExperience?: string | null;
+  availability?: string | null;
+  salaryExpectation?: number | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -168,10 +177,17 @@ describe("candidate profile management", () => {
 
     const createResponse = await request(profileUrl, "POST", token, {
       phone: "01012345678",
+      headline: "Product designer",
       location: "Cairo, Egypt",
       education: "BSc Computer Science",
       experience: "Data Analysis Intern",
       skills: ["SQL", "Power BI", "Python"],
+      yearsOfExperience: 4,
+      portfolioUrl: "https://example.com/portfolio",
+      linkedinUrl: "https://linkedin.com/in/candidate",
+      githubUrl: "https://github.com/candidate",
+      summary: "Candidate profile summary",
+      availability: "Immediately",
     });
     const created = (await createResponse.json()) as Record<string, unknown>;
 
@@ -180,21 +196,37 @@ describe("candidate profile management", () => {
     assert.equal(created.name, candidate.name);
     assert.equal(created.email, candidate.email);
     assert.deepEqual(created.skills, ["SQL", "Power BI", "Python"]);
+    assert.equal(created.headline, "Product designer");
+    assert.equal(created.yearsOfExp, 4);
+    assert.equal(created.portfolioUrl, "https://example.com/portfolio");
+    assert.equal(created.linkedinUrl, "https://linkedin.com/in/candidate");
+    assert.equal(created.githubUrl, "https://github.com/candidate");
+    assert.equal(created.summary, "Candidate profile summary");
+    assert.equal(created.availability, "Immediately");
 
     const getResponse = await request(profileUrl, "GET", token);
     assert.equal(getResponse.status, 200);
     const retrieved = (await getResponse.json()) as Record<string, unknown>;
     assert.equal(retrieved.location, "Cairo, Egypt");
+    assert.equal(retrieved.headline, "Product designer");
+    assert.equal(retrieved.email, candidate.email);
+    assert.equal(retrieved.yearsOfExp, 4);
 
     const updateResponse = await request(profileUrl, "PUT", token, {
+      headline: "Senior product designer",
       location: "Alexandria, Egypt",
       skills: ["TypeScript"],
+      summary: "Updated summary",
+      githubUrl: null,
     });
     const updated = (await updateResponse.json()) as Record<string, unknown>;
     assert.equal(updateResponse.status, 200);
     assert.equal(updated.location, "Alexandria, Egypt");
     assert.deepEqual(updated.skills, ["TypeScript"]);
     assert.equal(updated.phone, "01012345678");
+    assert.equal(updated.headline, "Senior product designer");
+    assert.equal(updated.summary, "Updated summary");
+    assert.equal(updated.githubUrl, null);
   });
 
   it("rejects duplicate creation, invalid skills, and ownership fields", async () => {

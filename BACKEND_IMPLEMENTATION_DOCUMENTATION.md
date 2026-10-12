@@ -527,6 +527,11 @@ the root router is mounted under `/api`.
 5. Requests cannot provide or change `userId`, `id`, role, or authentication
 	fields. Duplicate creation returns `409`, missing profiles return `404`, and
 	non-candidate users receive `403`.
+6. The response includes the user's identity plus headline, location, phone,
+	education, experience, skills, resume and professional URLs, summary,
+	availability, salary expectation, and timestamps. `yearsOfExp` is returned
+	as a number or `null`, mapped from the database's numeric
+	`yearsOfExperience` column.
 
 ### Validation and persistence
 
@@ -539,6 +544,10 @@ the root router is mounted under `/api`.
 	name, email, and avatar URL are returned through the existing users join
 	rather than duplicated in the candidate profile table.
 5. Updates set `candidate_profiles.updated_at` and only write supplied fields.
+6. Headline, summary, professional URLs, experience years, and availability
+	are now included in create/update persistence. Nullable profile fields can
+	be cleared by sending `null`; invalid non-empty URLs and invalid years still
+	fail schema validation.
 
 ### Tests and database migration
 
@@ -560,13 +569,16 @@ Candidate profile request validation is defined in
 partial update schemas now share these rules:
 
 1. `headline` is trimmed, required when supplied, and limited to 255 characters.
-2. `yearsOfExperience` must be a finite, non-negative integer from 0 through 100.
+2. When supplied, `yearsOfExperience` must be a finite, non-negative integer
+	from 0 through 100; `null` clears the stored value.
 3. `skills` must contain 1 to 100 trimmed, non-empty skill names, each no longer
 	than 100 characters; duplicate names are rejected after trimming.
 4. `portfolioUrl`, `linkedinUrl`, and `githubUrl` are optional trimmed URLs;
 	empty strings and malformed URLs are rejected.
 5. Unknown fields remain rejected by the existing strict object schemas, and the
 	update schema continues to require at least one supplied field.
+6. `summary` and `availability` are trimmed and bounded; nullable headline and
+	professional-link fields support clearing values.
 
 Focused schema tests live in
 `artifacts/api-server/src/candidate-profile-schema.test.ts`. They cover valid
@@ -806,24 +818,55 @@ now calls `POST /api/auth/login` through the existing `AuthProvider` in
 as JSON with `Content-Type: application/json`. The API base is
 `VITE_API_BASE_URL`, defaulting to the existing same-origin `/api` convention;
 set it to the backend origin plus `/api` when the frontend and API are hosted
-separately. The backend does not use cookies for login, so authentication
-tokens are returned in JSON.
+separately. Browser authentication uses HttpOnly access and refresh cookies;
+the frontend sends requests with `credentials: "include"` and does not persist
+token values in localStorage. The `AuthProvider` restores the session with
+`GET /api/auth/me`, attempts one refresh after an access-token `401`, and
+provides the authoritative user and role to the protected route gates.
 
-The frontend consumes the backend's actual `message`, `token`, `accessToken`,
-`refreshToken`, and safe `user` response fields. Because the login response's
-user object does not include a role, the provider requests `GET /api/auth/me`
-with the returned bearer access token, then stores that authoritative user and
-both tokens in its existing localStorage-backed session state. The form routes
-recruiters to `/recruiter/dashboard` and candidates to
-`/candidate/dashboard`. Backend errors are shown inline, network failures get a
-connection message, and the submit button is disabled while the request is in
-flight. Requests use same-origin credentials; the backend currently relies on
-bearer tokens rather than cookies.
+The sign-in form routes recruiters to `/recruiter/dashboard` and candidates to
+`/candidate/dashboard`. The provider also owns registration and logout.
+Authentication errors and network failures are surfaced through the existing
+form/page behavior.
 
-This completes only the sign-in slice of frontend Phase 1. Tokens are stored in
-localStorage for this bearer-token implementation. Automatic refresh, `/me`
-validation during page-load session restoration, backend logout/revocation,
-sign-up integration, and real-role route-gating tests remain follow-up work.
+### 3.23 Candidate profile page integration
+
+The candidate profile page in
+`artifacts/maqbool/src/pages/candidate/profile.tsx` now uses the authenticated
+user from `AuthProvider` for identity and calls
+`GET /api/candidates/profile` only after the candidate-role route gate passes.
+`artifacts/maqbool/src/lib/candidate-profile-api.ts` uses the existing
+`customFetch` client with the configured API base and cookie credentials. Its
+candidate-specific React Query key and abort signal prevent cross-user cache
+reuse and allow unmounted requests to be cancelled.
+
+The page renders the real user name/email and profile headline, location,
+experience, education, skills, summary, availability, and portfolio, LinkedIn,
+and GitHub links. Missing fields have explicit empty states. The profile's
+actual `experience` and `education` fields are database text values, despite
+the generated OpenAPI client describing arrays; the focused frontend type
+models the implemented route's response rather than asserting the stale array
+shape. A missing profile receives a `404` state and can be initialized with
+`POST /api/candidates/profile`. Headline and summary edits persist using `PUT`.
+`401`/`403` responses sign out and return to the auth page; other server and
+network errors show a retry action. No mock candidate or application fallback
+is used.
+
+The implementation exposed and corrected a backend projection/update gap:
+the route previously returned only identity, location, skills, and basic
+timestamps despite the profile table holding additional fields. Candidate
+profile GET/POST/PUT now return/store the supported profile values. No
+candidate-profile React test runner is configured; the frontend is verified
+with typecheck/build, while route behavior and schema validation are covered
+by the API server tests. An authenticated browser smoke test still requires a
+running backend with a configured database and candidate account.
+
+Verification for this change: frontend and API-server TypeScript checks passed;
+the focused API-Zod TypeScript check passed; all 8 focused candidate route and
+schema tests passed; and the frontend production build passed. Vite emitted
+existing sourcemap-resolution notices and a large-chunk warning. The test
+harness exercises API routes with an in-memory fake database, so it does not
+replace an authenticated browser smoke test against a running backend.
 
 ## 4. Completion Boundary Through Phase 4.3.4
 
@@ -844,6 +887,8 @@ sign-up integration, and real-role route-gating tests remain follow-up work.
 - Get current user endpoint from task 3.2.1.
 - Update user profile endpoint from task 3.2.2.
 - Candidate profile management endpoints from task 4.1.1.
+- Candidate profile page integration with `/api/auth/me` session state and
+  `/api/candidates/profile`.
 - Published jobs listing endpoint from task 4.2.1.
 - Single published job details endpoint from task 4.2.2.
 - Saved jobs endpoints from task 4.2.3.

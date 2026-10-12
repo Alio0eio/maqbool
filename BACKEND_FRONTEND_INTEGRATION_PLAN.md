@@ -9,16 +9,19 @@ submission, application tracking, application details, and application
 withdrawal.
 
 The backend API is mounted at `/api` by
-`artifacts/api-server/src/app.ts`. The frontend currently uses mock data and a
-mock authentication provider, so this work is an integration migration rather
-than a simple endpoint hookup.
+`artifacts/api-server/src/app.ts`. The frontend has a backend-backed
+authentication provider and the candidate profile page now loads the
+authenticated user's real profile. Other candidate feature pages remain in
+their existing migration phases.
 
 ## Current State and Integration Risks
 
-1. Authentication now uses the backend login, registration, current-user,
-   refresh, and logout endpoints. Candidate feature pages still read mock data.
-2. Candidate pages under `artifacts/maqbool/src/pages/candidate` read from
-   `@/lib/mock-data`.
+1. Authentication uses the backend login, registration, current-user, refresh,
+   and logout endpoints. `GET /api/auth/me` restores the cookie-authenticated
+   session before protected routes render.
+2. `artifacts/maqbool/src/pages/candidate/profile.tsx` now uses the authenticated
+   user and `GET /api/candidates/profile`; other candidate feature pages remain
+   in the mock-data migration queue.
 3. `lib/api-client-react` contains generated operations from a broader API
    contract whose application response shapes do not match the implemented
    candidate routes. It should not be used for these routes until the contract
@@ -175,14 +178,33 @@ email-verification user flow additionally requires the backend prerequisites.
 
 ### Phase 2: Candidate profile foundation
 
-1. Replace mock candidate data in the candidate profile page with
-   `GET /api/auth/me` and `GET /api/candidates/profile`.
-2. Map the current UI fields to the backend profile fields, preserving backend
-   validation for skills, experience, and URLs.
-3. Wire profile create/update actions to `POST` and `PUT /api/candidates/profile`.
-4. Use the profile's `resumeUrl` as the current application resume source.
-5. Show the backend's `404 Candidate profile not found` state with a setup
-   action instead of silently falling back to mock data.
+1. [x] Reuse the existing `AuthProvider` session restoration from
+   `GET /api/auth/me`; only request candidate data after the candidate role is
+   established.
+2. [x] Replace mock candidate and application objects in the profile page with
+   the authenticated user and `GET /api/candidates/profile`.
+3. [x] Display real identity, profile, experience, skills, portfolio, LinkedIn,
+   and GitHub fields, with explicit empty-field states.
+4. [x] Wire profile creation and headline/summary updates to the existing
+   `POST` and `PUT /api/candidates/profile` routes.
+5. [x] Handle loading, retryable request failures, expired/unauthorized
+   sessions, and the missing-profile `404` without mock fallback.
+6. [ ] Use the profile's `resumeUrl` as the current application resume source
+   in the apply flow; that page remains a separate integration task.
+
+**Progress update (2026-10-12)**: The profile page now uses React Query with a
+candidate-specific key and abortable requests through the cookie-authenticated
+API client. It shows `/auth/me` name/email and profile fields from the profile
+endpoint, supports creating a missing profile and persisting headline/summary
+edits, and redirects after a protected request reports `401` or `403`. The
+backend profile projection now returns the stored professional fields and the
+update schema persists the displayed editable fields. `education` and
+`experience` are plain text in the actual database/API, so the page renders
+them as text rather than assuming the arrays described in the generated
+OpenAPI client model. React component tests are not configured in this package;
+backend route/schema coverage and frontend typecheck/build are the available
+automated checks. Runtime integration still requires a configured backend and
+authenticated candidate account.
 
 **Exit check:** profile edits persist after reload and the apply flow reflects
 the saved profile resume.

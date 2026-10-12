@@ -14,12 +14,16 @@ describe("candidate profile validation schemas", () => {
       portfolioUrl: "https://example.com/portfolio",
       linkedinUrl: "https://www.linkedin.com/in/example",
       githubUrl: "https://github.com/example",
+      summary: "  Experienced candidate  ",
+      availability: "  Immediately  ",
     });
 
     assert.equal(result.success, true);
     if (result.success) {
       assert.equal(result.data.headline, "Junior Data Analyst");
       assert.deepEqual(result.data.skills, ["SQL", "Power BI", "Python"]);
+      assert.equal(result.data.summary, "Experienced candidate");
+      assert.equal(result.data.availability, "Immediately");
     }
   });
 
@@ -36,6 +40,14 @@ describe("candidate profile validation schemas", () => {
     assert.equal(
       updateCandidateProfileRequestSchema.safeParse({
         linkedinUrl: "https://www.linkedin.com/in/example",
+      }).success,
+      true,
+    );
+    assert.equal(
+      updateCandidateProfileRequestSchema.safeParse({
+        summary: null,
+        headline: null,
+        githubUrl: null,
       }).success,
       true,
     );
