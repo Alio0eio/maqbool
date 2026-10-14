@@ -455,7 +455,7 @@ export function AppShell({
         ref={mainRef}
         id="main-content"
         tabIndex={-1}
-        className="flex-1 flex flex-col min-w-0 outline-none"
+        className="flex-1 flex flex-col min-w-0 min-h-0 outline-none"
         initial={false}
         animate={{ marginLeft: isMobile ? 0 : (isExpanded ? RAIL_EXPANDED_W : RAIL_COLLAPSED_W) + RAIL_GUTTER }}
         transition={widthTransition}
@@ -500,7 +500,7 @@ export function AppShell({
           </div>
         </header>
 
-        <ScrollArea className="flex-1 relative">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain relative">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={transitionKey(location)}
@@ -513,7 +513,7 @@ export function AppShell({
               {children}
             </motion.div>
           </AnimatePresence>
-        </ScrollArea>
+        </div>
       </motion.main>
     </div>
   );

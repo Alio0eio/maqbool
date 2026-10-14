@@ -283,7 +283,7 @@ export default function CandidateInterview() {
   const retakesLeft = currentQuestion.retakeLimit - retakesUsed;
 
   return (
-    <div className="max-w-5xl mx-auto pb-20 animate-in fade-in duration-500 h-[calc(100vh-100px)] flex flex-col">
+    <div className="max-w-5xl mx-auto pb-20 animate-in fade-in duration-500 min-h-[calc(100vh-100px)] flex flex-col">
       <PageHeader
         sticky
         className="mb-6 shrink-0"
