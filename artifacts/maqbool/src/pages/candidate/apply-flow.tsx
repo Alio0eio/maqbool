@@ -1,20 +1,22 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import { Controller, useForm, type FieldPath } from "react-hook-form";
-import { MOCK_CANDIDATES, MOCK_JOBS, MOCK_USERS, SCREENING_QUESTIONS } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { ApiError } from "@workspace/api-client-react";
 import { Button } from "@workspace/design-system/button";
 import { Card, CardContent } from "@workspace/design-system/card";
 import { Input } from "@workspace/design-system/input";
 import { Label } from "@workspace/design-system/label";
 import { Textarea } from "@workspace/design-system/textarea";
 import { RadioGroup, RadioGroupItem } from "@workspace/design-system/radio-group";
-import { Progress } from "@workspace/design-system/progress";
 import { PageHeader } from "@/components/shared/page-header";
+import { useAuth } from "@/lib/auth";
+import { getCandidateProfile, getCandidateResumeHref } from "@/lib/candidate-profile-api";
+import { submitJobApplication } from "@/lib/candidate-applications-api";
+import { MOCK_JOBS, SCREENING_QUESTIONS } from "@/lib/mock-data";
 import {
   ArrowLeft,
-  UploadCloud,
   FileText,
-  Pencil,
   CheckCircle2,
   Sparkles,
   ChevronRight,
@@ -37,9 +39,6 @@ const FORM_STEP_COUNT = steps.length - 1; // details, screening, review
 // default slice a newly-created job would get, so the questions shown here
 // are real shared data rather than copy hardcoded to one specific job/company.
 const screeningSet = SCREENING_QUESTIONS.slice(0, 3);
-
-const MAX_RESUME_BYTES = 5 * 1024 * 1024;
-const ACCEPTED_RESUME_EXTENSIONS = [".pdf", ".doc", ".docx"];
 const URL_PATTERN = /^https?:\/\/[^\s]+\.[^\s]+$/i;
 
 interface ScreeningFormValues {
@@ -51,24 +50,55 @@ function isLinkQuestion(question: string) {
   return /link|portfolio|website|url/i.test(question);
 }
 
+function isValidResumeUrl(value: string): boolean {
+  if (/^\/api\/candidates\/profile\/resume\/[0-9a-f-]{36}\.(?:pdf|docx)$/i.test(value)) {
+    return true;
+  }
+
+  try {
+    const url = new URL(value);
+    return (url.protocol === "http:" || url.protocol === "https:") && Boolean(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+function getApiErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    const data = error.data;
+    if (data && typeof data === "object") {
+      const body = data as { error?: { message?: unknown }; message?: unknown };
+      if (typeof body.error?.message === "string") return body.error.message;
+      if (typeof body.message === "string") return body.message;
+    }
+  }
+
+  return error instanceof Error ? error.message : "The request failed. Please try again.";
+}
+
 export default function ApplyFlow() {
   const { id, step } = useParams();
-  const [dragActive, setDragActive] = useState(false);
   const [, setLocation] = useLocation();
+  const { user, role, signOut } = useAuth();
   const job = MOCK_JOBS.find(j => j.id === Number(id));
-  const user = MOCK_USERS.candidate;
-  const candidate = MOCK_CANDIDATES.find(c => c.email === user.email);
+  const candidateProfileQuery = useQuery({
+    queryKey: ["candidate-profile", user?.id],
+    queryFn: ({ signal }) => getCandidateProfile(signal),
+    enabled: Boolean(user && role === "candidate"),
+    retry: false,
+  });
+  const candidateProfile = candidateProfileQuery.data;
+  const savedResumeUrl = candidateProfile?.resumeUrl?.trim() ?? "";
+  const hasValidResume = Boolean(savedResumeUrl && isValidResumeUrl(savedResumeUrl));
 
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
-  const [isParsing, setIsParsing] = useState(false);
+  const [resumeError, setResumeError] = useState<string | null>(null);
+  const [applicationError, setApplicationError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [candidateDetails, setCandidateDetails] = useState({
-    name: candidate?.name ?? user.name,
-    email: candidate?.email ?? user.email,
-    location: candidate?.location ?? "",
+    name: user?.name ?? "",
+    email: user?.email ?? "",
+    location: "",
   });
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -84,8 +114,62 @@ export default function ApplyFlow() {
   const currentStepIndex = steps.indexOf((step ?? "details") as StepId);
   const direction = useStepDirection(currentStepIndex);
 
+  useEffect(() => {
+    if (candidateProfile) {
+      setCandidateDetails({
+        name: candidateProfile.name,
+        email: candidateProfile.email,
+        location: candidateProfile.location ?? "",
+      });
+    }
+  }, [candidateProfile]);
+
+  useEffect(() => {
+    const error = candidateProfileQuery.error;
+    if (error instanceof ApiError && error.status === 401) {
+      void signOut().then(() => setLocation("/"));
+    }
+  }, [candidateProfileQuery.error, setLocation, signOut]);
+
   if (!job) return <NotFound />;
   if (currentStepIndex === -1) return <NotFound />;
+  if (!user || role !== "candidate") return null;
+  if (candidateProfileQuery.isPending) {
+    return (
+      <main className="flex min-h-64 items-center justify-center text-sm text-muted-foreground" role="status">
+        Loading your profile…
+      </main>
+    );
+  }
+  if (candidateProfileQuery.error instanceof ApiError && candidateProfileQuery.error.status === 404) {
+    return (
+      <Card className="mx-auto max-w-xl">
+        <CardContent className="space-y-4 p-6">
+          <h1 className="text-lg font-semibold">Complete your candidate profile</h1>
+          <p className="text-sm text-muted-foreground">
+            Create your profile and add a resume before applying for this role.
+          </p>
+          <Link href="/candidate/profile">
+            <Button>Go to your profile</Button>
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  }
+  if (candidateProfileQuery.error) {
+    return (
+      <Card className="mx-auto max-w-xl">
+        <CardContent className="space-y-4 p-6">
+          <p className="text-sm text-destructive" role="alert">
+            {getApiErrorMessage(candidateProfileQuery.error)}
+          </p>
+          <Button variant="outline" onClick={() => void candidateProfileQuery.refetch()}>
+            Try again
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const goToStep = (s: StepId) => setLocation(`/candidate/apply/${id}/${s}`);
 
@@ -94,58 +178,39 @@ export default function ApplyFlow() {
     else setLocation(`/candidate/jobs/${id}`);
   };
 
-  const handleFiles = (files: FileList | null) => {
-    const file = files?.[0];
-    if (!file) return;
-    const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
-    if (!ACCEPTED_RESUME_EXTENSIONS.includes(ext)) {
-      setFileError("Please upload a PDF, DOC, or DOCX file.");
-      return;
-    }
-    if (file.size > MAX_RESUME_BYTES) {
-      setFileError("That file is too large. Max size is 5MB.");
-      return;
-    }
-    setFileError(null);
-    setResumeFile(file);
-  };
-
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFiles(e.target.files);
-    e.target.value = ""; // allow re-selecting the same file after removing it
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    handleFiles(e.dataTransfer.files);
-  };
-
   const handleResumeContinue = () => {
-    if (!resumeFile && !candidate?.resumeUrl) {
-      setFileError("Please upload your resume to continue.");
+    if (!hasValidResume) {
+      setResumeError(
+        savedResumeUrl
+          ? "Your saved resume link is invalid. Update your candidate profile before applying."
+          : "Add a resume to your candidate profile before applying.",
+      );
       return;
     }
-    setIsParsing(true);
-    setTimeout(() => {
-      setIsParsing(false);
-      goToStep("screening");
-    }, 1500);
+    setResumeError(null);
+    goToStep("screening");
   };
 
   const onScreeningValid = () => goToStep("review");
 
-  const handleReviewSubmit = () => {
+  const handleReviewSubmit = async () => {
+    setApplicationError(null);
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const coverLetter = screeningValues.motivation.trim();
+      await submitJobApplication(Number(id), coverLetter || undefined);
       goToStep("success");
-    }, 2000);
+    } catch (error) {
+      setApplicationError(getApiErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handlePrimaryAction = () => {
     if (step === "details") handleResumeContinue();
     else if (step === "screening") void handleSubmit(onScreeningValid)();
-    else if (step === "review") handleReviewSubmit();
+    else if (step === "review") void handleReviewSubmit();
   };
 
   if (step === "success") {
@@ -203,7 +268,7 @@ export default function ApplyFlow() {
     <div className="max-w-3xl mx-auto pb-20 animate-in fade-in duration-300">
       {/* Header */}
       <div className="mb-8">
-        <Button variant="ghost" size="sm" className="mb-4 -ml-3 text-muted-foreground hover:text-foreground" onClick={handleBack} disabled={isParsing || isSubmitting}>
+        <Button variant="ghost" size="sm" className="mb-4 -ml-3 text-muted-foreground hover:text-foreground" onClick={handleBack} disabled={isSubmitting}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           {currentStepIndex === 0 ? "Back to Job" : "Back"}
         </Button>
@@ -253,90 +318,42 @@ export default function ApplyFlow() {
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <h3 className="text-[14px] font-semibold text-foreground">Resume</h3>
-                    <p className="text-[13.5px] text-muted-foreground mt-1">Use your saved resume or upload a newer version.</p>
+                    <p className="text-[13.5px] text-muted-foreground mt-1">
+                      Your current profile resume will be included with this application.
+                    </p>
                   </div>
-                  <Pencil className="w-4 h-4 text-muted-foreground shrink-0" />
                 </div>
 
-                {candidate?.resumeUrl && !resumeFile && (
+                {hasValidResume ? (
                   <div className="flex items-center gap-3 rounded-lg border border-border/60 bg-surface-subtle p-4">
                     <FileText className="w-5 h-5 text-primary shrink-0" />
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{candidate.resumeUrl}</p>
-                      <p className="text-xs text-muted-foreground">Saved in your profile</p>
+                      <a
+                        href={getCandidateResumeHref(savedResumeUrl)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm font-medium text-primary underline underline-offset-4"
+                      >
+                        View your saved resume
+                      </a>
+                      <p className="text-xs text-muted-foreground">This is the resume the application will use.</p>
                     </div>
-                  </div>
-                )}
-
-              <div
-                role="button"
-                tabIndex={0}
-                aria-label="Upload resume"
-                className={cn(
-                  "border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-200 cursor-pointer hover:bg-surface-subtle outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                  dragActive && "border-secondary bg-secondary/[0.06] scale-[1.01] shadow-[0_0_0_6px_hsl(var(--secondary)/0.1)]",
-                  !dragActive && (resumeFile ? "border-primary bg-primary/5" : fileError ? "border-destructive" : "border-border")
-                )}
-                onClick={() => fileInputRef.current?.click()}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    fileInputRef.current?.click();
-                  }
-                }}
-                onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
-                onDragLeave={() => setDragActive(false)}
-                onDrop={(e) => { setDragActive(false); handleDrop(e); }}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept={ACCEPTED_RESUME_EXTENSIONS.join(",")}
-                  className="hidden"
-                  onChange={handleFileInputChange}
-                />
-                {resumeFile ? (
-                  <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
-                      <FileText className="w-6 h-6" />
-                    </div>
-                    <p className="font-medium text-foreground">{resumeFile.name}</p>
-                    <p className="text-xs text-muted-foreground mt-1 tabular-nums">{(resumeFile.size / 1024).toFixed(1)} KB · PDF</p>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="mt-4 text-xs"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setResumeFile(null);
-                      }}
-                    >
-                      Remove
-                    </Button>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center text-muted-foreground">
-                    <div className="w-12 h-12 rounded-full bg-surface-subtle flex items-center justify-center mb-3">
-                      <UploadCloud className="w-6 h-6" />
-                    </div>
-                    <p className="font-medium text-foreground mb-1">Click to upload or drag and drop</p>
-                    <p className="text-xs">Upload a replacement · PDF, DOC, DOCX up to 5MB</p>
+                  <div className="rounded-lg border border-dashed border-border p-4 text-sm text-muted-foreground">
+                    <p>
+                      {savedResumeUrl
+                        ? "Your profile resume link is invalid."
+                        : "No resume is saved in your candidate profile."}
+                    </p>
+                    <Link href="/candidate/profile" className="mt-2 inline-block text-primary underline underline-offset-4">
+                      Update your candidate profile
+                    </Link>
                   </div>
                 )}
-              </div>
 
-              {fileError && <p className="text-sm text-destructive">{fileError}</p>}
+              {resumeError && <p className="text-sm text-destructive" role="alert">{resumeError}</p>}
 
-              {isParsing && (
-                <div className="bg-accent-record-tint border border-accent-record/30 rounded-lg p-4 flex items-center gap-4 animate-in fade-in">
-                  <Sparkles className="w-5 h-5 text-accent-record-ink animate-pulse shrink-0" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-accent-record-ink">AI is extracting your profile details...</p>
-                    <Progress value={65} className="h-1.5 mt-2 bg-accent-record-tint [&>div]:bg-accent-record" />
-                  </div>
-                  <span className="text-xs text-accent-record-ink tabular-nums shrink-0">65%</span>
-                </div>
-              )}
               </div>
             </div>
           )}
@@ -454,7 +471,9 @@ export default function ApplyFlow() {
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-md border border-border/60 bg-surface-subtle">
                     <FileText className="w-5 h-5 text-muted-foreground shrink-0" />
-                    <span className="text-sm font-medium text-foreground truncate">{resumeFile?.name || candidate?.resumeUrl || "No resume uploaded"}</span>
+                    <span className="text-sm font-medium text-foreground truncate">
+                      {hasValidResume ? "Saved profile resume" : "No valid resume saved"}
+                    </span>
                   </div>
                 </div>
 
@@ -490,13 +509,18 @@ export default function ApplyFlow() {
         </StepTransition>
 
           {/* Footer Actions */}
+          {applicationError && (
+            <p className="mt-6 text-sm text-destructive" role="alert">
+              {applicationError}
+            </p>
+          )}
           <div className="mt-8 pt-6 border-t border-border/60 flex justify-end gap-3">
-            <Button variant="outline" onClick={handleBack} disabled={isParsing || isSubmitting}>
+            <Button variant="outline" onClick={handleBack} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button onClick={handlePrimaryAction} disabled={isParsing || isSubmitting} className="min-w-[120px]">
-              {isParsing ? "Processing..." : isSubmitting ? "Submitting..." : step === "review" ? "Submit Application" : "Continue"}
-              {!isParsing && !isSubmitting && step !== "review" && <ChevronRight className="w-4 h-4 ml-1" />}
+            <Button onClick={handlePrimaryAction} disabled={isSubmitting} className="min-w-[120px]">
+              {isSubmitting ? "Submitting..." : step === "review" ? "Submit Application" : "Continue"}
+              {!isSubmitting && step !== "review" && <ChevronRight className="w-4 h-4 ml-1" />}
             </Button>
           </div>
         </CardContent>

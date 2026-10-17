@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useLocation } from 'wouter';
 import { ApiError } from '@workspace/api-client-react';
@@ -13,11 +13,14 @@ import { PageHeader } from '@/components/shared/page-header';
 import { useAuth } from '@/lib/auth';
 import {
   createCandidateProfile,
+  getCandidateResumeHref,
   getCandidateProfile,
+  uploadCandidateResume,
   updateCandidateProfile,
   type CandidateProfile,
+  type CandidateProfileInput,
 } from '@/lib/candidate-profile-api';
-import { BriefcaseBusiness, CalendarDays, Check, Mail, MapPin, Pencil, X } from 'lucide-react';
+import { BriefcaseBusiness, CalendarDays, Check, FileText, Mail, MapPin, Pencil, UploadCloud, X } from 'lucide-react';
 
 function getApiErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
@@ -58,9 +61,13 @@ export default function CandidateProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [headlineDraft, setHeadlineDraft] = useState('');
   const [summaryDraft, setSummaryDraft] = useState('');
+  const [resumeSuggestions, setResumeSuggestions] = useState<CandidateProfileInput | null>(null);
+  const [resumeFileError, setResumeFileError] = useState<string | null>(null);
+  const resumeInputRef = useRef<HTMLInputElement>(null);
+  const profileQueryKey = ['candidate-profile', user?.id];
 
   const profileQuery = useQuery({
-    queryKey: ['candidate-profile', user?.id],
+    queryKey: profileQueryKey,
     queryFn: ({ signal }) => getCandidateProfile(signal),
     enabled: Boolean(user && role === 'candidate'),
     retry: false,
@@ -81,13 +88,24 @@ export default function CandidateProfilePage() {
     },
   });
 
+  const resumeImportMutation = useMutation({
+    mutationFn: uploadCandidateResume,
+    onSuccess: ({ resumeUrl, extractedFields }) => {
+      queryClient.setQueryData<CandidateProfile>(profileQueryKey, (current) =>
+        current ? { ...current, resumeUrl } : current,
+      );
+      setResumeSuggestions(extractedFields);
+    },
+  });
+
   const unauthorizedError = [
     profileQuery.error,
     createMutation.error,
     updateMutation.error,
+    resumeImportMutation.error,
   ].find(
     (error) =>
-      error instanceof ApiError && (error.status === 401 || error.status === 403),
+      error instanceof ApiError && error.status === 401,
   );
 
   useEffect(() => {
@@ -174,6 +192,40 @@ export default function CandidateProfilePage() {
       summary: summaryDraft.trim() || null,
     });
   }
+
+  function chooseResume(file: File | undefined) {
+    if (!file) return;
+    if (!/\.(pdf|docx)$/i.test(file.name)) {
+      setResumeFileError('Choose a PDF or DOCX resume.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setResumeFileError('Resume files must be 5MB or smaller.');
+      return;
+    }
+    setResumeFileError(null);
+    setResumeSuggestions(null);
+    resumeImportMutation.mutate(file);
+  }
+
+  function applyResumeSuggestions() {
+    if (!resumeSuggestions) return;
+    updateMutation.mutate(resumeSuggestions, {
+      onSuccess: () => setResumeSuggestions(null),
+    });
+  }
+
+  const extractedSuggestionRows = resumeSuggestions
+    ? [
+        ['Phone', resumeSuggestions.phone],
+        ['Location', resumeSuggestions.location],
+        ['Education', resumeSuggestions.education],
+        ['Experience', resumeSuggestions.experience],
+        ['Skills', resumeSuggestions.skills?.join(', ')],
+        ['Summary', resumeSuggestions.summary],
+        ['Years of experience', resumeSuggestions.yearsOfExperience],
+      ].filter(([, value]) => value !== undefined && value !== null && value !== '')
+    : [];
 
   return (
     <div className="mx-auto max-w-5xl animate-in space-y-6 fade-in slide-in-from-bottom-4 pb-20 duration-500">
@@ -265,6 +317,93 @@ export default function CandidateProfilePage() {
             </p>
           )}
         </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <FileText className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+            <div className="min-w-0">
+              <h3 className="font-semibold text-foreground">Resume</h3>
+              {getCandidateResumeHref(profile.resumeUrl) ? (
+                <a
+                  href={getCandidateResumeHref(profile.resumeUrl)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-1 block truncate text-sm text-primary underline underline-offset-4"
+                >
+                  View current resume
+                </a>
+              ) : (
+                <p className="mt-1 text-sm text-muted-foreground">No resume uploaded yet.</p>
+              )}
+              <p className="mt-1 text-xs text-muted-foreground">
+                Upload a PDF or DOCX (up to 5MB). We’ll read it and suggest profile details.
+              </p>
+            </div>
+          </div>
+          <input
+            ref={resumeInputRef}
+            type="file"
+            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            className="hidden"
+            onChange={(event) => {
+              chooseResume(event.target.files?.[0]);
+              event.target.value = '';
+            }}
+          />
+          <Button
+            variant="outline"
+            onClick={() => resumeInputRef.current?.click()}
+            disabled={resumeImportMutation.isPending}
+          >
+            <UploadCloud className="mr-2 h-4 w-4" />
+            {resumeImportMutation.isPending ? 'Reading resume…' : profile.resumeUrl ? 'Update resume' : 'Upload resume'}
+          </Button>
+        </CardContent>
+        {resumeImportMutation.error && (
+          <p className="px-6 pb-4 text-sm text-destructive" role="alert">
+            {getApiErrorMessage(resumeImportMutation.error)}
+          </p>
+        )}
+        {resumeFileError && (
+          <p className="px-6 pb-4 text-sm text-destructive" role="alert">
+            {resumeFileError}
+          </p>
+        )}
+        {resumeSuggestions && (
+          <CardContent className="border-t border-border/60 p-6">
+            {extractedSuggestionRows.length ? (
+              <>
+                <h4 className="font-semibold text-foreground">Resume details found</h4>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Review the extracted information, then add it to your profile.
+                </p>
+                <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+                  {extractedSuggestionRows.map(([label, value]) => (
+                    <div key={label} className="min-w-0">
+                      <dt className="text-xs font-medium text-muted-foreground">{label}</dt>
+                      <dd className="mt-1 whitespace-pre-wrap break-words text-sm text-foreground">
+                        {String(value)}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+                <Button
+                  className="mt-5"
+                  onClick={applyResumeSuggestions}
+                  disabled={updateMutation.isPending}
+                >
+                  {updateMutation.isPending ? 'Updating profile…' : 'Fill profile with these details'}
+                </Button>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground" role="status">
+                The resume was uploaded, but no profile fields could be identified. You can still edit your profile manually.
+              </p>
+            )}
+          </CardContent>
+        )}
       </Card>
 
       <Tabs defaultValue="overview" className="space-y-6">
