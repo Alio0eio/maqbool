@@ -8,7 +8,7 @@ process.env.DATABASE_URL ??= "postgresql://test:test@localhost:5432/test";
 process.env.PORT ??= "5000";
 process.env.JWT_SECRET ??= "test-secret";
 
-const { candidateProfiles, companies, jobs, savedJobs } = await import("@workspace/db");
+const { applications, candidateProfiles, companies, jobs, savedJobs } = await import("@workspace/db");
 const { createCandidatesRouter } = await import("./routes/candidates");
 const { createJobsRouter } = await import("./routes/jobs");
 const { errorHandler } = await import("./middlewares/error");
@@ -204,7 +204,7 @@ describe("saved jobs", () => {
 
 describe("job application submission", () => {
   it("lets a candidate apply with their existing resume and default status", async () => {
-    const applications: Array<{ id: number; jobId: number; candidateId: number; status: string; stage: string; resumeUrl: string | null; coverLetter: string | null; createdAt: Date; updatedAt: Date }> = [];
+    const applicationRows: Array<{ id: number; jobId: number; candidateId: number; status: string; stage: string; resumeUrl: string | null; coverLetter: string | null; createdAt: Date; updatedAt: Date }> = [];
     const candidate = { id: 10, userId: 1, resumeUrl: "https://example.com/resume.pdf" };
     const publishedJob = { id: 1, status: "published" };
 
@@ -216,6 +216,11 @@ describe("job application submission", () => {
               limit: async () => {
                 if (table === candidateProfiles) return [candidate];
                 if (table === jobs) return [publishedJob];
+                if (table === applications) {
+                  return applicationRows.filter(
+                    (application) => application.candidateId === candidate.id && application.jobId === publishedJob.id,
+                  );
+                }
                 return [];
               },
             }),
@@ -227,14 +232,14 @@ describe("job application submission", () => {
         values: (value: { jobId: number; candidateId: number; resumeUrl: string | null; coverLetter: string | null }) => ({
           returning: async () => {
             const record = {
-              id: applications.length + 1,
+              id: applicationRows.length + 1,
               ...value,
               status: "applied",
               stage: "applied",
               createdAt: new Date("2026-09-20T00:00:00.000Z"),
               updatedAt: new Date("2026-09-20T00:00:00.000Z"),
             };
-            applications.push(record);
+            applicationRows.push(record);
             return [record];
           },
         }),
@@ -252,19 +257,89 @@ describe("job application submission", () => {
     assert.ok(address && typeof address !== "string");
     servers.push(server);
 
+    assert.equal(
+      (await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST")).status,
+      401,
+    );
+    assert.equal(
+      (await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(2, "recruiter"))).status,
+      403,
+    );
+
     const response = await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(1), {
       coverLetter: "I am interested in this position because...",
+      resumeUrl: "https://another-candidate.example/resume.pdf",
+      candidateId: 20,
     });
 
-    assert.equal(response.status, 201);
-    const body = await response.json() as { jobId: number; candidateId: number; status: string; stage: string; resumeUrl: string | null; coverLetter: string | null };
+    assert.equal(response.status, 400);
+    const validResponse = await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(1), {
+      coverLetter: "I am interested in this position because...",
+    });
+    assert.equal(validResponse.status, 201);
+    const body = await validResponse.json() as { jobId: number; candidateId: number; status: string; stage: string; resumeUrl: string | null; coverLetter: string | null };
     assert.equal(body.status, "applied");
     assert.equal(body.stage, "applied");
     assert.equal(body.jobId, 1);
     assert.equal(body.candidateId, 10);
     assert.equal(body.resumeUrl, "https://example.com/resume.pdf");
     assert.equal(body.coverLetter, "I am interested in this position because...");
-    assert.equal(applications.length, 1);
+
+    candidate.resumeUrl = "https://example.com/updated-resume.pdf";
+    publishedJob.id = 2;
+    const subsequentResponse = await request(`http://127.0.0.1:${address.port}/jobs/2/apply`, "POST", tokenFor(1));
+    assert.equal(subsequentResponse.status, 201);
+    const subsequentBody = await subsequentResponse.json() as { resumeUrl: string | null };
+    assert.equal(subsequentBody.resumeUrl, "https://example.com/updated-resume.pdf");
+    assert.equal(applicationRows.length, 2);
+  });
+
+  it("rejects missing or invalid profile resume references without creating applications", async () => {
+    const candidate: { id: number; userId: number; resumeUrl: string | null } = {
+      id: 10,
+      userId: 1,
+      resumeUrl: null,
+    };
+    let insertCount = 0;
+    const database = {
+      select: () => ({
+        from: (table: unknown) => ({
+          where: () => ({
+            limit: async () => {
+              if (table === candidateProfiles) return [candidate];
+              if (table === jobs) return [{ id: 1, status: "published" }];
+              return [];
+            },
+          }),
+        }),
+      }),
+      insert: () => ({
+        values: () => ({
+          returning: async () => {
+            insertCount += 1;
+            return [];
+          },
+        }),
+      }),
+    };
+
+    const app = express();
+    app.use(express.json());
+    app.use(createJobsRouter(database as never));
+    app.use(errorHandler);
+    const server = http.createServer(app);
+    server.listen(0, "127.0.0.1");
+    await once(server, "listening");
+    const address = server.address();
+    assert.ok(address && typeof address !== "string");
+    servers.push(server);
+
+    for (const invalidResumeUrl of [null, "", "   ", "not-a-url", "javascript:alert(1)"]) {
+      candidate.resumeUrl = invalidResumeUrl;
+      const response = await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(1));
+      assert.equal(response.status, 422, `expected ${String(invalidResumeUrl)} to fail`);
+    }
+    assert.equal(insertCount, 0);
   });
 
   it("rejects duplicate applications and invalid cover letters", async () => {

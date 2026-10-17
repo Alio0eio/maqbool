@@ -1,4 +1,4 @@
-import { customFetch } from '@workspace/api-client-react';
+import { authenticatedApiRequest } from './authenticated-api';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '');
 
@@ -41,12 +41,13 @@ export interface CandidateProfileInput {
   availability?: string | null;
 }
 
+export interface ResumeImportResult {
+  resumeUrl: string;
+  extractedFields: CandidateProfileInput;
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
-  return customFetch<T>(`${API_BASE_URL}${path}`, {
-    ...options,
-    credentials: 'include',
-    responseType: 'json',
-  });
+  return authenticatedApiRequest<T>(path, options);
 }
 
 export function getCandidateProfile(signal?: AbortSignal): Promise<CandidateProfile> {
@@ -67,4 +68,21 @@ export function updateCandidateProfile(input: CandidateProfileInput): Promise<Ca
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
   });
+}
+
+export function uploadCandidateResume(file: File): Promise<ResumeImportResult> {
+  const formData = new FormData();
+  formData.set('resume', file);
+  return request<ResumeImportResult>('/candidates/profile/resume', {
+    method: 'POST',
+    body: formData,
+  });
+}
+
+export function getCandidateResumeHref(resumeUrl?: string | null): string | undefined {
+  if (!resumeUrl) return undefined;
+  if (resumeUrl.startsWith('/api/candidates/profile/resume/')) {
+    return `${API_BASE_URL}${resumeUrl.slice('/api'.length)}`;
+  }
+  return resumeUrl;
 }

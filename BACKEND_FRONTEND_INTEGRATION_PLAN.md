@@ -29,13 +29,15 @@ their existing migration phases.
 4. The API server serves the built frontend and API from one origin. The
    combined development command builds the frontend with `VITE_API_BASE_URL=/api`
    so browser authentication cookies and API calls remain same-origin.
+   Standalone Vite development reads the workspace-root `.env` and uses
+   `VITE_API_BASE_URL` (for example `http://localhost:5000/api`) to call the API
+   server on its separate origin.
 5. The backend supports bearer tokens for existing clients and HttpOnly access
    and refresh cookies for the browser. A separate frontend origin still
    requires the backend `CORS_ORIGIN` allowlist and credentialed CORS.
-6. The backend currently has no upload endpoint. The existing apply flow's
-   local resume upload cannot become a server upload without a separate storage
-   decision. Until then, application submission uses the candidate profile's
-   existing `resumeUrl`.
+6. Candidate resumes are uploaded to private S3-compatible storage through the
+   authenticated API. The profile stores an owner-checked API download path,
+   and application submissions use that saved path.
 7. Candidate interviews, messages, notifications, job alerts, and company
    profile data are outside the backend scope through task 4.3.4 and should
    remain explicitly mock-backed or be hidden behind a feature flag during this
@@ -93,7 +95,8 @@ The existing provider owns:
 - the authenticated backend user and its role;
 - an initialization/loading state and session restoration from `GET /api/auth/me`;
 - `login`, `register`, and `logout` actions;
-- one refresh attempt after an initialization `401`;
+- one refresh-and-retry attempt for candidate profile and application requests
+  after a `401`;
 - clearing auth state and redirecting to `/` when restoration fails.
 
 The browser uses HttpOnly access and refresh cookies and does not persist token
@@ -189,14 +192,19 @@ email-verification user flow additionally requires the backend prerequisites.
    `POST` and `PUT /api/candidates/profile` routes.
 5. [x] Handle loading, retryable request failures, expired/unauthorized
    sessions, and the missing-profile `404` without mock fallback.
-6. [ ] Use the profile's `resumeUrl` as the current application resume source
-   in the apply flow; that page remains a separate integration task.
+6. [x] Use the authenticated profile's `resumeUrl` as the current application
+   resume source in the apply flow; the backend resolves the latest value on
+   submission and never trusts a client-supplied resume URL.
+7. [x] Add candidate-only PDF/DOCX upload, private object storage, protected
+   resume retrieval, and resume text extraction with reviewable profile-field
+   suggestions.
 
 **Progress update (2026-10-12)**: The profile page now uses React Query with a
 candidate-specific key and abortable requests through the cookie-authenticated
 API client. It shows `/auth/me` name/email and profile fields from the profile
 endpoint, supports creating a missing profile and persisting headline/summary
-edits, and redirects after a protected request reports `401` or `403`. The
+edits, and redirects after a `401` remains after refresh. A `403` is shown as
+an authorization error without clearing the authenticated session. The
 backend profile projection now returns the stored professional fields and the
 update schema persists the displayed editable fields. `education` and
 `experience` are plain text in the actual database/API, so the page renders
@@ -205,6 +213,33 @@ OpenAPI client model. React component tests are not configured in this package;
 backend route/schema coverage and frontend typecheck/build are the available
 automated checks. Runtime integration still requires a configured backend and
 authenticated candidate account.
+
+**Progress update (2026-10-17)**: The application page now loads the
+authenticated candidate profile through the existing profile API, displays
+the saved resume, and blocks progression when it is missing or invalid. Both
+legacy HTTP(S) references and the protected profile-resume path are supported.
+Review submission calls the existing authenticated
+`POST /api/jobs/:id/apply` endpoint without sending a candidate ID or resume
+URL; the endpoint resolves the candidate from the session and snapshots the
+profile's current resume into the application. Missing or invalid profile
+resume references receive `422` and are never inserted. The initial
+local-only file picker was removed while no upload endpoint existed; the
+authenticated upload/import capability is now implemented as described in
+Phase 2. Focused route tests cover the latest resume being used on a
+subsequent submission, invalid/missing references, client attempts to supply
+a resume URL, and preserved cover-letter/status behavior. Job lookup remains
+separate integration work.
+
+**Progress update (2026-10-17)**: The profile page now opens the browser file
+picker through **Upload resume** / **Update resume**, uploads PDF/DOCX files to
+the authenticated backend, and shows fields extracted from recognizable resume
+sections for candidate review. Choosing **Fill profile with these details**
+persists the detected phone, location, education, experience, skills, summary,
+and years of experience through the existing profile update API. Resume files
+are stored in a private S3-compatible bucket; the API returns a protected
+download path that verifies the authenticated candidate owns the profile's
+current resume. Server storage credentials are configured with the
+`RESUME_S3_*` environment variables. Image-only/scanned PDFs are not OCRed.
 
 **Exit check:** profile edits persist after reload and the apply flow reflects
 the saved profile resume.
@@ -233,13 +268,14 @@ backend detail request, and saving/unsaving survives reload.
 
 ### Phase 4: Application submission
 
-1. Replace mock job and candidate lookups in `apply-flow.tsx` with the job
-   detail and current-profile queries.
-2. Keep the existing multi-step UX, but make the review step submit
+1. Replace the mock job lookup in `apply-flow.tsx` with the job-detail query;
+   this is part of the separate job-integration task.
+2. [x] Replace mock candidate data with the current-profile query and keep the
+   existing multi-step UX while submitting the review through
    `POST /api/jobs/:id/apply` with the optional `coverLetter`.
-3. Do not claim that a locally selected resume was uploaded. Until a file
-   storage endpoint exists, require a profile `resumeUrl` and explain that the
-   application uses the saved resume.
+3. [x] Require the saved profile `resumeUrl` and explain that the application
+   uses the current saved resume; the backend resolves it from the
+   authenticated candidate profile.
 4. Treat `201` as success and navigate to the success state using the returned
    application ID.
 5. Handle `409 Application already exists`, `409 Job is not accepting
@@ -367,7 +403,6 @@ The integration is complete when:
 
 The following are intentionally outside this integration scope:
 
-- resume upload/storage and replacement;
 - candidate interview APIs and interview submissions;
 - notifications, messages, and job alerts;
 - recruiter/company APIs and recruiter frontend migration;

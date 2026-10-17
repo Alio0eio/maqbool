@@ -16,6 +16,20 @@ function isUniqueViolation(error: unknown): boolean {
   return typeof error === "object" && error !== null && "code" in error && error.code === "23505";
 }
 
+function isValidResumeReference(value: string | null): value is string {
+  if (!value?.trim()) return false;
+  if (/^\/api\/candidates\/profile\/resume\/[0-9a-f-]{36}\.(?:pdf|docx)$/i.test(value.trim())) {
+    return true;
+  }
+
+  try {
+    const url = new URL(value.trim());
+    return (url.protocol === "http:" || url.protocol === "https:") && Boolean(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function getUserId(req: Express.Request): number {
   const userId = Number(req.user?.id);
   if (!Number.isSafeInteger(userId) || userId <= 0) {
@@ -200,6 +214,10 @@ export function createJobsRouter(database: typeof db = db): IRouter {
         next(createHttpError("Candidate profile not found", 404));
         return;
       }
+      if (!isValidResumeReference(candidate.resumeUrl)) {
+        next(createHttpError("Add a valid resume URL to your candidate profile before applying", 422));
+        return;
+      }
 
       const [job] = await database
         .select({ id: jobs.id, status: jobs.status })
@@ -230,7 +248,7 @@ export function createJobsRouter(database: typeof db = db): IRouter {
         .values({
           jobId: job.id,
           candidateId: candidate.id,
-          resumeUrl: candidate.resumeUrl ?? null,
+          resumeUrl: candidate.resumeUrl.trim(),
           coverLetter: body.data.coverLetter ?? null,
           status: "applied",
           stage: "applied",

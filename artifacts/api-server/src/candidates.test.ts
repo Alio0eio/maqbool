@@ -3,6 +3,8 @@ import { once } from "node:events";
 import http from "node:http";
 import express from "express";
 import { afterEach, describe, it } from "node:test";
+import type { ResumeStorage } from "./lib/resume-storage";
+import type { ResumeTextReader } from "./lib/resume-import";
 
 process.env.DATABASE_URL ??= "postgresql://test:test@localhost:5432/test";
 process.env.PORT ??= "5000";
@@ -12,6 +14,7 @@ const { candidateProfiles, users } = await import("@workspace/db");
 const { createCandidatesRouter } = await import("./routes/candidates");
 const { errorHandler } = await import("./middlewares/error");
 const { generateAccessToken } = await import("./lib/auth");
+const { extractResumeProfile } = await import("./lib/resume-import");
 
 type TestUser = {
   id: number;
@@ -105,11 +108,16 @@ function createFakeDatabase(initialUsers: TestUser[], initialProfiles: TestProfi
 async function createTestServer(
   initialUsers: TestUser[],
   initialProfiles: TestProfile[] = [],
+  resumeStorage: ResumeStorage = {
+    upload: async () => "00000000-0000-0000-0000-000000000000.pdf",
+    download: async () => ({ body: new Uint8Array(), contentType: "application/pdf" }),
+  },
+  resumeTextReader: ResumeTextReader = async () => "",
 ) {
   const fake = createFakeDatabase(initialUsers, initialProfiles);
   const app = express();
   app.use(express.json());
-  app.use(createCandidatesRouter(fake.database as never));
+  app.use(createCandidatesRouter(fake.database as never, resumeStorage, resumeTextReader));
   app.use(errorHandler);
 
   const server = http.createServer(app);
@@ -189,6 +197,7 @@ describe("candidate profile management", () => {
       summary: "Candidate profile summary",
       availability: "Immediately",
     });
+
     const created = (await createResponse.json()) as Record<string, unknown>;
 
     assert.equal(createResponse.status, 201);
@@ -284,5 +293,121 @@ describe("candidate profile management", () => {
 
     assert.equal(getResponse.status, 404);
     assert.equal(updateResponse.status, 404);
+  });
+});
+
+describe("candidate resume import", () => {
+  it("stores the authenticated candidate's resume and extracts profile fields", async () => {
+    const profile: TestProfile = {
+      id: 11,
+      userId: candidate.id,
+      phone: null,
+      location: null,
+      education: null,
+      experience: null,
+      skills: [],
+      resumeUrl: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    let storedUserId: number | null = null;
+    const storage: ResumeStorage = {
+      async upload(userId) {
+        storedUserId = userId;
+        return "00000000-0000-0000-0000-000000000001.pdf";
+      },
+      async download(userId) {
+        if (userId !== candidate.id) {
+          throw Object.assign(new Error("Resume not found"), { statusCode: 404 });
+        }
+        return { body: new Uint8Array([1, 2, 3]), contentType: "application/pdf" };
+      },
+    };
+    const reader: ResumeTextReader = async () =>
+      "Phone: +1 555 222 3333\nLocation: Cairo, Egypt\n5 years experience\nSUMMARY\nExperienced engineer\nEXPERIENCE\nBuilt APIs\nEDUCATION\nBSc Computer Science\nSKILLS\nTypeScript, PostgreSQL";
+    const testServer = await createTestServer([candidate], [profile], storage, reader);
+    servers.push(testServer.server);
+    const formData = new FormData();
+    formData.set("resume", new Blob(["%PDF-fake-pdf-content"], { type: "application/pdf" }), "resume.pdf");
+
+    const response = await fetch(`${testServer.url}/candidates/profile/resume`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${tokenFor(candidate)}` },
+      body: formData,
+    });
+    const body = await response.json() as {
+      resumeUrl: string;
+      extractedFields: Record<string, unknown>;
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(storedUserId, candidate.id);
+    assert.equal(body.resumeUrl, "/api/candidates/profile/resume/00000000-0000-0000-0000-000000000001.pdf");
+    assert.equal(testServer.fake.storedProfiles[0].resumeUrl, body.resumeUrl);
+    assert.equal(body.extractedFields.phone, "+1 555 222 3333");
+    assert.equal(body.extractedFields.location, "Cairo, Egypt");
+    assert.equal(body.extractedFields.experience, "Built APIs");
+    assert.equal(body.extractedFields.education, "BSc Computer Science");
+    assert.deepEqual(body.extractedFields.skills, ["TypeScript", "PostgreSQL"]);
+    assert.equal(body.extractedFields.yearsOfExperience, 5);
+
+    const downloadResponse = await fetch(`${testServer.url}${body.resumeUrl.replace(/^\/api/, "")}`, {
+      headers: { authorization: `Bearer ${tokenFor(candidate)}` },
+    });
+    assert.equal(downloadResponse.status, 200);
+    assert.equal(downloadResponse.headers.get("x-content-type-options"), "nosniff");
+    assert.deepEqual(new Uint8Array(await downloadResponse.arrayBuffer()), new Uint8Array([1, 2, 3]));
+
+    const otherCandidate = { ...candidate, id: 3, email: "other@example.com" };
+    const forbiddenDownload = await fetch(`${testServer.url}${body.resumeUrl.replace(/^\/api/, "")}`, {
+      headers: { authorization: `Bearer ${tokenFor(otherCandidate)}` },
+    });
+    assert.equal(forbiddenDownload.status, 404);
+  });
+
+  it("requires candidate authentication and rejects non-PDF/DOCX files", async () => {
+    const profile: TestProfile = {
+      id: 11,
+      userId: candidate.id,
+      phone: null,
+      location: null,
+      education: null,
+      experience: null,
+      skills: [],
+      resumeUrl: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    const testServer = await createTestServer([candidate, recruiter], [profile]);
+    servers.push(testServer.server);
+    const url = `${testServer.url}/candidates/profile/resume`;
+    const missingAuth = await fetch(url, { method: "POST" });
+    assert.equal(missingAuth.status, 401);
+
+    const recruiterResponse = await fetch(url, {
+      method: "POST",
+      headers: { authorization: `Bearer ${tokenFor(recruiter)}` },
+    });
+    assert.equal(recruiterResponse.status, 403);
+
+    const invalidForm = new FormData();
+    invalidForm.set("resume", new Blob(["not a pdf"], { type: "application/pdf" }), "resume.pdf");
+    const invalidResponse = await fetch(url, {
+      method: "POST",
+      headers: { authorization: `Bearer ${tokenFor(candidate)}` },
+      body: invalidForm,
+    });
+    assert.equal(invalidResponse.status, 400);
+  });
+
+  it("extracts profile fields only from recognizable resume sections", () => {
+    assert.deepEqual(extractResumeProfile(
+      "Phone: +1 555 222 3333\nSUMMARY\nEngineer\nEDUCATION\nBSc Computer Science\nSKILLS\nTypeScript, SQL",
+    ), {
+      phone: "+1 555 222 3333",
+      summary: "Engineer",
+      education: "BSc Computer Science",
+      skills: ["TypeScript", "SQL"],
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type RequestHandler } from "express";
 import {
   createCandidateProfileRequestSchema,
   getApplicationParamsSchema,
@@ -9,6 +9,9 @@ import { applications, candidateProfiles, companies, db, interviews, jobs, saved
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { listJobsQuerySchema } from "@workspace/api-zod/jobs";
 import { authenticate, authorize } from "../middlewares/auth";
+import multer from "multer";
+import { extractResumeProfile, readResumeText, type ResumeTextReader } from "../lib/resume-import";
+import { createS3ResumeStorage, type ResumeStorage } from "../lib/resume-storage";
 
 type HttpError = Error & { statusCode: number };
 
@@ -82,7 +85,33 @@ async function findCandidateProfile(database: typeof db, userId: number) {
   };
 }
 
-export function createCandidatesRouter(database: typeof db = db): IRouter {
+const resumeUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+});
+
+const resumeUploadMiddleware: RequestHandler = (req, res, next) => {
+  resumeUpload.single("resume")(req, res, (error: unknown) => {
+    if (!error) {
+      next();
+      return;
+    };
+
+    const uploadError = error as Error & { code?: string };
+    next(createHttpError(
+      uploadError.code === "LIMIT_FILE_SIZE"
+        ? "Resume file must be 5MB or smaller"
+        : "Resume upload could not be read",
+      uploadError.code === "LIMIT_FILE_SIZE" ? 413 : 400,
+    ));
+  });
+}
+
+export function createCandidatesRouter(
+  database: typeof db = db,
+  resumeStorage: ResumeStorage = createS3ResumeStorage(),
+  resumeTextReader: ResumeTextReader = readResumeText,
+): IRouter {
   const router: IRouter = Router();
 
   router.post(
@@ -156,6 +185,113 @@ export function createCandidatesRouter(database: typeof db = db): IRouter {
         res.status(200).json(profile);
       } catch (_error) {
         next(createHttpError("Candidate profile retrieval failed", 500));
+      }
+    },
+  );
+
+  router.post(
+    "/candidates/profile/resume",
+    authenticate,
+    authorize("candidate"),
+    resumeUploadMiddleware,
+    async (req, res, next) => {
+      const file = req.file;
+      if (!file) {
+        next(createHttpError("Choose a PDF or DOCX resume to upload", 400));
+        return;
+      }
+
+      const originalName = file.originalname.toLowerCase();
+      const extension = originalName.endsWith(".pdf")
+        ? ".pdf"
+        : originalName.endsWith(".docx")
+          ? ".docx"
+          : null;
+      const isPdf = extension === ".pdf" && file.buffer.subarray(0, 5).toString() === "%PDF-";
+      const isDocx = extension === ".docx" && file.buffer.subarray(0, 4).toString() === "PK\u0003\u0004";
+      if (!extension || (!isPdf && !isDocx)) {
+        next(createHttpError("Resume must be a valid PDF or DOCX file", 400));
+        return;
+      }
+
+      try {
+        const userId = getUserId(req);
+        const [candidate] = await database
+          .select({ id: candidateProfiles.id })
+          .from(candidateProfiles)
+          .where(eq(candidateProfiles.userId, userId))
+          .limit(1);
+        if (!candidate) {
+          next(createHttpError("Candidate profile not found", 404));
+          return;
+        }
+
+        let extractedFields;
+        try {
+          const text = await resumeTextReader(file.buffer, extension);
+          extractedFields = extractResumeProfile(text);
+        } catch {
+          next(createHttpError("The resume could not be read. Please try a text-based PDF or DOCX file.", 422));
+          return;
+        }
+
+        let resumeId: string;
+        try {
+          resumeId = await resumeStorage.upload(userId, file, extension);
+        } catch (error) {
+          if (error instanceof Error && error.message.startsWith("Missing required environment variable: RESUME_S3_")) {
+            next(createHttpError("Resume storage is not configured", 503));
+            return;
+          }
+          next(error);
+          return;
+        }
+        const resumeUrl = `/api/candidates/profile/resume/${resumeId}`;
+
+        await database
+          .update(candidateProfiles)
+          .set({ resumeUrl, updatedAt: new Date() })
+          .where(eq(candidateProfiles.userId, userId));
+
+        res.status(200).json({ resumeUrl, extractedFields });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  router.get(
+    "/candidates/profile/resume/:resumeId",
+    authenticate,
+    authorize("candidate"),
+    async (req, res, next) => {
+      const resumeId = req.params.resumeId;
+      if (typeof resumeId !== "string" || !/^[0-9a-f-]{36}\.(?:pdf|docx)$/i.test(resumeId)) {
+        next(createHttpError("Resume not found", 404));
+        return;
+      }
+
+      try {
+        const userId = getUserId(req);
+        const [candidate] = await database
+          .select({ resumeUrl: candidateProfiles.resumeUrl })
+          .from(candidateProfiles)
+          .where(eq(candidateProfiles.userId, userId))
+          .limit(1);
+        if (!candidate || candidate.resumeUrl !== `/api/candidates/profile/resume/${resumeId}`) {
+          next(createHttpError("Resume not found", 404));
+          return;
+        }
+
+        const resume = await resumeStorage.download(userId, resumeId);
+        res
+          .status(200)
+          .set("Content-Type", resume.contentType)
+          .set("Content-Disposition", `attachment; filename="${resumeId}"`)
+          .set("X-Content-Type-Options", "nosniff")
+          .send(Buffer.from(resume.body));
+      } catch (error) {
+        next(error);
       }
     },
   );

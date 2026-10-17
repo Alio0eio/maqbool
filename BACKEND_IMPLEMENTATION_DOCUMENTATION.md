@@ -861,6 +861,62 @@ with typecheck/build, while route behavior and schema validation are covered
 by the API server tests. An authenticated browser smoke test still requires a
 running backend with a configured database and candidate account.
 
+### 3.24 Candidate application resume source
+
+The apply page now reads the authenticated candidate's profile using the
+existing `GET /api/candidates/profile` API and shows that profile's saved
+resume. A missing profile or resume blocks the flow and directs the candidate
+to their profile. An invalid saved URL is surfaced before continuing.
+
+The review step submits to the existing `POST /api/jobs/:id/apply` endpoint
+using cookie authentication. The browser sends only the optional cover letter:
+it does not submit a candidate ID or resume URL. The endpoint loads the
+candidate profile by the authenticated session's user ID and copies its latest
+resume URL into the application, preventing stale frontend values and
+cross-candidate resume selection. The route rejects missing, blank, malformed,
+or non-HTTP(S) resume references with `422` before inserting an application.
+No database/API schema changes were needed; duplicate checks, applied status
+and stage, and cover-letter storage remain on the existing code path.
+
+Focused route tests verify application resume selection from the profile,
+updated profile resume selection on a later submission, rejection of
+client-provided resume URLs, and rejection of missing/invalid profile
+references. Job-detail/job-list integration remains outside this change.
+
+### 3.25 Candidate resume upload and profile import
+
+The candidate profile page now opens a browser file picker from its **Upload
+resume** / **Update resume** control. It accepts PDF and DOCX files up to 5MB
+and posts multipart data to `POST /api/candidates/profile/resume`. The route
+requires a candidate session, validates the file extension and file signature,
+extracts text from the document, stores the original file in the candidate's
+private S3-compatible object key, and persists a protected download path in
+`candidate_profiles.resume_url`.
+
+The API parser extracts supported fields from explicit resume sections:
+phone, location, education, experience, skills, summary, and years of
+experience. The profile page displays the suggestions and only writes them
+after the candidate chooses **Fill profile with these details**; this uses the
+existing `PUT /api/candidates/profile` validation and update path. Fields not
+recognized in the document are left unchanged. Scanned/image-only resumes
+need OCR and are not currently parsed.
+
+`GET /api/candidates/profile/resume/:resumeId` authenticates the candidate,
+checks that the requested resume ID matches that candidate profile's current
+resume, then reads from private object storage. Objects are partitioned by
+candidate ID in storage, and the random resume ID is used in the protected API
+path rather than exposing an object-store URL. No database migration was
+needed. Configure `RESUME_S3_BUCKET`, `RESUME_S3_ACCESS_KEY_ID`, and
+`RESUME_S3_SECRET_ACCESS_KEY`; `RESUME_S3_ENDPOINT` is optional for compatible
+providers and `RESUME_S3_REGION` defaults to `us-east-1`. Credentials must only
+be set on the API server, never in frontend environment variables.
+
+Focused route tests cover authenticated uploads, file validation, candidate-
+only access, protected downloads, and extracted profile fields. The tests use
+an in-memory database and mock object storage/text extraction; a live upload
+smoke test requires configured S3-compatible credentials and a running
+authenticated API.
+
 Verification for this change: frontend and API-server TypeScript checks passed;
 the focused API-Zod TypeScript check passed; all 8 focused candidate route and
 schema tests passed; and the frontend production build passed. Vite emitted
