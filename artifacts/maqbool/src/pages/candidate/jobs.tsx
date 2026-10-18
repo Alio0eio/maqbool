@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { MOCK_JOBS } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { ApiError } from "@workspace/api-client-react";
 import { JobCard } from "@/components/shared/job-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
@@ -8,23 +9,40 @@ import { Input } from "@workspace/design-system/input";
 import { Search, MapPin, Briefcase, Sparkles } from "lucide-react";
 import { cn } from "@workspace/design-system/utils";
 import { StaggerGroup, StaggerItem } from "@/components/shared/stagger";
+import { getCandidateJobs } from "@/lib/candidate-jobs-api";
 
 const SUGGESTED_SEARCHES = ["Product Design", "Frontend", "React", "Remote"];
 const WORK_TYPES = [
   { value: "remote", label: "Remote" },
   { value: "hybrid", label: "Hybrid" },
-  { value: "on_site", label: "On-site" },
+  { value: "onsite", label: "On-site" },
 ];
+
+function getApiErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    const data = error.data;
+    if (data && typeof data === "object") {
+      const body = data as { error?: { message?: unknown }; message?: unknown };
+      if (typeof body.error?.message === "string") return body.error.message;
+      if (typeof body.message === "string") return body.message;
+    }
+  }
+
+  return error instanceof Error ? error.message : "The request failed. Please try again.";
+}
 
 export default function CandidateJobs() {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationTerm, setLocationTerm] = useState("");
   const [workType, setWorkType] = useState<string | null>(null);
+  const jobsQuery = useQuery({
+    queryKey: ["jobs"],
+    queryFn: ({ signal }) => getCandidateJobs(signal),
+  });
 
-  // Exclude drafts/closed for candidates
-  const publishedJobs = MOCK_JOBS.filter(job => job.status === "published");
+  const jobs = jobsQuery.data?.jobs ?? [];
 
-  const filteredJobs = publishedJobs.filter(job => {
+  const filteredJobs = jobs.filter(job => {
     const matchesQuery =
       searchTerm.trim() === "" ||
       job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -50,7 +68,11 @@ export default function CandidateJobs() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto">
       <PageHeader
         title="Find Jobs"
-        eyebrow={`${publishedJobs.length} open role${publishedJobs.length === 1 ? "" : "s"}`}
+        eyebrow={
+          jobsQuery.data
+            ? `${jobsQuery.data.pagination.total} open role${jobsQuery.data.pagination.total === 1 ? "" : "s"}`
+            : "Discover open roles"
+        }
         description="Discover opportunities matched to your skills and experience."
       />
 
@@ -124,8 +146,15 @@ export default function CandidateJobs() {
           <p className="text-muted-foreground text-[13px] flex items-center gap-1.5 mt-1">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
             <span aria-live="polite">
-              {filteredJobs.length} match{filteredJobs.length === 1 ? "" : "es"}{hasFilters ? "" : " based on your profile and experience"}
-            </span>
+                {jobsQuery.data
+                  ? `${filteredJobs.length} match${filteredJobs.length === 1 ? "" : "es"}${hasFilters ? "" : " based on your profile and experience"}`
+                  : jobsQuery.isPending
+                  ? "Loading job matches…"
+                  : "Job matches unavailable"}
+              </span>
+            {jobsQuery.isFetching && jobsQuery.data && (
+              <span className="ml-1" role="status">Refreshing job listings…</span>
+            )}
           </p>
         </div>
         <div className="flex flex-wrap gap-2" role="group" aria-label="Work type">
@@ -148,23 +177,72 @@ export default function CandidateJobs() {
         </div>
       </div>
 
-      {filteredJobs.length > 0 ? (
-        <StaggerGroup key={`${searchTerm}-${locationTerm}-${workType}`} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredJobs.map(job => (
-            <StaggerItem key={job.id}>
-              <JobCard job={job} variant="candidate" />
-            </StaggerItem>
+      {jobsQuery.isError && !jobsQuery.data ? (
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/[0.04] p-6 text-center">
+          <p className="text-sm text-destructive" role="alert">
+            We couldn’t load job listings. {getApiErrorMessage(jobsQuery.error)}
+          </p>
+          <Button
+            variant="outline"
+            className="mt-4"
+            onClick={() => void jobsQuery.refetch()}
+            disabled={jobsQuery.isFetching}
+          >
+            Try again
+          </Button>
+        </div>
+      ) : jobsQuery.isPending ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="status" aria-label="Loading job listings">
+          {Array.from({ length: 4 }, (_, index) => (
+            <div key={index} className="h-64 rounded-2xl border border-border bg-white/70 p-5">
+              <div className="h-12 w-12 animate-pulse rounded-xl bg-muted" />
+              <div className="mt-5 h-4 w-2/3 animate-pulse rounded bg-muted" />
+              <div className="mt-3 h-3 w-1/2 animate-pulse rounded bg-muted" />
+              <div className="mt-8 h-3 w-full animate-pulse rounded bg-muted" />
+              <div className="mt-3 h-3 w-4/5 animate-pulse rounded bg-muted" />
+            </div>
           ))}
-        </StaggerGroup>
+        </div>
       ) : (
-        <EmptyState
-          icon={Briefcase}
-          title="No opportunities found"
-          description="Try broadening your search criteria or explore other categories."
-          action={
-            <Button variant="outline" onClick={clearFilters}>Clear search</Button>
-          }
-        />
+        <>
+          {jobsQuery.isError && (
+            <p className="text-sm text-destructive" role="alert">
+              We couldn’t refresh job listings. Showing the last loaded results. {getApiErrorMessage(jobsQuery.error)}
+              <Button
+                variant="link"
+                className="ml-1 h-auto p-0"
+                onClick={() => void jobsQuery.refetch()}
+                disabled={jobsQuery.isFetching}
+              >
+                Retry
+              </Button>
+            </p>
+          )}
+          {jobs.length === 0 ? (
+            <EmptyState
+              icon={Briefcase}
+              title="No open roles yet"
+              description="There are no published opportunities available right now. Please check back soon."
+            />
+          ) : filteredJobs.length > 0 ? (
+            <StaggerGroup key={`${searchTerm}-${locationTerm}-${workType}`} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredJobs.map(job => (
+                <StaggerItem key={job.id}>
+                  <JobCard job={job} variant="candidate" />
+                </StaggerItem>
+              ))}
+            </StaggerGroup>
+          ) : (
+            <EmptyState
+              icon={Briefcase}
+              title="No opportunities found"
+              description="Try broadening your search criteria or explore other categories."
+              action={
+                <Button variant="outline" onClick={clearFilters}>Clear search</Button>
+              }
+            />
+          )}
+        </>
       )}
     </div>
   );

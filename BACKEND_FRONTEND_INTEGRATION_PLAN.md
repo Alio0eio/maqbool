@@ -246,7 +246,7 @@ the saved profile resume.
 
 ### Phase 3: Job discovery and job details
 
-1. Replace `MOCK_JOBS` in candidate jobs with React Query data from
+1. [x] Replace `MOCK_JOBS` in candidate jobs with React Query data from
    `GET /api/jobs`.
 2. Translate search controls into supported query parameters: pagination,
    company, job type, location type, experience level, salary range, skills,
@@ -265,6 +265,18 @@ the saved profile resume.
 
 **Exit check:** published jobs only are shown, job views increment through the
 backend detail request, and saving/unsaving survives reload.
+
+**Progress update (2026-10-19)**: Candidate job discovery now uses the existing
+React Query provider and authenticated API client to load
+`GET /api/jobs?page=N&limit=100`. The endpoint returns `{ jobs, pagination }`;
+each job has a flat `company` name and nullable `companyLogoUrl`, salary, and
+posted-date fields. Its published-only response is read across all pages so
+the existing client-side title/company/skills, location, and work-type search
+continues to cover the complete result set; the endpoint's `total` remains the
+open-role count. The page now distinguishes initial loading, request errors
+with retry, a truly empty result, and filters with no matches. A failed
+background refetch keeps the existing cards visible. Job details and save-job
+integration remain separate work in this phase.
 
 ### Phase 4: Application submission
 
