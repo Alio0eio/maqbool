@@ -885,44 +885,67 @@ references. Job-detail/job-list integration remains outside this change.
 
 ### 3.25 Candidate resume upload and profile import
 
-The candidate profile page now opens a browser file picker from its **Upload
+The candidate profile page opens a browser file picker from its **Upload
 resume** / **Update resume** control. It accepts PDF and DOCX files up to 5MB
-and posts multipart data to `POST /api/candidates/profile/resume`. The route
-requires a candidate session, validates the file extension and file signature,
-extracts text from the document, stores the original file in the candidate's
-private S3-compatible object key, and persists a protected download path in
-`candidate_profiles.resume_url`.
+and sends multipart data to the authenticated
+`POST /api/candidates/parse-cv` endpoint. The prior
+`POST /api/candidates/profile/resume` endpoint remains supported by the same
+handler. Both require the candidate role, validate the file extension and
+signature, extract document text, store the original file using the existing
+private S3-compatible storage, and update only the profile's protected
+`resumeUrl`.
 
-The API parser extracts supported fields from explicit resume sections:
-phone, location, education, experience, skills, summary, and years of
-experience. The profile page displays the suggestions and only writes them
-after the candidate chooses **Fill profile with these details**; this uses the
-existing `PUT /api/candidates/profile` validation and update path. Fields not
-recognized in the document are left unchanged. Scanned/image-only resumes
-need OCR and are not currently parsed.
+Parsed suggestions are restricted to fields displayed on the candidate
+profile page and accepted by its existing profile update contract:
+`headline`, `location`, `education`, `experience`, `skills` (`string[]`),
+`summary`, `yearsOfExperience`, `availability`, `portfolioUrl`, `linkedinUrl`,
+and `githubUrl`. The profile GET response names the years field `yearsOfExp`;
+the update and parse shapes use `yearsOfExperience`. Authenticated-user
+`name`, `email`, and `avatarUrl` are not parsed. Neither `phone` (not displayed
+on this page) nor database-only fields such as `address` and
+`salaryExpectation` are included.
+
+The endpoint returns the suggestions separately from `resumeUrl`; it does not
+write parsed profile fields. The profile page presents editable inputs for
+every returned value, shows existing values when a suggestion conflicts, and
+submits only the reviewed suggestions through the existing
+`PUT /api/candidates/profile` endpoint after candidate confirmation. Missing
+fields are omitted from that update and remain unchanged. The resume URL
+continues to point to the stored document and remains the source used by job
+applications. Scanned/image-only resumes need OCR and are not currently
+parsed.
+
+The API already includes `pdf-parse` and `mammoth` for local extraction and
+has no AI provider integration. This implementation adds no AI dependency or
+key; a future AI-backed extractor would need a backend-only provider client
+and server-side API key.
 
 `GET /api/candidates/profile/resume/:resumeId` authenticates the candidate,
 checks that the requested resume ID matches that candidate profile's current
-resume, then reads from private object storage. Objects are partitioned by
-candidate ID in storage, and the random resume ID is used in the protected API
-path rather than exposing an object-store URL. No database migration was
-needed. Configure `RESUME_S3_BUCKET`, `RESUME_S3_ACCESS_KEY_ID`, and
+resume, then reads from private storage. In development, the API stores files
+under `.local-data/candidate-resumes` relative to the API server working
+directory (or `RESUME_STORAGE_DIR`) and partitions them by candidate ID. In production, it uses S3-compatible object storage and
+requires `RESUME_S3_BUCKET`, `RESUME_S3_ACCESS_KEY_ID`, and
 `RESUME_S3_SECRET_ACCESS_KEY`; `RESUME_S3_ENDPOINT` is optional for compatible
 providers and `RESUME_S3_REGION` defaults to `us-east-1`. Credentials must only
-be set on the API server, never in frontend environment variables.
+be set on the API server, never in frontend environment variables. Resume
+downloads remain authenticated and owner-checked; no object-store URL is
+exposed and no database migration is needed.
 
-Focused route tests cover authenticated uploads, file validation, candidate-
-only access, protected downloads, and extracted profile fields. The tests use
-an in-memory database and mock object storage/text extraction; a live upload
-smoke test requires configured S3-compatible credentials and a running
-authenticated API.
+Route tests cover PDF and DOCX signature validation, candidate authentication,
+protected downloads, exact field mapping, preservation of missing values,
+reviewed profile updates/refetch, and empty extraction. They use an in-memory
+database, mock storage, and an injected text reader; a live upload smoke test
+still requires configured S3-compatible credentials and an authenticated API.
+The frontend package has no React component test runner configured, so review
+control behavior is validated by workspace typechecking and the production
+build rather than a browser component test.
 
-Verification for this change: frontend and API-server TypeScript checks passed;
-the focused API-Zod TypeScript check passed; all 8 focused candidate route and
-schema tests passed; and the frontend production build passed. Vite emitted
-existing sourcemap-resolution notices and a large-chunk warning. The test
-harness exercises API routes with an in-memory fake database, so it does not
-replace an authenticated browser smoke test against a running backend.
+Verification for this change: all 73 API-server tests passed, workspace
+typechecking passed, and the API-server and candidate frontend production
+builds passed. Vite emitted existing sourcemap-resolution notices and a
+large-chunk warning. The full workspace build remains blocked by the unrelated
+mockup-sandbox build's required `PORT` and `BASE_PATH` environment variables.
 
 ## 4. Completion Boundary Through Phase 4.3.4
 

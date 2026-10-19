@@ -41,9 +41,11 @@ export interface CandidateProfileInput {
   availability?: string | null;
 }
 
+export type CandidateCvProfileInput = Omit<CandidateProfileInput, 'phone'>;
+
 export interface ResumeImportResult {
   resumeUrl: string;
-  extractedFields: CandidateProfileInput;
+  extractedFields: CandidateCvProfileInput;
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -70,10 +72,10 @@ export function updateCandidateProfile(input: CandidateProfileInput): Promise<Ca
   });
 }
 
-export function uploadCandidateResume(file: File): Promise<ResumeImportResult> {
+export function parseCandidateCv(file: File): Promise<ResumeImportResult> {
   const formData = new FormData();
   formData.set('resume', file);
-  return request<ResumeImportResult>('/candidates/profile/resume', {
+  return request<ResumeImportResult>('/candidates/parse-cv', {
     method: 'POST',
     body: formData,
   });

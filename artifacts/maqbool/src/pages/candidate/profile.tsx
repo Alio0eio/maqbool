@@ -15,12 +15,15 @@ import {
   createCandidateProfile,
   getCandidateResumeHref,
   getCandidateProfile,
-  uploadCandidateResume,
+  parseCandidateCv,
   updateCandidateProfile,
+  type CandidateCvProfileInput,
   type CandidateProfile,
   type CandidateProfileInput,
 } from '@/lib/candidate-profile-api';
 import { BriefcaseBusiness, CalendarDays, Check, FileText, Mail, MapPin, Pencil, UploadCloud, X } from 'lucide-react';
+
+type TextCandidateProfileField = Exclude<keyof CandidateCvProfileInput, 'skills' | 'yearsOfExperience'>;
 
 function getApiErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
@@ -33,6 +36,10 @@ function getApiErrorMessage(error: unknown): string {
   }
 
   return error instanceof Error ? error.message : 'The request failed. Please try again.';
+}
+
+function formatProfileValue(value: string | number | string[] | null | undefined): string {
+  return Array.isArray(value) ? value.join(', ') : value == null ? '' : String(value);
 }
 
 function ProfileLink({ label, href }: { label: string; href?: string | null }) {
@@ -61,7 +68,7 @@ export default function CandidateProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [headlineDraft, setHeadlineDraft] = useState('');
   const [summaryDraft, setSummaryDraft] = useState('');
-  const [resumeSuggestions, setResumeSuggestions] = useState<CandidateProfileInput | null>(null);
+  const [resumeSuggestions, setResumeSuggestions] = useState<CandidateCvProfileInput | null>(null);
   const [resumeFileError, setResumeFileError] = useState<string | null>(null);
   const resumeInputRef = useRef<HTMLInputElement>(null);
   const profileQueryKey = ['candidate-profile', user?.id];
@@ -89,7 +96,7 @@ export default function CandidateProfilePage() {
   });
 
   const resumeImportMutation = useMutation({
-    mutationFn: uploadCandidateResume,
+    mutationFn: parseCandidateCv,
     onSuccess: ({ resumeUrl, extractedFields }) => {
       queryClient.setQueryData<CandidateProfile>(profileQueryKey, (current) =>
         current ? { ...current, resumeUrl } : current,
@@ -215,17 +222,67 @@ export default function CandidateProfilePage() {
     });
   }
 
-  const extractedSuggestionRows = resumeSuggestions
-    ? [
-        ['Phone', resumeSuggestions.phone],
-        ['Location', resumeSuggestions.location],
-        ['Education', resumeSuggestions.education],
-        ['Experience', resumeSuggestions.experience],
-        ['Skills', resumeSuggestions.skills?.join(', ')],
-        ['Summary', resumeSuggestions.summary],
-        ['Years of experience', resumeSuggestions.yearsOfExperience],
-      ].filter(([, value]) => value !== undefined && value !== null && value !== '')
-    : [];
+  function renderTextSuggestion(
+    field: TextCandidateProfileField,
+    label: string,
+    currentValue: string | null | undefined,
+    multiline = false,
+  ) {
+    const suggestedValue = resumeSuggestions?.[field];
+    if (suggestedValue === undefined) return null;
+
+    const currentText = formatProfileValue(currentValue);
+    const suggestionText = formatProfileValue(suggestedValue);
+    return (
+      <label key={field} className="block min-w-0 text-sm">
+        <span className="text-xs font-medium text-muted-foreground">{label}</span>
+        {multiline ? (
+          <Textarea
+            value={suggestionText}
+            onChange={(event) => {
+              const value = event.target.value;
+              setResumeSuggestions((current) =>
+                current
+                  ? {
+                      ...current,
+                      [field]:
+                        value === '' && (field === 'headline' || field.endsWith('Url'))
+                          ? null
+                          : value,
+                    }
+                  : current,
+              );
+            }}
+            className="mt-1 min-h-24"
+          />
+        ) : (
+          <Input
+            value={suggestionText}
+            onChange={(event) => {
+              const value = event.target.value;
+              setResumeSuggestions((current) =>
+                current
+                  ? {
+                      ...current,
+                      [field]:
+                        value === '' && (field === 'headline' || field.endsWith('Url'))
+                          ? null
+                          : value,
+                    }
+                  : current,
+              );
+            }}
+            className="mt-1"
+          />
+        )}
+        {currentText && currentText !== suggestionText && (
+          <span className="mt-1 block text-xs text-muted-foreground">
+            Current profile value: {currentText}
+          </span>
+        )}
+      </label>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-5xl animate-in space-y-6 fade-in slide-in-from-bottom-4 pb-20 duration-500">
@@ -373,28 +430,100 @@ export default function CandidateProfilePage() {
         )}
         {resumeSuggestions && (
           <CardContent className="border-t border-border/60 p-6">
-            {extractedSuggestionRows.length ? (
+            {Object.keys(resumeSuggestions).length ? (
               <>
                 <h4 className="font-semibold text-foreground">Resume details found</h4>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Review the extracted information, then add it to your profile.
+                  Review and edit these suggestions. Existing profile values are shown when a suggestion differs; nothing is saved until you confirm.
                 </p>
-                <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-                  {extractedSuggestionRows.map(([label, value]) => (
-                    <div key={label} className="min-w-0">
-                      <dt className="text-xs font-medium text-muted-foreground">{label}</dt>
-                      <dd className="mt-1 whitespace-pre-wrap break-words text-sm text-foreground">
-                        {String(value)}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  {renderTextSuggestion('headline', 'Headline', profile.headline)}
+                  {renderTextSuggestion('location', 'Location', profile.location)}
+                  {resumeSuggestions.yearsOfExperience !== undefined && (
+                    <label className="block min-w-0 text-sm">
+                      <span className="text-xs font-medium text-muted-foreground">Years of experience</span>
+                      <Input
+                        type="number"
+                        min={0}
+                        max={100}
+                        step={1}
+                        value={resumeSuggestions.yearsOfExperience ?? ''}
+                        onChange={(event) =>
+                          setResumeSuggestions((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  yearsOfExperience:
+                                    event.target.value === '' ? null : Number(event.target.value),
+                                }
+                              : current,
+                          )
+                        }
+                        className="mt-1"
+                      />
+                      {profile.yearsOfExp != null &&
+                        profile.yearsOfExp !== resumeSuggestions.yearsOfExperience && (
+                          <span className="mt-1 block text-xs text-muted-foreground">
+                            Current profile value: {profile.yearsOfExp}
+                          </span>
+                        )}
+                    </label>
+                  )}
+                  {renderTextSuggestion('availability', 'Availability', profile.availability)}
+                  {renderTextSuggestion('summary', 'Summary', profile.summary, true)}
+                  {renderTextSuggestion('experience', 'Experience', profile.experience, true)}
+                  {renderTextSuggestion('education', 'Education', profile.education, true)}
+                  {resumeSuggestions.skills !== undefined && (
+                    <label className="block min-w-0 text-sm">
+                      <span className="text-xs font-medium text-muted-foreground">Skills</span>
+                      <Input
+                        value={resumeSuggestions.skills.join(', ')}
+                        onChange={(event) =>
+                          setResumeSuggestions((current) =>
+                            current
+                              ? {
+                                  ...current,
+                                  skills: event.target.value
+                                    .split(',')
+                                    .map((skill) => skill.trim())
+                                    .filter(Boolean),
+                                }
+                              : current,
+                          )
+                        }
+                        className="mt-1"
+                      />
+                      {resumeSuggestions.skills.length === 0 && (
+                        <span className="mt-1 block text-xs text-destructive" role="alert">
+                          Enter at least one skill to apply these suggestions.
+                        </span>
+                      )}
+                      {profile.skills?.length &&
+                        formatProfileValue(profile.skills) !== formatProfileValue(resumeSuggestions.skills) && (
+                          <span className="mt-1 block text-xs text-muted-foreground">
+                            Current profile value: {profile.skills.join(', ')}
+                          </span>
+                        )}
+                    </label>
+                  )}
+                  {renderTextSuggestion('portfolioUrl', 'Portfolio URL', profile.portfolioUrl)}
+                  {renderTextSuggestion('linkedinUrl', 'LinkedIn URL', profile.linkedinUrl)}
+                  {renderTextSuggestion('githubUrl', 'GitHub URL', profile.githubUrl)}
+                </div>
                 <Button
                   className="mt-5"
                   onClick={applyResumeSuggestions}
+                  disabled={updateMutation.isPending || resumeSuggestions.skills?.length === 0}
+                >
+                  {updateMutation.isPending ? 'Updating profile…' : 'Apply reviewed details'}
+                </Button>
+                <Button
+                  className="ml-2 mt-5"
+                  variant="outline"
+                  onClick={() => setResumeSuggestions(null)}
                   disabled={updateMutation.isPending}
                 >
-                  {updateMutation.isPending ? 'Updating profile…' : 'Fill profile with these details'}
+                  Discard suggestions
                 </Button>
               </>
             ) : (

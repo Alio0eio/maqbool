@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm } from "node:fs/promises";
 import { once } from "node:events";
 import http from "node:http";
+import os from "node:os";
+import path from "node:path";
+import { Readable } from "node:stream";
 import express from "express";
 import { afterEach, describe, it } from "node:test";
 import type { ResumeStorage } from "./lib/resume-storage";
@@ -15,6 +19,7 @@ const { createCandidatesRouter } = await import("./routes/candidates");
 const { errorHandler } = await import("./middlewares/error");
 const { generateAccessToken } = await import("./lib/auth");
 const { extractResumeProfile } = await import("./lib/resume-import");
+const { createLocalResumeStorage } = await import("./lib/resume-storage");
 
 type TestUser = {
   id: number;
@@ -297,15 +302,51 @@ describe("candidate profile management", () => {
 });
 
 describe("candidate resume import", () => {
+  it("stores local resumes privately per candidate and rejects invalid or cross-candidate reads", async () => {
+    const storageDirectory = await mkdtemp(path.join(os.tmpdir(), "candidate-resume-storage-"));
+    const storage = createLocalResumeStorage(storageDirectory);
+    const file = {
+      fieldname: "resume",
+      originalname: "candidate.pdf",
+      encoding: "7bit",
+      mimetype: "application/pdf",
+      size: 10,
+      buffer: Buffer.from("%PDF-test"),
+      destination: "",
+      filename: "",
+      path: "",
+      stream: Readable.from([]),
+    };
+
+    try {
+      const resumeId = await storage.upload(candidate.id, file, ".pdf");
+      const downloaded = await storage.download(candidate.id, resumeId);
+      assert.deepEqual(downloaded.body, new Uint8Array(file.buffer));
+      assert.equal(downloaded.contentType, "application/pdf");
+      await assert.rejects(
+        storage.download(recruiter.id, resumeId),
+        (error: unknown) => error instanceof Error && "statusCode" in error && error.statusCode === 404,
+      );
+      await assert.rejects(
+        storage.download(candidate.id, "..\\other-candidate\\resume.pdf"),
+        (error: unknown) => error instanceof Error && "statusCode" in error && error.statusCode === 404,
+      );
+    } finally {
+      await rm(storageDirectory, { recursive: true, force: true });
+    }
+  });
+
   it("stores the authenticated candidate's resume and extracts profile fields", async () => {
     const profile: TestProfile = {
       id: 11,
       userId: candidate.id,
       phone: null,
-      location: null,
+      headline: "Existing headline",
+      location: "Existing location",
       education: null,
       experience: null,
       skills: [],
+      summary: "Existing summary",
       resumeUrl: null,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -324,7 +365,7 @@ describe("candidate resume import", () => {
       },
     };
     const reader: ResumeTextReader = async () =>
-      "Phone: +1 555 222 3333\nLocation: Cairo, Egypt\n5 years experience\nSUMMARY\nExperienced engineer\nEXPERIENCE\nBuilt APIs\nEDUCATION\nBSc Computer Science\nSKILLS\nTypeScript, PostgreSQL";
+      "Headline: Senior Backend Engineer\nLocation: Cairo, Egypt\nAvailability: Immediately\nPortfolio: https://example.com/portfolio\nLinkedIn: https://linkedin.com/in/candidate\nGitHub: https://github.com/candidate\n5 years experience\nSUMMARY\nExperienced engineer\nEXPERIENCE\nBuilt APIs\nEDUCATION\nBSc Computer Science\nSKILLS\nTypeScript, PostgreSQL";
     const testServer = await createTestServer([candidate], [profile], storage, reader);
     servers.push(testServer.server);
     const formData = new FormData();
@@ -344,12 +385,47 @@ describe("candidate resume import", () => {
     assert.equal(storedUserId, candidate.id);
     assert.equal(body.resumeUrl, "/api/candidates/profile/resume/00000000-0000-0000-0000-000000000001.pdf");
     assert.equal(testServer.fake.storedProfiles[0].resumeUrl, body.resumeUrl);
-    assert.equal(body.extractedFields.phone, "+1 555 222 3333");
+    assert.equal(body.extractedFields.headline, "Senior Backend Engineer");
     assert.equal(body.extractedFields.location, "Cairo, Egypt");
+    assert.equal(body.extractedFields.availability, "Immediately");
     assert.equal(body.extractedFields.experience, "Built APIs");
     assert.equal(body.extractedFields.education, "BSc Computer Science");
+    assert.equal(body.extractedFields.summary, "Experienced engineer");
     assert.deepEqual(body.extractedFields.skills, ["TypeScript", "PostgreSQL"]);
     assert.equal(body.extractedFields.yearsOfExperience, 5);
+    assert.equal(body.extractedFields.portfolioUrl, "https://example.com/portfolio");
+    assert.equal(body.extractedFields.linkedinUrl, "https://linkedin.com/in/candidate");
+    assert.equal(body.extractedFields.githubUrl, "https://github.com/candidate");
+    assert.equal("phone" in body.extractedFields, false);
+    assert.equal("salaryExpectation" in body.extractedFields, false);
+    assert.equal("resumeUrl" in body.extractedFields, false);
+    assert.equal(testServer.fake.storedProfiles[0].headline, "Existing headline");
+    assert.equal(testServer.fake.storedProfiles[0].location, "Existing location");
+    assert.equal(testServer.fake.storedProfiles[0].summary, "Existing summary");
+
+    const reviewedFields = {
+      ...body.extractedFields,
+      headline: "Candidate-reviewed headline",
+      summary: "Candidate-reviewed summary",
+      skills: ["TypeScript", "PostgreSQL", "Node.js"],
+    };
+    const saveResponse = await request(
+      `${testServer.url}/candidates/profile`,
+      "PUT",
+      tokenFor(candidate),
+      reviewedFields,
+    );
+    assert.equal(saveResponse.status, 200);
+    const savedProfile = await request(
+      `${testServer.url}/candidates/profile`,
+      "GET",
+      tokenFor(candidate),
+    );
+    const savedBody = await savedProfile.json() as Record<string, unknown>;
+    assert.equal(savedBody.headline, reviewedFields.headline);
+    assert.equal(savedBody.summary, reviewedFields.summary);
+    assert.deepEqual(savedBody.skills, reviewedFields.skills);
+    assert.equal(savedBody.resumeUrl, body.resumeUrl);
 
     const downloadResponse = await fetch(`${testServer.url}${body.resumeUrl.replace(/^\/api/, "")}`, {
       headers: { authorization: `Bearer ${tokenFor(candidate)}` },
@@ -380,7 +456,7 @@ describe("candidate resume import", () => {
     };
     const testServer = await createTestServer([candidate, recruiter], [profile]);
     servers.push(testServer.server);
-    const url = `${testServer.url}/candidates/profile/resume`;
+    const url = `${testServer.url}/candidates/parse-cv`;
     const missingAuth = await fetch(url, { method: "POST" });
     assert.equal(missingAuth.status, 401);
 
@@ -400,11 +476,96 @@ describe("candidate resume import", () => {
     assert.equal(invalidResponse.status, 400);
   });
 
+  it("accepts DOCX files at POST /candidates/parse-cv and preserves missing profile values", async () => {
+    const profile: TestProfile = {
+      id: 12,
+      userId: candidate.id,
+      phone: "not parsed",
+      location: "Existing location",
+      education: null,
+      experience: null,
+      skills: [],
+      resumeUrl: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    let storedExtension: string | null = null;
+    const storage: ResumeStorage = {
+      async upload(_userId, _file, extension) {
+        storedExtension = extension;
+        return "00000000-0000-0000-0000-000000000002.docx";
+      },
+      async download() {
+        return { body: new Uint8Array(), contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
+      },
+    };
+    const reader: ResumeTextReader = async () => "SUMMARY\nA concise profile";
+    const testServer = await createTestServer([candidate], [profile], storage, reader);
+    servers.push(testServer.server);
+
+    const formData = new FormData();
+    formData.set(
+      "resume",
+      new Blob(["PK\u0003\u0004valid mocked docx"], {
+        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      }),
+      "resume.docx",
+    );
+    const response = await fetch(`${testServer.url}/candidates/parse-cv`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${tokenFor(candidate)}` },
+      body: formData,
+    });
+    const body = await response.json() as {
+      resumeUrl: string;
+      extractedFields: Record<string, unknown>;
+    };
+
+    assert.equal(response.status, 200);
+    assert.equal(storedExtension, ".docx");
+    assert.deepEqual(body.extractedFields, { summary: "A concise profile" });
+    assert.equal(testServer.fake.storedProfiles[0].location, "Existing location");
+    assert.equal(testServer.fake.storedProfiles[0].phone, "not parsed");
+    assert.equal(testServer.fake.storedProfiles[0].resumeUrl, body.resumeUrl);
+  });
+
+  it("rejects CV uploads with no extractable text", async () => {
+    const profile: TestProfile = {
+      id: 13,
+      userId: candidate.id,
+      phone: null,
+      location: null,
+      education: null,
+      experience: null,
+      skills: [],
+      resumeUrl: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    const testServer = await createTestServer(
+      [candidate],
+      [profile],
+      undefined,
+      async () => " \n ",
+    );
+    servers.push(testServer.server);
+    const formData = new FormData();
+    formData.set("resume", new Blob(["%PDF-empty"], { type: "application/pdf" }), "empty.pdf");
+    const response = await fetch(`${testServer.url}/candidates/parse-cv`, {
+      method: "POST",
+      headers: { authorization: `Bearer ${tokenFor(candidate)}` },
+      body: formData,
+    });
+
+    assert.equal(response.status, 422);
+    assert.equal(testServer.fake.storedProfiles[0].resumeUrl, null);
+  });
+
   it("extracts profile fields only from recognizable resume sections", () => {
     assert.deepEqual(extractResumeProfile(
-      "Phone: +1 555 222 3333\nSUMMARY\nEngineer\nEDUCATION\nBSc Computer Science\nSKILLS\nTypeScript, SQL",
+      "Phone: +1 555 222 3333\nHeadline: Engineer\nSUMMARY\nEngineer\nEDUCATION\nBSc Computer Science\nSKILLS\nTypeScript, SQL",
     ), {
-      phone: "+1 555 222 3333",
+      headline: "Engineer",
       summary: "Engineer",
       education: "BSc Computer Science",
       skills: ["TypeScript", "SQL"],

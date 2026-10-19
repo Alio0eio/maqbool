@@ -3,6 +3,7 @@ import {
   createCandidateProfileRequestSchema,
   getApplicationParamsSchema,
   listCandidateApplicationsQuerySchema,
+  parsedCandidateProfileSchema,
   updateCandidateProfileRequestSchema,
 } from "@workspace/api-zod/candidates";
 import { applications, candidateProfiles, companies, db, interviews, jobs, savedJobs, users } from "@workspace/db";
@@ -11,7 +12,7 @@ import { listJobsQuerySchema } from "@workspace/api-zod/jobs";
 import { authenticate, authorize } from "../middlewares/auth";
 import multer from "multer";
 import { extractResumeProfile, readResumeText, type ResumeTextReader } from "../lib/resume-import";
-import { createS3ResumeStorage, type ResumeStorage } from "../lib/resume-storage";
+import { createResumeStorage, type ResumeStorage } from "../lib/resume-storage";
 
 type HttpError = Error & { statusCode: number };
 
@@ -109,7 +110,7 @@ const resumeUploadMiddleware: RequestHandler = (req, res, next) => {
 
 export function createCandidatesRouter(
   database: typeof db = db,
-  resumeStorage: ResumeStorage = createS3ResumeStorage(),
+  resumeStorage: ResumeStorage = createResumeStorage(),
   resumeTextReader: ResumeTextReader = readResumeText,
 ): IRouter {
   const router: IRouter = Router();
@@ -190,7 +191,7 @@ export function createCandidatesRouter(
   );
 
   router.post(
-    "/candidates/profile/resume",
+    ["/candidates/profile/resume", "/candidates/parse-cv"],
     authenticate,
     authorize("candidate"),
     resumeUploadMiddleware,
@@ -229,7 +230,17 @@ export function createCandidatesRouter(
         let extractedFields;
         try {
           const text = await resumeTextReader(file.buffer, extension);
+          if (!text.trim()) {
+            next(createHttpError("The resume does not contain readable text.", 422));
+            return;
+          }
           extractedFields = extractResumeProfile(text);
+          const validatedFields = parsedCandidateProfileSchema.safeParse(extractedFields);
+          if (!validatedFields.success) {
+            next(createHttpError("The resume did not produce valid profile details.", 422));
+            return;
+          }
+          extractedFields = validatedFields.data;
         } catch {
           next(createHttpError("The resume could not be read. Please try a text-based PDF or DOCX file.", 422));
           return;

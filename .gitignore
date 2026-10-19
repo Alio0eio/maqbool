@@ -50,6 +50,7 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+**/.local-data/
 
 # design-sync
 .design-sync/sb-reference/

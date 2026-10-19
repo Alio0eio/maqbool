@@ -2,18 +2,24 @@ import mammoth from "mammoth";
 import pdfParse from "pdf-parse";
 
 export interface ExtractedResumeProfile {
-  phone?: string;
+  headline?: string;
   location?: string;
   education?: string;
   experience?: string;
   skills?: string[];
   summary?: string;
   yearsOfExperience?: number;
+  availability?: string;
+  portfolioUrl?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
 }
 
 export type ResumeTextReader = (buffer: Buffer, extension: ".pdf" | ".docx") => Promise<string>;
 
 const sectionHeadings = [
+  "headline",
+  "professional headline",
   "summary",
   "professional summary",
   "profile",
@@ -25,10 +31,24 @@ const sectionHeadings = [
   "education",
   "skills",
   "technical skills",
+  "portfolio",
+  "portfolio url",
+  "availability",
 ] as const;
 
 function normalizeText(value: string): string {
   return value.replace(/\r\n?/g, "\n").replace(/[ \t]+\n/g, "\n").trim();
+}
+
+function normalizeUrl(value: string | undefined): string | undefined {
+  const candidate = value?.match(/(?:https?:\/\/|www\.)[^\s<>()]+/i)?.[0].replace(/[),.;]+$/, "");
+  if (!candidate) return undefined;
+
+  try {
+    return new URL(candidate.startsWith("www.") ? `https://${candidate}` : candidate).toString();
+  } catch {
+    return undefined;
+  }
 }
 
 function extractSection(text: string, headings: readonly string[]): string | undefined {
@@ -57,13 +77,11 @@ export const readResumeText: ResumeTextReader = async (buffer, extension) => {
 
 export function extractResumeProfile(text: string): ExtractedResumeProfile {
   const profile: ExtractedResumeProfile = {};
-  const labeledPhone = text.match(/(?:phone|mobile|telephone|tel)\s*:\s*([+()\d][+()\d\s.-]{7,})/i);
-  const possiblePhone = text.split("\n").find((line) => {
-    const digitCount = (line.match(/\d/g) ?? []).length;
-    return digitCount >= 10 && digitCount <= 15;
-  });
-  const phone = labeledPhone?.[1] ?? possiblePhone;
-  const explicitLocation = text.match(/^\s*(?:location|based in|address)\s*:\s*(.+)$/im);
+  const headline =
+    text.match(/^\s*(?:professional\s+)?headline\s*:\s*(.+)$/im)?.[1] ??
+    extractSection(text, ["headline", "professional headline"]);
+  const explicitLocation = text.match(/^\s*(?:location|based in)\s*:\s*(.+)$/im);
+  const availability = text.match(/^\s*availability\s*:\s*(.+)$/im)?.[1];
   const years = text.match(/\b(\d{1,2})\+?\s+years?\s+(?:of\s+)?experience\b/i);
   const summary = extractSection(text, ["summary", "professional summary", "profile", "objective"]);
   const experience = extractSection(text, [
@@ -75,8 +93,9 @@ export function extractResumeProfile(text: string): ExtractedResumeProfile {
   const education = extractSection(text, ["education"]);
   const skillsText = extractSection(text, ["skills", "technical skills"]);
 
-  if (phone) profile.phone = phone.replace(/\s+/g, " ").trim().slice(0, 30);
+  if (headline) profile.headline = headline.trim().slice(0, 255);
   if (explicitLocation?.[1]) profile.location = explicitLocation[1].trim().slice(0, 255);
+  if (availability) profile.availability = availability.trim().slice(0, 100);
   if (years) profile.yearsOfExperience = Number(years[1]);
   if (summary) profile.summary = summary.slice(0, 4000);
   if (experience) profile.experience = experience.slice(0, 4000);
@@ -89,6 +108,25 @@ export function extractResumeProfile(text: string): ExtractedResumeProfile {
     const uniqueSkills = [...new Set(skills)].slice(0, 100);
     if (uniqueSkills.length > 0) profile.skills = uniqueSkills;
   }
+
+  const urls = [...text.matchAll(/(?:https?:\/\/|www\.)[^\s<>()]+/gi)]
+    .map(([value]) => normalizeUrl(value))
+    .filter((url): url is string => url !== undefined);
+  const linkedInUrl = urls.find((url) => {
+    const hostname = new URL(url).hostname.toLowerCase();
+    return hostname === "linkedin.com" || hostname.endsWith(".linkedin.com");
+  });
+  const githubUrl = urls.find((url) => {
+    const hostname = new URL(url).hostname.toLowerCase();
+    return hostname === "github.com" || hostname.endsWith(".github.com");
+  });
+  const portfolioContent =
+    text.match(/^\s*portfolio(?:\s+url)?\s*:\s*(.+)$/im)?.[1] ??
+    extractSection(text, ["portfolio", "portfolio url"]);
+  const portfolioUrl = normalizeUrl(portfolioContent);
+  if (portfolioUrl) profile.portfolioUrl = portfolioUrl;
+  if (linkedInUrl) profile.linkedinUrl = linkedInUrl;
+  if (githubUrl) profile.githubUrl = githubUrl;
 
   return profile;
 }
