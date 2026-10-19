@@ -1,9 +1,71 @@
 import { randomUUID } from "node:crypto";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { config } from "../config";
 
 export interface ResumeStorage {
   upload(userId: number, file: Express.Multer.File, extension: ".pdf" | ".docx"): Promise<string>;
   download(userId: number, resumeId: string): Promise<{ body: Uint8Array; contentType: string }>;
+}
+
+type StorageError = Error & { statusCode?: number };
+
+function createStorageError(message: string, statusCode: number): StorageError {
+  return Object.assign(new Error(message), { statusCode });
+}
+
+function getContentType(resumeId: string): string {
+  return resumeId.endsWith(".pdf")
+    ? "application/pdf"
+    : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+}
+
+function isResumeId(resumeId: string): boolean {
+  return /^[0-9a-f-]{36}\.(?:pdf|docx)$/i.test(resumeId);
+}
+
+export function createLocalResumeStorage(
+  storageDirectory = path.resolve(
+    process.cwd(),
+    process.env.RESUME_STORAGE_DIR?.trim() || ".local-data/candidate-resumes",
+  ),
+): ResumeStorage {
+  return {
+    async upload(userId, file, extension) {
+      if (!Number.isSafeInteger(userId) || userId <= 0) {
+        throw createStorageError("Invalid candidate ID", 400);
+      }
+
+      const resumeId = `${randomUUID()}${extension}`;
+      const candidateDirectory = path.join(storageDirectory, String(userId));
+      await mkdir(candidateDirectory, { recursive: true, mode: 0o700 });
+      await writeFile(path.join(candidateDirectory, resumeId), file.buffer, {
+        flag: "wx",
+        mode: 0o600,
+      });
+      return resumeId;
+    },
+    async download(userId, resumeId) {
+      if (!Number.isSafeInteger(userId) || userId <= 0 || !isResumeId(resumeId)) {
+        throw createStorageError("Resume not found", 404);
+      }
+
+      try {
+        const body = await readFile(path.join(storageDirectory, String(userId), resumeId));
+        return { body: new Uint8Array(body), contentType: getContentType(resumeId) };
+      } catch (error) {
+        if (typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT") {
+          throw createStorageError("Resume not found", 404);
+        }
+        throw error;
+      }
+    },
+  };
+}
+
+export function createResumeStorage(): ResumeStorage {
+  return config.isProduction ? createS3ResumeStorage() : createLocalResumeStorage();
 }
 
 function requiredSetting(name: string): string {

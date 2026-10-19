@@ -52,6 +52,20 @@ export const updateCandidateProfileRequestSchema = z
     message: "At least one candidate profile field is required",
   });
 
+export const parsedCandidateProfileSchema = z.object({
+  headline: candidateProfileFields.headline,
+  location: candidateProfileFields.location,
+  education: candidateProfileFields.education,
+  experience: candidateProfileFields.experience,
+  skills: candidateProfileFields.skills,
+  yearsOfExperience: candidateProfileFields.yearsOfExperience,
+  portfolioUrl: candidateProfileFields.portfolioUrl,
+  linkedinUrl: candidateProfileFields.linkedinUrl,
+  githubUrl: candidateProfileFields.githubUrl,
+  summary: candidateProfileFields.summary,
+  availability: candidateProfileFields.availability,
+}).strict();
+
 export const listCandidateApplicationsQuerySchema = z
   .object({
     status: z.enum(applicationStatuses).optional(),
@@ -74,6 +88,7 @@ export type CreateCandidateProfileRequest = z.infer<
 export type UpdateCandidateProfileRequest = z.infer<
   typeof updateCandidateProfileRequestSchema
 >;
+export type ParsedCandidateProfile = z.infer<typeof parsedCandidateProfileSchema>;
 export type ListCandidateApplicationsQuery = z.infer<
   typeof listCandidateApplicationsQuerySchema
 >;
