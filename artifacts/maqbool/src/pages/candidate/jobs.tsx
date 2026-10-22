@@ -9,7 +9,7 @@ import { Input } from "@workspace/design-system/input";
 import { Search, MapPin, Briefcase, Sparkles } from "lucide-react";
 import { cn } from "@workspace/design-system/utils";
 import { StaggerGroup, StaggerItem } from "@/components/shared/stagger";
-import { getCandidateJobs } from "@/lib/candidate-jobs-api";
+import { getCandidateJobs, type CandidateJobsQuery } from "@/lib/candidate-jobs-api";
 
 const SUGGESTED_SEARCHES = ["Product Design", "Frontend", "React", "Remote"];
 const WORK_TYPES = [
@@ -17,6 +17,13 @@ const WORK_TYPES = [
   { value: "hybrid", label: "Hybrid" },
   { value: "onsite", label: "On-site" },
 ];
+const JOB_TYPES = [
+  { value: "full_time", label: "Full-time" },
+  { value: "part_time", label: "Part-time" },
+  { value: "contract", label: "Contract" },
+  { value: "internship", label: "Internship" },
+] as const;
+const EXPERIENCE_LEVELS = ["Entry", "Mid", "Senior", "Lead", "Director"];
 
 function getApiErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
@@ -35,9 +42,35 @@ export default function CandidateJobs() {
   const [searchTerm, setSearchTerm] = useState("");
   const [locationTerm, setLocationTerm] = useState("");
   const [workType, setWorkType] = useState<string | null>(null);
+  const [companyId, setCompanyId] = useState("");
+  const [jobType, setJobType] = useState<CandidateJobsQuery["jobType"]>("");
+  const [experienceLevel, setExperienceLevel] = useState("");
+  const [minSalary, setMinSalary] = useState("");
+  const [maxSalary, setMaxSalary] = useState("");
+  const [skills, setSkills] = useState("");
+  const [sortBy, setSortBy] = useState<CandidateJobsQuery["sortBy"]>("postedAt");
+  const [sortOrder, setSortOrder] = useState<CandidateJobsQuery["sortOrder"]>("desc");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+
+  const query: CandidateJobsQuery = {
+    page,
+    limit,
+    companyId,
+    search: searchTerm,
+    location: locationTerm,
+    jobType,
+    locationType: (workType ?? "") as CandidateJobsQuery["locationType"],
+    experienceLevel,
+    minSalary,
+    maxSalary,
+    skills,
+    sortBy,
+    sortOrder,
+  };
   const jobsQuery = useQuery({
-    queryKey: ["jobs"],
-    queryFn: ({ signal }) => getCandidateJobs(signal),
+    queryKey: ["jobs", query, searchTerm, locationTerm],
+    queryFn: ({ signal }) => getCandidateJobs(query, signal),
   });
 
   const jobs = jobsQuery.data?.jobs ?? [];
@@ -56,12 +89,31 @@ export default function CandidateJobs() {
     return matchesQuery && matchesLocation && matchesWorkType;
   });
 
-  const hasFilters = searchTerm.trim() !== "" || locationTerm.trim() !== "" || workType !== null;
+  const hasFilters = Boolean(
+    searchTerm.trim() ||
+    locationTerm.trim() ||
+    workType ||
+    companyId ||
+    jobType ||
+    experienceLevel ||
+    minSalary ||
+    maxSalary ||
+    skills.trim(),
+  );
 
   const clearFilters = () => {
     setSearchTerm("");
     setLocationTerm("");
     setWorkType(null);
+    setCompanyId("");
+    setJobType("");
+    setExperienceLevel("");
+    setMinSalary("");
+    setMaxSalary("");
+    setSkills("");
+    setSortBy("postedAt");
+    setSortOrder("desc");
+    setPage(1);
   };
 
   return (
@@ -94,7 +146,10 @@ export default function CandidateJobs() {
                 placeholder="Job title, skills, or company"
                 className="w-full h-11 pl-11 border-transparent shadow-none rounded-full text-[14px] text-foreground focus-visible:ring-0 focus-visible:bg-muted/50"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setPage(1);
+                }}
               />
             </div>
             <div className="hidden md:block w-px bg-border my-2" aria-hidden />
@@ -105,7 +160,10 @@ export default function CandidateJobs() {
                 placeholder="Location or 'Remote'"
                 className="w-full h-11 pl-11 border-transparent shadow-none rounded-full text-[14px] text-foreground focus-visible:ring-0 focus-visible:bg-muted/50"
                 value={locationTerm}
-                onChange={(e) => setLocationTerm(e.target.value)}
+                onChange={(e) => {
+                  setLocationTerm(e.target.value);
+                  setPage(1);
+                }}
               />
             </div>
             <Button size="lg" className="h-11 px-8 rounded-full shrink-0">
@@ -119,7 +177,10 @@ export default function CandidateJobs() {
               <button
                 key={tag}
                 type="button"
-                onClick={() => setSearchTerm(tag)}
+                onClick={() => {
+                  setSearchTerm(tag);
+                  setPage(1);
+                }}
                 className={cn(
                   "rounded-full border px-3 py-1 transition-colors",
                   searchTerm === tag
@@ -133,6 +194,123 @@ export default function CandidateJobs() {
           </div>
         </div>
       </div>
+
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 rounded-2xl border border-border bg-white/70 p-4" aria-label="Job filters">
+        <label className="space-y-1 text-xs font-medium text-muted-foreground">
+          Company ID
+          <Input
+            aria-label="Company ID"
+            type="number"
+            min="1"
+            value={companyId}
+            onChange={(event) => {
+              setCompanyId(event.target.value);
+              setPage(1);
+            }}
+            placeholder="Any company"
+          />
+        </label>
+        <label className="space-y-1 text-xs font-medium text-muted-foreground">
+          Job type
+          <select
+            aria-label="Job type"
+            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
+            value={jobType}
+            onChange={(event) => {
+              setJobType(event.target.value as CandidateJobsQuery["jobType"]);
+              setPage(1);
+            }}
+          >
+            <option value="">All job types</option>
+            {JOB_TYPES.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
+          </select>
+        </label>
+        <label className="space-y-1 text-xs font-medium text-muted-foreground">
+          Experience level
+          <select
+            aria-label="Experience level"
+            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
+            value={experienceLevel}
+            onChange={(event) => {
+              setExperienceLevel(event.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">Any experience</option>
+            {EXPERIENCE_LEVELS.map((level) => <option key={level} value={level}>{level}</option>)}
+          </select>
+        </label>
+        <label className="space-y-1 text-xs font-medium text-muted-foreground">
+          Skills (comma-separated)
+          <Input
+            aria-label="Skills (comma-separated)"
+            value={skills}
+            onChange={(event) => {
+              setSkills(event.target.value);
+              setPage(1);
+            }}
+            placeholder="React, TypeScript"
+          />
+        </label>
+        <label className="space-y-1 text-xs font-medium text-muted-foreground">
+          Minimum salary
+          <Input
+            aria-label="Minimum salary"
+            type="number"
+            min="0"
+            value={minSalary}
+            onChange={(event) => {
+              setMinSalary(event.target.value);
+              setPage(1);
+            }}
+            placeholder="No minimum"
+          />
+        </label>
+        <label className="space-y-1 text-xs font-medium text-muted-foreground">
+          Maximum salary
+          <Input
+            aria-label="Maximum salary"
+            type="number"
+            min="0"
+            value={maxSalary}
+            onChange={(event) => {
+              setMaxSalary(event.target.value);
+              setPage(1);
+            }}
+            placeholder="No maximum"
+          />
+        </label>
+        <label className="space-y-1 text-xs font-medium text-muted-foreground">
+          Sort by
+          <select
+            aria-label="Sort by"
+            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
+            value={sortBy}
+            onChange={(event) => {
+              setSortBy(event.target.value as CandidateJobsQuery["sortBy"]);
+              setPage(1);
+            }}
+          >
+            <option value="postedAt">Posted date</option>
+            <option value="salary">Salary</option>
+          </select>
+        </label>
+        <label className="space-y-1 text-xs font-medium text-muted-foreground">
+          Sort order
+          <select
+            aria-label="Sort order"
+            className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
+            value={sortOrder}
+            onChange={(event) => {
+              setSortOrder(event.target.value as CandidateJobsQuery["sortOrder"]);
+              setPage(1);
+            }}
+          >
+            <option value="desc">Descending</option>
+            <option value="asc">Ascending</option>
+          </select>
+        </label>
+      </section>
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -163,7 +341,10 @@ export default function CandidateJobs() {
               key={t.value}
               type="button"
               aria-pressed={workType === t.value}
-              onClick={() => setWorkType(workType === t.value ? null : t.value)}
+              onClick={() => {
+                setWorkType(workType === t.value ? null : t.value);
+                setPage(1);
+              }}
               className={cn(
                 "rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-all active:scale-95",
                 workType === t.value
@@ -218,11 +399,12 @@ export default function CandidateJobs() {
               </Button>
             </p>
           )}
-          {jobs.length === 0 ? (
+          {jobsQuery.data?.pagination.total === 0 ? (
             <EmptyState
               icon={Briefcase}
-              title="No open roles yet"
-              description="There are no published opportunities available right now. Please check back soon."
+              title={hasFilters ? "No opportunities found" : "No open roles yet"}
+              description={hasFilters ? "Try broadening your search criteria or clear your filters." : "There are no published opportunities available right now. Please check back soon."}
+              action={hasFilters ? <Button variant="outline" onClick={clearFilters}>Clear filters</Button> : undefined}
             />
           ) : filteredJobs.length > 0 ? (
             <StaggerGroup key={`${searchTerm}-${locationTerm}-${workType}`} className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -241,6 +423,43 @@ export default function CandidateJobs() {
                 <Button variant="outline" onClick={clearFilters}>Clear search</Button>
               }
             />
+          )}
+          {jobsQuery.data && jobsQuery.data.pagination.total > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border pt-4">
+              <p className="text-sm text-muted-foreground" aria-live="polite">
+                Page {jobsQuery.data.pagination.page} of {jobsQuery.data.pagination.totalPages} · {jobsQuery.data.pagination.total} jobs
+              </p>
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                  Results per page
+                  <select
+                    aria-label="Results per page"
+                    className="h-9 rounded-md border border-input bg-background px-2 text-sm text-foreground"
+                    value={limit}
+                    onChange={(event) => {
+                      setLimit(Number(event.target.value));
+                      setPage(1);
+                    }}
+                  >
+                    {[10, 20, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
+                  </select>
+                </label>
+                <Button
+                  variant="outline"
+                  disabled={page <= 1 || jobsQuery.isFetching}
+                  onClick={() => setPage((current) => Math.max(1, current - 1))}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={page >= jobsQuery.data.pagination.totalPages || jobsQuery.isFetching}
+                  onClick={() => setPage((current) => current + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
           )}
         </>
       )}

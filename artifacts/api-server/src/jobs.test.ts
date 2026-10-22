@@ -40,16 +40,31 @@ const publishedJob = {
 
 function createFakeDatabase(result = [publishedJob]) {
   const calls: Array<{ kind: string; value?: number }> = [];
+  const whereConditions: unknown[] = [];
   const database = {
     select: (selection: Record<string, unknown>) => ({
       from: (_table: unknown) => {
         if ("count" in selection) {
-          return { where: async () => [{ count: String(result.length) }] };
+          return {
+            innerJoin: () => ({
+              where: async (condition: unknown) => {
+                whereConditions.push(condition);
+                return [{ count: String(result.length) }];
+              },
+            }),
+            where: async (condition: unknown) => {
+              whereConditions.push(condition);
+              return [{ count: String(result.length) }];
+            },
+          };
         }
 
         const builder = {
           innerJoin: () => builder,
-          where: (_condition: unknown) => builder,
+          where: (condition: unknown) => {
+            whereConditions.push(condition);
+            return builder;
+          },
           orderBy: (_order: unknown) => {
             calls.push({ kind: "orderBy" });
             return builder;
@@ -68,7 +83,7 @@ function createFakeDatabase(result = [publishedJob]) {
     }),
   };
 
-  return { database, calls };
+  return { database, calls, whereConditions };
 }
 
 async function createTestServer(result = [publishedJob]) {
@@ -114,6 +129,32 @@ describe("GET /jobs", () => {
     ]);
   });
 
+  it("uses the same active filters for the result count and returned page", async () => {
+    const testServer = await createTestServer();
+    servers.push(testServer.server);
+
+    const response = await fetch(
+      `${testServer.url}/jobs?companyId=10&search=TypeScript&location=remote&jobType=full_time&locationType=remote&experienceLevel=senior&minSalary=90000&maxSalary=150000&skills=TypeScript,React&sortBy=salary&sortOrder=asc`,
+    );
+
+    assert.equal(response.status, 200);
+    assert.equal(testServer.fake.whereConditions.length, 2);
+    assert.strictEqual(testServer.fake.whereConditions[0], testServer.fake.whereConditions[1]);
+  });
+
+  it("uses default pagination values when none are provided", async () => {
+    const testServer = await createTestServer();
+    servers.push(testServer.server);
+
+    const response = await fetch(`${testServer.url}/jobs`);
+
+    assert.equal(response.status, 200);
+    assert.deepEqual(testServer.fake.calls.slice(-2), [
+      { kind: "limit", value: 20 },
+      { kind: "offset", value: 0 },
+    ]);
+  });
+
   for (const [name, query] of [
     ["company", "companyId=10"],
     ["job type", "jobType=full_time"],
@@ -144,6 +185,7 @@ describe("GET /jobs", () => {
       "sortBy=title",
       "minSalary=not-a-number",
       "minSalary=200&maxSalary=100",
+      `search=${"x".repeat(201)}`,
       "unexpected=value",
     ]) {
       const response = await fetch(`${testServer.url}/jobs?${query}`);

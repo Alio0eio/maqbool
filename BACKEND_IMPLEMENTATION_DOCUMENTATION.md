@@ -1,6 +1,6 @@
 # Empo Backend Implementation Documentation
 
-This document records the database and backend implementation completed so far, following `BACKEND_IMPLEMENTATION_PLAN.md` through Phase 3.2.1. It describes the code currently present in the repository.
+This document records the database and backend implementation completed so far, following `BACKEND_IMPLEMENTATION_PLAN.md` through Phase 3.2.1 and subsequent job-discovery integration work. It describes the code currently present in the repository.
 
 ## 1. Repository and Backend Foundation
 
@@ -1008,3 +1008,54 @@ The following tasks remain planned in the implementation plan:
 - `lib/api-zod/src/jobs.ts`
 - `lib/api-zod/src/candidates.ts`
 - `.env.example`
+
+## 6. Candidate Job Search Query Parameters
+
+The candidate job list uses the existing `GET /api/jobs` endpoint. The list
+query schema is defined in `lib/api-zod/src/jobs.ts`, and the endpoint applies
+these parameters in the Drizzle query in `artifacts/api-server/src/routes/jobs.ts`:
+
+| Parameter | Accepted values / behavior |
+| --- | --- |
+| `page` | Positive integer; defaults to `1`. |
+| `limit` | Integer from `1` through `100`; defaults to `20`. |
+| `companyId` | Positive database company ID. |
+| `search` | Optional text up to 200 characters; substring-matches job title, company name, and serialized skills. |
+| `location` | Optional text up to 255 characters; substring-matches location, with `remote` also matching remote location type. |
+| `jobType` | `full_time`, `part_time`, `contract`, or `internship`. |
+| `locationType` | `remote`, `hybrid`, or `onsite`. |
+| `experienceLevel` | Optional text up to 100 characters; matched against the stored varchar value. |
+| `minSalary`, `maxSalary` | Non-negative integer bounds; the minimum must not exceed the maximum. |
+| `skills` | Comma-separated skill names, maximum 20; JSONB containment requires every requested skill. |
+| `sortBy` | `postedAt` (default) or `salary`. |
+| `sortOrder` | `asc` or `desc` (default `desc`). |
+
+Salary filtering uses overlapping ranges: a posting matches a requested minimum
+when its maximum is at least that minimum, and matches a requested maximum when
+its minimum is at most that maximum. A missing salary endpoint is retained as
+unknown for that endpoint rather than silently excluding the job. Count and
+page queries use the same predicates, and pagination returns `{ jobs,
+pagination: { page, limit, total, totalPages } }`.
+
+The candidate page sends the current filters and sort selection to the API,
+uses a page size of 20 by default, and exposes page-size choices up to the
+backend maximum of 100. React Query keys include every request parameter.
+Changing a filter, search, location, or sort order resets pagination to page 1.
+The company control accepts the numeric company ID because there is no company
+directory endpoint to resolve an arbitrary company name to an ID. Current
+filter state is preserved while paging but is not yet synchronized to the URL.
+
+Implementation and verification steps for this feature:
+
+1. Confirmed the `jobs` JSONB skills, salary, company, posting-date, experience,
+   job-type, and location-type fields in the existing schema.
+2. Reused and tightened the existing Zod schema and `/jobs` Drizzle route;
+   no endpoint or dependency was added.
+3. Replaced the candidate client’s all-pages fetch with a single paginated
+   request carrying the active query parameters.
+4. Connected the candidate search/filter/sort/page controls to React Query and
+   reset page state on changes.
+5. Added route tests for default pagination, query acceptance/validation,
+   combined-filter count predicate reuse, empty results, and published-only
+   results. No database-backed integration fixture or React component test
+   framework is configured in this repository.
