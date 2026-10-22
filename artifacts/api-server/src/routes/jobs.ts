@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { applyJobBodySchema, getJobParamsSchema, listJobsQuerySchema } from "../../../../lib/api-zod/src/jobs";
 import { applications, candidateProfiles, companies, db, jobs, savedJobs } from "@workspace/db";
-import { and, asc, desc, eq, gte, isNull, lte, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, isNull, lte, or, sql } from "drizzle-orm";
 import { authenticate, authorize, optionalAuthenticate } from "../middlewares/auth";
 
 type HttpError = Error & { statusCode: number };
@@ -49,10 +49,42 @@ export function createJobsRouter(database: typeof db = db): IRouter {
       return;
     }
 
-    const { page, limit, companyId, jobType, locationType, experienceLevel, minSalary, maxSalary, skills, sortBy, sortOrder } = parsed.data;
+    const {
+      page,
+      limit,
+      companyId,
+      search,
+      location,
+      jobType,
+      locationType,
+      experienceLevel,
+      minSalary,
+      maxSalary,
+      skills,
+      sortBy,
+      sortOrder,
+    } = parsed.data;
     const filters = [eq(jobs.status, "published")];
 
     if (companyId !== undefined) filters.push(eq(jobs.companyId, companyId));
+    if (search) {
+      const searchPattern = `%${search}%`;
+      filters.push(
+        or(
+          ilike(jobs.title, searchPattern),
+          ilike(companies.name, searchPattern),
+          sql`${jobs.skills}::text ILIKE ${searchPattern}`,
+        )!,
+      );
+    }
+    if (location) {
+      const locationPattern = `%${location}%`;
+      filters.push(
+        location.toLowerCase() === "remote"
+          ? or(ilike(jobs.location, locationPattern), eq(jobs.locationType, "remote"))!
+          : ilike(jobs.location, locationPattern),
+      );
+    }
     if (jobType !== undefined) filters.push(eq(jobs.type, jobType));
     if (locationType !== undefined) filters.push(eq(jobs.locationType, locationType));
     if (experienceLevel !== undefined) filters.push(eq(jobs.experienceLevel, experienceLevel));
@@ -74,6 +106,7 @@ export function createJobsRouter(database: typeof db = db): IRouter {
       const [{ count }] = await database
         .select({ count: sql<number>`count(*)` })
         .from(jobs)
+        .innerJoin(companies, eq(jobs.companyId, companies.id))
         .where(where);
       const total = Number(count);
       const result = await database

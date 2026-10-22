@@ -19,6 +19,8 @@ export const listJobsQuerySchema = z
     page: z.coerce.number().int().min(1).default(1),
     limit: z.coerce.number().int().min(1).max(100).default(20),
     companyId: z.coerce.number().int().positive().optional(),
+    search: z.string().trim().max(200).optional(),
+    location: z.string().trim().max(255).optional(),
     jobType: z.enum(["full_time", "part_time", "contract", "internship"]).optional(),
     locationType: z.enum(["remote", "hybrid", "onsite"]).optional(),
     experienceLevel: z.string().trim().min(1).max(100).optional(),

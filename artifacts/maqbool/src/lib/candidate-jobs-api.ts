@@ -1,9 +1,24 @@
 import { type Job } from '@workspace/api-client-react';
 import { authenticatedApiRequest } from './authenticated-api';
 
-const PAGE_SIZE = 100;
 const JOB_TYPES: readonly Job['type'][] = ['full_time', 'part_time', 'contract', 'internship'];
 const LOCATION_TYPES: readonly NonNullable<Job['locationType']>[] = ['remote', 'hybrid', 'onsite'];
+
+export interface CandidateJobsQuery {
+  page: number;
+  limit: number;
+  companyId?: string;
+  search?: string;
+  location?: string;
+  jobType?: Job['type'] | '';
+  locationType?: NonNullable<Job['locationType']> | '';
+  experienceLevel?: string;
+  minSalary?: string;
+  maxSalary?: string;
+  skills?: string;
+  sortBy: 'postedAt' | 'salary';
+  sortOrder: 'asc' | 'desc';
+}
 
 interface JobsPagination {
   page: number;
@@ -62,22 +77,22 @@ function isJob(value: unknown): value is Job {
   );
 }
 
-function parseJobsPage(value: unknown, expectedPage: number): CandidateJobsResult {
+function parseJobsPage(value: unknown, expectedQuery: CandidateJobsQuery): CandidateJobsResult {
   if (!isRecord(value) || !Array.isArray(value.jobs) || !isRecord(value.pagination)) {
     throw new Error('The jobs service returned an invalid response.');
   }
 
   const { page, limit, total, totalPages } = value.pagination;
   if (
-    page !== expectedPage ||
-    limit !== PAGE_SIZE ||
+    page !== expectedQuery.page ||
+    limit !== expectedQuery.limit ||
     typeof total !== 'number' ||
     !Number.isSafeInteger(total) ||
     total < 0 ||
     typeof totalPages !== 'number' ||
     !Number.isSafeInteger(totalPages) ||
     totalPages < 0 ||
-    totalPages !== Math.ceil(total / PAGE_SIZE) ||
+    totalPages !== Math.ceil(total / expectedQuery.limit) ||
     !value.jobs.every(isJob)
   ) {
     throw new Error('The jobs service returned an invalid response.');
@@ -85,28 +100,32 @@ function parseJobsPage(value: unknown, expectedPage: number): CandidateJobsResul
 
   return {
     jobs: value.jobs,
-    pagination: { page: expectedPage, limit: PAGE_SIZE, total, totalPages },
+    pagination: { page: expectedQuery.page, limit: expectedQuery.limit, total, totalPages },
   };
 }
 
-async function getJobsPage(page: number, signal?: AbortSignal): Promise<CandidateJobsResult> {
-  const params = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
+export async function getCandidateJobs(
+  query: CandidateJobsQuery,
+  signal?: AbortSignal,
+): Promise<CandidateJobsResult> {
+  const params = new URLSearchParams({
+    page: String(query.page),
+    limit: String(query.limit),
+    sortBy: query.sortBy,
+    sortOrder: query.sortOrder,
+  });
+  if (query.companyId) params.set('companyId', query.companyId);
+  if (query.search?.trim()) params.set('search', query.search.trim());
+  if (query.location?.trim()) params.set('location', query.location.trim());
+  if (query.jobType) params.set('jobType', query.jobType);
+  if (query.locationType) params.set('locationType', query.locationType);
+  if (query.experienceLevel) params.set('experienceLevel', query.experienceLevel);
+  if (query.minSalary) params.set('minSalary', query.minSalary);
+  if (query.maxSalary) params.set('maxSalary', query.maxSalary);
+  if (query.skills?.trim()) {
+    const skills = query.skills.split(',').map((skill) => skill.trim()).filter(Boolean);
+    if (skills.length > 0) params.set('skills', skills.join(','));
+  }
   const response = await authenticatedApiRequest<unknown>(`/jobs?${params}`, { signal });
-  return parseJobsPage(response, page);
-}
-
-export async function getCandidateJobs(signal?: AbortSignal): Promise<CandidateJobsResult> {
-  const firstPage = await getJobsPage(1, signal);
-  if (firstPage.pagination.totalPages <= 1) return firstPage;
-
-  const remainingPages = await Promise.all(
-    Array.from({ length: firstPage.pagination.totalPages - 1 }, (_, index) =>
-      getJobsPage(index + 2, signal),
-    ),
-  );
-
-  return {
-    jobs: [firstPage, ...remainingPages].flatMap(({ jobs }) => jobs),
-    pagination: firstPage.pagination,
-  };
+  return parseJobsPage(response, query);
 }

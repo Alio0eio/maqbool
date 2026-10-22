@@ -248,7 +248,7 @@ the saved profile resume.
 
 1. [x] Replace `MOCK_JOBS` in candidate jobs with React Query data from
    `GET /api/jobs`.
-2. Translate search controls into supported query parameters: pagination,
+2. [x] Translate search controls into supported query parameters: pagination,
    company, job type, location type, experience level, salary range, skills,
    and posted/salary sorting.
 3. Keep search and filter state in the URL where practical so refresh and share
@@ -277,6 +277,21 @@ open-role count. The page now distinguishes initial loading, request errors
 with retry, a truly empty result, and filters with no matches. A failed
 background refetch keeps the existing cards visible. Job details and save-job
 integration remain separate work in this phase.
+
+**Progress update (2026-10-22)**: Candidate job discovery now sends the active
+search, location, company ID, job type, location type, experience level, salary
+bounds, skills, sort field/direction, page, and page size to the existing
+`GET /api/jobs` endpoint. Results are paginated server-side and the React Query
+key includes all request controls; changing any control resets the page to 1.
+The backend validates the query, filters the published-job database query, and
+uses the same filtered query for total counts and returned rows. Multiple
+requested skills use JSONB containment (all selected skills must be present).
+Salary bounds use range overlap and retain postings with missing salary bounds
+as unknown rather than excluding them. Free-text search covers title, company,
+and skills; location search also recognizes the Remote location type. The
+company selector currently accepts the database company ID because no company
+directory endpoint exists. Query state is kept for page navigation but is not
+serialized into the browser URL.
 
 ### Phase 4: Application submission
 
