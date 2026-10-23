@@ -251,8 +251,8 @@ the saved profile resume.
 2. [x] Translate search controls into supported query parameters: pagination,
    company, job type, location type, experience level, salary range, skills,
    and posted/salary sorting.
-3. Keep search and filter state in the URL where practical so refresh and share
-   behavior are stable.
+3. [x] Keep search and filter state in the URL so refresh, sharing, and browser
+   history restore the same result set.
 4. Add loading, empty, invalid-query, and retry states.
 5. Replace job detail lookup with `GET /api/jobs/:id` and use the returned
    `applicationStatus` to disable or change the Apply action.
@@ -292,6 +292,25 @@ and skills; location search also recognizes the Remote location type. The
 company selector currently accepts the database company ID because no company
 directory endpoint exists. Query state is kept for page navigation but is not
 serialized into the browser URL.
+
+**Progress update (2026-10-23)**: Candidate job query state is now synchronized
+with the existing Wouter URL search-parameter hook. The shared URL restores
+keyword (`q`), company ID, location, job type, location type, experience,
+salary bounds, skills, sorting, page, and page size. Default and empty values
+are omitted; malformed or unsupported values are normalized before the
+React Query request, and the URL is canonicalized without dropping unrelated
+query parameters. The React Query key and request are derived from the
+normalized URL state, and search/location/skills text is debounced while
+remaining immediately editable. Filter/sort/page-size changes reset the page;
+pagination changes only the page, and Wouter history navigation restores the
+matching controls and results. The page now renders the server-filtered page
+instead of filtering a partial page a second time in the browser. The API
+contract remains unchanged: the UI's `q` is sent as `search`, and `limit` is
+the backend page-size parameter. Keyword, location, skills, company ID, and
+salary inputs remain responsive while their URL/API updates are debounced.
+Validation performed: candidate frontend TypeScript check and production
+build, plus the focused jobs API contract tests (14 passing). Component-level
+React tests and lint scripts are not configured in this package.
 
 ### Phase 4: Application submission
 
