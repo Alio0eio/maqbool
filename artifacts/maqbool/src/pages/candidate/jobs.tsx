@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ApiError } from "@workspace/api-client-react";
+import { useSearchParams } from "wouter";
 import { JobCard } from "@/components/shared/job-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
@@ -16,7 +17,7 @@ const WORK_TYPES = [
   { value: "remote", label: "Remote" },
   { value: "hybrid", label: "Hybrid" },
   { value: "onsite", label: "On-site" },
-];
+] as const;
 const JOB_TYPES = [
   { value: "full_time", label: "Full-time" },
   { value: "part_time", label: "Part-time" },
@@ -24,6 +25,100 @@ const JOB_TYPES = [
   { value: "internship", label: "Internship" },
 ] as const;
 const EXPERIENCE_LEVELS = ["Entry", "Mid", "Senior", "Lead", "Director"];
+const PAGE_SIZES = [10, 20, 50, 100] as const;
+const DEFAULT_PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 350;
+const JOB_QUERY_PARAMS = [
+  "q",
+  "companyId",
+  "location",
+  "jobType",
+  "locationType",
+  "experienceLevel",
+  "minSalary",
+  "maxSalary",
+  "skills",
+  "sortBy",
+  "sortOrder",
+  "page",
+  "limit",
+] as const;
+
+function parsePositiveInteger(value: string | null): number | undefined {
+  if (!value || !/^\d+$/.test(value)) return undefined;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : undefined;
+}
+
+function parseNonNegativeInteger(value: string | null): string | undefined {
+  if (!value || !/^\d+$/.test(value)) return undefined;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) ? String(parsed) : undefined;
+}
+
+function parseJobQuery(params: URLSearchParams): CandidateJobsQuery {
+  const companyId = parsePositiveInteger(params.get("companyId"));
+  const page = parsePositiveInteger(params.get("page"));
+  const limit = parsePositiveInteger(params.get("limit"));
+  const rawMinSalary = parseNonNegativeInteger(params.get("minSalary"));
+  const rawMaxSalary = parseNonNegativeInteger(params.get("maxSalary"));
+  const minSalary = rawMinSalary === undefined ? undefined : Number(rawMinSalary);
+  const maxSalary = rawMaxSalary === undefined ? undefined : Number(rawMaxSalary);
+  const validSalaryRange =
+    minSalary === undefined || maxSalary === undefined || minSalary <= maxSalary;
+  const rawSkills = params.get("skills")?.split(",").map((skill) => skill.trim()).filter(Boolean) ?? [];
+  const skills = rawSkills.length > 0 && rawSkills.length <= 20 ? rawSkills.join(",") : "";
+  const rawSearch = params.get("q")?.trim() ?? "";
+  const rawLocation = params.get("location")?.trim() ?? "";
+  const rawExperience = params.get("experienceLevel")?.trim() ?? "";
+  const rawJobType = params.get("jobType");
+  const rawLocationType = params.get("locationType");
+  const rawSortBy = params.get("sortBy");
+  const rawSortOrder = params.get("sortOrder");
+
+  return {
+    page: page ?? 1,
+    limit: limit && PAGE_SIZES.includes(limit as (typeof PAGE_SIZES)[number]) ? limit : DEFAULT_PAGE_SIZE,
+    companyId: companyId === undefined ? undefined : String(companyId),
+    search: rawSearch.length <= 200 ? rawSearch : "",
+    location: rawLocation.length <= 255 ? rawLocation : "",
+    jobType: JOB_TYPES.some((type) => type.value === rawJobType)
+      ? rawJobType as CandidateJobsQuery["jobType"]
+      : "",
+    locationType: WORK_TYPES.some((type) => type.value === rawLocationType)
+      ? rawLocationType as CandidateJobsQuery["locationType"]
+      : "",
+    experienceLevel: EXPERIENCE_LEVELS.includes(rawExperience) ? rawExperience : "",
+    minSalary: validSalaryRange ? rawMinSalary ?? "" : "",
+    maxSalary: validSalaryRange ? rawMaxSalary ?? "" : "",
+    skills,
+    sortBy: rawSortBy === "salary" ? "salary" : "postedAt",
+    sortOrder: rawSortOrder === "asc" ? "asc" : "desc",
+  };
+}
+
+function serializeJobQuery(params: URLSearchParams, query: CandidateJobsQuery): URLSearchParams {
+  for (const key of JOB_QUERY_PARAMS) params.delete(key);
+
+  if (query.search?.trim()) params.set("q", query.search.trim());
+  if (query.companyId) params.set("companyId", query.companyId);
+  if (query.location?.trim()) params.set("location", query.location.trim());
+  if (query.jobType) params.set("jobType", query.jobType);
+  if (query.locationType) params.set("locationType", query.locationType);
+  if (query.experienceLevel) params.set("experienceLevel", query.experienceLevel);
+  if (query.minSalary) params.set("minSalary", query.minSalary);
+  if (query.maxSalary) params.set("maxSalary", query.maxSalary);
+  if (query.skills?.trim()) params.set("skills", query.skills.split(",").map((skill) => skill.trim()).filter(Boolean).join(","));
+  if (query.sortBy !== "postedAt") params.set("sortBy", query.sortBy);
+  if (query.sortOrder !== "desc") params.set("sortOrder", query.sortOrder);
+  if (query.page > 1) params.set("page", String(query.page));
+  if (query.limit !== DEFAULT_PAGE_SIZE) params.set("limit", String(query.limit));
+  return params;
+}
+
+function parseIntegerInput(value: string): string | undefined {
+  return parseNonNegativeInteger(value || null);
+}
 
 function getApiErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
@@ -39,55 +134,111 @@ function getApiErrorMessage(error: unknown): string {
 }
 
 export default function CandidateJobs() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [locationTerm, setLocationTerm] = useState("");
-  const [workType, setWorkType] = useState<string | null>(null);
-  const [companyId, setCompanyId] = useState("");
-  const [jobType, setJobType] = useState<CandidateJobsQuery["jobType"]>("");
-  const [experienceLevel, setExperienceLevel] = useState("");
-  const [minSalary, setMinSalary] = useState("");
-  const [maxSalary, setMaxSalary] = useState("");
-  const [skills, setSkills] = useState("");
-  const [sortBy, setSortBy] = useState<CandidateJobsQuery["sortBy"]>("postedAt");
-  const [sortOrder, setSortOrder] = useState<CandidateJobsQuery["sortOrder"]>("desc");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchString = searchParams.toString();
+  const query = useMemo(() => parseJobQuery(new URLSearchParams(searchString)), [searchString]);
+  const [searchDraft, setSearchDraft] = useState(query.search ?? "");
+  const [locationDraft, setLocationDraft] = useState(query.location ?? "");
+  const [skillsDraft, setSkillsDraft] = useState(query.skills ?? "");
+  const [companyDraft, setCompanyDraft] = useState(query.companyId ?? "");
+  const [minSalaryDraft, setMinSalaryDraft] = useState(query.minSalary ?? "");
+  const [maxSalaryDraft, setMaxSalaryDraft] = useState(query.maxSalary ?? "");
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  const query: CandidateJobsQuery = {
-    page,
-    limit,
-    companyId,
-    search: searchTerm,
-    location: locationTerm,
-    jobType,
-    locationType: (workType ?? "") as CandidateJobsQuery["locationType"],
-    experienceLevel,
-    minSalary,
-    maxSalary,
-    skills,
-    sortBy,
-    sortOrder,
+  const updateQuery = (patch: Partial<CandidateJobsQuery>, resetPage = false) => {
+    const nextQuery = { ...query, ...patch, page: resetPage ? 1 : patch.page ?? query.page };
+    const nextParams = serializeJobQuery(new URLSearchParams(searchString), nextQuery);
+    if (nextParams.toString() !== searchString) setSearchParams(nextParams);
   };
+
+  useEffect(() => {
+    const normalizedParams = serializeJobQuery(new URLSearchParams(searchString), query);
+    if (normalizedParams.toString() !== searchString) {
+      setSearchParams(normalizedParams, { replace: true });
+    }
+  }, [query, searchString, setSearchParams]);
+
+  useEffect(() => {
+    setSearchDraft(query.search ?? "");
+  }, [query.search]);
+
+  useEffect(() => {
+    setLocationDraft(query.location ?? "");
+  }, [query.location]);
+
+  useEffect(() => {
+    setSkillsDraft(query.skills ?? "");
+  }, [query.skills]);
+
+  useEffect(() => {
+    setCompanyDraft(query.companyId ?? "");
+  }, [query.companyId]);
+
+  useEffect(() => {
+    setMinSalaryDraft(query.minSalary ?? "");
+  }, [query.minSalary]);
+
+  useEffect(() => {
+    setMaxSalaryDraft(query.maxSalary ?? "");
+  }, [query.maxSalary]);
+
+  const commitDrafts = () => {
+    const companyIdValue = parsePositiveInteger(companyDraft);
+    const minSalaryValue = parseIntegerInput(minSalaryDraft) ?? "";
+    const maxSalaryValue = parseIntegerInput(maxSalaryDraft) ?? "";
+    updateQuery({
+      search: searchDraft,
+      location: locationDraft,
+      skills: skillsDraft,
+      companyId: companyIdValue === undefined ? undefined : String(companyIdValue),
+      minSalary: minSalaryValue,
+      maxSalary: maxSalaryValue,
+    }, true);
+  };
+
+  useEffect(() => {
+    if (
+      searchDraft === (query.search ?? "") &&
+      locationDraft === (query.location ?? "") &&
+      skillsDraft === (query.skills ?? "") &&
+      companyDraft === (query.companyId ?? "") &&
+      minSalaryDraft === (query.minSalary ?? "") &&
+      maxSalaryDraft === (query.maxSalary ?? "")
+    ) return;
+    searchTimer.current = setTimeout(commitDrafts, SEARCH_DEBOUNCE_MS);
+    return () => {
+      if (searchTimer.current !== undefined) clearTimeout(searchTimer.current);
+    };
+  }, [
+    query,
+    searchDraft,
+    locationDraft,
+    skillsDraft,
+    companyDraft,
+    minSalaryDraft,
+    maxSalaryDraft,
+    searchString,
+  ]);
+
+  const commitSearch = () => {
+    if (searchTimer.current !== undefined) clearTimeout(searchTimer.current);
+    commitDrafts();
+  };
+
   const jobsQuery = useQuery({
-    queryKey: ["jobs", query, searchTerm, locationTerm],
+    queryKey: ["jobs", query],
     queryFn: ({ signal }) => getCandidateJobs(query, signal),
   });
 
-  const jobs = jobsQuery.data?.jobs ?? [];
-
-  const filteredJobs = jobs.filter(job => {
-    const matchesQuery =
-      searchTerm.trim() === "" ||
-      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.skills?.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesLocation =
-      locationTerm.trim() === "" ||
-      job.location.toLowerCase().includes(locationTerm.toLowerCase()) ||
-      (locationTerm.toLowerCase() === "remote" && job.locationType === "remote");
-    const matchesWorkType = !workType || job.locationType === workType;
-    return matchesQuery && matchesLocation && matchesWorkType;
-  });
+  const searchTerm = query.search ?? "";
+  const locationTerm = query.location ?? "";
+  const companyId = query.companyId ?? "";
+  const jobType = query.jobType ?? "";
+  const workType = query.locationType || null;
+  const experienceLevel = query.experienceLevel;
+  const minSalary = query.minSalary ?? "";
+  const maxSalary = query.maxSalary ?? "";
+  const skills = query.skills ?? "";
 
   const hasFilters = Boolean(
     searchTerm.trim() ||
@@ -102,18 +253,26 @@ export default function CandidateJobs() {
   );
 
   const clearFilters = () => {
-    setSearchTerm("");
-    setLocationTerm("");
-    setWorkType(null);
-    setCompanyId("");
-    setJobType("");
-    setExperienceLevel("");
-    setMinSalary("");
-    setMaxSalary("");
-    setSkills("");
-    setSortBy("postedAt");
-    setSortOrder("desc");
-    setPage(1);
+    if (searchTimer.current !== undefined) clearTimeout(searchTimer.current);
+    setSearchDraft("");
+    setLocationDraft("");
+    setSkillsDraft("");
+    setCompanyDraft("");
+    setMinSalaryDraft("");
+    setMaxSalaryDraft("");
+    updateQuery({
+      search: "",
+      location: "",
+      companyId: undefined,
+      jobType: "",
+      locationType: "",
+      experienceLevel: "",
+      minSalary: "",
+      maxSalary: "",
+      skills: "",
+      sortBy: "postedAt",
+      sortOrder: "desc",
+    }, true);
   };
 
   return (
@@ -145,11 +304,8 @@ export default function CandidateJobs() {
                 aria-label="Job title, skills, or company"
                 placeholder="Job title, skills, or company"
                 className="w-full h-11 pl-11 border-transparent shadow-none rounded-full text-[14px] text-foreground focus-visible:ring-0 focus-visible:bg-muted/50"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setPage(1);
-                }}
+                value={searchDraft}
+                onChange={(event) => setSearchDraft(event.target.value)}
               />
             </div>
             <div className="hidden md:block w-px bg-border my-2" aria-hidden />
@@ -159,14 +315,11 @@ export default function CandidateJobs() {
                 aria-label="Location"
                 placeholder="Location or 'Remote'"
                 className="w-full h-11 pl-11 border-transparent shadow-none rounded-full text-[14px] text-foreground focus-visible:ring-0 focus-visible:bg-muted/50"
-                value={locationTerm}
-                onChange={(e) => {
-                  setLocationTerm(e.target.value);
-                  setPage(1);
-                }}
+                value={locationDraft}
+                onChange={(event) => setLocationDraft(event.target.value)}
               />
             </div>
-            <Button size="lg" className="h-11 px-8 rounded-full shrink-0">
+            <Button size="lg" className="h-11 px-8 rounded-full shrink-0" onClick={commitSearch}>
               Search
             </Button>
           </div>
@@ -178,8 +331,9 @@ export default function CandidateJobs() {
                 key={tag}
                 type="button"
                 onClick={() => {
-                  setSearchTerm(tag);
-                  setPage(1);
+                  if (searchTimer.current !== undefined) clearTimeout(searchTimer.current);
+                  setSearchDraft(tag);
+                  updateQuery({ search: tag, location: locationDraft, skills: skillsDraft }, true);
                 }}
                 className={cn(
                   "rounded-full border px-3 py-1 transition-colors",
@@ -202,11 +356,9 @@ export default function CandidateJobs() {
             aria-label="Company ID"
             type="number"
             min="1"
-            value={companyId}
-            onChange={(event) => {
-              setCompanyId(event.target.value);
-              setPage(1);
-            }}
+            step="1"
+            value={companyDraft}
+            onChange={(event) => setCompanyDraft(event.target.value)}
             placeholder="Any company"
           />
         </label>
@@ -216,10 +368,7 @@ export default function CandidateJobs() {
             aria-label="Job type"
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
             value={jobType}
-            onChange={(event) => {
-              setJobType(event.target.value as CandidateJobsQuery["jobType"]);
-              setPage(1);
-            }}
+            onChange={(event) => updateQuery({ jobType: event.target.value as CandidateJobsQuery["jobType"] }, true)}
           >
             <option value="">All job types</option>
             {JOB_TYPES.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
@@ -231,10 +380,7 @@ export default function CandidateJobs() {
             aria-label="Experience level"
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
             value={experienceLevel}
-            onChange={(event) => {
-              setExperienceLevel(event.target.value);
-              setPage(1);
-            }}
+            onChange={(event) => updateQuery({ experienceLevel: event.target.value }, true)}
           >
             <option value="">Any experience</option>
             {EXPERIENCE_LEVELS.map((level) => <option key={level} value={level}>{level}</option>)}
@@ -244,11 +390,8 @@ export default function CandidateJobs() {
           Skills (comma-separated)
           <Input
             aria-label="Skills (comma-separated)"
-            value={skills}
-            onChange={(event) => {
-              setSkills(event.target.value);
-              setPage(1);
-            }}
+            value={skillsDraft}
+            onChange={(event) => setSkillsDraft(event.target.value)}
             placeholder="React, TypeScript"
           />
         </label>
@@ -258,10 +401,13 @@ export default function CandidateJobs() {
             aria-label="Minimum salary"
             type="number"
             min="0"
-            value={minSalary}
+            step="1"
+            value={minSalaryDraft}
             onChange={(event) => {
-              setMinSalary(event.target.value);
-              setPage(1);
+              const value = event.target.value;
+              const clearMax = value !== "" && maxSalaryDraft !== "" && Number(value) > Number(maxSalaryDraft);
+              setMinSalaryDraft(value);
+              if (clearMax) setMaxSalaryDraft("");
             }}
             placeholder="No minimum"
           />
@@ -272,10 +418,13 @@ export default function CandidateJobs() {
             aria-label="Maximum salary"
             type="number"
             min="0"
-            value={maxSalary}
+            step="1"
+            value={maxSalaryDraft}
             onChange={(event) => {
-              setMaxSalary(event.target.value);
-              setPage(1);
+              const value = event.target.value;
+              const clearMin = value !== "" && minSalaryDraft !== "" && Number(value) < Number(minSalaryDraft);
+              setMaxSalaryDraft(value);
+              if (clearMin) setMinSalaryDraft("");
             }}
             placeholder="No maximum"
           />
@@ -285,11 +434,8 @@ export default function CandidateJobs() {
           <select
             aria-label="Sort by"
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
-            value={sortBy}
-            onChange={(event) => {
-              setSortBy(event.target.value as CandidateJobsQuery["sortBy"]);
-              setPage(1);
-            }}
+            value={query.sortBy}
+            onChange={(event) => updateQuery({ sortBy: event.target.value as CandidateJobsQuery["sortBy"] }, true)}
           >
             <option value="postedAt">Posted date</option>
             <option value="salary">Salary</option>
@@ -300,11 +446,8 @@ export default function CandidateJobs() {
           <select
             aria-label="Sort order"
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
-            value={sortOrder}
-            onChange={(event) => {
-              setSortOrder(event.target.value as CandidateJobsQuery["sortOrder"]);
-              setPage(1);
-            }}
+            value={query.sortOrder}
+            onChange={(event) => updateQuery({ sortOrder: event.target.value as CandidateJobsQuery["sortOrder"] }, true)}
           >
             <option value="desc">Descending</option>
             <option value="asc">Ascending</option>
@@ -325,7 +468,7 @@ export default function CandidateJobs() {
             <Sparkles className="w-3.5 h-3.5 text-primary" />
             <span aria-live="polite">
                 {jobsQuery.data
-                  ? `${filteredJobs.length} match${filteredJobs.length === 1 ? "" : "es"}${hasFilters ? "" : " based on your profile and experience"}`
+                  ? `${jobsQuery.data.pagination.total} match${jobsQuery.data.pagination.total === 1 ? "" : "es"}${hasFilters ? "" : " based on your profile and experience"}`
                   : jobsQuery.isPending
                   ? "Loading job matches…"
                   : "Job matches unavailable"}
@@ -341,10 +484,7 @@ export default function CandidateJobs() {
               key={t.value}
               type="button"
               aria-pressed={workType === t.value}
-              onClick={() => {
-                setWorkType(workType === t.value ? null : t.value);
-                setPage(1);
-              }}
+              onClick={() => updateQuery({ locationType: workType === t.value ? "" : t.value }, true)}
               className={cn(
                 "rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-all active:scale-95",
                 workType === t.value
@@ -406,9 +546,9 @@ export default function CandidateJobs() {
               description={hasFilters ? "Try broadening your search criteria or clear your filters." : "There are no published opportunities available right now. Please check back soon."}
               action={hasFilters ? <Button variant="outline" onClick={clearFilters}>Clear filters</Button> : undefined}
             />
-          ) : filteredJobs.length > 0 ? (
-            <StaggerGroup key={`${searchTerm}-${locationTerm}-${workType}`} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {filteredJobs.map(job => (
+          ) : (jobsQuery.data?.jobs.length ?? 0) > 0 ? (
+            <StaggerGroup key={searchString} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {jobsQuery.data?.jobs.map(job => (
                 <StaggerItem key={job.id}>
                   <JobCard job={job} variant="candidate" />
                 </StaggerItem>
@@ -435,26 +575,25 @@ export default function CandidateJobs() {
                   <select
                     aria-label="Results per page"
                     className="h-9 rounded-md border border-input bg-background px-2 text-sm text-foreground"
-                    value={limit}
+                    value={query.limit}
                     onChange={(event) => {
-                      setLimit(Number(event.target.value));
-                      setPage(1);
+                      updateQuery({ limit: Number(event.target.value) }, true);
                     }}
                   >
-                    {[10, 20, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
+                    {PAGE_SIZES.map((size) => <option key={size} value={size}>{size}</option>)}
                   </select>
                 </label>
                 <Button
                   variant="outline"
-                  disabled={page <= 1 || jobsQuery.isFetching}
-                  onClick={() => setPage((current) => Math.max(1, current - 1))}
+                  disabled={query.page <= 1 || jobsQuery.isFetching}
+                  onClick={() => updateQuery({ page: Math.max(1, query.page - 1) })}
                 >
                   Previous
                 </Button>
                 <Button
                   variant="outline"
-                  disabled={page >= jobsQuery.data.pagination.totalPages || jobsQuery.isFetching}
-                  onClick={() => setPage((current) => current + 1)}
+                  disabled={query.page >= jobsQuery.data.pagination.totalPages || jobsQuery.isFetching}
+                  onClick={() => updateQuery({ page: query.page + 1 })}
                 >
                   Next
                 </Button>
