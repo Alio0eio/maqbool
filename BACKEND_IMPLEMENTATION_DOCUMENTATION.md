@@ -1042,8 +1042,20 @@ uses a page size of 20 by default, and exposes page-size choices up to the
 backend maximum of 100. React Query keys include every request parameter.
 Changing a filter, search, location, or sort order resets pagination to page 1.
 The company control accepts the numeric company ID because there is no company
-directory endpoint to resolve an arbitrary company name to an ID. Current
-filter state is preserved while paging but is not yet synchronized to the URL.
+directory endpoint to resolve an arbitrary company name to an ID. Filter and
+pagination state is synchronized with the URL: `q` maps to API parameter
+`search`, and unrelated URL parameters are preserved.
+
+Before querying, the page validates pagination, company IDs, search/location
+lengths, job and location types, experience text, salary bounds, skills, and
+sorting against the API schema. Invalid parameters block the request and show
+field-specific explanations; resetting them preserves valid filters. Initial
+loads show skeleton cards. Filter changes keep the prior cards visible with an
+updating indicator, but a failed request for the new filters replaces those
+stale cards with an error and Retry action. Background refresh errors keep the
+current result set visible. One automatic React Query retry is configured.
+Successful empty responses distinguish no published jobs, no filter matches,
+and a valid page number with no rows because the result set changed.
 
 Implementation and verification steps for this feature:
 
@@ -1059,3 +1071,9 @@ Implementation and verification steps for this feature:
    combined-filter count predicate reuse, empty results, and published-only
    results. No database-backed integration fixture or React component test
    framework is configured in this repository.
+6. Added focused frontend unit tests for URL validation/correction, valid filter
+   and pagination changes, and loading/error/empty/results view-state selection.
+7. Added explicit loading, empty, invalid-query, background-refresh, and retry
+   presentation without changing the API contract or adding dependencies.
+8. Verified the candidate frontend type-check/build, focused frontend query
+   tests, and existing jobs API contract tests.

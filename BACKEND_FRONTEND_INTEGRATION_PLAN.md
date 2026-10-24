@@ -253,7 +253,7 @@ the saved profile resume.
    and posted/salary sorting.
 3. [x] Keep search and filter state in the URL so refresh, sharing, and browser
    history restore the same result set.
-4. Add loading, empty, invalid-query, and retry states.
+4. [x] Add loading, empty, invalid-query, and retry states.
 5. Replace job detail lookup with `GET /api/jobs/:id` and use the returned
    `applicationStatus` to disable or change the Apply action.
 6. Replace local bookmark state with `POST /api/jobs/:id/save` and
@@ -297,10 +297,11 @@ serialized into the browser URL.
 with the existing Wouter URL search-parameter hook. The shared URL restores
 keyword (`q`), company ID, location, job type, location type, experience,
 salary bounds, skills, sorting, page, and page size. Default and empty values
-are omitted; malformed or unsupported values are normalized before the
-React Query request, and the URL is canonicalized without dropping unrelated
-query parameters. The React Query key and request are derived from the
-normalized URL state, and search/location/skills text is debounced while
+are omitted; valid query values are canonicalized without dropping unrelated
+query parameters. At this stage malformed or unsupported values were silently
+normalized; the follow-up below replaces that behavior with explicit
+validation. The React Query key and request are derived from URL state, and
+search/location/skills text is debounced while
 remaining immediately editable. Filter/sort/page-size changes reset the page;
 pagination changes only the page, and Wouter history navigation restores the
 matching controls and results. The page now renders the server-filtered page
@@ -311,6 +312,17 @@ salary inputs remain responsive while their URL/API updates are debounced.
 Validation performed: candidate frontend TypeScript check and production
 build, plus the focused jobs API contract tests (14 passing). Component-level
 React tests and lint scripts are not configured in this package.
+
+**Progress update (2026-10-24)**: Candidate job URL parameters are now
+validated against the `GET /api/jobs` schema before a request runs. Invalid
+values show field-specific messages and can be reset without dropping valid
+filters or unrelated URL parameters. Initial loads use job-card skeletons;
+filter changes keep previous cards visible with an updating indicator, while
+stale results are not shown after a failed request for the new filters.
+Successful empty responses distinguish no published jobs, no matches for
+active filters, and an out-of-range page. Requests retry once automatically,
+and the visible Retry action uses React Query's `refetch`. Added focused
+frontend query/state tests; the API contract and backend remain unchanged.
 
 ### Phase 4: Application submission
 

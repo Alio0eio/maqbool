@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { ApiError } from "@workspace/api-client-react";
 import { useSearchParams } from "wouter";
 import { JobCard } from "@/components/shared/job-card";
@@ -7,10 +7,18 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@workspace/design-system/button";
 import { Input } from "@workspace/design-system/input";
-import { Search, MapPin, Briefcase, Sparkles } from "lucide-react";
+import { Search, MapPin, Briefcase, Sparkles, LoaderCircle } from "lucide-react";
 import { cn } from "@workspace/design-system/utils";
 import { StaggerGroup, StaggerItem } from "@/components/shared/stagger";
 import { getCandidateJobs, type CandidateJobsQuery } from "@/lib/candidate-jobs-api";
+import {
+  DEFAULT_PAGE_SIZE,
+  PAGE_SIZES,
+  getCandidateJobsEmptyState,
+  getCandidateJobsViewState,
+  parseJobQuery,
+  serializeJobQuery,
+} from "@/lib/candidate-jobs-query";
 
 const SUGGESTED_SEARCHES = ["Product Design", "Frontend", "React", "Remote"];
 const WORK_TYPES = [
@@ -25,99 +33,18 @@ const JOB_TYPES = [
   { value: "internship", label: "Internship" },
 ] as const;
 const EXPERIENCE_LEVELS = ["Entry", "Mid", "Senior", "Lead", "Director"];
-const PAGE_SIZES = [10, 20, 50, 100] as const;
-const DEFAULT_PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 350;
-const JOB_QUERY_PARAMS = [
-  "q",
-  "companyId",
-  "location",
-  "jobType",
-  "locationType",
-  "experienceLevel",
-  "minSalary",
-  "maxSalary",
-  "skills",
-  "sortBy",
-  "sortOrder",
-  "page",
-  "limit",
-] as const;
 
-function parsePositiveInteger(value: string | null): number | undefined {
-  if (!value || !/^\d+$/.test(value)) return undefined;
+function parsePositiveIntegerInput(value: string): number | undefined {
+  if (!value.trim()) return undefined;
   const parsed = Number(value);
   return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : undefined;
 }
 
-function parseNonNegativeInteger(value: string | null): string | undefined {
-  if (!value || !/^\d+$/.test(value)) return undefined;
+function parseNonNegativeIntegerInput(value: string): string | undefined {
+  if (!value.trim()) return "";
   const parsed = Number(value);
-  return Number.isSafeInteger(parsed) ? String(parsed) : undefined;
-}
-
-function parseJobQuery(params: URLSearchParams): CandidateJobsQuery {
-  const companyId = parsePositiveInteger(params.get("companyId"));
-  const page = parsePositiveInteger(params.get("page"));
-  const limit = parsePositiveInteger(params.get("limit"));
-  const rawMinSalary = parseNonNegativeInteger(params.get("minSalary"));
-  const rawMaxSalary = parseNonNegativeInteger(params.get("maxSalary"));
-  const minSalary = rawMinSalary === undefined ? undefined : Number(rawMinSalary);
-  const maxSalary = rawMaxSalary === undefined ? undefined : Number(rawMaxSalary);
-  const validSalaryRange =
-    minSalary === undefined || maxSalary === undefined || minSalary <= maxSalary;
-  const rawSkills = params.get("skills")?.split(",").map((skill) => skill.trim()).filter(Boolean) ?? [];
-  const skills = rawSkills.length > 0 && rawSkills.length <= 20 ? rawSkills.join(",") : "";
-  const rawSearch = params.get("q")?.trim() ?? "";
-  const rawLocation = params.get("location")?.trim() ?? "";
-  const rawExperience = params.get("experienceLevel")?.trim() ?? "";
-  const rawJobType = params.get("jobType");
-  const rawLocationType = params.get("locationType");
-  const rawSortBy = params.get("sortBy");
-  const rawSortOrder = params.get("sortOrder");
-
-  return {
-    page: page ?? 1,
-    limit: limit && PAGE_SIZES.includes(limit as (typeof PAGE_SIZES)[number]) ? limit : DEFAULT_PAGE_SIZE,
-    companyId: companyId === undefined ? undefined : String(companyId),
-    search: rawSearch.length <= 200 ? rawSearch : "",
-    location: rawLocation.length <= 255 ? rawLocation : "",
-    jobType: JOB_TYPES.some((type) => type.value === rawJobType)
-      ? rawJobType as CandidateJobsQuery["jobType"]
-      : "",
-    locationType: WORK_TYPES.some((type) => type.value === rawLocationType)
-      ? rawLocationType as CandidateJobsQuery["locationType"]
-      : "",
-    experienceLevel: EXPERIENCE_LEVELS.includes(rawExperience) ? rawExperience : "",
-    minSalary: validSalaryRange ? rawMinSalary ?? "" : "",
-    maxSalary: validSalaryRange ? rawMaxSalary ?? "" : "",
-    skills,
-    sortBy: rawSortBy === "salary" ? "salary" : "postedAt",
-    sortOrder: rawSortOrder === "asc" ? "asc" : "desc",
-  };
-}
-
-function serializeJobQuery(params: URLSearchParams, query: CandidateJobsQuery): URLSearchParams {
-  for (const key of JOB_QUERY_PARAMS) params.delete(key);
-
-  if (query.search?.trim()) params.set("q", query.search.trim());
-  if (query.companyId) params.set("companyId", query.companyId);
-  if (query.location?.trim()) params.set("location", query.location.trim());
-  if (query.jobType) params.set("jobType", query.jobType);
-  if (query.locationType) params.set("locationType", query.locationType);
-  if (query.experienceLevel) params.set("experienceLevel", query.experienceLevel);
-  if (query.minSalary) params.set("minSalary", query.minSalary);
-  if (query.maxSalary) params.set("maxSalary", query.maxSalary);
-  if (query.skills?.trim()) params.set("skills", query.skills.split(",").map((skill) => skill.trim()).filter(Boolean).join(","));
-  if (query.sortBy !== "postedAt") params.set("sortBy", query.sortBy);
-  if (query.sortOrder !== "desc") params.set("sortOrder", query.sortOrder);
-  if (query.page > 1) params.set("page", String(query.page));
-  if (query.limit !== DEFAULT_PAGE_SIZE) params.set("limit", String(query.limit));
-  return params;
-}
-
-function parseIntegerInput(value: string): string | undefined {
-  return parseNonNegativeInteger(value || null);
+  return Number.isSafeInteger(parsed) && parsed >= 0 ? String(parsed) : undefined;
 }
 
 function getApiErrorMessage(error: unknown): string {
@@ -133,16 +60,34 @@ function getApiErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : "The request failed. Please try again.";
 }
 
+function JobCardSkeletons() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="status" aria-label="Loading job listings">
+      {Array.from({ length: 4 }, (_, index) => (
+        <div key={index} className="h-64 rounded-2xl border border-border bg-white/70 p-5">
+          <div className="h-12 w-12 animate-pulse rounded-xl bg-muted" />
+          <div className="mt-5 h-4 w-2/3 animate-pulse rounded bg-muted" />
+          <div className="mt-3 h-3 w-1/2 animate-pulse rounded bg-muted" />
+          <div className="mt-8 h-3 w-full animate-pulse rounded bg-muted" />
+          <div className="mt-3 h-3 w-4/5 animate-pulse rounded bg-muted" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function CandidateJobs() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchString = searchParams.toString();
-  const query = useMemo(() => parseJobQuery(new URLSearchParams(searchString)), [searchString]);
+  const parsedQuery = useMemo(() => parseJobQuery(new URLSearchParams(searchString)), [searchString]);
+  const { query, issues } = parsedQuery;
   const [searchDraft, setSearchDraft] = useState(query.search ?? "");
   const [locationDraft, setLocationDraft] = useState(query.location ?? "");
   const [skillsDraft, setSkillsDraft] = useState(query.skills ?? "");
   const [companyDraft, setCompanyDraft] = useState(query.companyId ?? "");
   const [minSalaryDraft, setMinSalaryDraft] = useState(query.minSalary ?? "");
   const [maxSalaryDraft, setMaxSalaryDraft] = useState(query.maxSalary ?? "");
+  const [draftValidationMessage, setDraftValidationMessage] = useState("");
   const searchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const updateQuery = (patch: Partial<CandidateJobsQuery>, resetPage = false) => {
@@ -152,11 +97,12 @@ export default function CandidateJobs() {
   };
 
   useEffect(() => {
+    if (issues.length > 0) return;
     const normalizedParams = serializeJobQuery(new URLSearchParams(searchString), query);
     if (normalizedParams.toString() !== searchString) {
       setSearchParams(normalizedParams, { replace: true });
     }
-  }, [query, searchString, setSearchParams]);
+  }, [issues.length, query, searchString, setSearchParams]);
 
   useEffect(() => {
     setSearchDraft(query.search ?? "");
@@ -183,9 +129,18 @@ export default function CandidateJobs() {
   }, [query.maxSalary]);
 
   const commitDrafts = () => {
-    const companyIdValue = parsePositiveInteger(companyDraft);
-    const minSalaryValue = parseIntegerInput(minSalaryDraft) ?? "";
-    const maxSalaryValue = parseIntegerInput(maxSalaryDraft) ?? "";
+    const companyIdValue = parsePositiveIntegerInput(companyDraft);
+    const minSalaryValue = parseNonNegativeIntegerInput(minSalaryDraft);
+    const maxSalaryValue = parseNonNegativeIntegerInput(maxSalaryDraft);
+    if (
+      (companyDraft.trim() !== "" && companyIdValue === undefined) ||
+      minSalaryValue === undefined ||
+      maxSalaryValue === undefined
+    ) {
+      setDraftValidationMessage("Enter a positive whole company ID and non-negative whole salary amounts.");
+      return;
+    }
+    setDraftValidationMessage("");
     updateQuery({
       search: searchDraft,
       location: locationDraft,
@@ -228,7 +183,20 @@ export default function CandidateJobs() {
   const jobsQuery = useQuery({
     queryKey: ["jobs", query],
     queryFn: ({ signal }) => getCandidateJobs(query, signal),
+    enabled: issues.length === 0,
+    retry: 1,
+    retryDelay: 1000,
+    placeholderData: keepPreviousData,
   });
+  const viewState = getCandidateJobsViewState({
+    hasInvalidQuery: issues.length > 0,
+    isPending: jobsQuery.isPending,
+    isError: jobsQuery.isError,
+    hasData: jobsQuery.data !== undefined,
+    isPlaceholderData: jobsQuery.isPlaceholderData,
+    jobCount: jobsQuery.data?.jobs.length ?? 0,
+  });
+  const hasCurrentData = jobsQuery.data !== undefined && !jobsQuery.isPlaceholderData;
 
   const searchTerm = query.search ?? "";
   const locationTerm = query.location ?? "";
@@ -251,6 +219,7 @@ export default function CandidateJobs() {
     maxSalary ||
     skills.trim(),
   );
+  const emptyState = getCandidateJobsEmptyState(hasFilters, jobsQuery.data?.pagination.total ?? 0);
 
   const clearFilters = () => {
     if (searchTimer.current !== undefined) clearTimeout(searchTimer.current);
@@ -260,6 +229,7 @@ export default function CandidateJobs() {
     setCompanyDraft("");
     setMinSalaryDraft("");
     setMaxSalaryDraft("");
+    setDraftValidationMessage("");
     updateQuery({
       search: "",
       location: "",
@@ -275,13 +245,18 @@ export default function CandidateJobs() {
     }, true);
   };
 
+  const clearInvalidParameters = () => {
+    if (searchTimer.current !== undefined) clearTimeout(searchTimer.current);
+    setSearchParams(serializeJobQuery(new URLSearchParams(searchString), query), { replace: true });
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto">
       <PageHeader
         title="Find Jobs"
         eyebrow={
-          jobsQuery.data
-            ? `${jobsQuery.data.pagination.total} open role${jobsQuery.data.pagination.total === 1 ? "" : "s"}`
+          hasCurrentData
+            ? `${jobsQuery.data?.pagination.total} open role${jobsQuery.data?.pagination.total === 1 ? "" : "s"}`
             : "Discover open roles"
         }
         description="Discover opportunities matched to your skills and experience."
@@ -384,6 +359,9 @@ export default function CandidateJobs() {
           >
             <option value="">Any experience</option>
             {EXPERIENCE_LEVELS.map((level) => <option key={level} value={level}>{level}</option>)}
+            {experienceLevel && !EXPERIENCE_LEVELS.includes(experienceLevel) && (
+              <option value={experienceLevel}>{experienceLevel}</option>
+            )}
           </select>
         </label>
         <label className="space-y-1 text-xs font-medium text-muted-foreground">
@@ -454,6 +432,9 @@ export default function CandidateJobs() {
           </select>
         </label>
       </section>
+      {draftValidationMessage && (
+        <p className="text-sm text-destructive" role="alert">{draftValidationMessage}</p>
+      )}
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -467,14 +448,21 @@ export default function CandidateJobs() {
           <p className="text-muted-foreground text-[13px] flex items-center gap-1.5 mt-1">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
             <span aria-live="polite">
-                {jobsQuery.data
-                  ? `${jobsQuery.data.pagination.total} match${jobsQuery.data.pagination.total === 1 ? "" : "es"}${hasFilters ? "" : " based on your profile and experience"}`
-                  : jobsQuery.isPending
-                  ? "Loading job matches…"
-                  : "Job matches unavailable"}
+              {hasCurrentData
+                ? `${jobsQuery.data?.pagination.total} match${jobsQuery.data?.pagination.total === 1 ? "" : "es"}${hasFilters ? "" : " based on your profile and experience"}`
+                : viewState === "updating"
+                ? "Updating job matches…"
+                : viewState === "loading"
+                ? "Loading job matches…"
+                : viewState === "invalid-query"
+                ? "Review the job search parameters"
+                : "Job matches unavailable"}
+            </span>
+            {jobsQuery.isFetching && hasCurrentData && (
+              <span className="ml-1 inline-flex items-center gap-1" role="status">
+                <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                Refreshing job listings…
               </span>
-            {jobsQuery.isFetching && jobsQuery.data && (
-              <span className="ml-1" role="status">Refreshing job listings…</span>
             )}
           </p>
         </div>
@@ -498,10 +486,29 @@ export default function CandidateJobs() {
         </div>
       </div>
 
-      {jobsQuery.isError && !jobsQuery.data ? (
+      {viewState === "invalid-query" && (
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/[0.04] p-6">
+          <h3 className="font-semibold text-foreground">Some job search parameters are invalid</h3>
+          <ul className="mt-2 space-y-1 text-sm text-destructive" role="alert">
+            {issues.map((issue, index) => (
+              <li key={`${issue.parameter}-${index}`}>
+                <span className="font-medium">{issue.parameter}:</span> {issue.message}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Correct the URL values or reset only the invalid parameters. Valid filters will be kept.
+          </p>
+          <Button variant="outline" className="mt-4" onClick={clearInvalidParameters}>
+            Reset invalid parameters
+          </Button>
+        </div>
+      )}
+
+      {viewState === "error" && (
         <div className="rounded-2xl border border-destructive/30 bg-destructive/[0.04] p-6 text-center">
           <p className="text-sm text-destructive" role="alert">
-            We couldn’t load job listings. {getApiErrorMessage(jobsQuery.error)}
+            We couldn’t load job listings for this search. {getApiErrorMessage(jobsQuery.error)}
           </p>
           <Button
             variant="outline"
@@ -509,22 +516,32 @@ export default function CandidateJobs() {
             onClick={() => void jobsQuery.refetch()}
             disabled={jobsQuery.isFetching}
           >
-            Try again
+            {jobsQuery.isFetching && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />}
+            {jobsQuery.isFetching ? "Retrying…" : "Try again"}
           </Button>
         </div>
-      ) : jobsQuery.isPending ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4" role="status" aria-label="Loading job listings">
-          {Array.from({ length: 4 }, (_, index) => (
-            <div key={index} className="h-64 rounded-2xl border border-border bg-white/70 p-5">
-              <div className="h-12 w-12 animate-pulse rounded-xl bg-muted" />
-              <div className="mt-5 h-4 w-2/3 animate-pulse rounded bg-muted" />
-              <div className="mt-3 h-3 w-1/2 animate-pulse rounded bg-muted" />
-              <div className="mt-8 h-3 w-full animate-pulse rounded bg-muted" />
-              <div className="mt-3 h-3 w-4/5 animate-pulse rounded bg-muted" />
-            </div>
-          ))}
+      )}
+
+      {viewState === "loading" && <JobCardSkeletons />}
+
+      {viewState === "updating" && (
+        <div aria-busy="true">
+          <p className="mb-3 text-sm text-muted-foreground" role="status">
+            Updating results for the new search. Previous results remain visible until they are ready.
+          </p>
+          {jobsQuery.data?.jobs.length ? (
+            <StaggerGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {jobsQuery.data.jobs.map((job) => (
+                <StaggerItem key={job.id}>
+                  <JobCard job={job} variant="candidate" />
+                </StaggerItem>
+              ))}
+            </StaggerGroup>
+          ) : <JobCardSkeletons />}
         </div>
-      ) : (
+      )}
+
+      {(viewState === "empty" || viewState === "results") && (
         <>
           {jobsQuery.isError && (
             <p className="text-sm text-destructive" role="alert">
@@ -535,18 +552,35 @@ export default function CandidateJobs() {
                 onClick={() => void jobsQuery.refetch()}
                 disabled={jobsQuery.isFetching}
               >
-                Retry
+                {jobsQuery.isFetching ? "Retrying…" : "Retry"}
               </Button>
             </p>
           )}
-          {jobsQuery.data?.pagination.total === 0 ? (
+          {viewState === "empty" && emptyState === "no-matches" ? (
             <EmptyState
               icon={Briefcase}
-              title={hasFilters ? "No opportunities found" : "No open roles yet"}
-              description={hasFilters ? "Try broadening your search criteria or clear your filters." : "There are no published opportunities available right now. Please check back soon."}
-              action={hasFilters ? <Button variant="outline" onClick={clearFilters}>Clear filters</Button> : undefined}
+              title="No jobs match your search"
+              description="Try broadening your search criteria or clear your filters."
+              action={<Button variant="outline" onClick={clearFilters}>Clear filters</Button>}
             />
-          ) : (jobsQuery.data?.jobs.length ?? 0) > 0 ? (
+          ) : viewState === "empty" && emptyState === "no-jobs" ? (
+            <EmptyState
+              icon={Briefcase}
+              title="No jobs are currently available"
+              description="There are no published opportunities available right now. Please check back soon."
+            />
+          ) : viewState === "empty" ? (
+            <EmptyState
+              icon={Briefcase}
+              title="No jobs on this page"
+              description="The listings may have changed since you opened this page. Return to the first page to see the current results."
+              action={
+                <Button variant="outline" onClick={() => updateQuery({ page: 1 })}>
+                  Go to first page
+                </Button>
+              }
+            />
+          ) : (
             <StaggerGroup key={searchString} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {jobsQuery.data?.jobs.map(job => (
                 <StaggerItem key={job.id}>
@@ -554,17 +588,8 @@ export default function CandidateJobs() {
                 </StaggerItem>
               ))}
             </StaggerGroup>
-          ) : (
-            <EmptyState
-              icon={Briefcase}
-              title="No opportunities found"
-              description="Try broadening your search criteria or explore other categories."
-              action={
-                <Button variant="outline" onClick={clearFilters}>Clear search</Button>
-              }
-            />
           )}
-          {jobsQuery.data && jobsQuery.data.pagination.total > 0 && (
+          {hasCurrentData && jobsQuery.data && jobsQuery.data.pagination.total > 0 && (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border pt-4">
               <p className="text-sm text-muted-foreground" aria-live="polite">
                 Page {jobsQuery.data.pagination.page} of {jobsQuery.data.pagination.totalPages} · {jobsQuery.data.pagination.total} jobs
@@ -581,6 +606,9 @@ export default function CandidateJobs() {
                     }}
                   >
                     {PAGE_SIZES.map((size) => <option key={size} value={size}>{size}</option>)}
+                    {!PAGE_SIZES.includes(query.limit as (typeof PAGE_SIZES)[number]) && (
+                      <option value={query.limit}>{query.limit}</option>
+                    )}
                   </select>
                 </label>
                 <Button
