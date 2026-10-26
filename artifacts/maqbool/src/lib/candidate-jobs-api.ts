@@ -1,8 +1,9 @@
-import { type Job } from '@workspace/api-client-react';
+import type { Job } from '@workspace/api-client-react';
 import { authenticatedApiRequest } from './authenticated-api';
+import { isCandidateJob, parseCandidateJobDetails, type CandidateJobDetails } from './candidate-job-details';
 
-const JOB_TYPES: readonly Job['type'][] = ['full_time', 'part_time', 'contract', 'internship'];
-const LOCATION_TYPES: readonly NonNullable<Job['locationType']>[] = ['remote', 'hybrid', 'onsite'];
+export { getApplicationStatusLabel, parseCandidateJobDetails } from './candidate-job-details';
+export type { CandidateJobDetails } from './candidate-job-details';
 
 export interface CandidateJobsQuery {
   page: number;
@@ -32,49 +33,24 @@ export interface CandidateJobsResult {
   pagination: JobsPagination;
 }
 
+export function candidateJobQueryKey(jobId: number, candidateId: number) {
+  return ['candidate-job', jobId, candidateId] as const;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
 
-function isOptionalNullableString(value: unknown): boolean {
-  return value === undefined || value === null || typeof value === 'string';
-}
+export async function getCandidateJobDetails(
+  jobId: number,
+  signal?: AbortSignal,
+): Promise<CandidateJobDetails> {
+  if (!Number.isSafeInteger(jobId) || jobId <= 0) {
+    throw new Error('A valid job ID is required.');
+  }
 
-function isOptionalNullableNumber(value: unknown): boolean {
-  return value === undefined || value === null || typeof value === 'number';
-}
-
-function isJob(value: unknown): value is Job {
-  if (!isRecord(value)) return false;
-
-  return (
-    Number.isSafeInteger(value.id) &&
-    typeof value.title === 'string' &&
-    typeof value.company === 'string' &&
-    typeof value.location === 'string' &&
-    JOB_TYPES.includes(value.type as Job['type']) &&
-    value.status === 'published' &&
-    typeof value.createdAt === 'string' &&
-    (value.locationType === undefined ||
-      (typeof value.locationType === 'string' &&
-        LOCATION_TYPES.includes(value.locationType as NonNullable<Job['locationType']>))) &&
-    isOptionalNullableNumber(value.companyId) &&
-    isOptionalNullableString(value.companyLogoUrl) &&
-    isOptionalNullableNumber(value.salaryMin) &&
-    isOptionalNullableNumber(value.salaryMax) &&
-    isOptionalNullableString(value.salaryCurrency) &&
-    isOptionalNullableString(value.description) &&
-    isOptionalNullableString(value.requirements) &&
-    isOptionalNullableString(value.responsibilities) &&
-    isOptionalNullableString(value.benefits) &&
-    (value.skills === undefined || (Array.isArray(value.skills) && value.skills.every((skill) => typeof skill === 'string'))) &&
-    (value.applicantCount === undefined || typeof value.applicantCount === 'number') &&
-    (value.viewCount === undefined || typeof value.viewCount === 'number') &&
-    isOptionalNullableString(value.postedAt) &&
-    isOptionalNullableString(value.closingDate) &&
-    isOptionalNullableString(value.department) &&
-    isOptionalNullableString(value.experienceLevel)
-  );
+  const response = await authenticatedApiRequest<unknown>(`/jobs/${jobId}`, { signal });
+  return parseCandidateJobDetails(response);
 }
 
 function parseJobsPage(value: unknown, expectedQuery: CandidateJobsQuery): CandidateJobsResult {
@@ -93,7 +69,7 @@ function parseJobsPage(value: unknown, expectedQuery: CandidateJobsQuery): Candi
     !Number.isSafeInteger(totalPages) ||
     totalPages < 0 ||
     totalPages !== Math.ceil(total / expectedQuery.limit) ||
-    !value.jobs.every(isJob)
+    !value.jobs.every(isCandidateJob)
   ) {
     throw new Error('The jobs service returned an invalid response.');
   }

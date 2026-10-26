@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import { Controller, useForm, type FieldPath } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
-import { ApiError } from "@workspace/api-client-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ApiError, ApplicationStatus } from "@workspace/api-client-react";
 import { Button } from "@workspace/design-system/button";
 import { Card, CardContent } from "@workspace/design-system/card";
 import { Input } from "@workspace/design-system/input";
@@ -13,7 +13,12 @@ import { PageHeader } from "@/components/shared/page-header";
 import { useAuth } from "@/lib/auth";
 import { getCandidateProfile, getCandidateResumeHref } from "@/lib/candidate-profile-api";
 import { submitJobApplication } from "@/lib/candidate-applications-api";
-import { MOCK_JOBS, SCREENING_QUESTIONS } from "@/lib/mock-data";
+import { SCREENING_QUESTIONS } from "@/lib/mock-data";
+import {
+  candidateJobQueryKey,
+  getApplicationStatusLabel,
+  getCandidateJobDetails,
+} from "@/lib/candidate-jobs-api";
 import {
   ArrowLeft,
   FileText,
@@ -80,20 +85,29 @@ export default function ApplyFlow() {
   const { id, step } = useParams();
   const [, setLocation] = useLocation();
   const { user, role, signOut } = useAuth();
-  const job = MOCK_JOBS.find(j => j.id === Number(id));
+  const queryClient = useQueryClient();
+  const parsedJobId = Number(id);
+  const jobId = Number.isSafeInteger(parsedJobId) && parsedJobId > 0 ? parsedJobId : undefined;
+  const jobQuery = useQuery({
+    queryKey: candidateJobQueryKey(jobId ?? 0, user?.id ?? 0),
+    queryFn: ({ signal }) =>
+      jobId === undefined
+        ? Promise.reject(new Error("A valid job ID is required."))
+        : getCandidateJobDetails(jobId, signal),
+    enabled: jobId !== undefined && Boolean(user && role === "candidate"),
+    retry: (failureCount, error) =>
+      !(error instanceof ApiError && error.status === 404) && failureCount < 1,
+  });
   const candidateProfileQuery = useQuery({
     queryKey: ["candidate-profile", user?.id],
     queryFn: ({ signal }) => getCandidateProfile(signal),
-    enabled: Boolean(user && role === "candidate"),
+    enabled: Boolean(user && role === "candidate" && jobId !== undefined),
     retry: false,
   });
-  const candidateProfile = candidateProfileQuery.data;
-  const savedResumeUrl = candidateProfile?.resumeUrl?.trim() ?? "";
-  const hasValidResume = Boolean(savedResumeUrl && isValidResumeUrl(savedResumeUrl));
-
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [applicationError, setApplicationError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const [candidateDetails, setCandidateDetails] = useState({
     name: user?.name ?? "",
     email: user?.email ?? "",
@@ -108,6 +122,9 @@ export default function ApplyFlow() {
     formState: { errors: screeningErrors },
   } = useForm<ScreeningFormValues>({ defaultValues: { answers: {}, motivation: "" } });
   const screeningValues = watch();
+  const candidateProfile = candidateProfileQuery.data;
+  const savedResumeUrl = candidateProfile?.resumeUrl?.trim() ?? "";
+  const hasValidResume = Boolean(savedResumeUrl && isValidResumeUrl(savedResumeUrl));
 
   // Hooks must run unconditionally above any early return, so the step index
   // (and the direction it implies) is computed before the not-found bail-outs.
@@ -131,9 +148,49 @@ export default function ApplyFlow() {
     }
   }, [candidateProfileQuery.error, setLocation, signOut]);
 
-  if (!job) return <NotFound />;
+  if (jobId === undefined) return <NotFound />;
   if (currentStepIndex === -1) return <NotFound />;
   if (!user || role !== "candidate") return null;
+  if (jobQuery.isPending || jobQuery.isFetching) {
+    return (
+      <main className="flex min-h-64 items-center justify-center text-sm text-muted-foreground" role="status">
+        Loading job details…
+      </main>
+    );
+  }
+  if (jobQuery.error instanceof ApiError && jobQuery.error.status === 404) return <NotFound />;
+  if (jobQuery.error) {
+    return (
+      <Card className="mx-auto max-w-xl">
+        <CardContent className="space-y-4 p-6">
+          <p className="text-sm text-destructive" role="alert">
+            {getApiErrorMessage(jobQuery.error)}
+          </p>
+          <Button variant="outline" onClick={() => void jobQuery.refetch()}>
+            Try again
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+  const job = jobQuery.data;
+  if (!job) return <NotFound />;
+  const applicationStatusLabel = getApplicationStatusLabel(job.applicationStatus);
+  if (applicationStatusLabel && !hasSubmitted) {
+    return (
+      <Card className="mx-auto max-w-xl">
+        <CardContent className="space-y-4 p-6">
+          <h1 className="text-lg font-semibold">{applicationStatusLabel}</h1>
+          <p className="text-sm text-muted-foreground">
+            An application already exists for this job. You can’t submit another one.
+          </p>
+          <Link href={`/candidate/jobs/${job.id}`}>
+            <Button variant="outline">Back to job details</Button>
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  }
   if (candidateProfileQuery.isPending) {
     return (
       <main className="flex min-h-64 items-center justify-center text-sm text-muted-foreground" role="status">
@@ -198,7 +255,13 @@ export default function ApplyFlow() {
     setIsSubmitting(true);
     try {
       const coverLetter = screeningValues.motivation.trim();
-      await submitJobApplication(Number(id), coverLetter || undefined);
+      await submitJobApplication(job.id, coverLetter || undefined);
+      queryClient.setQueryData(
+        candidateJobQueryKey(job.id, user.id),
+        (current: typeof job | undefined) =>
+          current ? { ...current, applicationStatus: ApplicationStatus.applied } : current,
+      );
+      setHasSubmitted(true);
       goToStep("success");
     } catch (error) {
       setApplicationError(getApiErrorMessage(error));
