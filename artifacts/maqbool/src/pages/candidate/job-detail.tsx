@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ApiError } from "@workspace/api-client-react";
 import { Link, useParams } from "wouter";
-import { MOCK_JOBS } from "@/lib/mock-data";
 import { Button } from "@workspace/design-system/button";
 import { Badge } from "@workspace/design-system/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/design-system/avatar";
@@ -8,6 +9,12 @@ import { Card, CardContent } from "@workspace/design-system/card";
 import { toast } from "@workspace/design-system/hooks/use-toast";
 import { cn } from "@workspace/design-system/utils";
 import { ViewfinderCard } from "@/components/shared/viewfinder-card";
+import { useAuth } from "@/lib/auth";
+import {
+  candidateJobQueryKey,
+  getApplicationStatusLabel,
+  getCandidateJobDetails,
+} from "@/lib/candidate-jobs-api";
 import {
   MapPin,
   Clock,
@@ -21,12 +28,63 @@ import {
 } from "lucide-react";
 import NotFound from "@/pages/not-found";
 
+function getApiErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    const data = error.data;
+    if (data && typeof data === "object") {
+      const body = data as { error?: { message?: unknown }; message?: unknown };
+      if (typeof body.error?.message === "string") return body.error.message;
+      if (typeof body.message === "string") return body.message;
+    }
+  }
+
+  return error instanceof Error ? error.message : "The request failed. Please try again.";
+}
+
 export default function JobDetail() {
   const { id } = useParams();
-  const job = MOCK_JOBS.find(j => j.id === Number(id));
+  const { user, role } = useAuth();
+  const parsedJobId = Number(id);
+  const jobId = Number.isSafeInteger(parsedJobId) && parsedJobId > 0 ? parsedJobId : undefined;
   const [saved, setSaved] = useState(false);
+  const jobQuery = useQuery({
+    queryKey: candidateJobQueryKey(jobId ?? 0, user?.id ?? 0),
+    queryFn: ({ signal }) =>
+      jobId === undefined
+        ? Promise.reject(new Error("A valid job ID is required."))
+        : getCandidateJobDetails(jobId, signal),
+    enabled: jobId !== undefined && Boolean(user?.id) && role === "candidate",
+    retry: (failureCount, error) =>
+      !(error instanceof ApiError && error.status === 404) && failureCount < 1,
+  });
 
+  if (jobId === undefined) return <NotFound />;
+  if (jobQuery.isPending) {
+    return (
+      <main className="flex min-h-64 items-center justify-center text-sm text-muted-foreground" role="status">
+        Loading job details…
+      </main>
+    );
+  }
+  if (jobQuery.error instanceof ApiError && jobQuery.error.status === 404) return <NotFound />;
+  if (jobQuery.error) {
+    return (
+      <Card className="mx-auto max-w-xl">
+        <CardContent className="space-y-4 p-6">
+          <p className="text-sm text-destructive" role="alert">
+            {getApiErrorMessage(jobQuery.error)}
+          </p>
+          <Button variant="outline" onClick={() => void jobQuery.refetch()}>
+            Try again
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const job = jobQuery.data;
   if (!job) return <NotFound />;
+  const applicationStatusLabel = getApplicationStatusLabel(job.applicationStatus);
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -87,11 +145,21 @@ export default function JobDetail() {
               >
                 <Share2 className="w-4 h-4" />
               </Button>
-              <Link href={`/candidate/apply/${job.id}/details`} className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto px-8">
-                  Apply Now
+              {applicationStatusLabel ? (
+                <Button size="lg" className="w-full sm:w-auto px-8" disabled>
+                  {applicationStatusLabel}
                 </Button>
-              </Link>
+              ) : jobQuery.isFetching ? (
+                <Button size="lg" className="w-full sm:w-auto px-8" disabled>
+                  Checking application status…
+                </Button>
+              ) : (
+                <Link href={`/candidate/apply/${job.id}/details`} className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full sm:w-auto px-8">
+                    Apply Now
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
 
