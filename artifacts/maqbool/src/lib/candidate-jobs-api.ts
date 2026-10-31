@@ -1,9 +1,15 @@
 import type { Job } from '@workspace/api-client-react';
 import { authenticatedApiRequest } from './authenticated-api';
-import { isCandidateJob, parseCandidateJobDetails, type CandidateJobDetails } from './candidate-job-details';
+import {
+  isCandidateJob,
+  parseCandidateSavedJobsPage,
+  parseCandidateJobDetails,
+  type CandidateJobDetails,
+  type CandidateSavedJob,
+} from './candidate-job-details';
 
-export { getApplicationStatusLabel, parseCandidateJobDetails } from './candidate-job-details';
-export type { CandidateJobDetails } from './candidate-job-details';
+export { getApplicationStatusLabel, parseCandidateJobDetails, parseCandidateSavedJobsPage } from './candidate-job-details';
+export type { CandidateJobDetails, CandidateSavedJob } from './candidate-job-details';
 
 export interface CandidateJobsQuery {
   page: number;
@@ -37,8 +43,51 @@ export function candidateJobQueryKey(jobId: number, candidateId: number) {
   return ['candidate-job', jobId, candidateId] as const;
 }
 
+export function candidateSavedJobsQueryKey(candidateId: number) {
+  return ['saved-jobs', candidateId] as const;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
+}
+
+export async function getCandidateSavedJobs(signal?: AbortSignal): Promise<CandidateSavedJob[]> {
+  const limit = 100;
+  const getPage = async (page: number) => {
+    const response = await authenticatedApiRequest<unknown>(
+      `/candidates/saved-jobs?page=${page}&limit=${limit}`,
+      { signal },
+    );
+    return parseCandidateSavedJobsPage(response, page, limit);
+  };
+
+  const firstPage = await getPage(1);
+  const savedJobs = [...firstPage.jobs];
+  for (let page = 2; page <= firstPage.pagination.totalPages; page += 1) {
+    const result = await getPage(page);
+    if (
+      result.pagination.total !== firstPage.pagination.total ||
+      result.pagination.totalPages !== firstPage.pagination.totalPages
+    ) {
+      throw new Error('The saved-jobs service changed while the results were being loaded. Please try again.');
+    }
+    savedJobs.push(...result.jobs);
+  }
+  return savedJobs;
+}
+
+export async function saveCandidateJob(jobId: number): Promise<unknown> {
+  if (!Number.isSafeInteger(jobId) || jobId <= 0) {
+    throw new Error('A valid job ID is required.');
+  }
+  return authenticatedApiRequest<unknown>(`/jobs/${jobId}/save`, { method: 'POST' });
+}
+
+export async function unsaveCandidateJob(jobId: number): Promise<unknown> {
+  if (!Number.isSafeInteger(jobId) || jobId <= 0) {
+    throw new Error('A valid job ID is required.');
+  }
+  return authenticatedApiRequest<unknown>(`/jobs/${jobId}/save`, { method: 'DELETE' });
 }
 
 export async function getCandidateJobDetails(

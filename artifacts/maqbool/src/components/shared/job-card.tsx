@@ -12,19 +12,29 @@ import {
 } from "@workspace/design-system/dropdown-menu";
 import { StatusBadge } from "./badges";
 import { ViewfinderCard } from "./viewfinder-card";
-import { MapPin, Clock, DollarSign, Bookmark, MoreHorizontal, Share2, Flag, Pencil, Users } from "lucide-react";
+import { MapPin, Clock, DollarSign, Bookmark, MoreHorizontal, Share2, Flag, Pencil, Users, LoaderCircle } from "lucide-react";
 import { Link } from "wouter";
 import { cn } from "@workspace/design-system/utils";
 
 interface JobCardProps {
-  job: Job;
+  job: Omit<Job, "status"> & { status?: Job["status"] };
   variant?: "recruiter" | "candidate";
   className?: string;
   saved?: boolean;
   onToggleSave?: () => void;
+  saving?: boolean;
+  savePending?: boolean;
 }
 
-export function JobCard({ job, variant = "candidate", className, saved, onToggleSave }: JobCardProps) {
+export function JobCard({
+  job,
+  variant = "candidate",
+  className,
+  saved,
+  onToggleSave,
+  saving = false,
+  savePending = false,
+}: JobCardProps) {
   const isRecruiter = variant === "recruiter";
   const postedMs = new Date(job.postedAt || job.createdAt).getTime();
   const isNew = !isRecruiter && Date.now() - postedMs < 7 * 86_400_000 && Date.now() >= postedMs;
@@ -68,7 +78,7 @@ export function JobCard({ job, variant = "candidate", className, saved, onToggle
 
           <div className="flex items-center gap-1.5 shrink-0">
             {isRecruiter ? (
-              <StatusBadge status={job.status} />
+              job.status && <StatusBadge status={job.status} />
             ) : (
               onToggleSave && (
                 <Button
@@ -76,9 +86,13 @@ export function JobCard({ job, variant = "candidate", className, saved, onToggle
                   size="icon"
                   className={cn("h-8 w-8", saved ? "text-primary" : "text-muted-foreground hover:text-foreground")}
                   onClick={onToggleSave}
+                  disabled={saving}
+                  aria-busy={savePending}
                   aria-label={saved ? "Remove from saved" : "Save job"}
                 >
-                  <Bookmark className={cn("w-4 h-4", saved && "fill-current")} />
+                  {savePending
+                    ? <LoaderCircle className="w-4 h-4 animate-spin" aria-hidden="true" />
+                    : <Bookmark className={cn("w-4 h-4", saved && "fill-current")} />}
                 </Button>
               )
             )}
