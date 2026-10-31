@@ -1077,3 +1077,37 @@ Implementation and verification steps for this feature:
    presentation without changing the API contract or adding dependencies.
 8. Verified the candidate frontend type-check/build, focused frontend query
    tests, and existing jobs API contract tests.
+
+## 7. Candidate Job Bookmark Integration
+
+The candidate job list, job detail, and saved-jobs page use persisted saved-job
+records from the authenticated API. The implementation uses the existing
+`authenticatedApiRequest` helper, which shares the existing API client's fetch
+and session-refresh behavior; no second client or dependency was added.
+
+1. `POST /api/jobs/:id/save` saves a job and
+   `DELETE /api/jobs/:id/save` removes it. Both authenticated candidate-only
+   routes already exist in `artifacts/api-server/src/routes/jobs.ts`.
+2. `GET /api/candidates/saved-jobs?page=N&limit=100` supplies the saved state.
+   The frontend validates the paginated `{ jobs, pagination }` response and
+   loads all pages; each saved row includes the saved record ID, job ID, save
+   timestamp, and the partial nested job fields returned by the backend.
+3. Job-list cards and job detail determine whether a job is saved by matching
+   its ID against the saved-jobs query. The saved-jobs screen renders the
+   nested job from that same query. There is no client-only saved-state array
+   or optimistic toggle.
+4. Successful save/unsave mutations invalidate the candidate's
+   `["saved-jobs", candidateId]` query, the matching
+   `["candidate-job", jobId, candidateId]` detail query, and the `["jobs"]`
+   prefix so all matching active list queries refetch. Failed mutations show
+   an error toast and preserve the backend-derived status.
+5. Bookmark controls are disabled while saved status is loading/unknown or a
+   mutation is pending. The saved-jobs query also displays retry/error states
+   in the list, detail, and saved-jobs views. The job-alert controls remain
+   local mock state because the backend has no job-alert endpoint.
+6. Updated the OpenAPI paths and saved-jobs response schema to match the
+   existing runtime routes and pagination payload; generated API-client and
+   Zod outputs are kept aligned with that contract.
+
+Focused validation included the candidate frontend type-check, candidate job
+API/query tests, and the existing backend saved-jobs route tests.

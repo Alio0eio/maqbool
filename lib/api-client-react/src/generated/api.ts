@@ -29,6 +29,7 @@ import type {
   Candidate,
   CandidateComparison,
   CandidateProfileInput,
+  CandidateSavedJobsResponse,
   Company,
   CompanyInput,
   Conversation,
@@ -54,6 +55,7 @@ import type {
   JobUpdate,
   ListCandidatesParams,
   ListJobsParams,
+  ListSavedJobsParams,
   Message,
   MessageInput,
   Notification,
@@ -2060,20 +2062,27 @@ export function useCompareCandidates<TData = Awaited<ReturnType<typeof compareCa
 
 
 
-export const getListSavedJobsUrl = () => {
+export const getListSavedJobsUrl = (params?: ListSavedJobsParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/candidates/saved`
+  return stringifiedParams.length > 0 ? `/api/candidates/saved-jobs?${stringifiedParams}` : `/api/candidates/saved-jobs`
 }
 
 /**
  * @summary List saved jobs for current candidate
  */
-export const listSavedJobs = async ( options?: RequestInit): Promise<SavedJob[]> => {
+export const listSavedJobs = async (params?: ListSavedJobsParams, options?: RequestInit): Promise<CandidateSavedJobsResponse> => {
 
-  return customFetch<SavedJob[]>(getListSavedJobsUrl(),
+  return customFetch<CandidateSavedJobsResponse>(getListSavedJobsUrl(params),
   {
     ...options,
     method: 'GET'
@@ -2086,23 +2095,23 @@ export const listSavedJobs = async ( options?: RequestInit): Promise<SavedJob[]>
 
 
 
-export const getListSavedJobsQueryKey = () => {
+export const getListSavedJobsQueryKey = (params?: ListSavedJobsParams,) => {
     return [
-    `/api/candidates/saved`
+    `/api/candidates/saved-jobs`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getListSavedJobsQueryOptions = <TData = Awaited<ReturnType<typeof listSavedJobs>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listSavedJobs>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getListSavedJobsQueryOptions = <TData = Awaited<ReturnType<typeof listSavedJobs>>, TError = ErrorType<unknown>>(params?: ListSavedJobsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listSavedJobs>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getListSavedJobsQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getListSavedJobsQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof listSavedJobs>>> = ({ signal }) => listSavedJobs({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listSavedJobs>>> = ({ signal }) => listSavedJobs(params, { signal, ...requestOptions });
 
 
 
@@ -2120,11 +2129,11 @@ export type ListSavedJobsQueryError = ErrorType<unknown>
  */
 
 export function useListSavedJobs<TData = Awaited<ReturnType<typeof listSavedJobs>>, TError = ErrorType<unknown>>(
-  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listSavedJobs>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ params?: ListSavedJobsParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listSavedJobs>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
-  const queryOptions = getListSavedJobsQueryOptions(options)
+  const queryOptions = getListSavedJobsQueryOptions(params,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -2137,20 +2146,20 @@ export function useListSavedJobs<TData = Awaited<ReturnType<typeof listSavedJobs
 
 
 
-export const getSaveJobUrl = (jobId: number,) => {
+export const getSaveJobUrl = (id: number,) => {
 
 
 
 
-  return `/api/candidates/saved/${jobId}`
+  return `/api/jobs/${id}/save`
 }
 
 /**
  * @summary Save a job
  */
-export const saveJob = async (jobId: number, options?: RequestInit): Promise<SavedJob> => {
+export const saveJob = async (id: number, options?: RequestInit): Promise<SavedJob> => {
 
-  return customFetch<SavedJob>(getSaveJobUrl(jobId),
+  return customFetch<SavedJob>(getSaveJobUrl(id),
   {
     ...options,
     method: 'POST'
@@ -2164,8 +2173,8 @@ export const saveJob = async (jobId: number, options?: RequestInit): Promise<Sav
 
 
 export const getSaveJobMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveJob>>, TError,{jobId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof saveJob>>, TError,{jobId: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveJob>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof saveJob>>, TError,{id: number}, TContext> => {
 
 const mutationKey = ['saveJob'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -2177,10 +2186,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof saveJob>>, {jobId: number}> = (props) => {
-          const {jobId} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof saveJob>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
 
-          return  saveJob(jobId,requestOptions)
+          return  saveJob(id,requestOptions)
         }
 
 
@@ -2198,30 +2207,30 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Save a job
  */
 export const useSaveJob = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveJob>>, TError,{jobId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveJob>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof saveJob>>,
         TError,
-        {jobId: number},
+        {id: number},
         TContext
       > => {
       return useMutation(getSaveJobMutationOptions(options));
     }
 
-export const getUnsaveJobUrl = (jobId: number,) => {
+export const getUnsaveJobUrl = (id: number,) => {
 
 
 
 
-  return `/api/candidates/saved/${jobId}`
+  return `/api/jobs/${id}/save`
 }
 
 /**
  * @summary Remove saved job
  */
-export const unsaveJob = async (jobId: number, options?: RequestInit): Promise<SuccessResult> => {
+export const unsaveJob = async (id: number, options?: RequestInit): Promise<SuccessResult> => {
 
-  return customFetch<SuccessResult>(getUnsaveJobUrl(jobId),
+  return customFetch<SuccessResult>(getUnsaveJobUrl(id),
   {
     ...options,
     method: 'DELETE'
@@ -2235,8 +2244,8 @@ export const unsaveJob = async (jobId: number, options?: RequestInit): Promise<S
 
 
 export const getUnsaveJobMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof unsaveJob>>, TError,{jobId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof unsaveJob>>, TError,{jobId: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof unsaveJob>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof unsaveJob>>, TError,{id: number}, TContext> => {
 
 const mutationKey = ['unsaveJob'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -2248,10 +2257,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof unsaveJob>>, {jobId: number}> = (props) => {
-          const {jobId} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof unsaveJob>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
 
-          return  unsaveJob(jobId,requestOptions)
+          return  unsaveJob(id,requestOptions)
         }
 
 
@@ -2269,11 +2278,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Remove saved job
  */
 export const useUnsaveJob = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof unsaveJob>>, TError,{jobId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof unsaveJob>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof unsaveJob>>,
         TError,
-        {jobId: number},
+        {id: number},
         TContext
       > => {
       return useMutation(getUnsaveJobMutationOptions(options));

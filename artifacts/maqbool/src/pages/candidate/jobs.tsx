@@ -10,7 +10,14 @@ import { Input } from "@workspace/design-system/input";
 import { Search, MapPin, Briefcase, Sparkles, LoaderCircle } from "lucide-react";
 import { cn } from "@workspace/design-system/utils";
 import { StaggerGroup, StaggerItem } from "@/components/shared/stagger";
-import { getCandidateJobs, type CandidateJobsQuery } from "@/lib/candidate-jobs-api";
+import { useAuth } from "@/lib/auth";
+import {
+  candidateSavedJobsQueryKey,
+  getCandidateJobs,
+  getCandidateSavedJobs,
+  type CandidateJobsQuery,
+} from "@/lib/candidate-jobs-api";
+import { useCandidateJobSave } from "@/lib/use-candidate-job-save";
 import {
   DEFAULT_PAGE_SIZE,
   PAGE_SIZES,
@@ -77,6 +84,7 @@ function JobCardSkeletons() {
 }
 
 export default function CandidateJobs() {
+  const { user, role } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchString = searchParams.toString();
   const parsedQuery = useMemo(() => parseJobQuery(new URLSearchParams(searchString)), [searchString]);
@@ -188,6 +196,14 @@ export default function CandidateJobs() {
     retryDelay: 1000,
     placeholderData: keepPreviousData,
   });
+  const savedJobsQuery = useQuery({
+    queryKey: candidateSavedJobsQueryKey(user?.id ?? 0),
+    queryFn: ({ signal }) => getCandidateSavedJobs(signal),
+    enabled: Boolean(user?.id) && role === "candidate",
+    retry: 1,
+  });
+  const saveMutation = useCandidateJobSave(user?.id ?? 0);
+  const savedJobIds = new Set((savedJobsQuery.data ?? []).map(({ jobId }) => jobId));
   const viewState = getCandidateJobsViewState({
     hasInvalidQuery: issues.length > 0,
     isPending: jobsQuery.isPending,
@@ -505,6 +521,22 @@ export default function CandidateJobs() {
         </div>
       )}
 
+      {savedJobsQuery.isError && (
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/[0.04] p-4">
+          <p className="text-sm text-destructive" role="alert">
+            Saved-job status couldn’t be loaded. {getApiErrorMessage(savedJobsQuery.error)}
+          </p>
+          <Button
+            variant="link"
+            className="mt-1 h-auto p-0"
+            onClick={() => void savedJobsQuery.refetch()}
+            disabled={savedJobsQuery.isFetching}
+          >
+            {savedJobsQuery.isFetching ? "Retrying…" : "Retry"}
+          </Button>
+        </div>
+      )}
+
       {viewState === "error" && (
         <div className="rounded-2xl border border-destructive/30 bg-destructive/[0.04] p-6 text-center">
           <p className="text-sm text-destructive" role="alert">
@@ -533,7 +565,23 @@ export default function CandidateJobs() {
             <StaggerGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {jobsQuery.data.jobs.map((job) => (
                 <StaggerItem key={job.id}>
-                  <JobCard job={job} variant="candidate" />
+                  <JobCard
+                    job={job}
+                    variant="candidate"
+                    saved={savedJobIds.has(job.id)}
+                    saving={
+                      savedJobsQuery.isPending ||
+                      savedJobsQuery.isError ||
+                      savedJobsQuery.isFetching ||
+                      saveMutation.isPending
+                    }
+                    savePending={saveMutation.isPending && saveMutation.variables?.jobId === job.id}
+                    onToggleSave={
+                      user && role === "candidate"
+                        ? () => saveMutation.mutate({ jobId: job.id, isSaved: savedJobIds.has(job.id) })
+                        : undefined
+                    }
+                  />
                 </StaggerItem>
               ))}
             </StaggerGroup>
@@ -584,7 +632,23 @@ export default function CandidateJobs() {
             <StaggerGroup key={searchString} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {jobsQuery.data?.jobs.map(job => (
                 <StaggerItem key={job.id}>
-                  <JobCard job={job} variant="candidate" />
+                  <JobCard
+                    job={job}
+                    variant="candidate"
+                    saved={savedJobIds.has(job.id)}
+                    saving={
+                      savedJobsQuery.isPending ||
+                      savedJobsQuery.isError ||
+                      savedJobsQuery.isFetching ||
+                      saveMutation.isPending
+                    }
+                    savePending={saveMutation.isPending && saveMutation.variables?.jobId === job.id}
+                    onToggleSave={
+                      user && role === "candidate"
+                        ? () => saveMutation.mutate({ jobId: job.id, isSaved: savedJobIds.has(job.id) })
+                        : undefined
+                    }
+                  />
                 </StaggerItem>
               ))}
             </StaggerGroup>

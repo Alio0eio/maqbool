@@ -1095,45 +1095,54 @@ export const CompareCandidatesResponse = zod.object({
 /**
  * @summary List saved jobs for current candidate
  */
-export const ListSavedJobsResponseItem = zod.object({
+export const listSavedJobsQueryPageDefault = 1;
+
+export const listSavedJobsQueryLimitDefault = 20;
+export const listSavedJobsQueryLimitMax = 100;
+
+
+
+export const ListSavedJobsQueryParams = zod.object({
+  "page": zod.coerce.number().min(1).default(listSavedJobsQueryPageDefault),
+  "limit": zod.coerce.number().min(1).max(listSavedJobsQueryLimitMax).default(listSavedJobsQueryLimitDefault)
+})
+
+export const ListSavedJobsResponse = zod.object({
+  "jobs": zod.array(zod.object({
   "id": zod.number(),
   "jobId": zod.number(),
+  "savedAt": zod.string(),
   "job": zod.object({
   "id": zod.number(),
   "title": zod.string(),
+  "companyId": zod.number().optional(),
   "company": zod.string(),
-  "companyId": zod.number().nullish(),
   "companyLogoUrl": zod.string().nullish(),
   "location": zod.string(),
   "locationType": zod.enum(['remote', 'hybrid', 'onsite']).optional(),
   "type": zod.enum(['full_time', 'part_time', 'contract', 'internship']),
+  "experienceLevel": zod.string().nullish(),
   "salaryMin": zod.number().nullish(),
   "salaryMax": zod.number().nullish(),
   "salaryCurrency": zod.string().nullish(),
-  "description": zod.string().nullish(),
-  "requirements": zod.string().nullish(),
-  "responsibilities": zod.string().nullish(),
-  "benefits": zod.string().nullish(),
-  "skills": zod.array(zod.string()).optional(),
-  "status": zod.enum(['draft', 'published', 'closed', 'paused']),
-  "applicantCount": zod.number().optional(),
-  "viewCount": zod.number().optional(),
   "postedAt": zod.string().nullish(),
-  "closingDate": zod.string().nullish(),
-  "createdAt": zod.string(),
-  "department": zod.string().nullish(),
-  "experienceLevel": zod.string().nullish()
-}).optional(),
-  "savedAt": zod.string()
+  "createdAt": zod.string()
 })
-export const ListSavedJobsResponse = zod.array(ListSavedJobsResponseItem)
+})),
+  "pagination": zod.object({
+  "page": zod.number(),
+  "limit": zod.number(),
+  "total": zod.number(),
+  "totalPages": zod.number()
+})
+})
 
 
 /**
  * @summary Save a job
  */
 export const SaveJobParams = zod.object({
-  "jobId": zod.coerce.number()
+  "id": zod.coerce.number()
 })
 
 export const SaveJobResponse = zod.object({
@@ -1173,7 +1182,7 @@ export const SaveJobResponse = zod.object({
  * @summary Remove saved job
  */
 export const UnsaveJobParams = zod.object({
-  "jobId": zod.coerce.number()
+  "id": zod.coerce.number()
 })
 
 export const UnsaveJobResponse = zod.object({

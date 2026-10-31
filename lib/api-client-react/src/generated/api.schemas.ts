@@ -436,6 +436,67 @@ export interface SavedJob {
   savedAt: string;
 }
 
+export type CandidateSavedJobsResponseJobsItemJobLocationType = typeof CandidateSavedJobsResponseJobsItemJobLocationType[keyof typeof CandidateSavedJobsResponseJobsItemJobLocationType];
+
+
+export const CandidateSavedJobsResponseJobsItemJobLocationType = {
+  remote: 'remote',
+  hybrid: 'hybrid',
+  onsite: 'onsite',
+} as const;
+
+export type CandidateSavedJobsResponseJobsItemJobType = typeof CandidateSavedJobsResponseJobsItemJobType[keyof typeof CandidateSavedJobsResponseJobsItemJobType];
+
+
+export const CandidateSavedJobsResponseJobsItemJobType = {
+  full_time: 'full_time',
+  part_time: 'part_time',
+  contract: 'contract',
+  internship: 'internship',
+} as const;
+
+export type CandidateSavedJobsResponseJobsItemJob = {
+  id: number;
+  title: string;
+  companyId?: number;
+  company: string;
+  /** @nullable */
+  companyLogoUrl?: string | null;
+  location: string;
+  locationType?: CandidateSavedJobsResponseJobsItemJobLocationType;
+  type: CandidateSavedJobsResponseJobsItemJobType;
+  /** @nullable */
+  experienceLevel?: string | null;
+  /** @nullable */
+  salaryMin?: number | null;
+  /** @nullable */
+  salaryMax?: number | null;
+  /** @nullable */
+  salaryCurrency?: string | null;
+  /** @nullable */
+  postedAt?: string | null;
+  createdAt: string;
+};
+
+export type CandidateSavedJobsResponseJobsItem = {
+  id: number;
+  jobId: number;
+  savedAt: string;
+  job: CandidateSavedJobsResponseJobsItemJob;
+};
+
+export type CandidateSavedJobsResponsePagination = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
+
+export interface CandidateSavedJobsResponse {
+  jobs: CandidateSavedJobsResponseJobsItem[];
+  pagination: CandidateSavedJobsResponsePagination;
+}
+
 export type InterviewType = typeof InterviewType[keyof typeof InterviewType];
 
 
@@ -969,5 +1030,17 @@ page?: number;
 export type ListCandidatesParams = {
 q?: string;
 skills?: string;
+};
+
+export type ListSavedJobsParams = {
+/**
+ * @minimum 1
+ */
+page?: number;
+/**
+ * @minimum 1
+ * @maximum 100
+ */
+limit?: number;
 };
 
