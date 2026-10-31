@@ -254,12 +254,13 @@ the saved profile resume.
 3. [x] Keep search and filter state in the URL so refresh, sharing, and browser
    history restore the same result set.
 4. [x] Add loading, empty, invalid-query, and retry states.
-5. Replace job detail lookup with `GET /api/jobs/:id` and use the returned
+5. [x] Replace job detail lookup with `GET /api/jobs/:id` and use the returned
    `applicationStatus` to disable or change the Apply action.
-6. Replace local bookmark state with `POST /api/jobs/:id/save` and
-   `DELETE /api/jobs/:id/save`, invalidating the saved-jobs and job-detail
-   queries after mutation.
-7. Adapt backend company fields to the existing card/detail presentation;
+6. [x] Replace local bookmark state with `POST /api/jobs/:id/save` and
+   `DELETE /api/jobs/:id/save`, deriving saved status from the persisted saved
+   jobs response and invalidating saved-jobs, job-detail, and active job-list
+   queries after either mutation.
+7. [x] Adapt backend company fields to the existing card/detail presentation;
    do not assume the mock `company` string has the same shape as the backend
    `company` object.
 
@@ -275,8 +276,7 @@ the existing client-side title/company/skills, location, and work-type search
 continues to cover the complete result set; the endpoint's `total` remains the
 open-role count. The page now distinguishes initial loading, request errors
 with retry, a truly empty result, and filters with no matches. A failed
-background refetch keeps the existing cards visible. Job details and save-job
-integration remain separate work in this phase.
+background refetch keeps the existing cards visible.
 
 **Progress update (2026-10-22)**: Candidate job discovery now sends the active
 search, location, company ID, job type, location type, experience level, salary
@@ -324,6 +324,22 @@ active filters, and an out-of-range page. Requests retry once automatically,
 and the visible Retry action uses React Query's `refetch`. Added focused
 frontend query/state tests; the API contract and backend remain unchanged.
 
+**Progress update (2026-10-31)**: Candidate job detail, job-list cards, and the
+saved-jobs page now share backend-persisted bookmark state. Save and unsave use
+the authenticated API helper for `POST /api/jobs/:id/save` and
+`DELETE /api/jobs/:id/save`; the existing candidate-only backend routes already
+implement both operations. Saved state is derived from
+`GET /api/candidates/saved-jobs` (`{ jobs, pagination }`), including all pages,
+because ordinary list/detail responses do not include a saved flag. A
+successful mutation invalidates the candidate's saved-jobs query, the matching
+candidate job-detail query, and all active `["jobs", ...]` list queries. There
+is no optimistic bookmark state: failures show an error toast and leave the
+backend-derived state unchanged. Saved-job query loading and errors disable
+bookmark actions until the current state is known; retry feedback is shown on
+the list, detail, and saved-jobs screens. The saved-jobs page no longer uses
+mock jobs; job-alert controls remain explicitly local/mock because no endpoint
+exists. Added response validation tests for the paginated saved-jobs payload.
+
 ### Phase 4: Application submission
 
 1. Replace the mock job lookup in `apply-flow.tsx` with the job-detail query;
@@ -369,9 +385,9 @@ remove the application from history, and cannot be repeated.
 
 ### Phase 6: Saved jobs and remaining candidate shell cleanup
 
-1. Replace `MOCK_JOBS` in the saved-jobs page with
+1. [x] Replace `MOCK_JOBS` in the saved-jobs page with
    `GET /api/candidates/saved-jobs`.
-2. Preserve job-alert UI as mock or remove it from the live-data claim because
+2. [x] Preserve job-alert UI as mock or remove it from the live-data claim because
    no alert endpoint exists yet.
 3. Remove mock candidate/application/job imports from live candidate screens.
 4. Keep shared display adapters in one place, such as

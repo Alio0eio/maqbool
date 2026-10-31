@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { MOCK_JOBS } from "@/lib/mock-data";
+import { useQuery } from "@tanstack/react-query";
+import { ApiError } from "@workspace/api-client-react";
 import { JobCard } from "@/components/shared/job-card";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -11,7 +12,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Link } from "wouter";
 import { AnimatePresence, motion } from "framer-motion";
 import { StaggerGroup, StaggerItem } from "@/components/shared/stagger";
-import { Bookmark, ArrowRight, Bell, Plus, Trash2 } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import {
+  candidateSavedJobsQueryKey,
+  getCandidateSavedJobs,
+} from "@/lib/candidate-jobs-api";
+import { useCandidateJobSave } from "@/lib/use-candidate-job-save";
+import { Bookmark, ArrowRight, Bell, Plus, Trash2, LoaderCircle } from "lucide-react";
 
 interface JobAlert {
   id: number;
@@ -26,8 +33,29 @@ const INITIAL_ALERTS: JobAlert[] = [
   { id: 2, keywords: "Frontend Engineer", location: "New York, NY", frequency: "weekly", active: true },
 ];
 
+function getApiErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    const data = error.data;
+    if (data && typeof data === "object") {
+      const body = data as { error?: { message?: unknown }; message?: unknown };
+      if (typeof body.error?.message === "string") return body.error.message;
+      if (typeof body.message === "string") return body.message;
+    }
+  }
+
+  return error instanceof Error ? error.message : "The request failed. Please try again.";
+}
+
 export default function CandidateSaved() {
-  const savedJobs = MOCK_JOBS.filter((job) => job.status === "published").slice(0, 3);
+  const { user, role } = useAuth();
+  const savedJobsQuery = useQuery({
+    queryKey: candidateSavedJobsQueryKey(user?.id ?? 0),
+    queryFn: ({ signal }) => getCandidateSavedJobs(signal),
+    enabled: Boolean(user?.id) && role === "candidate",
+    retry: 1,
+  });
+  const saveMutation = useCandidateJobSave(user?.id ?? 0);
+  const savedJobs = savedJobsQuery.data ?? [];
   const [alerts, setAlerts] = useState<JobAlert[]>(INITIAL_ALERTS);
   const [form, setForm] = useState({ keywords: "", location: "", frequency: "daily" as JobAlert["frequency"] });
 
@@ -51,7 +79,7 @@ export default function CandidateSaved() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl mx-auto">
       <PageHeader
         title="Saved Jobs"
-        eyebrow={`${savedJobs.length} saved job${savedJobs.length === 1 ? "" : "s"} · ${activeAlertCount} active alert${activeAlertCount === 1 ? "" : "s"}`}
+        eyebrow={`${savedJobsQuery.isPending ? "Loading saved jobs" : savedJobsQuery.isError ? "Saved jobs unavailable" : `${savedJobs.length} saved job${savedJobs.length === 1 ? "" : "s"}`} · ${activeAlertCount} active alert${activeAlertCount === 1 ? "" : "s"}`}
         description="Your bookmarked roles and job alert preferences."
         actions={
           <Link href="/candidate/jobs">
@@ -76,11 +104,38 @@ export default function CandidateSaved() {
         </TabsList>
 
         <TabsContent value="saved" className="outline-none mt-0">
-          {savedJobs.length > 0 ? (
+          {savedJobsQuery.isPending ? (
+            <div className="flex items-center justify-center gap-2 py-12 text-sm text-muted-foreground" role="status">
+              <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
+              Loading saved jobs…
+            </div>
+          ) : savedJobsQuery.isError ? (
+            <div className="rounded-2xl border border-destructive/30 bg-destructive/[0.04] p-6 text-center">
+              <p className="text-sm text-destructive" role="alert">
+                We couldn’t load your saved jobs. {getApiErrorMessage(savedJobsQuery.error)}
+              </p>
+              <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => void savedJobsQuery.refetch()}
+                disabled={savedJobsQuery.isFetching}
+              >
+                {savedJobsQuery.isFetching && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />}
+                {savedJobsQuery.isFetching ? "Retrying…" : "Try again"}
+              </Button>
+            </div>
+          ) : savedJobs.length > 0 ? (
             <StaggerGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {savedJobs.map((job) => (
-                <StaggerItem key={job.id}>
-                  <JobCard job={job} variant="candidate" />
+              {savedJobs.map((savedJob) => (
+                <StaggerItem key={savedJob.id}>
+                  <JobCard
+                    job={savedJob.job}
+                    variant="candidate"
+                    saved
+                    saving={savedJobsQuery.isFetching || saveMutation.isPending}
+                    savePending={saveMutation.isPending && saveMutation.variables?.jobId === savedJob.jobId}
+                    onToggleSave={() => saveMutation.mutate({ jobId: savedJob.jobId, isSaved: true })}
+                  />
                 </StaggerItem>
               ))}
             </StaggerGroup>

@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ApiError } from "@workspace/api-client-react";
 import { Link, useParams } from "wouter";
@@ -12,9 +11,12 @@ import { ViewfinderCard } from "@/components/shared/viewfinder-card";
 import { useAuth } from "@/lib/auth";
 import {
   candidateJobQueryKey,
+  candidateSavedJobsQueryKey,
   getApplicationStatusLabel,
   getCandidateJobDetails,
+  getCandidateSavedJobs,
 } from "@/lib/candidate-jobs-api";
+import { useCandidateJobSave } from "@/lib/use-candidate-job-save";
 import {
   MapPin,
   Clock,
@@ -24,7 +26,8 @@ import {
   Building2,
   ArrowLeft,
   CheckCircle2,
-  GraduationCap
+  GraduationCap,
+  LoaderCircle,
 } from "lucide-react";
 import NotFound from "@/pages/not-found";
 
@@ -46,7 +49,6 @@ export default function JobDetail() {
   const { user, role } = useAuth();
   const parsedJobId = Number(id);
   const jobId = Number.isSafeInteger(parsedJobId) && parsedJobId > 0 ? parsedJobId : undefined;
-  const [saved, setSaved] = useState(false);
   const jobQuery = useQuery({
     queryKey: candidateJobQueryKey(jobId ?? 0, user?.id ?? 0),
     queryFn: ({ signal }) =>
@@ -57,6 +59,13 @@ export default function JobDetail() {
     retry: (failureCount, error) =>
       !(error instanceof ApiError && error.status === 404) && failureCount < 1,
   });
+  const savedJobsQuery = useQuery({
+    queryKey: candidateSavedJobsQueryKey(user?.id ?? 0),
+    queryFn: ({ signal }) => getCandidateSavedJobs(signal),
+    enabled: Boolean(user?.id) && role === "candidate",
+    retry: 1,
+  });
+  const saveMutation = useCandidateJobSave(user?.id ?? 0);
 
   if (jobId === undefined) return <NotFound />;
   if (jobQuery.isPending) {
@@ -84,6 +93,7 @@ export default function JobDetail() {
 
   const job = jobQuery.data;
   if (!job) return <NotFound />;
+  const saved = savedJobsQuery.data?.some(({ jobId: savedJobId }) => savedJobId === job.id) ?? false;
   const applicationStatusLabel = getApplicationStatusLabel(job.applicationStatus);
 
   const handleShare = () => {
@@ -131,10 +141,19 @@ export default function JobDetail() {
                 variant="outline"
                 size="icon"
                 className={cn("h-10 w-10 shrink-0", saved && "text-primary")}
-                onClick={() => setSaved((s) => !s)}
+                onClick={() => saveMutation.mutate({ jobId: job.id, isSaved: saved })}
+                disabled={
+                  savedJobsQuery.isPending ||
+                  savedJobsQuery.isError ||
+                  savedJobsQuery.isFetching ||
+                  saveMutation.isPending
+                }
+                aria-busy={saveMutation.isPending}
                 aria-label={saved ? "Remove from saved jobs" : "Save job"}
               >
-                <Bookmark className={cn("w-4 h-4", saved && "fill-current")} />
+                {saveMutation.isPending
+                  ? <LoaderCircle className="w-4 h-4 animate-spin" aria-hidden="true" />
+                  : <Bookmark className={cn("w-4 h-4", saved && "fill-current")} />}
               </Button>
               <Button
                 variant="outline"
@@ -162,6 +181,19 @@ export default function JobDetail() {
               )}
             </div>
           </div>
+          {savedJobsQuery.isError && (
+            <p className="mb-4 text-sm text-destructive" role="alert">
+              Saved-job status couldn’t be loaded. {getApiErrorMessage(savedJobsQuery.error)}{" "}
+              <button
+                type="button"
+                className="underline underline-offset-2"
+                onClick={() => void savedJobsQuery.refetch()}
+                disabled={savedJobsQuery.isFetching}
+              >
+                {savedJobsQuery.isFetching ? "Retrying…" : "Try again"}
+              </button>
+            </p>
+          )}
 
           <dl className="grid grid-cols-2 sm:grid-cols-4 gap-3 border-t border-border/60 pt-6">
             {[

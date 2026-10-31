@@ -537,28 +537,40 @@ paths:
               schema:
                 $ref: "#/components/schemas/CandidateComparison"
 
-  /candidates/saved:
+  /candidates/saved-jobs:
     get:
       operationId: listSavedJobs
       tags: [candidates]
       summary: List saved jobs for current candidate
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
       responses:
         "200":
-          description: Saved jobs
+          description: Paginated saved jobs
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/SavedJob"
+                $ref: "#/components/schemas/CandidateSavedJobsResponse"
 
-  /candidates/saved/{jobId}:
+  /jobs/{id}/save:
     post:
       operationId: saveJob
       tags: [candidates]
       summary: Save a job
       parameters:
-        - name: jobId
+        - name: id
           in: path
           required: true
           schema:
@@ -575,7 +587,7 @@ paths:
       tags: [candidates]
       summary: Remove saved job
       parameters:
-        - name: jobId
+        - name: id
           in: path
           required: true
           schema:
@@ -1571,6 +1583,46 @@ components:
         jobId:  { type: integer }
         job:    { $ref: "#/components/schemas/Job" }
         savedAt: { type: string }
+
+    CandidateSavedJobsResponse:
+      type: object
+      required: [jobs, pagination]
+      properties:
+        jobs:
+          type: array
+          items:
+            type: object
+            required: [id, jobId, savedAt, job]
+            properties:
+              id:      { type: integer }
+              jobId:   { type: integer }
+              savedAt: { type: string }
+              job:
+                type: object
+                required: [id, title, company, location, type, createdAt]
+                properties:
+                  id:               { type: integer }
+                  title:            { type: string }
+                  companyId:        { type: integer }
+                  company:          { type: string }
+                  companyLogoUrl:   { type: ["string", "null"] }
+                  location:         { type: string }
+                  locationType:     { type: string, enum: [remote, hybrid, onsite] }
+                  type:             { type: string, enum: [full_time, part_time, contract, internship] }
+                  experienceLevel:  { type: ["string", "null"] }
+                  salaryMin:        { type: ["number", "null"] }
+                  salaryMax:        { type: ["number", "null"] }
+                  salaryCurrency:   { type: ["string", "null"] }
+                  postedAt:         { type: ["string", "null"] }
+                  createdAt:        { type: string }
+        pagination:
+          type: object
+          required: [page, limit, total, totalPages]
+          properties:
+            page:       { type: integer }
+            limit:      { type: integer }
+            total:      { type: integer }
+            totalPages: { type: integer }
 
     # ── Interviews ───────────────────────
     Interview:

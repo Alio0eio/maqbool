@@ -1,14 +1,83 @@
-import { ApplicationStatus, type Job } from "@workspace/api-client-react";
+import {
+  ApplicationStatus,
+  type CandidateSavedJobsResponse,
+  type CandidateSavedJobsResponseJobsItem,
+  type CandidateSavedJobsResponseJobsItemJob,
+  type Job,
+} from "@workspace/api-client-react";
 
-const JOB_TYPES: readonly Job["type"][] = ["full_time", "part_time", "contract", "internship"];
-const LOCATION_TYPES: readonly NonNullable<Job["locationType"]>[] = ["remote", "hybrid", "onsite"];
+export const JOB_TYPES: readonly Job["type"][] = ["full_time", "part_time", "contract", "internship"];
+export const LOCATION_TYPES: readonly NonNullable<Job["locationType"]>[] = ["remote", "hybrid", "onsite"];
 
 export type CandidateJobDetails = Job & {
   applicationStatus: string | null;
 };
 
+export type CandidateSavedJobDetails = CandidateSavedJobsResponseJobsItemJob;
+export type CandidateSavedJob = CandidateSavedJobsResponseJobsItem;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
+}
+
+function isCandidateSavedJobDetails(value: unknown): value is CandidateSavedJobDetails {
+  return (
+    isRecord(value) &&
+    Number.isSafeInteger(value.id) &&
+    typeof value.title === "string" &&
+    typeof value.company === "string" &&
+    typeof value.location === "string" &&
+    JOB_TYPES.includes(value.type as Job["type"]) &&
+    typeof value.createdAt === "string" &&
+    (value.companyId === undefined || typeof value.companyId === "number") &&
+    (value.companyLogoUrl === undefined || value.companyLogoUrl === null || typeof value.companyLogoUrl === "string") &&
+    (value.locationType === undefined ||
+      LOCATION_TYPES.includes(value.locationType as NonNullable<Job["locationType"]>)) &&
+    (value.salaryMin === undefined || value.salaryMin === null || typeof value.salaryMin === "number") &&
+    (value.salaryMax === undefined || value.salaryMax === null || typeof value.salaryMax === "number") &&
+    (value.salaryCurrency === undefined || value.salaryCurrency === null || typeof value.salaryCurrency === "string") &&
+    (value.skills === undefined || (Array.isArray(value.skills) && value.skills.every((skill) => typeof skill === "string"))) &&
+    (value.postedAt === undefined || value.postedAt === null || typeof value.postedAt === "string") &&
+    (value.experienceLevel === undefined || value.experienceLevel === null || typeof value.experienceLevel === "string")
+  );
+}
+
+export function parseCandidateSavedJobsPage(
+  value: unknown,
+  expectedPage: number,
+  limit: number,
+): CandidateSavedJobsResponse {
+  if (!isRecord(value) || !Array.isArray(value.jobs) || !isRecord(value.pagination)) {
+    throw new Error("The saved-jobs service returned an invalid response.");
+  }
+
+  const { page, limit: responseLimit, total, totalPages } = value.pagination;
+  if (
+    page !== expectedPage ||
+    responseLimit !== limit ||
+    typeof total !== "number" ||
+    !Number.isSafeInteger(total) ||
+    total < 0 ||
+    typeof totalPages !== "number" ||
+    !Number.isSafeInteger(totalPages) ||
+    totalPages < 0 ||
+    totalPages !== Math.ceil(total / limit) ||
+    !value.jobs.every((savedJob) =>
+      isRecord(savedJob) &&
+      Number.isSafeInteger(savedJob.id) &&
+      Number.isSafeInteger(savedJob.jobId) &&
+      typeof savedJob.savedAt === "string" &&
+      isCandidateSavedJobDetails(savedJob.job) &&
+      savedJob.job.id === savedJob.jobId
+    )
+  ) {
+    throw new Error("The saved-jobs service returned an invalid response.");
+  }
+
+  return {
+    jobs: value.jobs as CandidateSavedJob[],
+    pagination: { page: expectedPage, limit, total, totalPages },
+  };
 }
 
 function isOptionalNullableString(value: unknown): boolean {
