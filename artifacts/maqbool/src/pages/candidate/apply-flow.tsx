@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import { Controller, useForm, type FieldPath } from "react-hook-form";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@workspace/design-system/radio-group
 import { PageHeader } from "@/components/shared/page-header";
 import { useAuth } from "@/lib/auth";
 import { getCandidateProfile, getCandidateResumeHref } from "@/lib/candidate-profile-api";
-import { submitJobApplication } from "@/lib/candidate-applications-api";
+import { submitJobApplicationAndNavigate } from "@/lib/candidate-application-flow";
 import { SCREENING_QUESTIONS } from "@/lib/mock-data";
 import {
   candidateJobQueryKey,
@@ -107,6 +107,7 @@ export default function ApplyFlow() {
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [applicationError, setApplicationError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submissionPending = useRef(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [candidateDetails, setCandidateDetails] = useState({
     name: user?.name ?? "",
@@ -251,21 +252,29 @@ export default function ApplyFlow() {
   const onScreeningValid = () => goToStep("review");
 
   const handleReviewSubmit = async () => {
+    if (submissionPending.current) return;
+    submissionPending.current = true;
     setApplicationError(null);
     setIsSubmitting(true);
     try {
       const coverLetter = screeningValues.motivation.trim();
-      await submitJobApplication(job.id, coverLetter || undefined);
-      queryClient.setQueryData(
-        candidateJobQueryKey(job.id, user.id),
-        (current: typeof job | undefined) =>
-          current ? { ...current, applicationStatus: ApplicationStatus.applied } : current,
+      await submitJobApplicationAndNavigate(
+        job.id,
+        coverLetter || undefined,
+        () => {
+          queryClient.setQueryData(
+            candidateJobQueryKey(job.id, user.id),
+            (current: typeof job | undefined) =>
+              current ? { ...current, applicationStatus: ApplicationStatus.applied } : current,
+          );
+          setHasSubmitted(true);
+        },
+        setLocation,
       );
-      setHasSubmitted(true);
-      goToStep("success");
     } catch (error) {
       setApplicationError(getApiErrorMessage(error));
     } finally {
+      submissionPending.current = false;
       setIsSubmitting(false);
     }
   };
@@ -276,7 +285,29 @@ export default function ApplyFlow() {
     else if (step === "review") void handleReviewSubmit();
   };
 
-  if (step === "success") {
+  const applicationIdParam = new URLSearchParams(window.location.search).get("applicationId");
+  const successApplicationId = Number(applicationIdParam);
+  const hasValidSuccessApplicationId =
+    applicationIdParam !== null &&
+    Number.isSafeInteger(successApplicationId) &&
+    successApplicationId > 0;
+
+  if (step === "success" && !hasValidSuccessApplicationId) {
+    return (
+      <Card className="mx-auto max-w-xl">
+        <CardContent className="space-y-4 p-6">
+          <p className="text-sm text-destructive" role="alert">
+            Application confirmation is unavailable. Please return to the application review and try again.
+          </p>
+          <Button variant="outline" onClick={() => setLocation(`/candidate/apply/${job.id}/review`)}>
+            Return to application review
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (step === "success" && hasValidSuccessApplicationId) {
     return (
       <div className="relative max-w-2xl mx-auto py-12 text-center animate-in zoom-in-95 duration-700">
         <Confetti />

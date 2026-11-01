@@ -350,11 +350,15 @@ exists. Added response validation tests for the paginated saved-jobs payload.
 3. [x] Require the saved profile `resumeUrl` and explain that the application
    uses the current saved resume; the backend resolves it from the
    authenticated candidate profile.
-4. Treat `201` as success and navigate to the success state using the returned
-   application ID.
-5. Handle `409 Application already exists`, `409 Job is not accepting
+4. [x] Treat the backend's `201` response as success, validate the flat
+   application response and its numeric `id`, and navigate to the existing
+   success state at `/candidate/apply/:jobId/success?applicationId=:id`.
+5. [x] Keep failed requests and responses with a missing/invalid application
+   ID on the review step and show the existing inline error state; block
+   duplicate submissions while pending.
+6. Handle `409 Application already exists`, `409 Job is not accepting
    applications`, missing profile, and expired authentication explicitly.
-6. Invalidate the candidate applications list and job-detail queries after a
+7. Invalidate the candidate applications list and job-detail queries after a
    successful application.
 
 **Exit check:** one candidate can apply once, sees the submitted state after a
@@ -439,7 +443,9 @@ Recommended query keys:
 
 - Job list loading, filtering, pagination, and empty states.
 - Job detail application status and save state.
-- Apply flow validation, duplicate submission, and success navigation.
+- Apply flow validation, duplicate submission, HTTP-201 response parsing,
+missing-ID and request-error handling, and success navigation using the
+returned application ID.
 - Application list/detail rendering for every status, including withdrawn.
 - Withdraw confirmation, success, `404`, `409`, and already-withdrawn states.
 
