@@ -881,7 +881,15 @@ and stage, and cover-letter storage remain on the existing code path.
 Focused route tests verify application resume selection from the profile,
 updated profile resume selection on a later submission, rejection of
 client-provided resume URLs, and rejection of missing/invalid profile
-references. Job-detail/job-list integration remains outside this change.
+references. The frontend validates the flat application object returned with
+HTTP `201 Created`, including its positive numeric `id`, before changing to
+the existing success step. Success navigation preserves the job ID in the
+apply route and carries the returned application ID as
+`?applicationId=:id`; malformed responses and failed requests stay on the
+review step and use its inline error state. A synchronous pending guard blocks
+duplicate submissions. Frontend flow tests cover the backend response shape,
+201 success/navigation, request failure, and missing application IDs.
+Job-detail/job-list integration remains outside this change.
 
 ### 3.25 Candidate resume upload and profile import
 
