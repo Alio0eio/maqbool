@@ -47,7 +47,11 @@ export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [signupPassword, setSignupPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(() =>
+    new URLSearchParams(window.location.search).get("sessionExpired") === "1"
+      ? "Your session expired. Sign in to continue."
+      : null,
+  );
   const [registeredEmail, setRegisteredEmail] = useState("");
   const submitting = useRef(false);
   const heroWave = useMemo(
@@ -95,8 +99,17 @@ export default function AuthPage() {
         setMode("signin");
       } else {
         const user = await login(email, password);
+        const returnTo = new URLSearchParams(window.location.search).get("returnTo");
+        const candidateReturnPath =
+          returnTo?.startsWith("/candidate/") && !returnTo.startsWith("//")
+            ? returnTo
+            : null;
         setLocation(
-          user.role === "recruiter" ? "/recruiter/dashboard" : user.role === "candidate" ? "/candidate/dashboard" : "/",
+          user.role === "recruiter"
+            ? "/recruiter/dashboard"
+            : user.role === "candidate"
+              ? candidateReturnPath ?? "/candidate/dashboard"
+              : "/",
         );
       }
     } catch (cause) {

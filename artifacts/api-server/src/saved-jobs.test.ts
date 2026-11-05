@@ -295,6 +295,7 @@ describe("job application submission", () => {
   });
 
   it("rejects missing or invalid profile resume references without creating applications", async () => {
+    let profileExists = true;
     const candidate: { id: number; userId: number; resumeUrl: string | null } = {
       id: 10,
       userId: 1,
@@ -306,7 +307,7 @@ describe("job application submission", () => {
         from: (table: unknown) => ({
           where: () => ({
             limit: async () => {
-              if (table === candidateProfiles) return [candidate];
+              if (table === candidateProfiles) return profileExists ? [candidate] : [];
               if (table === jobs) return [{ id: 1, status: "published" }];
               return [];
             },
@@ -338,7 +339,23 @@ describe("job application submission", () => {
       candidate.resumeUrl = invalidResumeUrl;
       const response = await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(1));
       assert.equal(response.status, 422, `expected ${String(invalidResumeUrl)} to fail`);
+      assert.deepEqual(await response.json(), {
+        error: {
+          message: "Add a valid resume URL to your candidate profile before applying",
+        },
+      });
     }
+
+    profileExists = false;
+    const missingProfileResponse = await request(
+      `http://127.0.0.1:${address.port}/jobs/1/apply`,
+      "POST",
+      tokenFor(1),
+    );
+    assert.equal(missingProfileResponse.status, 404);
+    assert.deepEqual(await missingProfileResponse.json(), {
+      error: { message: "Candidate profile not found" },
+    });
     assert.equal(insertCount, 0);
   });
 
@@ -347,7 +364,7 @@ describe("job application submission", () => {
       { id: 1, jobId: 1, candidateId: 10, status: "applied", stage: "applied", resumeUrl: "https://example.com/resume.pdf", coverLetter: null },
     ];
     const candidate = { id: 10, userId: 1, resumeUrl: "https://example.com/resume.pdf" };
-    const publishedJob = { id: 1, status: "published" };
+    const publishedJob: { id: number; status: string } = { id: 1, status: "published" };
 
     const database = {
       select: () => ({
@@ -393,6 +410,16 @@ describe("job application submission", () => {
 
     const duplicateResponse = await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(1));
     assert.equal(duplicateResponse.status, 409);
+    assert.deepEqual(await duplicateResponse.json(), {
+      error: { message: "Application already exists" },
+    });
+
+    publishedJob.status = "closed";
+    const closedResponse = await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(1));
+    assert.equal(closedResponse.status, 409);
+    assert.deepEqual(await closedResponse.json(), {
+      error: { message: "Job is not accepting applications" },
+    });
 
     const invalidLetterResponse = await request(`http://127.0.0.1:${address.port}/jobs/1/apply`, "POST", tokenFor(1), {
       coverLetter: "x".repeat(20000),

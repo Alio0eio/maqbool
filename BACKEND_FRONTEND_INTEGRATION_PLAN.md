@@ -356,13 +356,23 @@ exists. Added response validation tests for the paginated saved-jobs payload.
 5. [x] Keep failed requests and responses with a missing/invalid application
    ID on the review step and show the existing inline error state; block
    duplicate submissions while pending.
-6. Handle `409 Application already exists`, `409 Job is not accepting
-   applications`, missing profile, and expired authentication explicitly.
-7. Invalidate the candidate applications list and job-detail queries after a
-   successful application.
+6. [x] Handle `409 Application already exists`, `409 Job is not accepting
+   applications`, missing/incomplete profile, and expired authentication
+   explicitly. Duplicate and closed-job conflicts are matched by status and
+   backend message; profile failures use the backend's 404/422 messages.
+7. [x] Invalidate the job-detail and candidate-application query keys after a
+   successful application; refresh job state without replacing the current
+   closed-job or duplicate-conflict feedback. The application-list dashboard
+   remains mock-backed until Phase 5, so there is no active list query yet.
 
 **Exit check:** one candidate can apply once, sees the submitted state after a
    reload, and cannot submit a duplicate application.
+
+**Error handling:** submission errors are classified in a reusable frontend
+   handler. Profile navigation carries a validated return path to the same
+   application. A 401 triggers the existing cookie refresh once, retries the
+   original request once, and on refresh failure clears client auth/query state
+   before redirecting to sign-in with the intended destination preserved.
 
 ### Phase 5: Applications dashboard and withdrawal
 

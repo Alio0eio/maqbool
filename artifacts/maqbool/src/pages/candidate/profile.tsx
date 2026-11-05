@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useLocation } from 'wouter';
 import { ApiError } from '@workspace/api-client-react';
@@ -62,9 +62,14 @@ function ProfileLink({ label, href }: { label: string; href?: string | null }) {
 }
 
 export default function CandidateProfilePage() {
-  const { user, role, signOut } = useAuth();
+  const { user, role } = useAuth();
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
+  const requestedReturnTo = new URLSearchParams(window.location.search).get('returnTo');
+  const applicationReturnTo =
+    requestedReturnTo && /^\/candidate\/apply\/[1-9]\d*\/(?:details|screening|review)$/.test(requestedReturnTo)
+      ? requestedReturnTo
+      : null;
   const [isEditing, setIsEditing] = useState(false);
   const [headlineDraft, setHeadlineDraft] = useState('');
   const [summaryDraft, setSummaryDraft] = useState('');
@@ -104,23 +109,6 @@ export default function CandidateProfilePage() {
       setResumeSuggestions(extractedFields);
     },
   });
-
-  const unauthorizedError = [
-    profileQuery.error,
-    createMutation.error,
-    updateMutation.error,
-    resumeImportMutation.error,
-  ].find(
-    (error) =>
-      error instanceof ApiError && error.status === 401,
-  );
-
-  useEffect(() => {
-    if (unauthorizedError) {
-      void signOut();
-      setLocation('/');
-    }
-  }, [setLocation, signOut, unauthorizedError]);
 
   if (!user || role !== 'candidate') return null;
 
@@ -291,9 +279,16 @@ export default function CandidateProfilePage() {
         eyebrow={[experienceYears, profile.availability].filter(Boolean).join(' · ') || undefined}
         description="Keep your story, skills, and experience up to date."
         actions={
-          <Link href="/candidate/dashboard">
-            <Button variant="outline">Back to dashboard</Button>
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            {applicationReturnTo && (
+              <Link href={applicationReturnTo}>
+                <Button>Return to application</Button>
+              </Link>
+            )}
+            <Link href="/candidate/dashboard">
+              <Button variant="outline">Back to dashboard</Button>
+            </Link>
+          </div>
         }
       />
 

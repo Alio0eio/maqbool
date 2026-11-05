@@ -609,6 +609,10 @@ describe("POST /auth/refresh", () => {
     const invalidResponse = await postAuth(testServer.url + "/auth/refresh", {
       refreshToken: "invalid-token",
     });
+    const invalidCookieResponse = await fetch(testServer.url + "/auth/refresh", {
+      method: "POST",
+      headers: { cookie: "maqbool_refresh_token=invalid-token" },
+    });
     const accessResponse = await postAuth(testServer.url + "/auth/refresh", {
       refreshToken: loginBody.accessToken,
     });
@@ -622,6 +626,15 @@ describe("POST /auth/refresh", () => {
     });
 
     assert.equal(invalidResponse.status, 401);
+    assert.equal(invalidCookieResponse.status, 401);
+    assert.match(
+      invalidCookieResponse.headers.get("set-cookie") ?? "",
+      /maqbool_access_token=;/,
+    );
+    assert.match(
+      invalidCookieResponse.headers.get("set-cookie") ?? "",
+      /maqbool_refresh_token=;/,
+    );
     assert.equal(accessResponse.status, 401);
     assert.equal(expiredResponse.status, 401);
 

@@ -11,6 +11,10 @@ import { Textarea } from "@workspace/design-system/textarea";
 import { RadioGroup, RadioGroupItem } from "@workspace/design-system/radio-group";
 import { PageHeader } from "@/components/shared/page-header";
 import { useAuth } from "@/lib/auth";
+import {
+  getCandidateApplicationError,
+  type CandidateApplicationError,
+} from "@/lib/candidate-application-errors";
 import { getCandidateProfile, getCandidateResumeHref } from "@/lib/candidate-profile-api";
 import { submitJobApplicationAndNavigate } from "@/lib/candidate-application-flow";
 import { SCREENING_QUESTIONS } from "@/lib/mock-data";
@@ -68,23 +72,10 @@ function isValidResumeUrl(value: string): boolean {
   }
 }
 
-function getApiErrorMessage(error: unknown): string {
-  if (error instanceof ApiError) {
-    const data = error.data;
-    if (data && typeof data === "object") {
-      const body = data as { error?: { message?: unknown }; message?: unknown };
-      if (typeof body.error?.message === "string") return body.error.message;
-      if (typeof body.message === "string") return body.message;
-    }
-  }
-
-  return error instanceof Error ? error.message : "The request failed. Please try again.";
-}
-
 export default function ApplyFlow() {
   const { id, step } = useParams();
   const [, setLocation] = useLocation();
-  const { user, role, signOut } = useAuth();
+  const { user, role } = useAuth();
   const queryClient = useQueryClient();
   const parsedJobId = Number(id);
   const jobId = Number.isSafeInteger(parsedJobId) && parsedJobId > 0 ? parsedJobId : undefined;
@@ -105,7 +96,8 @@ export default function ApplyFlow() {
     retry: false,
   });
   const [resumeError, setResumeError] = useState<string | null>(null);
-  const [applicationError, setApplicationError] = useState<string | null>(null);
+  const [applicationError, setApplicationError] = useState<CandidateApplicationError | null>(null);
+  const [jobApplicationsClosed, setJobApplicationsClosed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submissionPending = useRef(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -142,13 +134,6 @@ export default function ApplyFlow() {
     }
   }, [candidateProfile]);
 
-  useEffect(() => {
-    const error = candidateProfileQuery.error;
-    if (error instanceof ApiError && error.status === 401) {
-      void signOut().then(() => setLocation("/"));
-    }
-  }, [candidateProfileQuery.error, setLocation, signOut]);
-
   if (jobId === undefined) return <NotFound />;
   if (currentStepIndex === -1) return <NotFound />;
   if (!user || role !== "candidate") return null;
@@ -165,7 +150,7 @@ export default function ApplyFlow() {
       <Card className="mx-auto max-w-xl">
         <CardContent className="space-y-4 p-6">
           <p className="text-sm text-destructive" role="alert">
-            {getApiErrorMessage(jobQuery.error)}
+            We couldn’t load this job. Please try again.
           </p>
           <Button variant="outline" onClick={() => void jobQuery.refetch()}>
             Try again
@@ -183,7 +168,7 @@ export default function ApplyFlow() {
         <CardContent className="space-y-4 p-6">
           <h1 className="text-lg font-semibold">{applicationStatusLabel}</h1>
           <p className="text-sm text-muted-foreground">
-            An application already exists for this job. You can’t submit another one.
+            You have already applied for this job.
           </p>
           <Link href={`/candidate/jobs/${job.id}`}>
             <Button variant="outline">Back to job details</Button>
@@ -207,7 +192,7 @@ export default function ApplyFlow() {
           <p className="text-sm text-muted-foreground">
             Create your profile and add a resume before applying for this role.
           </p>
-          <Link href="/candidate/profile">
+          <Link href={`/candidate/profile?returnTo=${encodeURIComponent(`/candidate/apply/${jobId}/details`)}`}>
             <Button>Go to your profile</Button>
           </Link>
         </CardContent>
@@ -219,7 +204,7 @@ export default function ApplyFlow() {
       <Card className="mx-auto max-w-xl">
         <CardContent className="space-y-4 p-6">
           <p className="text-sm text-destructive" role="alert">
-            {getApiErrorMessage(candidateProfileQuery.error)}
+            We couldn’t load your profile. Please try again.
           </p>
           <Button variant="outline" onClick={() => void candidateProfileQuery.refetch()}>
             Try again
@@ -230,6 +215,7 @@ export default function ApplyFlow() {
   }
 
   const goToStep = (s: StepId) => setLocation(`/candidate/apply/${id}/${s}`);
+  const profilePath = `/candidate/profile?returnTo=${encodeURIComponent(`/candidate/apply/${job.id}/details`)}`;
 
   const handleBack = () => {
     if (currentStepIndex > 0) goToStep(steps[currentStepIndex - 1]);
@@ -267,12 +253,47 @@ export default function ApplyFlow() {
             (current: typeof job | undefined) =>
               current ? { ...current, applicationStatus: ApplicationStatus.applied } : current,
           );
+          void queryClient.invalidateQueries({
+            queryKey: candidateJobQueryKey(job.id, user.id),
+            exact: true,
+            refetchType: "none",
+          });
+          void queryClient.invalidateQueries({
+            queryKey: ["candidate-applications", user.id],
+            refetchType: "none",
+          });
           setHasSubmitted(true);
         },
         setLocation,
       );
     } catch (error) {
-      setApplicationError(getApiErrorMessage(error));
+      const applicationFailure = getCandidateApplicationError(error);
+      setApplicationError(applicationFailure);
+      if (applicationFailure.kind === "duplicate-application") {
+        queryClient.setQueryData(
+          candidateJobQueryKey(job.id, user.id),
+          (current: typeof job | undefined) =>
+            current ? { ...current, applicationStatus: ApplicationStatus.applied } : current,
+        );
+        void queryClient.invalidateQueries({
+          queryKey: candidateJobQueryKey(job.id, user.id),
+          exact: true,
+          refetchType: "none",
+        });
+      } else if (applicationFailure.kind === "closed-job") {
+        setJobApplicationsClosed(true);
+        void queryClient.invalidateQueries({
+          queryKey: candidateJobQueryKey(job.id, user.id),
+          exact: true,
+          refetchType: "none",
+        });
+      } else if (applicationFailure.kind === "profile-required") {
+        void queryClient.invalidateQueries({
+          queryKey: ["candidate-profile", user.id],
+          exact: true,
+          refetchType: "none",
+        });
+      }
     } finally {
       submissionPending.current = false;
       setIsSubmitting(false);
@@ -440,7 +461,7 @@ export default function ApplyFlow() {
                         ? "Your profile resume link is invalid."
                         : "No resume is saved in your candidate profile."}
                     </p>
-                    <Link href="/candidate/profile" className="mt-2 inline-block text-primary underline underline-offset-4">
+                    <Link href={profilePath} className="mt-2 inline-block text-primary underline underline-offset-4">
                       Update your candidate profile
                     </Link>
                   </div>
@@ -604,17 +625,40 @@ export default function ApplyFlow() {
 
           {/* Footer Actions */}
           {applicationError && (
-            <p className="mt-6 text-sm text-destructive" role="alert">
-              {applicationError}
-            </p>
+            <div className="mt-6 space-y-2" role="alert">
+              <p className="text-sm text-destructive">{applicationError.message}</p>
+              {applicationError.kind === "profile-required" && (
+                <Link href={profilePath} className="inline-block text-sm text-primary underline underline-offset-4">
+                  Complete your candidate profile
+                </Link>
+              )}
+            </div>
           )}
           <div className="mt-8 pt-6 border-t border-border/60 flex justify-end gap-3">
             <Button variant="outline" onClick={handleBack} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button onClick={handlePrimaryAction} disabled={isSubmitting} className="min-w-[120px]">
-              {isSubmitting ? "Submitting..." : step === "review" ? "Submit Application" : "Continue"}
-              {!isSubmitting && step !== "review" && <ChevronRight className="w-4 h-4 ml-1" />}
+            <Button
+              onClick={handlePrimaryAction}
+              disabled={
+                isSubmitting ||
+                jobApplicationsClosed ||
+                applicationError?.kind === "profile-required"
+              }
+              className="min-w-[120px]"
+            >
+              {isSubmitting
+                ? "Submitting..."
+                : jobApplicationsClosed
+                  ? "Applications Closed"
+                  : applicationError?.kind === "profile-required"
+                    ? "Complete Profile"
+                    : step === "review"
+                      ? "Submit Application"
+                      : "Continue"}
+              {!isSubmitting && !jobApplicationsClosed && step !== "review" && (
+                <ChevronRight className="w-4 h-4 ml-1" />
+              )}
             </Button>
           </div>
         </CardContent>

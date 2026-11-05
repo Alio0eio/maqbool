@@ -2,6 +2,48 @@
 
 This document records the database and backend implementation completed so far, following `BACKEND_IMPLEMENTATION_PLAN.md` through Phase 3.2.1 and subsequent job-discovery integration work. It describes the code currently present in the repository.
 
+## Candidate Application Error Contract and Frontend Steps
+
+The application endpoint is `POST /api/jobs/:id/apply`. It returns `201` with
+the created application object, or the shared error envelope
+`{ "error": { "message": "..." } }`. The existing backend distinguishes the
+application-flow errors with these responses:
+
+1. `409 Application already exists` for an existing candidate/job application.
+2. `409 Job is not accepting applications` when the job is not published.
+3. `404 Candidate profile not found` when the candidate profile does not exist.
+4. `422 Add a valid resume URL to your candidate profile before applying`
+   when the profile has no acceptable resume reference.
+5. `401` with an authentication error message when the access token is missing,
+   expired, or invalid.
+
+The frontend classifies the exact conflict/profile status and message pair,
+shows candidate-safe feedback, marks duplicate applications as already applied,
+disables submission after a closed-job response, and links profile completion
+back to the same application. Unrecognized errors use a generic message rather
+than displaying backend internals.
+
+Authenticated API calls use the existing `/api/auth/refresh` cookie endpoint.
+Concurrent 401 responses share one refresh operation; each original request is
+retried at most once. If refresh or the retry fails with 401, the frontend
+clears the authenticated user and React Query cache and navigates to sign-in
+with the current destination encoded as `returnTo`. Signing in resumes that
+candidate destination. The backend clears both HttpOnly auth cookies when the
+refresh token is missing or invalid so stale credentials are not retained.
+
+Implementation/verification steps:
+
+1. Keep the application endpoint's status/message responses above distinct.
+2. Test each response classification, including unrelated 409 responses.
+3. Test successful application refresh/retry, failed refresh, non-401 failures,
+   and concurrent unauthorized requests.
+4. Run the frontend TypeScript check and focused application/authentication
+   tests after changing the flow.
+
+The application list/dashboard is still mock-backed; the flow invalidates its
+candidate-application query key for consistency, but no live list query consumes
+that key until the planned applications-dashboard integration is completed.
+
 ## 1. Repository and Backend Foundation
 
 1. The project uses a pnpm workspace monorepo.
