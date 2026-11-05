@@ -6,6 +6,17 @@ type ApiRequestOptions = RequestInit & {
 };
 
 let refreshRequest: Promise<void> | undefined;
+let sessionExpirationNotified = false;
+
+export const SESSION_EXPIRED_EVENT = 'maqbool:session-expired';
+
+function notifySessionExpired(): void {
+  if (sessionExpirationNotified) return;
+  sessionExpirationNotified = true;
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
+  }
+}
 
 function refreshSession(): Promise<void> {
   if (!refreshRequest) {
@@ -41,13 +52,19 @@ export async function authenticatedApiRequest<T>(
 
     try {
       await refreshSession();
-    } catch (refreshError) {
-      if (refreshError instanceof ApiError && refreshError.status === 401) {
-        throw error;
-      }
-      throw refreshError;
+    } catch {
+      notifySessionExpired();
+      throw error;
     }
 
-    return request();
+    sessionExpirationNotified = false;
+    try {
+      return await request();
+    } catch (retryError) {
+      if (retryError instanceof ApiError && retryError.status === 401) {
+        notifySessionExpired();
+      }
+      throw retryError;
+    }
   }
 }

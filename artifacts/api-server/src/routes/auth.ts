@@ -256,6 +256,7 @@ export function createAuthRouter(database: typeof db = db): IRouter {
       refreshToken: req.cookies?.maqbool_refresh_token ?? req.body?.refreshToken,
     });
     if (!parsed.success) {
+      clearAuthCookies(res);
       next(createHttpError("Invalid refresh token", 401));
       return;
     }
@@ -273,6 +274,7 @@ export function createAuthRouter(database: typeof db = db): IRouter {
         if (storedToken?.revoked) {
           revokeRefreshTokensForUser(storedToken.userId);
         }
+        clearAuthCookies(res);
         next(createHttpError("Invalid refresh token", 401));
         return;
       }
@@ -285,6 +287,7 @@ export function createAuthRouter(database: typeof db = db): IRouter {
 
       if (!user) {
         revokeRefreshToken(refreshPayload.jti);
+        clearAuthCookies(res);
         next(createHttpError("Invalid refresh token", 401));
         return;
       }
@@ -310,6 +313,7 @@ export function createAuthRouter(database: typeof db = db): IRouter {
         refreshToken,
       });
     } catch (_error) {
+      clearAuthCookies(res);
       next(createHttpError("Invalid refresh token", 401));
     }
   });

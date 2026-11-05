@@ -18,7 +18,16 @@ export function RequireAuth({ role, children }: { role: Role; children: ReactNod
     );
   }
 
-  if (!isAuthenticated || currentRole !== role) {
+  if (!isAuthenticated) {
+    const currentDestination = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const returnTo =
+      role === 'candidate' && currentDestination.startsWith('/candidate/')
+        ? `/?returnTo=${encodeURIComponent(currentDestination)}`
+        : '/';
+    return <Redirect to={returnTo} />;
+  }
+
+  if (currentRole !== role) {
     return <Redirect to="/" />;
   }
 

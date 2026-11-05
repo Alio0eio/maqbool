@@ -7,7 +7,9 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { ApiError, customFetch } from '@workspace/api-client-react';
+import { SESSION_EXPIRED_EVENT } from './authenticated-api';
 import type { User } from './mock-data';
 import type { Role } from './mock-data';
 
@@ -92,6 +94,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const authActionVersion = useRef(0);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      authActionVersion.current += 1;
+      setUser(null);
+      setIsInitializing(false);
+      queryClient.clear();
+      clearLegacyAuthenticationData();
+
+      const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      window.location.assign(
+        `/?returnTo=${encodeURIComponent(returnTo)}&sessionExpired=1`,
+      );
+    };
+
+    window.addEventListener(SESSION_EXPIRED_EVENT, handleSessionExpired);
+    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, handleSessionExpired);
+  }, [queryClient]);
 
   useEffect(() => {
     let mounted = true;

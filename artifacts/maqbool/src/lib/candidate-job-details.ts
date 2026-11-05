@@ -152,7 +152,7 @@ export function getApplicationStatusLabel(status: CandidateJobDetails["applicati
 
   switch (status) {
     case ApplicationStatus.applied:
-      return "Application submitted";
+      return "Already Applied";
     case ApplicationStatus.reviewing:
       return "Under review";
     case ApplicationStatus.shortlisted:
