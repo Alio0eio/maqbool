@@ -40,9 +40,9 @@ Implementation/verification steps:
 4. Run the frontend TypeScript check and focused application/authentication
    tests after changing the flow.
 
-The application list/dashboard is still mock-backed; the flow invalidates its
-candidate-application query key for consistency, but no live list query consumes
-that key until the planned applications-dashboard integration is completed.
+The candidate dashboard now consumes the live, user-scoped application list
+query. Successful submissions invalidate the same query key, so returning to
+the dashboard fetches the updated applications.
 
 ## 1. Repository and Backend Foundation
 
@@ -1161,3 +1161,36 @@ and session-refresh behavior; no second client or dependency was added.
 
 Focused validation included the candidate frontend type-check, candidate job
 API/query tests, and the existing backend saved-jobs route tests.
+
+## 8. Candidate Applications Dashboard Integration
+
+The candidate dashboard now reads its application data from
+`GET /api/candidates/applications` using the existing authenticated API client
+and cookie refresh flow.
+
+1. `artifacts/maqbool/src/lib/candidate-applications-api.ts` validates the
+   backend's paginated `{ applications, pagination }` response. Each list item
+   uses its application `id`, `status`, `stage`, `appliedAt`, `createdAt`, and
+   nested `job` fields including `title`, `location`, and `company.name` /
+   `company.logoUrl`.
+2. The service requests 100 items per page and loads each backend page so
+   dashboard totals include all applications. It rejects malformed responses
+   and totals that change during a multi-page load.
+3. `artifacts/maqbool/src/lib/use-candidate-applications.ts` provides the
+   React Query hook. Its `["candidate-applications", candidateId]` key scopes
+   cached results per authenticated candidate and matches the submit flow's
+   invalidation.
+4. The dashboard renders the backend job, company, status, date, progress, and
+   summary data. Job links retain their existing job IDs, while the application
+   action navigates with the backend application ID to the candidate detail
+   route. The dashboard does not combine list data with mock application or
+   interview records.
+5. The detail route calls the candidate-owned `GET /api/applications/:id`
+   endpoint, displays interview information only when present, and displays
+   feedback only for rejected applications.
+6. Loading uses application-card skeletons; empty results retain the Browse
+   jobs action; failures show a generic retryable message. Unauthorized
+   requests continue through the shared refresh/session-expiration behavior.
+7. API contract tests cover optional logo/date fields, malformed pagination,
+   loading multiple pages, and inconsistent totals. No frontend test runner or
+   component-test framework is configured in the package.

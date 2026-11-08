@@ -21,6 +21,7 @@ import RecruiterCandidates from '@/pages/recruiter/candidates';
 
 import CandidateDashboard from '@/pages/candidate/dashboard';
 import CandidateJobs from '@/pages/candidate/jobs';
+import CandidateApplicationDetail from '@/pages/candidate/application-detail';
 import JobDetail from '@/pages/candidate/job-detail';
 import ApplyFlow from '@/pages/candidate/apply-flow';
 import CandidateInterview from '@/pages/candidate/interview';
@@ -112,6 +113,7 @@ function App() {
                   <Route path="/candidate/dashboard" component={CandidateDashboard} />
                   <Route path="/candidate/jobs" component={CandidateJobs} />
                   <Route path="/candidate/jobs/:id" component={JobDetail} />
+                  <Route path="/candidate/applications/:id" component={CandidateApplicationDetail} />
                   <Route path="/candidate/company/:slug" component={CompanyProfile} />
                   <Route path="/candidate/apply/:id/:step" component={ApplyFlow} />
                   <Route path="/candidate/interviews/:id" component={CandidateInterview} />

@@ -23,6 +23,7 @@ import {
   getApplicationStatusLabel,
   getCandidateJobDetails,
 } from "@/lib/candidate-jobs-api";
+import { candidateApplicationsQueryKey } from "@/lib/candidate-applications-api";
 import {
   ArrowLeft,
   FileText,
@@ -259,7 +260,7 @@ export default function ApplyFlow() {
             refetchType: "none",
           });
           void queryClient.invalidateQueries({
-            queryKey: ["candidate-applications", user.id],
+            queryKey: candidateApplicationsQueryKey(user.id),
             refetchType: "none",
           });
           setHasSubmitted(true);

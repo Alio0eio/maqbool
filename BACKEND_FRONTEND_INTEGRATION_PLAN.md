@@ -376,13 +376,16 @@ exists. Added response validation tests for the paginated saved-jobs payload.
 
 ### Phase 5: Applications dashboard and withdrawal
 
-1. Replace mock applications in the candidate dashboard with
-   `GET /api/candidates/applications`.
-2. Use backend pagination, status/stage filters, and sort order rather than
-   filtering the full mock array in the browser.
-3. Add an application details view or route that calls
-   `GET /api/applications/:id`; keep interview nullable and show feedback only
-   when the application is rejected.
+1. [x] Replace mock applications in the candidate dashboard with
+   `GET /api/candidates/applications`. The user-scoped React Query key uses the
+   authenticated candidate ID, and the service loads all pages with the
+   backend's newest-first default ordering.
+2. [x] Consume the endpoint's pagination rather than filtering the mock array
+   in the browser. The dashboard loads all application pages so its counts and
+   status summaries reflect the complete response.
+3. [x] Add an application details route that calls
+   `GET /api/applications/:id` with the selected application ID; render an
+   optional interview and show feedback only for rejected applications.
 4. Add a visible Withdraw action only for `applied`, `reviewing`, `shortlisted`,
    and `interviewing` applications.
 5. Confirm withdrawal before calling `DELETE /api/applications/:id`.
