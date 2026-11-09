@@ -1,115 +1,99 @@
-import React from "react";
 import { Link } from "wouter";
-import { MOCK_APPLICATIONS, MOCK_INTERVIEWS, MOCK_CANDIDATES } from "@/lib/mock-data";
+import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth";
 import { greeting } from "@/lib/greeting";
-import { motion } from "framer-motion";
+import { useCandidateApplications } from "@/lib/use-candidate-applications";
+import { useCandidateApplicationWithdrawal } from "@/lib/use-candidate-application-withdrawal";
+import { isApplicationWithdrawable } from "@/lib/candidate-application-status";
 import { SummaryStrip } from "@/components/shared/summary-strip";
-import { relativeDay } from "@/components/shared/date-tile";
 import { CardContent } from "@workspace/design-system/card";
 import { Button } from "@workspace/design-system/button";
-import { Badge } from "@workspace/design-system/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/design-system/avatar";
 import { StatusBadge } from "@/components/shared/badges";
 import { PageHeader } from "@/components/shared/page-header";
 import { ViewfinderCard } from "@/components/shared/viewfinder-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StaggerGroup, StaggerItem } from "@/components/shared/stagger";
+import { ConfirmAction } from "@/components/shared/confirm-action";
 import {
-  MapPin,
-  Calendar,
-  ChevronRight,
-  Clock,
-  Video,
-  CheckCircle2,
   ArrowRight,
   Briefcase,
+  CheckCircle2,
+  ChevronRight,
+  LoaderCircle,
+  MapPin,
 } from "lucide-react";
 import { cn } from "@workspace/design-system/utils";
 
-export default function CandidateDashboard() {
-  const { user } = useAuth();
-  const myCandidateId = MOCK_CANDIDATES.find(c => c.email === user?.email)?.id;
-
-  // My Applications
-  const myApplications = MOCK_APPLICATIONS.filter(a => a.candidateId === myCandidateId);
-  
-  // Pending Interviews
-  const pendingInterviews = MOCK_INTERVIEWS.filter(
-    i => myApplications.some(a => a.id === i.applicationId) && i.status === "invited"
+function ApplicationSkeletons() {
+  return (
+    <div className="space-y-4" role="status" aria-label="Loading applications">
+      {Array.from({ length: 3 }, (_, index) => (
+        <div key={index} className="h-36 rounded-2xl border border-border bg-white/70 p-5">
+          <div className="h-11 w-11 animate-pulse rounded-xl bg-muted" />
+          <div className="mt-4 h-4 w-2/5 animate-pulse rounded bg-muted" />
+          <div className="mt-3 h-3 w-1/4 animate-pulse rounded bg-muted" />
+        </div>
+      ))}
+    </div>
   );
+}
+
+export default function CandidateDashboard() {
+  const { user, role } = useAuth();
+  const applicationsQuery = useCandidateApplications(
+    user?.id ?? 0,
+    Boolean(user?.id) && role === "candidate",
+  );
+  const withdrawalMutation = useCandidateApplicationWithdrawal(user?.id ?? 0);
+  const myApplications = applicationsQuery.data ?? [];
+  const isApplicationsLoaded = applicationsQuery.isSuccess;
+  const stages = ["applied", "screening", "interview", "offer"];
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <PageHeader
         title={greeting(user?.name)}
-        eyebrow={`${myApplications.length} application${myApplications.length === 1 ? "" : "s"} · ${pendingInterviews.length} pending interview${pendingInterviews.length === 1 ? "" : "s"}`}
-        description="Track your applications and upcoming interviews."
+        eyebrow={
+          applicationsQuery.isPending
+            ? "Loading applications"
+            : applicationsQuery.isError
+              ? "Applications unavailable"
+              : `${myApplications.length} application${myApplications.length === 1 ? "" : "s"}`
+        }
+        description="Track your application progress and upcoming opportunities."
       />
 
-      <SummaryStrip
-        items={[
-          { label: "Applications", value: myApplications.length },
-          { label: "Interviewing", value: myApplications.filter(a => a.stage === "interview" && a.status !== "rejected").length },
-          { label: "Awaiting your response", value: pendingInterviews.length },
-          { label: "Offers", value: myApplications.filter(a => a.stage === "offer" || a.status === "offered").length },
-        ]}
-      />
-
-      {pendingInterviews.length > 0 && (
-        <section>
-          <h2 className="text-[15px] font-semibold text-foreground tracking-[-0.01em] mb-4 flex items-center gap-2">
-            Action required
-            <Badge variant="destructive" className="h-5 px-1.5 rounded-full">{pendingInterviews.length}</Badge>
-          </h2>
-          <StaggerGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {pendingInterviews.map(interview => {
-              const app = myApplications.find(a => a.id === interview.applicationId);
-              if (!app || !app.job) return null;
-
-              return (
-                <StaggerItem key={interview.id}>
-                <ViewfinderCard className="relative overflow-hidden">
-                  <div className="absolute inset-y-0 left-0 w-[3px] bg-destructive" />
-                  <CardContent className="p-5">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-[10px] bg-destructive/10 text-destructive flex items-center justify-center shrink-0">
-                          {interview.type.includes("video") ? <Video className="w-[18px] h-[18px]" /> : <Calendar className="w-[18px] h-[18px]" />}
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-foreground text-[13.5px]">Interview Invitation</h3>
-                          <p className="text-[12.5px] text-muted-foreground">{app.job.title} at {app.job.company}</p>
-                        </div>
-                      </div>
-                      <Badge variant="destructive">Pending</Badge>
-                    </div>
-
-                    <div className="bg-surface-subtle rounded-[10px] p-3 mb-4 text-[12.5px]">
-                      <div className="flex items-center gap-2 text-foreground font-medium mb-1">
-                        <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-                        Complete by: {new Date(interview.deadline!).toLocaleDateString()}
-                        {relativeDay(interview.deadline) && (
-                          <span className="ml-auto rounded-full bg-destructive/10 text-destructive px-2 py-0.5 text-[11px] font-semibold">
-                            {relativeDay(interview.deadline)}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-muted-foreground line-clamp-2">{interview.invitationNote}</p>
-                    </div>
-
-                    <Link href={`/candidate/interviews/${interview.id}`}>
-                      <Button className="w-full">
-                        Start Video Interview
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </ViewfinderCard>
-                </StaggerItem>
-              );
-            })}
-          </StaggerGroup>
-        </section>
+      {isApplicationsLoaded && (
+        <SummaryStrip
+          items={[
+            { label: "Applications", value: myApplications.length },
+            {
+              label: "Interviewing",
+              value: myApplications.filter(
+                (application) => application.status === "interviewing" || application.stage === "interview",
+              ).length,
+            },
+            {
+              label: "In review",
+              value: myApplications.filter(
+                (application) =>
+                  application.status === "reviewing" ||
+                  application.status === "shortlisted" ||
+                  application.stage === "screening",
+              ).length,
+            },
+            {
+              label: "Offers",
+              value: myApplications.filter(
+                (application) =>
+                  application.status === "offered" ||
+                  application.stage === "offer" ||
+                  application.stage === "hired",
+              ).length,
+            },
+          ]}
+        />
       )}
 
       <section>
@@ -122,7 +106,26 @@ export default function CandidateDashboard() {
           </Link>
         </div>
 
-        {myApplications.length === 0 ? (
+        {applicationsQuery.isPending ? (
+          <ApplicationSkeletons />
+        ) : applicationsQuery.isError ? (
+          <div className="rounded-2xl border border-destructive/30 bg-destructive/[0.04] p-6 text-center">
+            <p className="text-sm text-destructive" role="alert">
+              We couldn’t load your applications. Please try again.
+            </p>
+            <Button
+              variant="outline"
+              className="mt-4"
+              onClick={() => void applicationsQuery.refetch()}
+              disabled={applicationsQuery.isFetching}
+            >
+              {applicationsQuery.isFetching && (
+                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              )}
+              {applicationsQuery.isFetching ? "Retrying…" : "Try again"}
+            </Button>
+          </div>
+        ) : myApplications.length === 0 ? (
           <EmptyState
             icon={Briefcase}
             title="No applications yet"
@@ -134,106 +137,150 @@ export default function CandidateDashboard() {
             }
           />
         ) : (
-        <StaggerGroup className="space-y-4">
-          {myApplications.map((app) => {
-            if (!app.job) return null;
+          <StaggerGroup className="space-y-4">
+            {myApplications.map((application) => {
+              const stageIndexByName: Record<string, number> = {
+                applied: 0,
+                screening: 1,
+                interview: 2,
+                decision: 3,
+                offer: 3,
+                hired: 3,
+                rejected: 3,
+              };
+              const currentStageIndex = stageIndexByName[application.stage] ?? 0;
+              const isRejected = application.status === "rejected" || application.stage === "rejected";
+              const isWithdrawn = application.status === "withdrawn";
+              const isTerminal = isRejected || isWithdrawn;
+              const isWithdrawing =
+                withdrawalMutation.isPending &&
+                withdrawalMutation.variables?.applicationId === application.id;
 
-            // Progress calculation
-            const stages = ["applied", "screening", "interview", "offer"];
-            const currentStageIndex = stages.indexOf(app.stage);
-            const isRejected = app.status === "rejected";
-
-            return (
-              <StaggerItem key={app.id}>
-              <ViewfinderCard className={cn("overflow-hidden", isRejected && "opacity-70")}>
-                <CardContent className="p-0">
-                  <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div className="flex items-center gap-4 flex-1">
-                      <Avatar className="w-11 h-11 rounded-[10px] ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))]">
-                        <AvatarImage src={app.job.companyLogoUrl || ""} />
-                        <AvatarFallback className="rounded-[10px] bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold">
-                          {app.job.company.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <Link href={`/candidate/jobs/${app.job.id}`}>
-                          <h3 className="text-[15px] font-semibold text-foreground tracking-[-0.01em] hover:text-primary transition-colors line-clamp-1 outline-none">
-                            {app.job.title}
-                          </h3>
-                        </Link>
-                        <div className="flex items-center gap-2 text-[13px] text-muted-foreground mt-0.5">
-                          <span className="font-medium text-foreground">{app.job.company}</span>
-                          <span className="text-border">•</span>
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5" />
-                            {app.job.location}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 sm:min-w-[200px] justify-between sm:justify-end">
-                      <div className="text-right">
-                        <StatusBadge status={app.status} />
-                        <p className="text-[11px] text-muted-foreground mt-1">
-                          Applied {new Date(app.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <Link href={`/candidate/jobs/${app.jobId}`}>
-                        <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full" aria-label="View job details">
-                          <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div className="bg-surface-subtle/60 px-5 py-4 border-t border-border/60">
-                    <div className="relative pt-1">
-                      <div className="flex mb-2 items-center justify-between">
-                        {stages.map((stage, idx) => {
-                          const isActive = idx === currentStageIndex && !isRejected;
-                          const isPast = idx < currentStageIndex && !isRejected;
-                          const isCurrentRejected = idx === currentStageIndex && isRejected;
-
-                          return (
-                            <div key={stage} className="flex flex-col items-center relative z-10 w-1/4">
-                              <div className={cn(
-                                "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold border-2 transition-colors",
-                                isPast ? "bg-success border-success text-white" :
-                                isActive ? "bg-white border-primary text-primary" :
-                                isCurrentRejected ? "bg-destructive border-destructive text-white" :
-                                "bg-white border-border text-muted-foreground"
-                              )}>
-                                {isPast ? <CheckCircle2 className="w-3.5 h-3.5" /> : idx + 1}
-                              </div>
-                              <span className={cn(
-                                "text-[11px] font-medium mt-1.5 capitalize",
-                                isActive ? "text-primary" : isCurrentRejected ? "text-destructive" : "text-muted-foreground"
-                              )}>
-                                {stage}
+              return (
+                <StaggerItem key={application.id}>
+                  <ViewfinderCard className={cn("overflow-hidden", isTerminal && "opacity-70")}>
+                    <CardContent className="p-0">
+                      <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                        <div className="flex items-center gap-4 flex-1">
+                          <Avatar className="w-11 h-11 rounded-[10px] ring-2 ring-white shadow-[0_0_0_1px_hsl(var(--border))]">
+                            <AvatarImage src={application.job.company.logoUrl ?? ""} />
+                            <AvatarFallback className="rounded-[10px] bg-gradient-to-br from-primary to-secondary text-primary-foreground font-semibold">
+                              {application.job.company.name.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <Link href={`/candidate/jobs/${application.job.id}`}>
+                              <h3 className="text-[15px] font-semibold text-foreground tracking-[-0.01em] hover:text-primary transition-colors line-clamp-1 outline-none">
+                                {application.job.title}
+                              </h3>
+                            </Link>
+                            <div className="flex items-center gap-2 text-[13px] text-muted-foreground mt-0.5">
+                              <span className="font-medium text-foreground">{application.job.company.name}</span>
+                              <span className="text-border">•</span>
+                              <span className="flex items-center gap-1">
+                                <MapPin className="w-3.5 h-3.5" />
+                                {application.job.location}
                               </span>
                             </div>
-                          );
-                        })}
-                        {/* Connecting Lines */}
-                        <div className="absolute top-4 left-0 w-full h-0.5 bg-border/70 -z-10 px-8">
-                          <motion.div
-                            className={cn("h-full", isRejected ? "bg-destructive" : "bg-success")}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${(Math.max(0, currentStageIndex) / (stages.length - 1)) * 100}%` }}
-                            transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                          />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 sm:min-w-[200px] justify-between sm:justify-end">
+                          <div className="text-right">
+                            <StatusBadge status={application.status} />
+                            <p className="text-[11px] text-muted-foreground mt-1">
+                              Applied {new Date(application.appliedAt ?? application.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <Link href={`/candidate/applications/${application.id}`}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="w-8 h-8 rounded-full"
+                              aria-label={`View application for ${application.job.title}`}
+                            >
+                              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                            </Button>
+                          </Link>
+                          {isApplicationWithdrawable(application.status) && (
+                            <ConfirmAction
+                              title="Withdraw application?"
+                              description={`Are you sure you want to withdraw your application for ${application.job.title} at ${application.job.company.name}? It will remain in your application history.`}
+                              confirmLabel="Withdraw Application"
+                              onConfirm={() =>
+                                withdrawalMutation.withdraw({
+                                  applicationId: application.id,
+                                  jobId: application.job.id,
+                                })
+                              }
+                            >
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-destructive hover:text-destructive"
+                                disabled={withdrawalMutation.isPending}
+                              >
+                                {isWithdrawing && (
+                                  <LoaderCircle
+                                    className="mr-2 h-4 w-4 animate-spin"
+                                    aria-hidden="true"
+                                  />
+                                )}
+                                {isWithdrawing ? "Withdrawing…" : "Withdraw Application"}
+                              </Button>
+                            </ConfirmAction>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </ViewfinderCard>
-              </StaggerItem>
-            );
-          })}
-        </StaggerGroup>
+
+                      <div className="bg-surface-subtle/60 px-5 py-4 border-t border-border/60" aria-label="Application progress">
+                        <div className="relative pt-1">
+                          <div className="flex mb-2 items-center justify-between">
+                            {stages.map((stage, index) => {
+                              const isActive = index === currentStageIndex && !isTerminal;
+                              const isPast = index < currentStageIndex && !isTerminal;
+                              const isCurrentRejected = index === currentStageIndex && isRejected;
+
+                              return (
+                                <div key={stage} className="flex flex-col items-center relative z-10 w-1/4">
+                                  <div className={cn(
+                                    "w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold border-2 transition-colors",
+                                    isPast ? "bg-success border-success text-white" :
+                                    isActive ? "bg-white border-primary text-primary" :
+                                    isCurrentRejected ? "bg-destructive border-destructive text-white" :
+                                    "bg-white border-border text-muted-foreground"
+                                  )}>
+                                    {isPast ? <CheckCircle2 className="w-3.5 h-3.5" /> : index + 1}
+                                  </div>
+                                  <span className={cn(
+                                    "text-[11px] font-medium mt-1.5 capitalize",
+                                    isActive ? "text-primary" : isCurrentRejected ? "text-destructive" : "text-muted-foreground"
+                                  )}>
+                                    {stage}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                            <div className="absolute top-4 left-0 w-full h-0.5 bg-border/70 -z-10 px-8">
+                              <motion.div
+                                className={cn(
+                                  "h-full",
+                                  isRejected ? "bg-destructive" : isWithdrawn ? "bg-muted-foreground" : "bg-success",
+                                )}
+                                initial={{ width: 0 }}
+                                animate={{ width: `${(Math.max(0, currentStageIndex) / (stages.length - 1)) * 100}%` }}
+                                transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </ViewfinderCard>
+                </StaggerItem>
+              );
+            })}
+          </StaggerGroup>
         )}
       </section>
     </div>

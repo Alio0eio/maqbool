@@ -376,21 +376,24 @@ exists. Added response validation tests for the paginated saved-jobs payload.
 
 ### Phase 5: Applications dashboard and withdrawal
 
-1. Replace mock applications in the candidate dashboard with
-   `GET /api/candidates/applications`.
-2. Use backend pagination, status/stage filters, and sort order rather than
-   filtering the full mock array in the browser.
-3. Add an application details view or route that calls
-   `GET /api/applications/:id`; keep interview nullable and show feedback only
-   when the application is rejected.
-4. Add a visible Withdraw action only for `applied`, `reviewing`, `shortlisted`,
+1. [x] Replace mock applications in the candidate dashboard with
+   `GET /api/candidates/applications`. The user-scoped React Query key uses the
+   authenticated candidate ID, and the service loads all pages with the
+   backend's newest-first default ordering.
+2. [x] Consume the endpoint's pagination rather than filtering the mock array
+   in the browser. The dashboard loads all application pages so its counts and
+   status summaries reflect the complete response.
+3. [x] Add an application details route that calls
+   `GET /api/applications/:id` with the selected application ID; render an
+   optional interview and show feedback only for rejected applications.
+4. [x] Add a visible Withdraw action only for `applied`, `reviewing`, `shortlisted`,
    and `interviewing` applications.
-5. Confirm withdrawal before calling `DELETE /api/applications/:id`.
-6. On success, invalidate the application list, application detail, and any
+5. [x] Confirm withdrawal before calling `DELETE /api/applications/:id`.
+6. [x] On success, invalidate the application list, application detail, and any
    dashboard summary queries. Preserve the application row and render the
    `withdrawn` status.
-7. Map `409 Application cannot be withdrawn in its current status` to a
-   refreshed detail state rather than treating it as a generic failure.
+7. [x] Map `409 Application cannot be withdrawn in its current status` to a
+   refreshed application state rather than treating it as a generic failure.
 8. Leave interviews, messages, and notifications clearly marked as mock-backed
    until their backend tasks are implemented.
 
