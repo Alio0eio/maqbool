@@ -386,14 +386,14 @@ exists. Added response validation tests for the paginated saved-jobs payload.
 3. [x] Add an application details route that calls
    `GET /api/applications/:id` with the selected application ID; render an
    optional interview and show feedback only for rejected applications.
-4. Add a visible Withdraw action only for `applied`, `reviewing`, `shortlisted`,
+4. [x] Add a visible Withdraw action only for `applied`, `reviewing`, `shortlisted`,
    and `interviewing` applications.
-5. Confirm withdrawal before calling `DELETE /api/applications/:id`.
-6. On success, invalidate the application list, application detail, and any
+5. [x] Confirm withdrawal before calling `DELETE /api/applications/:id`.
+6. [x] On success, invalidate the application list, application detail, and any
    dashboard summary queries. Preserve the application row and render the
    `withdrawn` status.
-7. Map `409 Application cannot be withdrawn in its current status` to a
-   refreshed detail state rather than treating it as a generic failure.
+7. [x] Map `409 Application cannot be withdrawn in its current status` to a
+   refreshed application state rather than treating it as a generic failure.
 8. Leave interviews, messages, and notifications clearly marked as mock-backed
    until their backend tasks are implemented.
 

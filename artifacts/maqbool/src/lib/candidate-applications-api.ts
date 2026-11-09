@@ -1,4 +1,5 @@
 import { authenticatedApiRequest } from './authenticated-api';
+import { ApplicationStatus } from '@workspace/api-client-react';
 
 export interface CandidateApplication {
   id: number;
@@ -207,6 +208,24 @@ export async function getCandidateApplicationDetails(
     feedback,
     interview,
   };
+}
+
+export async function withdrawCandidateApplication(
+  applicationId: number,
+): Promise<CandidateApplicationResponse> {
+  if (!isPositiveInteger(applicationId)) {
+    throw new Error('A valid application ID is required.');
+  }
+
+  const response = await authenticatedApiRequest<unknown>(`/applications/${applicationId}`, {
+    method: 'DELETE',
+  });
+  const application = parseCandidateApplicationResponse(response);
+  if (application.id !== applicationId || application.status !== ApplicationStatus.withdrawn) {
+    throw new Error('The applications service returned an invalid withdrawal response.');
+  }
+
+  return application;
 }
 
 export function parseCandidateApplicationResponse(value: unknown): CandidateApplicationResponse {

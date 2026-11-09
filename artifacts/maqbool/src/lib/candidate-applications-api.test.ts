@@ -5,7 +5,9 @@ import {
   getCandidateApplications,
   getCandidateApplicationDetails,
   parseCandidateApplicationsPage,
+  withdrawCandidateApplication,
 } from "./candidate-applications-api";
+import { isApplicationWithdrawable } from "./candidate-application-status";
 
 const originalFetch = globalThis.fetch;
 
@@ -150,5 +152,41 @@ describe("candidate applications API", () => {
     assert.equal(result.interview, null);
     assert.ok(requestedUrl.endsWith("/api/applications/7"));
     assert.notDeepEqual(candidateApplicationDetailsQueryKey(1, 7), candidateApplicationDetailsQueryKey(2, 7));
+  });
+
+  it("withdraws an application with one DELETE request and validates the returned status", async () => {
+    const requests: Array<{ url: string; method: string | undefined }> = [];
+    globalThis.fetch = async (input, init) => {
+      requests.push({ url: String(input), method: init?.method });
+      return new Response(JSON.stringify({
+        id: 7,
+        jobId: 107,
+        candidateId: 1,
+        status: "withdrawn",
+        stage: "applied",
+        resumeUrl: "https://example.com/resume",
+        coverLetter: null,
+        createdAt: "2026-10-10T12:00:00.000Z",
+        updatedAt: "2026-10-11T12:00:00.000Z",
+      }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    };
+
+    const result = await withdrawCandidateApplication(7);
+
+    assert.equal(result.id, 7);
+    assert.equal(result.status, "withdrawn");
+    assert.deepEqual(requests, [{ url: "/api/applications/7", method: "DELETE" }]);
+  });
+
+  it("allows withdrawal only for the exact eligible backend statuses", () => {
+    for (const status of ["applied", "reviewing", "shortlisted", "interviewing"]) {
+      assert.equal(isApplicationWithdrawable(status), true);
+    }
+    for (const status of ["offered", "rejected", "withdrawn", "hired", "Applied", "unknown"]) {
+      assert.equal(isApplicationWithdrawable(status), false);
+    }
   });
 });

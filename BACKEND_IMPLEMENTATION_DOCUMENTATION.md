@@ -1194,3 +1194,17 @@ and cookie refresh flow.
 7. API contract tests cover optional logo/date fields, malformed pagination,
    loading multiple pages, and inconsistent totals. No frontend test runner or
    component-test framework is configured in the package.
+8. The dashboard renders the Withdraw Application action only for the exact
+   backend statuses `applied`, `reviewing`, `shortlisted`, and `interviewing`.
+   It uses a reusable status utility, confirms the job and company before
+   sending `DELETE /api/applications/:id`, and disables withdrawal controls
+   while the request is pending.
+9. The withdrawal service validates the returned application ID and
+   `withdrawn` status. On success, the mutation invalidates the candidate
+   applications, application details, and candidate job detail query keys;
+   the application stays in history and displays the refreshed backend status.
+10. A `409` refreshes those affected queries and displays a specific stale-status
+    message. `401`, `404`, and network/server failures receive user-safe error
+    feedback; failed requests do not optimistically change application data.
+    API tests cover exact eligibility comparisons and one DELETE request with
+    the requested ID.

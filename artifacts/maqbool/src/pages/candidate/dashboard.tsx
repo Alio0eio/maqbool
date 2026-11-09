@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/lib/auth";
 import { greeting } from "@/lib/greeting";
 import { useCandidateApplications } from "@/lib/use-candidate-applications";
+import { useCandidateApplicationWithdrawal } from "@/lib/use-candidate-application-withdrawal";
+import { isApplicationWithdrawable } from "@/lib/candidate-application-status";
 import { SummaryStrip } from "@/components/shared/summary-strip";
 import { CardContent } from "@workspace/design-system/card";
 import { Button } from "@workspace/design-system/button";
@@ -12,6 +14,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { ViewfinderCard } from "@/components/shared/viewfinder-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StaggerGroup, StaggerItem } from "@/components/shared/stagger";
+import { ConfirmAction } from "@/components/shared/confirm-action";
 import {
   ArrowRight,
   Briefcase,
@@ -42,6 +45,7 @@ export default function CandidateDashboard() {
     user?.id ?? 0,
     Boolean(user?.id) && role === "candidate",
   );
+  const withdrawalMutation = useCandidateApplicationWithdrawal(user?.id ?? 0);
   const myApplications = applicationsQuery.data ?? [];
   const isApplicationsLoaded = applicationsQuery.isSuccess;
   const stages = ["applied", "screening", "interview", "offer"];
@@ -148,6 +152,9 @@ export default function CandidateDashboard() {
               const isRejected = application.status === "rejected" || application.stage === "rejected";
               const isWithdrawn = application.status === "withdrawn";
               const isTerminal = isRejected || isWithdrawn;
+              const isWithdrawing =
+                withdrawalMutation.isPending &&
+                withdrawalMutation.variables?.applicationId === application.id;
 
               return (
                 <StaggerItem key={application.id}>
@@ -195,6 +202,34 @@ export default function CandidateDashboard() {
                               <ChevronRight className="w-5 h-5 text-muted-foreground" />
                             </Button>
                           </Link>
+                          {isApplicationWithdrawable(application.status) && (
+                            <ConfirmAction
+                              title="Withdraw application?"
+                              description={`Are you sure you want to withdraw your application for ${application.job.title} at ${application.job.company.name}? It will remain in your application history.`}
+                              confirmLabel="Withdraw Application"
+                              onConfirm={() =>
+                                withdrawalMutation.withdraw({
+                                  applicationId: application.id,
+                                  jobId: application.job.id,
+                                })
+                              }
+                            >
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="text-destructive hover:text-destructive"
+                                disabled={withdrawalMutation.isPending}
+                              >
+                                {isWithdrawing && (
+                                  <LoaderCircle
+                                    className="mr-2 h-4 w-4 animate-spin"
+                                    aria-hidden="true"
+                                  />
+                                )}
+                                {isWithdrawing ? "Withdrawing…" : "Withdraw Application"}
+                              </Button>
+                            </ConfirmAction>
+                          )}
                         </div>
                       </div>
 
