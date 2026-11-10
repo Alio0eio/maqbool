@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import { Redirect } from 'wouter';
-import { useAuth } from '@/lib/auth';
-import type { Role } from '@/lib/mock-data';
+import { useAuth, type Role } from '@/lib/auth';
 
 export function RequireAuth({ role, children }: { role: Role; children: ReactNode }) {
   const { isAuthenticated, role: currentRole, isInitializing } = useAuth();

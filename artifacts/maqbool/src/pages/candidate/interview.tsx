@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useLocation } from "wouter";
-import { MOCK_INTERVIEWS } from "@/lib/mock-data";
 import { Button } from "@workspace/design-system/button";
 import { Card, CardContent } from "@workspace/design-system/card";
 import { Progress } from "@workspace/design-system/progress";
@@ -24,6 +23,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@workspace/design-system/utils";
 import { Spinner } from "@/components/shared/spinner";
 import { Confetti } from "@/components/shared/confetti";
+import { useAuth } from "@/lib/auth";
+import { useCandidateInterviews } from "@/lib/use-candidate-interviews";
 
 type CheckState = "idle" | "testing" | "ok";
 
@@ -91,7 +92,19 @@ type Phase = "techcheck" | "practice" | "interview" | "submitting" | "complete";
 export default function CandidateInterview() {
   const { id } = useParams();
   const [, setLocation] = useLocation();
-  const interview = MOCK_INTERVIEWS.find(i => i.id === Number(id));
+  const { user, role } = useAuth();
+  const parsedInterviewId = Number(id);
+  const interviewId =
+    Number.isSafeInteger(parsedInterviewId) && parsedInterviewId > 0
+      ? parsedInterviewId
+      : undefined;
+  const interviewsQuery = useCandidateInterviews(
+    user?.id ?? 0,
+    interviewId !== undefined && Boolean(user?.id) && role === "candidate",
+  );
+  const interviewApplication = interviewsQuery.data?.find(
+    ({ interview: candidateInterview }) => candidateInterview.id === interviewId,
+  );
 
   const [phase, setPhase] = useState<Phase>("techcheck");
   const [cameraState, setCameraState] = useState<CheckState>("idle");
@@ -124,7 +137,33 @@ export default function CandidateInterview() {
   // Hooks must run unconditionally above this line — the not-found bail-out
   // comes after, so navigating between /candidate/interviews/:id routes
   // never changes the number of hooks called on a re-render.
-  if (!interview) return <NotFound />;
+  if (interviewId === undefined) return <NotFound />;
+  if (interviewsQuery.isPending) {
+    return (
+      <main className="flex min-h-64 items-center justify-center text-sm text-muted-foreground" role="status">
+        Loading interview…
+      </main>
+    );
+  }
+  if (interviewsQuery.isError) {
+    return (
+      <Card className="mx-auto max-w-xl">
+        <CardContent className="space-y-4 p-6">
+          <p className="text-sm text-destructive" role="alert">
+            We couldn’t load this interview. Please try again.
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => void interviewsQuery.refetch()}
+            disabled={interviewsQuery.isFetching}
+          >
+            {interviewsQuery.isFetching ? "Retrying…" : "Try again"}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+  if (!interviewApplication) return <NotFound />;
 
   const handleStartRecording = () => {
     setIsRecording(true);
@@ -287,7 +326,7 @@ export default function CandidateInterview() {
       <PageHeader
         sticky
         className="mb-6 shrink-0"
-        eyebrow={`${interview.application?.job?.title ?? "Async interview"} · ${isPractice ? "Practice round" : `${Math.round(progress)}% complete`}`}
+        eyebrow={`${interviewApplication.application.job.title} · ${isPractice ? "Practice round" : `${Math.round(progress)}% complete`}`}
         title={isPractice ? "Practice Question" : `Question ${currentQuestionIndex + 1} of ${QUESTIONS.length}`}
         actions={
           <div className="flex items-center gap-4">

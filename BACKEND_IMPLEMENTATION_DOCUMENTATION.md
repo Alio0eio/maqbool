@@ -44,6 +44,43 @@ The candidate dashboard now consumes the live, user-scoped application list
 query. Successful submissions invalidate the same query key, so returning to
 the dashboard fetches the updated applications.
 
+## Candidate Screens Mock-Data Cleanup
+
+The candidate screens now use existing backend integrations instead of
+candidate, application, or job fixtures:
+
+1. Candidate company open roles use the existing `GET /api/jobs` query and
+   filter the published results by the displayed company name. Loading,
+   request-error/retry, and empty states are distinct; request failures do not
+   show fixture jobs.
+2. The candidate interviews list uses the authenticated
+   `GET /api/candidates/applications` query and fetches interview metadata
+   through the existing `GET /api/applications/:id` detail operation for
+   applications at the interview stage. The detail screen resolves the
+   interview ID from those same application details. No interview endpoint was
+   added.
+3. Authenticated `User` and `Role` types come from the API client/auth module,
+   not `mock-data.ts`.
+4. Candidate profile, job listing/detail, applications, and saved jobs continue
+   using their existing profile/jobs/applications/saved-jobs services and
+   React Query keys.
+
+Interview questions and recording/submission/availability, notifications,
+screening question templates, job alerts, messages, and recruiter display
+fixtures remain mock-backed or simulated because their corresponding live APIs
+are outside the implemented backend scope. They are not used as fallback data
+for API errors in the candidate screens connected above.
+
+Validation for this cleanup:
+
+- `pnpm --filter @workspace/maqbool typecheck` passed.
+- `pnpm --filter @workspace/maqbool build` passed, with sourcemap-resolution
+  and large-chunk warnings.
+- The frontend package has no test script and `tsx` is not installed. Bundling
+  the six existing candidate test files to temporary ESM files with the
+  installed esbuild runner, then running `node --test`, passed all 33 tests.
+  The temporary bundles were removed after the run.
+
 ## 1. Repository and Backend Foundation
 
 1. The project uses a pnpm workspace monorepo.

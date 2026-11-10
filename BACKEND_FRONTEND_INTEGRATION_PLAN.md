@@ -38,10 +38,13 @@ their existing migration phases.
 6. Candidate resumes are uploaded to private S3-compatible storage through the
    authenticated API. The profile stores an owner-checked API download path,
    and application submissions use that saved path.
-7. Candidate interviews, messages, notifications, job alerts, and company
-   profile data are outside the backend scope through task 4.3.4 and should
-   remain explicitly mock-backed or be hidden behind a feature flag during this
-   migration.
+7. Interview listing/detail metadata is read from the existing candidate
+   application detail endpoint when the application is at the interview stage.
+   Interview questions, response submission, and availability actions remain
+   simulated because no interview API is implemented. Messages, notifications,
+   job alerts, and company profile content remain outside the backend scope and
+   should stay explicitly mock-backed or be hidden behind a feature flag during
+   migration. Company open roles use the jobs API.
 
 ## Target Architecture
 
@@ -406,7 +409,11 @@ remove the application from history, and cannot be repeated.
    `GET /api/candidates/saved-jobs`.
 2. [x] Preserve job-alert UI as mock or remove it from the live-data claim because
    no alert endpoint exists yet.
-3. Remove mock candidate/application/job imports from live candidate screens.
+3. [x] Remove mock candidate/application/job imports from candidate screens in
+   the supported scope. Company open roles use `GET /api/jobs`; interview
+   metadata uses the existing candidate application list/detail APIs. Auth and
+   protected-route types now come from the API user type rather than the mock
+   data module.
 4. Keep shared display adapters in one place, such as
    `artifacts/maqbool/src/lib/api/adapters.ts`, rather than duplicating field
    mapping in every page.
@@ -415,6 +422,18 @@ remove the application from history, and cannot be repeated.
 
 **Exit check:** all candidate screens in the supported scope use backend data,
 and a network failure is visible to the user.
+
+**Progress update (2026-11-10)**: The company profile now requests published
+jobs through the existing jobs service and shows loading, error/retry, and
+empty states without falling back to fixtures. Candidate interviews now use
+the authenticated application list and application-detail query keys to
+resolve interview metadata and job/company labels; failed requests remain
+visible instead of appearing as an empty interview list. The interview
+question/recording and availability flows are still simulated because the
+backend has no interview endpoints. Candidate auth and route guards no longer
+depend on `mock-data.ts` for types. Screening question templates, candidate
+notifications, job alerts, and recruiter-only mock fixtures remain outside the
+supported live-data scope.
 
 ## Suggested Frontend Modules
 

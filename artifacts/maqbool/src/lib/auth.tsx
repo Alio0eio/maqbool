@@ -8,12 +8,13 @@ import {
   type ReactNode,
 } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ApiError, customFetch } from '@workspace/api-client-react';
+import { ApiError, customFetch, type User as ApiUser } from '@workspace/api-client-react';
 import { SESSION_EXPIRED_EVENT } from './authenticated-api';
-import type { User } from './mock-data';
-import type { Role } from './mock-data';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '');
+export type User = ApiUser & { title?: string };
+export type Role = User['role'];
+
 const roles: Role[] = ['candidate', 'recruiter', 'admin'];
 
 interface AuthContextValue {
