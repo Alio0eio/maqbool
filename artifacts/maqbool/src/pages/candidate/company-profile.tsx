@@ -1,11 +1,11 @@
-import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "wouter";
-import { MOCK_JOBS } from "@/lib/mock-data";
 import { Button } from "@workspace/design-system/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@workspace/design-system/avatar";
 import { Card, CardContent } from "@workspace/design-system/card";
 import { JobCard } from "@/components/shared/job-card";
-import { ArrowLeft, MapPin, Users, Globe, Building2 } from "lucide-react";
+import { getCandidateJobs, type CandidateJobsQuery } from "@/lib/candidate-jobs-api";
+import { ArrowLeft, Building2, Globe, LoaderCircle, MapPin, Users } from "lucide-react";
 import NotFound from "@/pages/not-found";
 
 const COMPANY_PROFILES: Record<string, {
@@ -36,10 +36,24 @@ const COMPANY_PROFILES: Record<string, {
 export default function CompanyProfile() {
   const { slug } = useParams<{ slug: string }>();
   const company = COMPANY_PROFILES[slug ?? ""] ?? COMPANY_PROFILES["stratos-financial"];
+  const jobsQueryParams: CandidateJobsQuery = {
+    page: 1,
+    limit: 100,
+    search: company?.name ?? "",
+    sortBy: "postedAt",
+    sortOrder: "desc",
+  };
+  const jobsQuery = useQuery({
+    queryKey: ["jobs", jobsQueryParams],
+    queryFn: ({ signal }) => getCandidateJobs(jobsQueryParams, signal),
+    enabled: Boolean(company),
+    retry: 1,
+  });
 
   if (!company) return <NotFound />;
 
-  const openRoles = MOCK_JOBS.filter(j => j.status === "published" && j.company === company.name);
+  const openRoles =
+    jobsQuery.data?.jobs.filter((job) => job.company === company.name) ?? [];
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
@@ -64,7 +78,11 @@ export default function CompanyProfile() {
             </Avatar>
             <div className="min-w-0">
               <p className="text-[13px] font-medium text-muted-foreground mb-1.5">
-                {company.size} · {openRoles.length} open role{openRoles.length === 1 ? "" : "s"}
+                {company.size} · {jobsQuery.isPending
+                  ? "Loading open roles"
+                  : jobsQuery.isError
+                    ? "Open roles unavailable"
+                    : `${openRoles.length} open role${openRoles.length === 1 ? "" : "s"}`}
               </p>
               <h1 className="text-[26px] font-semibold text-foreground tracking-[-0.02em] leading-[1.15] mb-2">
                 {company.name}
@@ -108,9 +126,30 @@ export default function CompanyProfile() {
 
           <section>
             <h2 className="text-[15px] font-semibold text-foreground tracking-[-0.01em] mb-3">
-              Open Roles ({openRoles.length})
+              Open Roles{jobsQuery.isSuccess ? ` (${openRoles.length})` : ""}
             </h2>
-            {openRoles.length > 0 ? (
+            {jobsQuery.isPending ? (
+              <div className="flex items-center gap-2 py-4 text-sm text-muted-foreground" role="status">
+                <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
+                Loading open roles…
+              </div>
+            ) : jobsQuery.isError ? (
+              <div className="space-y-3">
+                <p className="text-sm text-destructive" role="alert">
+                  We couldn’t load this company’s open roles. Please try again.
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => void jobsQuery.refetch()}
+                  disabled={jobsQuery.isFetching}
+                >
+                  {jobsQuery.isFetching && (
+                    <LoaderCircle className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                  )}
+                  {jobsQuery.isFetching ? "Retrying…" : "Try again"}
+                </Button>
+              </div>
+            ) : openRoles.length > 0 ? (
               <div className="grid grid-cols-1 gap-4">
                 {openRoles.map(job => (
                   <JobCard key={job.id} job={job} variant="candidate" />
