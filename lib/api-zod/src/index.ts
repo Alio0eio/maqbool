@@ -5,5 +5,6 @@ export {
   listJobsQuerySchema,
 } from "./jobs";
 export type { ApplyJobBody, ListJobsQuery } from "./jobs";
+export * from "./recruiter";
 export * from "./generated/api";
 export * from "./generated/types";
