@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Building2, Globe, Save, Check } from 'lucide-react';
 import { RingGauge } from '@/components/shared/ring-gauge';
 import { PageHeader } from '@/components/shared/page-header';
@@ -16,20 +16,37 @@ import {
   SelectValue,
 } from '@workspace/design-system/select';
 import { toast } from '@workspace/design-system/hooks/use-toast';
+import { useRecruiterCompany, useRecruiterCompanyMutation } from '@/lib/recruiter-api';
 
 const INDUSTRIES = ['Financial Services', 'Technology', 'Healthcare', 'Education', 'Retail', 'Manufacturing'];
 const SIZES = ['1-10', '11-50', '51-200', '201-500', '501-1000', '1000+'];
 
 export default function CompanySettings() {
   const [form, setForm] = useState({
-    name: 'Stratos Financial', industry: 'Financial Services', size: '201-500',
-    website: 'https://stratos.com', location: 'San Francisco, CA',
-    description: 'Stratos Financial is a leading fintech company building the next generation of financial infrastructure for businesses of all sizes.',
-    culture: 'We believe in radical transparency, continuous learning, and shipping fast.',
-    benefits: ['Health, Dental & Vision', '401(k) with 4% match', 'Flexible PTO', '$3k Learning Budget', 'Hybrid Work', 'Equity Package'],
+    name: '', industry: '', size: '',
+    website: '', location: '',
+    description: '',
+    culture: '',
+    benefits: [] as string[],
   });
   const [newBenefit, setNewBenefit] = useState('');
   const [saved, setSaved] = useState(false);
+  const companyQuery = useRecruiterCompany();
+  const companyMutation = useRecruiterCompanyMutation();
+
+  useEffect(() => {
+    if (!companyQuery.data) return;
+    setForm({
+      name: companyQuery.data.name,
+      industry: companyQuery.data.industry ?? '',
+      size: companyQuery.data.size ?? '',
+      website: companyQuery.data.website ?? '',
+      location: companyQuery.data.location ?? '',
+      description: companyQuery.data.description ?? '',
+      culture: companyQuery.data.culture ?? '',
+      benefits: companyQuery.data.benefits,
+    });
+  }, [companyQuery.data]);
 
   const requiredFields = [form.name, form.industry, form.size, form.website, form.location, form.description];
   const completion = useMemo(
@@ -48,10 +65,31 @@ export default function CompanySettings() {
     setNewBenefit('');
   }
 
-  function handleSave() {
-    setSaved(true);
-    toast({ title: 'Company profile saved', description: 'Your changes are now visible to candidates.' });
-    setTimeout(() => setSaved(false), 2000);
+  async function handleSave() {
+    try {
+      await companyMutation.mutateAsync({
+        name: form.name,
+        industry: form.industry || null,
+        size: form.size || null,
+        website: form.website || null,
+        location: form.location || null,
+        description: form.description || null,
+        culture: form.culture || null,
+        benefits: form.benefits,
+      });
+      setSaved(true);
+      toast({ title: 'Company profile saved', description: 'Your changes have been persisted.' });
+      setTimeout(() => setSaved(false), 2000);
+    } catch {
+      toast({ title: 'Could not save company', description: 'Please try again.', variant: 'destructive' });
+    }
+  }
+
+  if (companyQuery.isLoading) {
+    return <div className="max-w-3xl mx-auto text-sm text-muted-foreground">Loading company profile…</div>;
+  }
+  if (companyQuery.isError) {
+    return <div className="max-w-3xl mx-auto text-sm text-destructive">Unable to load company profile.</div>;
   }
 
   return (

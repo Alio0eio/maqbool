@@ -5,6 +5,8 @@ type HttpError = Error & {
   status?: number;
   statusCode?: number;
   type?: string;
+  code?: string;
+  details?: unknown;
 };
 
 export const notFoundHandler: RequestHandler = (req, res) => {
@@ -32,11 +34,13 @@ export const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {
 
   res.status(safeStatusCode).json({
     error: {
+      ...(httpError.code ? { code: httpError.code } : {}),
       message: isMalformedJson
         ? "Malformed JSON request body"
         : safeStatusCode >= 500 && config.isProduction
           ? "Internal server error"
           : httpError.message || "Request failed",
+      ...(httpError.details !== undefined ? { details: httpError.details } : {}),
     },
   });
 };
