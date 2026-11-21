@@ -34,6 +34,17 @@ function parseNodeEnvironment(value: string): NodeEnvironment {
   return value as NodeEnvironment;
 }
 
+function parseFeatureFlag(name: string, fallback = false): boolean {
+  const value = process.env[name]?.trim().toLowerCase();
+  if (!value) {
+    return fallback;
+  }
+  if (!["true", "false", "1", "0"].includes(value)) {
+    throw new Error(`${name} must be true or false`);
+  }
+  return value === "true" || value === "1";
+}
+
 const environment = parseNodeEnvironment(process.env.NODE_ENV?.trim() || "development");
 const port = parsePort(requiredEnvironment("PORT"));
 const legacyJwtSecret = process.env.JWT_SECRET?.trim();
@@ -81,6 +92,9 @@ export const config = {
   corsOrigins,
   logLevel: configuredLogLevel as Level,
   databaseUrl: process.env.DATABASE_URL?.trim(),
+  recruiter: {
+    liveEnabled: parseFeatureFlag("RECRUITER_LIVE_ENABLED"),
+  },
   jwt: {
     secret: jwtAccessSecret,
     accessSecret: jwtAccessSecret,
