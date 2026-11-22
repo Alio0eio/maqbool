@@ -6,6 +6,9 @@ import {
   recruiterCandidateParamsSchema,
   recruiterContextSchema,
   recruiterApiErrorSchema,
+  recruiterActiveCompanySchema,
+  recruiterInvitationCreateSchema,
+  recruiterTeamMemberUpdateSchema,
 } from "@workspace/api-zod/recruiter";
 
 test("recruiter context contract requires a recruiter and active company state", () => {
@@ -70,4 +73,39 @@ test("recruiter API error contract has a stable envelope", () => {
   });
 
   assert.equal(result.error.code, "APPLICATION_STALE");
+});
+
+test("recruiter active company selection requires a positive company ID", () => {
+  assert.equal(recruiterActiveCompanySchema.parse({ companyId: "42" }).companyId, 42);
+  assert.equal(recruiterActiveCompanySchema.safeParse({ companyId: 0 }).success, false);
+});
+
+test("recruiter invitations use normalized roles and reject unknown fields", () => {
+  assert.equal(
+    recruiterInvitationCreateSchema.parse({
+      email: " recruiter@example.com ",
+      role: "hiring_manager",
+    }).email,
+    "recruiter@example.com",
+  );
+  assert.equal(
+    recruiterInvitationCreateSchema.safeParse({
+      email: "recruiter@example.com",
+      role: "owner",
+    }).success,
+    false,
+  );
+  assert.equal(recruiterInvitationCreateSchema.safeParse({
+    email: "recruiter@example.com",
+    role: "recruiter",
+    companyId: 99,
+  }).success,
+  false,
+  );
+});
+
+test("team role updates are constrained", () => {
+  assert.equal(recruiterTeamMemberUpdateSchema.parse({ role: "admin" }).role, "admin");
+  assert.equal(recruiterTeamMemberUpdateSchema.safeParse({}).success, false);
+  assert.equal(recruiterTeamMemberUpdateSchema.safeParse({ role: "superadmin" }).success, false);
 });

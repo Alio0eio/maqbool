@@ -22,6 +22,13 @@ export const companyMemberStatusEnum = pgEnum("company_member_status", [
   "invited",
   "inactive",
 ]);
+export const recruiterTenantRoleEnum = pgEnum("recruiter_tenant_role", [
+  "owner",
+  "admin",
+  "recruiter",
+  "hiring_manager",
+  "billing_admin",
+]);
 export const jobStatusEnum = pgEnum("job_status", ["draft", "published", "closed", "paused"]);
 export const jobLocationTypeEnum = pgEnum("job_location_type", ["remote", "hybrid", "onsite"]);
 export const jobTypeEnum = pgEnum("job_type", [
@@ -130,12 +137,39 @@ export const companyMembers = pgTable(
     userId: integer("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    role: varchar("role", { length: 100 }).notNull(),
+    role: recruiterTenantRoleEnum("role").notNull(),
     status: companyMemberStatusEnum("status").notNull().default("invited"),
     joinedAt: timestamp("joined_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [unique("company_members_company_user_unique").on(table.companyId, table.userId)],
+);
+
+export const companyInvitations = pgTable(
+  "company_invitations",
+  {
+    id: serial("id").primaryKey(),
+    companyId: integer("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    email: varchar("email", { length: 320 }).notNull(),
+    role: recruiterTenantRoleEnum("role").notNull(),
+    invitedByUserId: integer("invited_by_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    tokenHash: varchar("token_hash", { length: 64 }).notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    acceptedAt: timestamp("accepted_at", { withTimezone: true }),
+    acceptedByUserId: integer("accepted_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    unique("company_invitations_token_hash_unique").on(table.tokenHash),
+    index("company_invitations_company_email_idx").on(table.companyId, table.email),
+  ],
 );
 
 export const jobs = pgTable(
@@ -241,6 +275,7 @@ export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertCandidateProfileSchema = createInsertSchema(candidateProfiles).omit({ id: true });
 export const insertCompanySchema = createInsertSchema(companies).omit({ id: true });
 export const insertCompanyMemberSchema = createInsertSchema(companyMembers).omit({ id: true });
+export const insertCompanyInvitationSchema = createInsertSchema(companyInvitations).omit({ id: true });
 export const insertJobSchema = createInsertSchema(jobs).omit({ id: true });
 export const insertSavedJobSchema = createInsertSchema(savedJobs).omit({ id: true });
 export const insertApplicationSchema = createInsertSchema(applications).omit({ id: true });

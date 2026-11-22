@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "wouter";
 import { Kbd } from "@workspace/design-system/kbd";
 import {
   LayoutDashboard,
@@ -15,7 +14,7 @@ import {
   CreditCard,
   Search,
 } from "lucide-react";
-import { RECRUITER_NOTIFICATIONS, MOCK_JOBS, MOCK_CANDIDATES } from "@/lib/mock-data";
+import { useRecruiterContext } from "@/lib/recruiter-api";
 import { AppShell, type AppNavGroup } from "./app-shell";
 
 const NAV_GROUPS: AppNavGroup[] = [
@@ -60,11 +59,6 @@ function RecruiterSearch() {
   const [query, setQuery] = React.useState("");
   const [open, setOpen] = React.useState(false);
 
-  const q = query.trim().toLowerCase();
-  const jobResults = q ? MOCK_JOBS.filter((j) => j.title.toLowerCase().includes(q)).slice(0, 4) : [];
-  const candidateResults = q ? MOCK_CANDIDATES.filter((c) => c.name.toLowerCase().includes(q)).slice(0, 4) : [];
-  const hasResults = jobResults.length > 0 || candidateResults.length > 0;
-
   return (
     <div className="relative w-full max-w-sm hidden md:block">
       <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -78,44 +72,9 @@ function RecruiterSearch() {
         className="w-full h-10 pl-10 pr-14 rounded-full border border-border/70 bg-white/80 shadow-[0_1px_2px_rgba(16,24,40,0.04)] text-sm placeholder:text-muted-foreground focus:outline-none focus:border-secondary/40 focus:ring-4 focus:ring-secondary/10 focus:bg-white transition-[box-shadow,border-color,background-color] hover:bg-white"
       />
       <Kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px]">⌘K</Kbd>
-      {open && q && (
+      {open && query.trim() && (
         <div className="absolute top-11 left-0 w-80 bg-popover border border-border rounded-xl shadow-lg overflow-hidden z-30">
-          {hasResults ? (
-            <>
-              {jobResults.length > 0 && (
-                <div className="py-1.5">
-                  <p className="px-3 pt-1 pb-1 text-[11px] font-medium text-muted-foreground">Jobs</p>
-                  {jobResults.map((job) => (
-                    <Link
-                      key={job.id}
-                      href={`/recruiter/jobs/${job.id}/applicants`}
-                      className="block px-3 py-1.5 text-sm hover:bg-foreground/[0.045] transition-colors"
-                      onClick={() => setQuery("")}
-                    >
-                      {job.title}
-                    </Link>
-                  ))}
-                </div>
-              )}
-              {candidateResults.length > 0 && (
-                <div className="py-1.5 border-t border-border/70">
-                  <p className="px-3 pt-1 pb-1 text-[11px] font-medium text-muted-foreground">Candidates</p>
-                  {candidateResults.map((c) => (
-                    <Link
-                      key={c.id}
-                      href={`/recruiter/candidates/${c.id}`}
-                      className="block px-3 py-1.5 text-sm hover:bg-foreground/[0.045] transition-colors"
-                      onClick={() => setQuery("")}
-                    >
-                      {c.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </>
-          ) : (
-            <p className="px-3 py-2.5 text-sm text-muted-foreground">No results for "{query}"</p>
-          )}
+          <p className="px-3 py-2.5 text-sm text-muted-foreground">Live search is not available yet.</p>
         </div>
       )}
     </div>
@@ -123,12 +82,32 @@ function RecruiterSearch() {
 }
 
 export function RecruiterShell({ children }: { children: React.ReactNode }) {
-  const unreadNotifications = RECRUITER_NOTIFICATIONS.filter((n) => !n.read).length;
+  const context = useRecruiterContext();
+  const unreadNotifications = 0;
+
+  if (context.isLoading) {
+    return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">Loading workspace…</div>;
+  }
+  if (context.isError) {
+    return <div className="min-h-screen flex items-center justify-center text-sm text-destructive">Unable to load recruiter workspace.</div>;
+  }
+  if (!context.data?.activeCompany) {
+    return (
+      <main className="min-h-screen flex items-center justify-center p-6">
+        <div className="max-w-md text-center space-y-3">
+          <h1 className="text-xl font-semibold">No company workspace</h1>
+          <p className="text-sm text-muted-foreground">
+            This recruiter account has no active company membership. Ask a workspace administrator to send you an invitation.
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <AppShell
       navGroups={NAV_GROUPS}
-      roleLabel="Stratos Financial"
+      roleLabel={context.data.activeCompany.name}
       profileHref="/recruiter/settings/company"
       notificationsHref="/recruiter/notifications"
       unreadNotifications={unreadNotifications}
