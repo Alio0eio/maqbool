@@ -17,7 +17,7 @@ import {
   type RecruiterCapability,
   type RecruiterTenantRole,
 } from "../../../../lib/api-zod/src/recruiter";
-import { authenticate, authorize } from "../middlewares/auth";
+import { authenticate } from "../middlewares/auth";
 
 type HttpError = Error & { statusCode: number; code?: string; details?: unknown };
 
@@ -64,7 +64,7 @@ type RecruiterRequest = {
 
 export function createRecruiterRouter(database: typeof db = db): IRouter {
   const router: IRouter = Router();
-  router.use(authenticate, authorize("recruiter"));
+  router.use(authenticate);
 
   async function getActiveMembership(req: RecruiterRequest) {
     const userId = getUserId(req);
@@ -78,7 +78,12 @@ export function createRecruiterRouter(database: typeof db = db): IRouter {
       })
       .from(companyMembers)
       .innerJoin(companies, eq(companies.id, companyMembers.companyId))
-      .where(eq(companyMembers.userId, userId));
+      .where(
+        and(
+          eq(companyMembers.userId, userId),
+          eq(companies.verificationStatus, "approved"),
+        ),
+      );
 
     const active = memberships.filter((membership) => membership.status === "active");
     if (active.length === 0) return { memberships, active: null };
@@ -88,10 +93,11 @@ export function createRecruiterRouter(database: typeof db = db): IRouter {
         : typeof req.cookies?.recruiter_company_id === "string"
           ? Number(req.cookies.recruiter_company_id)
           : undefined;
-    const selected =
-      requestedCompanyId && active.some((membership) => membership.companyId === requestedCompanyId)
-        ? active.find((membership) => membership.companyId === requestedCompanyId)!
-        : active.slice().sort((a, b) => a.companyId - b.companyId)[0];
+    const selected = requestedCompanyId !== undefined
+      ? active.find((membership) => membership.companyId === requestedCompanyId) ?? null
+      : active.length === 1
+        ? active[0]
+        : null;
     return { memberships, active: selected };
   }
 
@@ -103,13 +109,13 @@ export function createRecruiterRouter(database: typeof db = db): IRouter {
         .from(users)
         .where(eq(users.id, userId))
         .limit(1);
-      if (!user || user.role !== "recruiter") {
-        next(createHttpError("Recruiter account not found", 403, "FORBIDDEN"));
+      if (!user) {
+        next(createHttpError("User not found", 404, "USER_NOT_FOUND"));
         return;
       }
       const { memberships, active } = await getActiveMembership(req);
       res.json({
-        user: { id: user.id, name: user.name, email: user.email, role: "recruiter" as const },
+        user: { id: user.id, name: user.name, email: user.email, role: user.role },
         activeCompany: active ? {
           id: active.companyId,
           name: active.companyName,
@@ -160,7 +166,29 @@ export function createRecruiterRouter(database: typeof db = db): IRouter {
       const { active } = await getActiveMembership(req);
       if (!active) { next(createHttpError("No active company membership", 404, "NO_ACTIVE_COMPANY")); return; }
       requireCapability(active.role, "company.read");
-      const [company] = await database.select().from(companies).where(eq(companies.id, active.companyId)).limit(1);
+      const [company] = await database
+        .select({
+          id: companies.id,
+          name: companies.name,
+          industry: companies.industry,
+          website: companies.website,
+          logoUrl: companies.logoUrl,
+          size: companies.size,
+          location: companies.location,
+          description: companies.description,
+          culture: companies.culture,
+          benefits: companies.benefits,
+          createdAt: companies.createdAt,
+          updatedAt: companies.updatedAt,
+        })
+        .from(companies)
+        .where(
+          and(
+            eq(companies.id, active.companyId),
+            eq(companies.verificationStatus, "approved"),
+          ),
+        )
+        .limit(1);
       if (!company) { next(createHttpError("Company not found", 404, "COMPANY_NOT_FOUND")); return; }
       res.json({ company });
     } catch (error) { next(error); }
@@ -178,7 +206,26 @@ export function createRecruiterRouter(database: typeof db = db): IRouter {
       requireCapability(active.role, "company.update");
       const [company] = await database.update(companies)
         .set({ ...parsed.data, updatedAt: new Date() })
-        .where(eq(companies.id, active.companyId)).returning();
+        .where(
+          and(
+            eq(companies.id, active.companyId),
+            eq(companies.verificationStatus, "approved"),
+          ),
+        )
+        .returning({
+          id: companies.id,
+          name: companies.name,
+          industry: companies.industry,
+          website: companies.website,
+          logoUrl: companies.logoUrl,
+          size: companies.size,
+          location: companies.location,
+          description: companies.description,
+          culture: companies.culture,
+          benefits: companies.benefits,
+          createdAt: companies.createdAt,
+          updatedAt: companies.updatedAt,
+        });
       if (!company) { next(createHttpError("Company not found", 404, "COMPANY_NOT_FOUND")); return; }
       res.json({ company });
     } catch (error) { next(error); }
@@ -263,6 +310,20 @@ export function createRecruiterRouter(database: typeof db = db): IRouter {
       if (!user) { next(createHttpError("Recruiter account not found", 404, "USER_NOT_FOUND")); return; }
       const [invitation] = await database.select().from(companyInvitations).where(eq(companyInvitations.tokenHash, tokenHash)).limit(1);
       if (!invitation || invitation.acceptedAt || invitation.revokedAt || invitation.expiresAt <= new Date() || invitation.email !== user.email.toLowerCase()) {
+        next(createHttpError("Invitation is invalid or expired", 404, "INVITATION_NOT_FOUND"));
+        return;
+      }
+      const [company] = await database
+        .select({ id: companies.id })
+        .from(companies)
+        .where(
+          and(
+            eq(companies.id, invitation.companyId),
+            eq(companies.verificationStatus, "approved"),
+          ),
+        )
+        .limit(1);
+      if (!company) {
         next(createHttpError("Invitation is invalid or expired", 404, "INVITATION_NOT_FOUND"));
         return;
       }

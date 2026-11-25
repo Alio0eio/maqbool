@@ -78,7 +78,7 @@ export default function AuthPage() {
 
     if (mode === "signup") {
       if (role !== "candidate") {
-        setError("Recruiter accounts cannot be created through this registration form. Choose Candidate to sign up.");
+        setLocation("/recruiter/sign-up");
         return;
       }
       if (!PASSWORD_RULE.test(password)) {
@@ -245,7 +245,12 @@ export default function AuthPage() {
                     role="radio"
                     aria-checked={active}
                     data-testid={`role-${o.value}`}
-                    onClick={() => setRole(o.value)}
+                    onClick={() => {
+                      setRole(o.value);
+                      if (o.value === "recruiter" && mode === "signup") {
+                        setLocation("/recruiter/sign-up");
+                      }
+                    }}
                     className={cn(
                       "relative flex flex-col items-start gap-1 rounded-2xl border p-3.5 text-left transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
                       active ? "border-transparent text-primary" : "border-border/70 text-muted-foreground hover:bg-foreground/[0.03]",
@@ -287,6 +292,10 @@ export default function AuthPage() {
                   role="tab"
                   aria-selected={mode === m}
                   onClick={() => {
+                    if (m === "signup" && role === "recruiter") {
+                      setLocation("/recruiter/sign-up");
+                      return;
+                    }
                     setMode(m);
                     setError(null);
                     setNotice(null);
@@ -413,6 +422,19 @@ export default function AuthPage() {
                 )}
               </Button>
             </form>
+
+            {mode === "signin" && (
+              <p className="mt-5 text-center text-[13px] text-muted-foreground">
+                Don&apos;t have an account yet?{" "}
+                <button
+                  type="button"
+                  onClick={() => role === "recruiter" ? setLocation("/recruiter/sign-up") : setMode("signup")}
+                  className="font-semibold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-sm"
+                >
+                  Sign up
+                </button>
+              </p>
+            )}
 
           </div>
         </motion.div>

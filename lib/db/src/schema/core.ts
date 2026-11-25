@@ -1,5 +1,7 @@
 import { createInsertSchema } from "drizzle-zod";
+import { sql } from "drizzle-orm";
 import {
+  check,
   date,
   index,
   integer,
@@ -21,6 +23,11 @@ export const companyMemberStatusEnum = pgEnum("company_member_status", [
   "active",
   "invited",
   "inactive",
+]);
+export const companyVerificationStatusEnum = pgEnum("company_verification_status", [
+  "pending",
+  "approved",
+  "rejected",
 ]);
 export const recruiterTenantRoleEnum = pgEnum("recruiter_tenant_role", [
   "owner",
@@ -123,9 +130,24 @@ export const companies = pgTable("companies", {
   description: text("description"),
   culture: text("culture"),
   benefits: jsonb("benefits").$type<string[]>().default([]).notNull(),
+  verificationStatus: companyVerificationStatusEnum("verification_status")
+    .notNull()
+    .default("approved"),
+  applicantUserId: integer("applicant_user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  rejectionReason: text("rejection_reason"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-});
+}, (table) => [
+  uniqueIndex("companies_one_pending_registration_per_applicant")
+    .on(table.applicantUserId)
+    .where(sql`${table.verificationStatus} = 'pending'`),
+  check(
+    "companies_pending_registration_requires_applicant",
+    sql`${table.verificationStatus} <> 'pending' OR ${table.applicantUserId} IS NOT NULL`,
+  ),
+]);
 
 export const companyMembers = pgTable(
   "company_members",

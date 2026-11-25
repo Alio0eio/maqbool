@@ -1,7 +1,8 @@
-# Recruiter Phase 0 Decisions
+f# Recruiter Phase 0 Decisions
 
-Phase 0 establishes recruiter backend contracts and policy. It does not enable
-or implement recruiter routes; those belong to Phase 1 and later phases.
+Phase 0 establishes recruiter backend contracts and policy. Recruiter
+operations remain feature-flagged; company registration applications are
+available separately and do not grant recruiter access.
 
 ## Approved product decisions
 
@@ -39,9 +40,12 @@ unverified global-candidate access.
 
 ### Company and membership
 
-- `users.role = recruiter` permits access to recruiter routes.
-- Company access requires an active `company_members` row.
+- A user's global role does not grant company access. Access requires an
+  authenticated identity and an active membership in an approved company.
 - `company_members.role` is tenant-scoped and separate from global `users.role`.
+- Candidate accounts retain their global candidate role when they gain
+  recruiter capabilities through company membership.
+- Platform-admin privileges do not bypass company membership or tenant roles.
 - A recruiter may belong to multiple companies, but only one active company
   is selected for a request/session context.
 - A client-supplied company ID is never a grant of authority.
@@ -54,11 +58,14 @@ unverified global-candidate access.
 
 ### Recruiter provisioning
 
-Recruiter accounts and companies are provisioned through a controlled
-invitation/admin process. Public candidate registration must remain
-candidate-only and must never accept a recruiter role or company grant from a
-request body. A company invitation is a separate one-time token record,
-different from membership; accepting it atomically activates the membership.
+Users register and log in through the existing account system. An authenticated
+user may submit a company registration application; it remains pending and
+does not create an owner membership. Approval must create an active owner
+membership, while rejection grants no recruiter access. Public user
+registration remains candidate-only and must never accept a recruiter role or
+company grant from a request body. Email verification is not implemented yet
+and is deferred. A company invitation is a separate one-time token record;
+accepting a valid invitation activates the membership.
 
 The last owner of a company cannot be removed or demoted through normal team
 APIs.
@@ -143,8 +150,10 @@ not implicitly reject or withdraw applicants.
 
 ## API conventions
 
-The recruiter API is mounted under `/api/recruiter/*` only after the feature
-flag is enabled. Contracts use Zod in `@workspace/api-zod/recruiter`.
+Recruiter operations are mounted under `/api/recruiter/*` only after the
+feature flag is enabled. Company registration and current-user status
+endpoints are mounted independently so authenticated users can apply while
+operations remain disabled. Contracts use Zod in `@workspace/api-zod/recruiter`.
 
 - Success payloads use resource data plus a stable list envelope.
 - List parameters use validated `page`, `limit`, allowlisted search/filter, and
@@ -176,9 +185,10 @@ behavior.
 ## Feature flag
 
 `RECRUITER_LIVE_ENABLED=false` is the default. The server exposes
-`config.recruiter.liveEnabled`, and recruiter routes/UI live mode must remain
-disabled until Phase 8. Invalid flag values fail startup instead of silently
-using recruiter behavior.
+`config.recruiter.liveEnabled`; recruiter operational routes/UI live mode must
+remain disabled until Phase 8. Company registration and status endpoints are
+not governed by this flag. Invalid flag values fail startup instead of
+silently using recruiter behavior.
 
 ## Phase 0 acceptance test matrix
 
@@ -199,6 +209,9 @@ using recruiter behavior.
 | Billing admin tries team management | Rejected |
 | Owner is the only remaining owner | Owner removal/demotion is rejected |
 | Public registration sends recruiter role | Request rejected; candidate role remains server-owned |
+| A company application is pending or rejected | No active owner membership or recruiter access |
+| An approved company has an active owner membership | Tenant access follows the membership role |
+| A user has multiple active company memberships without selection | No company is selected automatically |
 | Recruiter feature flag is invalid | Server startup fails |
 | Recruiter feature flag is false | Recruiter live routes/screens remain disabled |
 
