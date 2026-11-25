@@ -28,13 +28,23 @@ export const recruiterCapabilitySchema = z.enum([
   "reports.view",
 ]);
 
+const companyNameSchema = z.string().trim().min(1).max(255);
+const companyIndustrySchema = z.string().trim().max(150).nullable().optional();
+const companyWebsiteSchema = z.string().trim().url().nullable().optional();
+const companyLogoUrlSchema = z.string().trim().url().nullable().optional();
+const companySizeSchema = z.string().trim().max(50).nullable().optional();
+const companyLocationSchema = z.string().trim().max(255).nullable().optional();
+const companyDescriptionSchema = z.string().trim().max(5000).nullable().optional();
+const companyCultureSchema = z.string().trim().max(5000).nullable().optional();
+const companyBenefitsSchema = z.array(z.string().trim().min(1).max(150)).max(100).optional();
+
 export const recruiterContextSchema = z
   .object({
     user: z.object({
       id: z.number().int().positive(),
       name: z.string().min(1).max(200),
       email: z.string().email(),
-      role: z.literal("recruiter"),
+      role: z.enum(["candidate", "recruiter", "admin"]),
     }),
     activeCompany: z
       .object({
@@ -55,17 +65,31 @@ export const recruiterContextSchema = z
   })
   .strict();
 
+export const recruiterCompanyRegistrationSchema = z
+  .object({
+    name: companyNameSchema,
+    industry: companyIndustrySchema,
+    website: companyWebsiteSchema,
+    logoUrl: companyLogoUrlSchema,
+    size: companySizeSchema,
+    location: companyLocationSchema,
+    description: companyDescriptionSchema,
+    culture: companyCultureSchema,
+    benefits: companyBenefitsSchema,
+  })
+  .strict();
+
 export const recruiterCompanyUpdateSchema = z
   .object({
-    name: z.string().trim().min(1).max(255).optional(),
-    industry: z.string().trim().max(150).nullable().optional(),
-    website: z.string().trim().url().nullable().optional(),
-    logoUrl: z.string().trim().url().nullable().optional(),
-    size: z.string().trim().max(50).nullable().optional(),
-    location: z.string().trim().max(255).nullable().optional(),
-    description: z.string().trim().max(5000).nullable().optional(),
-    culture: z.string().trim().max(5000).nullable().optional(),
-    benefits: z.array(z.string().trim().min(1).max(150)).max(100).optional(),
+    name: companyNameSchema.optional(),
+    industry: companyIndustrySchema,
+    website: companyWebsiteSchema,
+    logoUrl: companyLogoUrlSchema,
+    size: companySizeSchema,
+    location: companyLocationSchema,
+    description: companyDescriptionSchema,
+    culture: companyCultureSchema,
+    benefits: companyBenefitsSchema,
   })
   .strict()
   .refine(
@@ -146,6 +170,7 @@ export type RecruiterTenantRole = z.infer<typeof recruiterTenantRoleSchema>;
 export type RecruiterMembershipStatus = z.infer<typeof recruiterMembershipStatusSchema>;
 export type RecruiterCapability = z.infer<typeof recruiterCapabilitySchema>;
 export type RecruiterContext = z.infer<typeof recruiterContextSchema>;
+export type RecruiterCompanyRegistration = z.infer<typeof recruiterCompanyRegistrationSchema>;
 export type RecruiterCompanyUpdate = z.infer<typeof recruiterCompanyUpdateSchema>;
 export type RecruiterActiveCompany = z.infer<typeof recruiterActiveCompanySchema>;
 export type RecruiterInvitationCreate = z.infer<typeof recruiterInvitationCreateSchema>;

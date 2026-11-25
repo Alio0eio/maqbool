@@ -39,6 +39,15 @@ function getUserId(req: Express.Request): number {
   return userId;
 }
 
+function approvedCompanyPredicate() {
+  return sql`EXISTS (
+    SELECT 1
+    FROM ${companies}
+    WHERE ${companies.id} = ${jobs.companyId}
+      AND ${companies.verificationStatus} = 'approved'
+  )`;
+}
+
 export function createJobsRouter(database: typeof db = db): IRouter {
   const router: IRouter = Router();
 
@@ -64,7 +73,10 @@ export function createJobsRouter(database: typeof db = db): IRouter {
       sortBy,
       sortOrder,
     } = parsed.data;
-    const filters = [eq(jobs.status, "published")];
+    const filters = [
+      eq(jobs.status, "published"),
+      eq(companies.verificationStatus, "approved"),
+    ];
 
     if (companyId !== undefined) filters.push(eq(jobs.companyId, companyId));
     if (search) {
@@ -164,7 +176,13 @@ export function createJobsRouter(database: typeof db = db): IRouter {
       const [job] = await database
         .update(jobs)
         .set({ viewCount: sql`${jobs.viewCount} + 1` })
-        .where(and(eq(jobs.id, id), eq(jobs.status, "published")))
+        .where(
+          and(
+            eq(jobs.id, id),
+            eq(jobs.status, "published"),
+            approvedCompanyPredicate(),
+          ),
+        )
         .returning({
           id: jobs.id,
           title: jobs.title,
@@ -255,7 +273,12 @@ export function createJobsRouter(database: typeof db = db): IRouter {
       const [job] = await database
         .select({ id: jobs.id, status: jobs.status })
         .from(jobs)
-        .where(eq(jobs.id, params.data.id))
+        .where(
+          and(
+            eq(jobs.id, params.data.id),
+            approvedCompanyPredicate(),
+          ),
+        )
         .limit(1);
       if (!job) {
         next(createHttpError("Job not found", 404));
@@ -333,7 +356,12 @@ export function createJobsRouter(database: typeof db = db): IRouter {
       const [job] = await database
         .select({ id: jobs.id })
         .from(jobs)
-        .where(eq(jobs.id, parsed.data.id))
+        .where(
+          and(
+            eq(jobs.id, parsed.data.id),
+            approvedCompanyPredicate(),
+          ),
+        )
         .limit(1);
       if (!job) {
         next(createHttpError("Job not found", 404));

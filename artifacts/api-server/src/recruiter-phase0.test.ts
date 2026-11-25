@@ -26,7 +26,7 @@ test("recruiter context contract requires a recruiter and active company state",
   assert.equal(result.activeCompany, null);
 });
 
-test("recruiter context contract rejects candidate role", () => {
+test("recruiter context contract preserves the user's global role", () => {
   const result = recruiterContextSchema.safeParse({
     user: {
       id: 1,
@@ -38,7 +38,7 @@ test("recruiter context contract rejects candidate role", () => {
     memberships: [],
   });
 
-  assert.equal(result.success, false);
+  assert.equal(result.success, true);
 });
 
 test("recruiter candidate params reject zero and malformed IDs", () => {

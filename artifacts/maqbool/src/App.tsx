@@ -7,6 +7,7 @@ import { MotionConfig } from 'framer-motion';
 import { Route, Switch, Router as WouterRouter, Redirect } from 'wouter';
 
 import AuthPage from '@/pages/auth';
+import RecruiterSignUpPage from '@/pages/recruiter-sign-up';
 import { RecruiterShell } from '@/components/layout/recruiter-shell';
 import { CandidateShell } from '@/components/layout/candidate-shell';
 import { RequireAuth } from '@/components/layout/require-auth';
@@ -68,6 +69,7 @@ function App() {
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
           <Switch>
             <Route path="/" component={AuthPage} />
+            <Route path="/recruiter/sign-up" component={RecruiterSignUpPage} />
 
             {/* Recruiter Routes */}
             <Route path="/recruiter/*">

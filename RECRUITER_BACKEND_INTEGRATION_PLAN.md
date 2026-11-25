@@ -266,13 +266,14 @@ provides `authenticate` and global-role `authorize`. These are necessary but
 not sufficient: the backend must additionally enforce company membership and
 resource ownership on **every** recruiter request.
 
-1. Require `authenticate` and global role `recruiter` for recruiter APIs.
-   The existing public `POST /api/auth/register` currently creates
-   `role: "candidate"` (`artifacts\api-server\src\routes\auth.ts:321+`); do not
-   solve recruiter signup by trusting a client-supplied role. Bootstrap a
-   company owner through a controlled invitation/admin process, then accept
-   company invitations and create/activate memberships. Define an explicit,
-   audited admin-provisioning process.
+1. Require `authenticate` for recruiter APIs and active approved company
+   membership for tenant resources. The existing public
+   `POST /api/auth/register` creates `role: "candidate"`; preserve that global
+   role and never trust a client-supplied role. An authenticated user submits a
+   company registration application, which remains pending without owner
+   membership until approval. Approval must create the applicant's active
+   owner membership; rejection grants no access. Email verification is not
+   implemented and is deferred.
 2. Resolve caller's active `company_members` row(s) from the authenticated
    user ID. Never derive authority from `companyId` in body, URL, localStorage,
    or frontend role label alone. Multi-company selection is a requested
