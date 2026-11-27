@@ -1,4 +1,4 @@
-import { Router, type IRouter, type Response } from "express";
+import { Router, type IRouter, type NextFunction, type Request, type Response } from "express";
 import {
   loginRequestSchema,
   refreshRequestSchema,
@@ -74,6 +74,55 @@ function isUniqueViolation(error: unknown): boolean {
 
 export function createAuthRouter(database: typeof db = db): IRouter {
   const router: IRouter = Router();
+
+  const registerUser =
+    (role: "candidate" | "recruiter") =>
+    async (req: Request, res: Response, next: NextFunction) => {
+      const parsed = registerRequestSchema.safeParse(req.body);
+      if (!parsed.success) {
+        next(createHttpError("Invalid registration data", 400));
+        return;
+      }
+
+      const email = parsed.data.email.toLowerCase();
+      const { password, name } = parsed.data;
+
+      try {
+        const existingUser = await database
+          .select({ id: users.id })
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
+
+        if (existingUser.length > 0) {
+          next(createHttpError("An account with that email already exists", 409));
+          return;
+        }
+
+        const passwordHash = await hashPassword(password);
+        const [user] = await database
+          .insert(users)
+          .values({
+            email,
+            passwordHash,
+            role,
+            name,
+          })
+          .returning({ id: users.id, email: users.email, name: users.name });
+
+        res.status(201).json({
+          message: "User registered successfully",
+          user,
+        });
+      } catch (error) {
+        if (isUniqueViolation(error)) {
+          next(createHttpError("An account with that email already exists", 409));
+          return;
+        }
+
+        next(createHttpError("Registration failed", 500));
+      }
+    };
 
   router.get("/auth/me", authenticate, async (req, res, next) => {
     if (!req.user) {
@@ -318,52 +367,8 @@ export function createAuthRouter(database: typeof db = db): IRouter {
     }
   });
 
-  router.post("/auth/register", async (req, res, next) => {
-    const parsed = registerRequestSchema.safeParse(req.body);
-    if (!parsed.success) {
-      next(createHttpError("Invalid registration data", 400));
-      return;
-    }
-
-    const email = parsed.data.email.toLowerCase();
-    const { password, name } = parsed.data;
-
-    try {
-      const existingUser = await database
-        .select({ id: users.id })
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
-
-      if (existingUser.length > 0) {
-        next(createHttpError("An account with that email already exists", 409));
-        return;
-      }
-
-      const passwordHash = await hashPassword(password);
-      const [user] = await database
-        .insert(users)
-        .values({
-          email,
-          passwordHash,
-          role: "candidate",
-          name,
-        })
-        .returning({ id: users.id, email: users.email, name: users.name });
-
-      res.status(201).json({
-        message: "User registered successfully",
-        user,
-      });
-    } catch (error) {
-      if (isUniqueViolation(error)) {
-        next(createHttpError("An account with that email already exists", 409));
-        return;
-      }
-
-      next(createHttpError("Registration failed", 500));
-    }
-  });
+  router.post("/auth/register", registerUser("candidate"));
+  router.post("/auth/register/recruiter", registerUser("recruiter"));
 
   return router;
 }

@@ -1,8 +1,8 @@
 import { Router, type IRouter, type Request } from "express";
 import { and, desc, eq } from "drizzle-orm";
-import { companies, db } from "@workspace/db";
+import { companies, companyMembers, db } from "@workspace/db";
 import { recruiterCompanyRegistrationSchema } from "@workspace/api-zod/recruiter";
-import { authenticate } from "../middlewares/auth";
+import { authenticate, authorize } from "../middlewares/auth";
 
 type HttpError = Error & { statusCode: number; code?: string; details?: unknown };
 
@@ -42,7 +42,7 @@ export function createRecruiterCompanyRegistrationRouter(
   const router: IRouter = Router();
   router.use(authenticate);
 
-  router.post("/recruiter/company-registration", async (req, res, next) => {
+  router.post("/recruiter/company-registration", authorize("recruiter"), async (req, res, next) => {
     const parsed = recruiterCompanyRegistrationSchema.safeParse(req.body);
     if (!parsed.success) {
       next(
@@ -66,67 +66,77 @@ export function createRecruiterCompanyRegistrationRouter(
 
     try {
       const registration = await database.transaction(async (transaction) => {
-        const [pendingRegistration] = await transaction
+        const [existingCompany] = await transaction
           .select({ id: companies.id })
           .from(companies)
+          .where(eq(companies.applicantUserId, applicantUserId))
+          .orderBy(desc(companies.createdAt))
+          .limit(1);
+
+        const [company] = existingCompany
+          ? await transaction
+              .update(companies)
+              .set({
+                ...parsed.data,
+                updatedAt: new Date(),
+              })
+              .where(eq(companies.id, existingCompany.id))
+              .returning({ id: companies.id })
+          : await transaction
+              .insert(companies)
+              .values({
+                ...parsed.data,
+                applicantUserId,
+              })
+              .returning({ id: companies.id });
+
+        const [membership] = await transaction
+          .select({ id: companyMembers.id })
+          .from(companyMembers)
           .where(
             and(
-              eq(companies.applicantUserId, applicantUserId),
-              eq(companies.verificationStatus, "pending"),
+              eq(companyMembers.companyId, company.id),
+              eq(companyMembers.userId, applicantUserId),
             ),
           )
           .limit(1);
 
-        if (pendingRegistration) return null;
-
-        const [company] = await transaction
-          .insert(companies)
-          .values({
-            ...parsed.data,
-            applicantUserId,
-            verificationStatus: "pending",
-          })
-          .returning({
-            id: companies.id,
-            verificationStatus: companies.verificationStatus,
-          });
+        if (!membership) {
+          await transaction
+            .insert(companyMembers)
+            .values({
+              companyId: company.id,
+              userId: applicantUserId,
+              role: "owner",
+              status: "active",
+              joinedAt: new Date(),
+            })
+            .returning({ id: companyMembers.id });
+        }
 
         return company;
       });
 
       if (!registration) {
-        next(
-          createHttpError(
-            "A company registration is already pending for this account",
-            409,
-            "PENDING_REGISTRATION_EXISTS",
-          ),
-        );
+        next(createHttpError("Unable to create the company workspace", 500, "WORKSPACE_CREATION_FAILED"));
         return;
       }
 
       res.status(201).json({
         registration: {
           id: registration.id,
-          status: registration.verificationStatus,
         },
       });
     } catch (error) {
       if (isUniqueViolation(error)) {
-        next(
-          createHttpError(
-            "A company registration is already pending for this account",
-            409,
-            "PENDING_REGISTRATION_EXISTS",
-          ),
-        );
+        next(createHttpError("A company workspace already exists for this account", 409, "WORKSPACE_EXISTS"));
         return;
       }
       next(error);
     }
   });
 
-  router.get("/recruiter/company-registration/me", async (req, res, next) => {
+  router.get("/recruiter/company-registration/me", authorize("recruiter"), async (req, res, next) => {
     let applicantUserId: number;
     try {
       applicantUserId = getApplicantId(req);
@@ -139,9 +149,6 @@ export function createRecruiterCompanyRegistrationRouter(
       const [registration] = await database
         .select({
           id: companies.id,
-          status: companies.verificationStatus,
-          rejectionReason: companies.rejectionReason,
-          submittedAt: companies.createdAt,
           company: {
             id: companies.id,
             name: companies.name,
@@ -163,9 +170,9 @@ export function createRecruiterCompanyRegistrationRouter(
       if (!registration) {
         next(
           createHttpError(
-            "No company registration was found for this account",
+            "No company workspace was found for this account",
             404,
-            "REGISTRATION_NOT_FOUND",
+            "COMPANY_NOT_FOUND",
           ),
         );
         return;

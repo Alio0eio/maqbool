@@ -34,7 +34,7 @@ type StoredUser = {
   id: number;
   email: string;
   passwordHash: string;
-  role: "candidate";
+  role: "candidate" | "recruiter";
   name: string;
 };
 
@@ -160,6 +160,7 @@ describe("POST /auth/register", () => {
       email: "  USER@example.com ",
       password: "Secure!123",
       name: "User",
+      role: "recruiter",
     });
     const body = await response.json();
 
@@ -171,6 +172,7 @@ describe("POST /auth/register", () => {
     assert.equal("password" in body.user, false);
     assert.equal("passwordHash" in body.user, false);
     assert.equal(testServer.fake.storedUsers.length, 1);
+    assert.equal(testServer.fake.storedUsers[0].role, "candidate");
     assert.notEqual(testServer.fake.storedUsers[0].passwordHash, "Secure!123");
     assert.equal(await verifyPassword("Secure!123", testServer.fake.storedUsers[0].passwordHash), true);
   });
@@ -213,6 +215,24 @@ describe("POST /auth/register", () => {
     assert.equal(response.status, 409);
     assert.deepEqual(body, { error: { message: "An account with that email already exists" } });
     assert.equal(JSON.stringify(body).includes("duplicate email"), false);
+  });
+});
+
+describe("POST /auth/register/recruiter", () => {
+  it("creates a recruiter account with the recruiter role", async () => {
+    const testServer = await createTestServer();
+    servers.push(testServer.server);
+
+    const response = await postAuth(testServer.url + "/auth/register/recruiter", {
+      email: "  RECRUITER@example.com ",
+      password: "Secure!123",
+      name: "Recruiter",
+    });
+
+    assert.equal(response.status, 201);
+    assert.equal(testServer.fake.storedUsers.length, 1);
+    assert.equal(testServer.fake.storedUsers[0].email, "recruiter@example.com");
+    assert.equal(testServer.fake.storedUsers[0].role, "recruiter");
   });
 });
 
