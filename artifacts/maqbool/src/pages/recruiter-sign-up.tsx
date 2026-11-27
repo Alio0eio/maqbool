@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { ArrowLeft, Building2, BriefcaseBusiness, ShieldCheck, Sparkles, Video } from "lucide-react";
 import { Button } from "@workspace/design-system/button";
 import { Input } from "@workspace/design-system/input";
@@ -26,7 +26,6 @@ const FEATURES = [
 const PASSWORD_RULE = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/;
 
 type SignUpForm = {
-  fullName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -42,7 +41,6 @@ type SignUpForm = {
 };
 
 const INITIAL_FORM: SignUpForm = {
-  fullName: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -58,13 +56,12 @@ const INITIAL_FORM: SignUpForm = {
 };
 
 export default function RecruiterSignUpPage() {
-  const { user, login, register, isInitializing } = useAuth();
+  const { user, login, registerRecruiter, isInitializing } = useAuth();
+  const [, setLocation] = useLocation();
   const [form, setForm] = useState(INITIAL_FORM);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [accountCreated, setAccountCreated] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   function updateField<K extends keyof SignUpForm>(key: K, value: SignUpForm[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -73,8 +70,15 @@ export default function RecruiterSignUpPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
-    setNotice(null);
 
+    if (!form.companyName.trim()) {
+      setError("Enter your company name.");
+      return;
+    }
+    if (user && user.role !== "recruiter") {
+      setError("This account is not a recruiter account. Sign out and create a company account to continue.");
+      return;
+    }
     if (!user && !PASSWORD_RULE.test(form.password)) {
       setError("Use at least 8 characters with uppercase and lowercase letters, a number, and a special character.");
       return;
@@ -96,7 +100,7 @@ export default function RecruiterSignUpPage() {
     try {
       if (!user) {
         if (!accountWasCreated) {
-          await register(email, form.password, form.fullName.trim());
+          await registerRecruiter(email, form.password, form.companyName.trim());
           accountWasCreated = true;
           setAccountCreated(true);
         }
@@ -104,13 +108,13 @@ export default function RecruiterSignUpPage() {
         await login(email, form.password);
       }
 
-      failedStep = "company application submission";
+      failedStep = "company workspace setup";
       const benefits = form.benefits
         .split(",")
         .map((benefit) => benefit.trim())
         .filter(Boolean);
-      const registration = await authenticatedApiRequest<{
-        registration: { id: number; status: string };
+      await authenticatedApiRequest<{
+        registration: { id: number };
       }>("/recruiter/company-registration", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -127,16 +131,13 @@ export default function RecruiterSignUpPage() {
         }),
       });
 
-      setSubmitted(true);
       setForm((current) => ({ ...current, password: "", confirmPassword: "" }));
-      setNotice(
-        `Your company application (#${registration.registration.id}) was submitted and is pending verification. Recruiter access starts after approval.`,
-      );
+      setLocation("/recruiter/dashboard");
     } catch (cause) {
       const message = cause instanceof Error ? cause.message : "Please try again.";
       setError(
-        failedStep === "company application submission"
-          ? `Company application submission failed (${failedStep}). ${message} You can retry without creating another account.`
+        failedStep === "company workspace setup"
+          ? `Company workspace setup failed. ${message} You can retry without creating another account.`
           : accountWasCreated
             ? `Your account was created, but ${failedStep} failed. ${message} You can retry without creating another account.`
           : message,
@@ -214,8 +215,8 @@ export default function RecruiterSignUpPage() {
                 <Building2 className="h-5 w-5" />
               </span>
               <div>
-                <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-foreground">Create your recruiter account</h2>
-                <p className="mt-1 text-[14px] text-muted-foreground">Set up your profile and company details.</p>
+                <h2 className="text-[24px] font-semibold tracking-[-0.02em] text-foreground">Create your company account</h2>
+                <p className="mt-1 text-[14px] text-muted-foreground">Set up your company workspace and hiring profile.</p>
               </div>
             </div>
 
@@ -223,25 +224,23 @@ export default function RecruiterSignUpPage() {
               <section aria-labelledby="recruiter-details-heading" className="space-y-4">
                 <div className="flex items-center gap-2 border-b border-border/70 pb-2">
                   <BriefcaseBusiness className="h-4 w-4 text-primary" />
-                  <h3 id="recruiter-details-heading" className="text-sm font-semibold text-foreground">Your details</h3>
+                  <h3 id="recruiter-details-heading" className="text-sm font-semibold text-foreground">Company and account details</h3>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <Label htmlFor="recruiter-full-name">Full name</Label>
+                    <Label htmlFor="company-name">Company name</Label>
                     <Input
-                      id="recruiter-full-name"
-                      autoComplete="name"
+                      id="company-name"
                       maxLength={200}
-                      placeholder="Alex Rivera"
-                      value={user?.name ?? form.fullName}
-                      onChange={(event) => updateField("fullName", event.target.value)}
-                      required={!user}
-                      disabled={!!user || accountCreated}
+                      placeholder="Acme Inc."
+                      value={form.companyName}
+                      onChange={(event) => updateField("companyName", event.target.value)}
+                      required
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="recruiter-email">Work email</Label>
+                    <Label htmlFor="recruiter-email">Company email</Label>
                     <Input
                       id="recruiter-email"
                       type="email"
@@ -287,21 +286,10 @@ export default function RecruiterSignUpPage() {
               <section aria-labelledby="company-details-heading" className="space-y-4">
                 <div className="flex items-center gap-2 border-b border-border/70 pb-2">
                   <Building2 className="h-4 w-4 text-primary" />
-                  <h3 id="company-details-heading" className="text-sm font-semibold text-foreground">Company details</h3>
+                  <h3 id="company-details-heading" className="text-sm font-semibold text-foreground">Company profile</h3>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-1.5 sm:col-span-2">
-                    <Label htmlFor="company-name">Company name</Label>
-                    <Input
-                      id="company-name"
-                      maxLength={255}
-                      placeholder="Acme Inc."
-                      value={form.companyName}
-                      onChange={(event) => updateField("companyName", event.target.value)}
-                      required
-                    />
-                  </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="company-industry">Industry</Label>
                     <Select value={form.industry} onValueChange={(value) => updateField("industry", value)}>
@@ -397,30 +385,22 @@ export default function RecruiterSignUpPage() {
                   {error}
                 </p>
               )}
-              {notice && (
-                <p role="status" className="rounded-xl bg-primary/[0.07] px-3.5 py-2.5 text-[13px] text-primary">
-                  {notice}
-                </p>
-              )}
-
               <Button
                 type="submit"
                 size="lg"
                 className="w-full"
-                disabled={isInitializing || isSubmitting || submitted}
+                disabled={isInitializing || isSubmitting}
               >
                 {isInitializing
                   ? "Loading account..."
                   : isSubmitting
                     ? "Submitting..."
-                    : submitted
-                      ? "Application submitted"
-                      : user || accountCreated
-                        ? "Submit company application"
-                        : "Create recruiter account"}
+                    : user || accountCreated
+                      ? "Create company workspace"
+                      : "Create company account"}
               </Button>
               <p className="text-center text-[12px] leading-relaxed text-muted-foreground">
-                Your account uses the existing sign-in system. Company access is available after verification.
+                Your company workspace is ready to use as soon as you sign up.
               </p>
             </form>
 

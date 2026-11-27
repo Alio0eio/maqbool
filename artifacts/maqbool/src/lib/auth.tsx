@@ -22,6 +22,7 @@ interface AuthContextValue {
   role: Role | null;
   login: (email: string, password: string) => Promise<User>;
   register: (email: string, password: string, name: string) => Promise<void>;
+  registerRecruiter: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
   isAuthenticated: boolean;
   isInitializing: boolean;
@@ -172,6 +173,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const registerRecruiter = useCallback(async (email: string, password: string, name: string) => {
+    await request<unknown>('/auth/register/recruiter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, name }),
+    });
+  }, []);
+
   const signOut = useCallback(async () => {
     authActionVersion.current += 1;
     setUser(null);
@@ -197,6 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role: user?.role ?? null,
         login,
         register,
+        registerRecruiter,
         signOut,
         isAuthenticated: !!user,
         isInitializing,

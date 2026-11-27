@@ -78,12 +78,7 @@ export function createRecruiterRouter(database: typeof db = db): IRouter {
       })
       .from(companyMembers)
       .innerJoin(companies, eq(companies.id, companyMembers.companyId))
-      .where(
-        and(
-          eq(companyMembers.userId, userId),
-          eq(companies.verificationStatus, "approved"),
-        ),
-      );
+      .where(eq(companyMembers.userId, userId));
 
     const active = memberships.filter((membership) => membership.status === "active");
     if (active.length === 0) return { memberships, active: null };
@@ -182,12 +177,7 @@ export function createRecruiterRouter(database: typeof db = db): IRouter {
           updatedAt: companies.updatedAt,
         })
         .from(companies)
-        .where(
-          and(
-            eq(companies.id, active.companyId),
-            eq(companies.verificationStatus, "approved"),
-          ),
-        )
+        .where(eq(companies.id, active.companyId))
         .limit(1);
       if (!company) { next(createHttpError("Company not found", 404, "COMPANY_NOT_FOUND")); return; }
       res.json({ company });
@@ -206,12 +196,7 @@ export function createRecruiterRouter(database: typeof db = db): IRouter {
       requireCapability(active.role, "company.update");
       const [company] = await database.update(companies)
         .set({ ...parsed.data, updatedAt: new Date() })
-        .where(
-          and(
-            eq(companies.id, active.companyId),
-            eq(companies.verificationStatus, "approved"),
-          ),
-        )
+        .where(eq(companies.id, active.companyId))
         .returning({
           id: companies.id,
           name: companies.name,
@@ -316,12 +301,7 @@ export function createRecruiterRouter(database: typeof db = db): IRouter {
       const [company] = await database
         .select({ id: companies.id })
         .from(companies)
-        .where(
-          and(
-            eq(companies.id, invitation.companyId),
-            eq(companies.verificationStatus, "approved"),
-          ),
-        )
+        .where(eq(companies.id, invitation.companyId))
         .limit(1);
       if (!company) {
         next(createHttpError("Invitation is invalid or expired", 404, "INVITATION_NOT_FOUND"));

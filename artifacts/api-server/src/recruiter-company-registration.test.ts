@@ -29,8 +29,6 @@ type TestCompany = {
   id: number;
   name: string;
   applicantUserId: number | null;
-  verificationStatus: "pending" | "approved" | "rejected";
-  rejectionReason: string | null;
   createdAt: Date;
   updatedAt: Date;
   industry?: string | null;
@@ -57,11 +55,13 @@ type DatabaseState = {
   companies: TestCompany[];
   memberships: TestMembership[];
   nextCompanyId: number;
+  nextMembershipId: number;
 };
 
 type FakeDatabase = {
   select: (selection?: Record<string, unknown>) => unknown;
   insert: (table: unknown) => unknown;
+  update: (table: unknown) => unknown;
   transaction: <T>(callback: (transaction: FakeDatabase) => Promise<T>) => Promise<T>;
 };
 
@@ -73,13 +73,10 @@ function createFakeDatabase(state: DatabaseState, currentUserId: number) {
 
     if (table === companyMembers) {
       return state.memberships
-        .filter((membership) => {
-          const company = state.companies.find((item) => item.id === membership.companyId);
-          return (
-            membership.userId === currentUserId &&
-            company?.verificationStatus === "approved"
-          );
-        })
+        .filter((membership) =>
+          membership.userId === currentUserId &&
+          state.companies.some((company) => company.id === membership.companyId),
+        )
         .map((membership) => ({
           membershipId: membership.id,
           companyId: membership.companyId,
@@ -90,16 +87,13 @@ function createFakeDatabase(state: DatabaseState, currentUserId: number) {
     }
 
     if (table === companies) {
-      if (selection && "submittedAt" in selection) {
+      if (selection && "company" in selection) {
         return state.companies
           .filter((company) => company.applicantUserId === currentUserId)
           .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())
           .slice(0, 1)
           .map((company) => ({
             id: company.id,
-            status: company.verificationStatus,
-            rejectionReason: company.rejectionReason,
-            submittedAt: company.createdAt,
             company: {
               id: company.id,
               name: company.name,
@@ -115,17 +109,14 @@ function createFakeDatabase(state: DatabaseState, currentUserId: number) {
           }));
       }
 
-      if (selection && Object.keys(selection).length === 1 && "id" in selection) {
+      if (selection && "id" in selection) {
         return state.companies
-          .filter(
-            (company) =>
-              company.applicantUserId === currentUserId &&
-              company.verificationStatus === "pending",
-          )
+          .filter((company) => company.applicantUserId === currentUserId)
+          .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())
           .slice(0, 1);
       }
 
-      return state.companies.filter((company) => company.verificationStatus === "approved");
+      return state.companies;
     }
 
     return [];
@@ -171,21 +162,45 @@ function createFakeDatabase(state: DatabaseState, currentUserId: number) {
     insert: (table: unknown) => ({
       values: (values: Record<string, unknown>) => ({
         returning: async () => {
-          if (table !== companies) return [];
-          const now = new Date();
-          const company = {
-            id: state.nextCompanyId++,
-            ...values,
-            createdAt: now,
-            updatedAt: now,
-            rejectionReason: null,
-          } as TestCompany;
-          state.companies.push(company);
-          return [{
-            id: company.id,
-            verificationStatus: company.verificationStatus,
-          }];
+          if (table === companies) {
+            const now = new Date();
+            const company = {
+              id: state.nextCompanyId++,
+              ...values,
+              createdAt: now,
+              updatedAt: now,
+            } as TestCompany;
+            state.companies.push(company);
+            return [{ id: company.id }];
+          }
+
+          if (table === companyMembers) {
+            const membership = {
+              id: state.nextMembershipId++,
+              ...values,
+            } as TestMembership;
+            state.memberships.push(membership);
+            return [membership];
+          }
+
+          return [];
         },
+      }),
+    }),
+    update: (table: unknown) => ({
+      set: (values: Record<string, unknown>) => ({
+        where: () => ({
+          returning: async () => {
+            if (table !== companies) return [];
+            const company = [...state.companies]
+              .reverse()
+              .find((item) => item.applicantUserId === currentUserId);
+            if (!company) return [];
+
+            Object.assign(company, values);
+            return [{ id: company.id }];
+          },
+        }),
       }),
     }),
     transaction: async <T>(callback: (transaction: FakeDatabase) => Promise<T>) =>
@@ -231,6 +246,7 @@ function createState(
     companies: companiesInState,
     memberships,
     nextCompanyId: 100,
+    nextMembershipId: 200,
   };
 }
 
@@ -266,8 +282,8 @@ afterEach(() => {
 });
 
 describe("recruiter company registration", () => {
-  it("creates a pending company registration for the authenticated candidate without membership", async () => {
-    const state = createState();
+  it("creates a company workspace with an active owner membership", async () => {
+    const state = createState("recruiter");
     const testServer = await createTestServer(state);
     servers.push(testServer.server);
 
@@ -281,16 +297,48 @@ describe("recruiter company registration", () => {
 
     assert.equal(response.status, 201);
     assert.deepEqual(await response.json(), {
-      registration: { id: 100, status: "pending" },
+      registration: { id: 100 },
     });
     assert.equal(state.companies[0].applicantUserId, state.user.id);
-    assert.equal(state.companies[0].verificationStatus, "pending");
-    assert.equal(state.memberships.length, 0);
-    assert.equal(state.user.role, "candidate");
+    assert.equal(state.memberships.length, 1);
+    assert.equal(state.memberships[0].companyId, 100);
+    assert.equal(state.memberships[0].userId, state.user.id);
+    assert.equal(state.memberships[0].role, "owner");
+    assert.equal(state.memberships[0].status, "active");
+    assert.ok(state.memberships[0].joinedAt instanceof Date);
+
+    const context = await request(
+      testServer.url,
+      "/recruiter/context",
+      "GET",
+      tokenFor(state.user),
+    );
+    assert.equal(context.status, 200);
+    const contextBody = await context.json() as {
+      activeCompany: { id: number; name: string; role: string } | null;
+    };
+    assert.deepEqual(contextBody.activeCompany, {
+      id: 100,
+      name: "Example Company",
+      role: "owner",
+      capabilities: [
+        "company.read",
+        "company.update",
+        "team.manage",
+        "billing.manage",
+        "jobs.manage",
+        "applications.view",
+        "applications.manage",
+        "interviews.manage",
+        "offers.manage",
+        "messages.manage",
+        "reports.view",
+      ],
+    });
   });
 
   it("requires authentication and rejects client-supplied identity or roles", async () => {
-    const state = createState();
+    const state = createState("recruiter");
     const testServer = await createTestServer(state);
     servers.push(testServer.server);
 
@@ -312,19 +360,29 @@ describe("recruiter company registration", () => {
     );
     assert.equal(spoofedIdentity.status, 400);
     assert.equal(state.companies.length, 0);
+
+    const candidateState = createState("candidate");
+    const candidateServer = await createTestServer(candidateState);
+    servers.push(candidateServer.server);
+    const candidateResponse = await request(
+      candidateServer.url,
+      "/recruiter/company-registration",
+      "POST",
+      tokenFor(candidateState.user),
+      { name: "Example Company" },
+    );
+    assert.equal(candidateResponse.status, 403);
   });
 
-  it("rejects duplicate pending registrations and only returns the caller's status", async () => {
-    const pending = {
+  it("reuses an existing company and only returns the caller's workspace", async () => {
+    const existingCompany = {
       id: 10,
-      name: "Pending Company",
+      name: "Existing Company",
       applicantUserId: 1,
-      verificationStatus: "pending" as const,
-      rejectionReason: null,
       createdAt: new Date("2026-01-01T00:00:00.000Z"),
       updatedAt: new Date("2026-01-01T00:00:00.000Z"),
     };
-    const state = createState("candidate", [pending]);
+    const state = createState("recruiter", [existingCompany]);
     const testServer = await createTestServer(state);
     servers.push(testServer.server);
 
@@ -335,20 +393,30 @@ describe("recruiter company registration", () => {
       tokenFor(state.user),
       { name: "Second Company" },
     );
-    assert.equal(duplicate.status, 409);
+    assert.equal(duplicate.status, 201);
+    assert.deepEqual(await duplicate.json(), {
+      registration: { id: existingCompany.id },
+    });
+    assert.equal(state.companies[0].name, "Second Company");
+    assert.equal(state.memberships[0].role, "owner");
+    assert.equal(state.memberships[0].status, "active");
 
-    const ownStatus = await request(
+    const ownWorkspace = await request(
       testServer.url,
       "/recruiter/company-registration/me",
       "GET",
       tokenFor(state.user),
     );
-    assert.equal(ownStatus.status, 200);
-    const ownBody = await ownStatus.json() as { registration: { id: number; status: string } };
-    assert.equal(ownBody.registration.id, pending.id);
-    assert.equal(ownBody.registration.status, "pending");
+    assert.equal(ownWorkspace.status, 200);
+    const ownBody = await ownWorkspace.json() as {
+      registration: { id: number; company: { name: string } };
+    };
+    assert.equal(ownBody.registration.id, existingCompany.id);
+    assert.equal(ownBody.registration.company.name, "Second Company");
+    assert.equal("status" in ownBody.registration, false);
+    assert.equal("rejectionReason" in ownBody.registration, false);
 
-    const otherState = createState("candidate", [pending]);
+    const otherState = createState("recruiter", [existingCompany]);
     otherState.user.id = 2;
     const otherServer = await createTestServer(otherState, otherState.user.id);
     servers.push(otherServer.server);
@@ -361,17 +429,15 @@ describe("recruiter company registration", () => {
     assert.equal(otherStatus.status, 404);
   });
 
-  it("returns rejection details for the applicant's own registration", async () => {
-    const rejected: TestCompany = {
+  it("returns 404 when the account does not own a company workspace", async () => {
+    const company: TestCompany = {
       id: 11,
-      name: "Rejected Company",
-      applicantUserId: 1,
-      verificationStatus: "rejected",
-      rejectionReason: "Company details could not be verified",
+      name: "Another Company",
+      applicantUserId: 2,
       createdAt: new Date("2026-02-01T00:00:00.000Z"),
       updatedAt: new Date("2026-02-02T00:00:00.000Z"),
     };
-    const state = createState("candidate", [rejected]);
+    const state = createState("recruiter", [company]);
     const testServer = await createTestServer(state);
     servers.push(testServer.server);
 
@@ -381,35 +447,28 @@ describe("recruiter company registration", () => {
       "GET",
       tokenFor(state.user),
     );
-    assert.equal(response.status, 200);
-    const body = await response.json() as {
-      registration: { status: string; rejectionReason: string | null };
-    };
-    assert.equal(body.registration.status, "rejected");
-    assert.equal(body.registration.rejectionReason, rejected.rejectionReason);
+    assert.equal(response.status, 404);
   });
 });
 
 describe("recruiter membership authorization", () => {
-  it("grants a candidate-role user recruiter access only through an approved active owner membership", async () => {
-    const approved: TestCompany = {
+  it("grants recruiter access through an active owner membership", async () => {
+    const company: TestCompany = {
       id: 20,
-      name: "Approved Company",
+      name: "Example Company",
       applicantUserId: 1,
-      verificationStatus: "approved",
-      rejectionReason: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
     const owner: TestMembership = {
       id: 30,
       userId: 1,
-      companyId: approved.id,
+      companyId: company.id,
       role: "owner",
       status: "active",
       joinedAt: new Date(),
     };
-    const state = createState("candidate", [approved], [owner]);
+    const state = createState("candidate", [company], [owner]);
     const testServer = await createTestServer(state);
     servers.push(testServer.server);
 
@@ -426,8 +485,8 @@ describe("recruiter membership authorization", () => {
     };
     assert.equal(contextBody.user.role, "candidate");
     assert.deepEqual(contextBody.activeCompany, {
-      id: approved.id,
-      name: approved.name,
+      id: company.id,
+      name: company.name,
       role: "owner",
       capabilities: [
         "company.read",
@@ -444,23 +503,21 @@ describe("recruiter membership authorization", () => {
       ],
     });
 
-    const company = await request(
+    const companyResponse = await request(
       testServer.url,
       "/recruiter/company",
       "GET",
       tokenFor(state.user),
     );
-    assert.equal(company.status, 200);
+    assert.equal(companyResponse.status, 200);
   });
 
-  it("does not grant recruiter access to pending or rejected companies, even if a stale active membership exists", async () => {
-    for (const verificationStatus of ["pending", "rejected"] as const) {
+  it("does not grant recruiter access without an active company membership", async () => {
+    for (const membershipStatus of ["invited", "inactive"] as const) {
       const company: TestCompany = {
-        id: verificationStatus === "pending" ? 40 : 41,
-        name: `${verificationStatus} Company`,
+        id: membershipStatus === "invited" ? 40 : 41,
+        name: `${membershipStatus} Company`,
         applicantUserId: 1,
-        verificationStatus,
-        rejectionReason: verificationStatus === "rejected" ? "Needs review" : null,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -469,7 +526,7 @@ describe("recruiter membership authorization", () => {
         userId: 1,
         companyId: company.id,
         role: "owner",
-        status: "active",
+        status: membershipStatus,
         joinedAt: new Date(),
       };
       const state = createState("candidate", [company], [membership]);
@@ -485,10 +542,10 @@ describe("recruiter membership authorization", () => {
       assert.equal(context.status, 200);
       const contextBody = await context.json() as {
         activeCompany: unknown;
-        memberships: unknown[];
+        memberships: { status: string }[];
       };
       assert.equal(contextBody.activeCompany, null);
-      assert.deepEqual(contextBody.memberships, []);
+      assert.deepEqual(contextBody.memberships.map((item) => item.status), [membershipStatus]);
 
       const companyResponse = await request(
         testServer.url,
@@ -514,8 +571,6 @@ describe("recruiter membership authorization", () => {
       id: 50,
       name: "First Company",
       applicantUserId: 1,
-      verificationStatus: "approved",
-      rejectionReason: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

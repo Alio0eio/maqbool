@@ -39,15 +39,6 @@ function getUserId(req: Express.Request): number {
   return userId;
 }
 
-function approvedCompanyPredicate() {
-  return sql`EXISTS (
-    SELECT 1
-    FROM ${companies}
-    WHERE ${companies.id} = ${jobs.companyId}
-      AND ${companies.verificationStatus} = 'approved'
-  )`;
-}
-
 export function createJobsRouter(database: typeof db = db): IRouter {
   const router: IRouter = Router();
 
@@ -73,10 +64,7 @@ export function createJobsRouter(database: typeof db = db): IRouter {
       sortBy,
       sortOrder,
     } = parsed.data;
-    const filters = [
-      eq(jobs.status, "published"),
-      eq(companies.verificationStatus, "approved"),
-    ];
+    const filters = [eq(jobs.status, "published")];
 
     if (companyId !== undefined) filters.push(eq(jobs.companyId, companyId));
     if (search) {
@@ -180,7 +168,6 @@ export function createJobsRouter(database: typeof db = db): IRouter {
           and(
             eq(jobs.id, id),
             eq(jobs.status, "published"),
-            approvedCompanyPredicate(),
           ),
         )
         .returning({
@@ -273,12 +260,7 @@ export function createJobsRouter(database: typeof db = db): IRouter {
       const [job] = await database
         .select({ id: jobs.id, status: jobs.status })
         .from(jobs)
-        .where(
-          and(
-            eq(jobs.id, params.data.id),
-            approvedCompanyPredicate(),
-          ),
-        )
+        .where(eq(jobs.id, params.data.id))
         .limit(1);
       if (!job) {
         next(createHttpError("Job not found", 404));
@@ -356,12 +338,7 @@ export function createJobsRouter(database: typeof db = db): IRouter {
       const [job] = await database
         .select({ id: jobs.id })
         .from(jobs)
-        .where(
-          and(
-            eq(jobs.id, parsed.data.id),
-            approvedCompanyPredicate(),
-          ),
-        )
+        .where(eq(jobs.id, parsed.data.id))
         .limit(1);
       if (!job) {
         next(createHttpError("Job not found", 404));
